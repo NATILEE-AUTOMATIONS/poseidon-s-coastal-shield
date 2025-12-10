@@ -55,9 +55,9 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '' }) => {
           style={{ filter: 'drop-shadow(0 0 10px hsl(168 80% 45% / 0.5))' }}
         />
         
-        {/* Door */}
+        {/* Door - centered at x=200 */}
         <rect
-          x="145"
+          x="177.5"
           y="195"
           width="45"
           height="70"
@@ -66,7 +66,7 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '' }) => {
           strokeWidth="1.5"
           rx="2"
         />
-        <circle cx="182" cy="230" r="2" fill="hsl(32 80% 50%)" />
+        <circle cx="214.5" cy="230" r="2" fill="hsl(32 80% 50%)" />
         
         {/* Windows with glow */}
         <rect
