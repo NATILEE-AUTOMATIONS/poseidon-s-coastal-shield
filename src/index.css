@@ -197,7 +197,7 @@
     animation-delay: 0.6s;
   }
   
-  /* ⚡ NEON GLOW BUTTON */
+  /* ⚡ NEON GLOW BUTTON - Dual Layer Architecture */
   .btn-neon {
     position: relative;
     display: inline-flex;
@@ -217,7 +217,7 @@
     font-size: 0.875rem;
     color: hsl(0 0% 100%);
     cursor: pointer;
-    overflow: visible;
+    overflow: hidden; /* KEY: Clips shimmer at edges */
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     
     /* Multi-layer neon glow */
@@ -237,36 +237,45 @@
     animation: neon-pulse 2.5s ease-in-out infinite;
   }
   
-  /* Shimmer sweep */
+  /* Premium Multi-Phase Shimmer with Perfect Clipping */
   .btn-neon::before {
     content: '';
     position: absolute;
-    inset: 0;
-    border-radius: 0.5rem;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background: linear-gradient(
-      105deg,
+      110deg,
       transparent 0%,
-      transparent 35%,
-      hsl(0 0% 100% / 0.2) 45%,
-      hsl(0 0% 100% / 0.4) 50%,
-      hsl(0 0% 100% / 0.2) 55%,
-      transparent 65%,
+      transparent 30%,
+      hsl(0 0% 100% / 0.06) 38%,
+      hsl(0 0% 100% / 0.15) 42%,
+      hsl(0 0% 100% / 0.5) 50%,
+      hsl(0 0% 100% / 0.15) 58%,
+      hsl(0 0% 100% / 0.06) 62%,
+      transparent 70%,
       transparent 100%
     );
-    transform: translateX(-150%);
-    animation: neon-shimmer 4s ease-in-out infinite;
-    animation-delay: 1.5s;
+    transform: translateX(-100%);
+    animation: shimmer-sweep 4s ease-in-out infinite;
+    animation-delay: 1s;
     pointer-events: none;
   }
   
-  /* Reflection/light pool below button */
-  .btn-neon::after {
+  /* Light pool reflection (outside button via wrapper) */
+  .btn-neon-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .btn-neon-wrapper::after {
     content: '';
     position: absolute;
-    bottom: -12px;
-    left: 10%;
-    right: 10%;
-    height: 12px;
+    bottom: -14px;
+    left: 15%;
+    right: 15%;
+    height: 14px;
     background: radial-gradient(
       ellipse at center,
       hsl(var(--teal-glow) / 0.4) 0%,
@@ -277,6 +286,16 @@
     border-radius: 50%;
     animation: neon-pulse 2.5s ease-in-out infinite;
     pointer-events: none;
+  }
+  
+  .btn-neon-wrapper:hover::after {
+    background: radial-gradient(
+      ellipse at center,
+      hsl(var(--teal-glow) / 0.6) 0%,
+      hsl(var(--teal-glow) / 0.2) 50%,
+      transparent 80%
+    );
+    filter: blur(8px);
   }
   
   .btn-neon:hover {
@@ -305,14 +324,9 @@
       0 0 5px hsl(0 0% 100% / 0.8);
   }
   
-  .btn-neon:hover::after {
-    background: radial-gradient(
-      ellipse at center,
-      hsl(var(--teal-glow) / 0.6) 0%,
-      hsl(var(--teal-glow) / 0.2) 50%,
-      transparent 80%
-    );
-    filter: blur(8px);
+  /* Instant shimmer on hover */
+  .btn-neon:hover::before {
+    animation: shimmer-sweep 1.2s ease-in-out;
   }
   
   .btn-neon .btn-icon {
@@ -340,9 +354,21 @@
   }
 }
 
-@keyframes neon-shimmer {
-  0%, 25% { transform: translateX(-150%); }
-  50%, 100% { transform: translateX(150%); }
+@keyframes shimmer-sweep {
+  0% { 
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% { 
+    transform: translateX(100%);
+    opacity: 0;
+  }
 }
 
 @keyframes float {
