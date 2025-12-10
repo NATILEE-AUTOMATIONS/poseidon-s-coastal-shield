@@ -748,3 +748,73 @@
 .animate-roof-pulse {
   animation: roof-pulse 1.5s ease-in-out infinite;
 }
+
+/* ===== ROOF VISION SECTION ANIMATIONS ===== */
+
+/* Slow spin for light rays */
+@keyframes spin-slow {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 30s linear infinite;
+}
+
+/* Vision gradient animation */
+@keyframes vision-gradient {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+.animate-vision-gradient {
+  animation: vision-gradient 4s ease-in-out infinite;
+}
+
+/* Floating particles */
+@keyframes float-particle {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.4;
+  }
+  25% {
+    transform: translateY(-15px) translateX(5px);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(-25px) translateX(-5px);
+    opacity: 0.5;
+  }
+  75% {
+    transform: translateY(-10px) translateX(8px);
+    opacity: 0.6;
+  }
+}
+
+.animate-float-particle {
+  animation: float-particle 4s ease-in-out infinite;
+}
+
+/* Roof glow pulse for dream house */
+@keyframes roof-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 5px hsl(var(--teal) / 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 0 15px hsl(var(--teal) / 0.8));
+  }
+}
+
+.animate-roof-glow {
+  animation: roof-glow 2s ease-in-out infinite;
+}
