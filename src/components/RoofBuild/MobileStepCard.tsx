@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { materialInfo } from './RoofLayers';
 
 interface MobileStepCardProps {
@@ -6,20 +6,33 @@ interface MobileStepCardProps {
   isVisible: boolean;
 }
 
+type AnimationPhase = 'idle' | 'exiting' | 'entering';
+
 const MobileStepCard: React.FC<MobileStepCardProps> = ({ currentStep, isVisible }) => {
   const [displayedStep, setDisplayedStep] = useState(currentStep);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [phase, setPhase] = useState<AnimationPhase>('idle');
+  const prevStepRef = useRef(currentStep);
 
   useEffect(() => {
-    if (currentStep !== displayedStep) {
-      setIsAnimating(true);
-      const timeout = setTimeout(() => {
+    if (currentStep !== prevStepRef.current) {
+      // Start exit animation
+      setPhase('exiting');
+      
+      const exitTimer = setTimeout(() => {
         setDisplayedStep(currentStep);
-        setIsAnimating(false);
-      }, 200);
-      return () => clearTimeout(timeout);
+        setPhase('entering');
+        
+        const enterTimer = setTimeout(() => {
+          setPhase('idle');
+        }, 600);
+        
+        return () => clearTimeout(enterTimer);
+      }, 250);
+
+      prevStepRef.current = currentStep;
+      return () => clearTimeout(exitTimer);
     }
-  }, [currentStep, displayedStep]);
+  }, [currentStep]);
 
   const material = materialInfo[displayedStep];
   if (!material) return null;
@@ -30,62 +43,82 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({ currentStep, isVisible 
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 pointer-events-none'
       }`}
     >
-      {/* Main Card */}
-      <div
-        className={`step-card ${isAnimating ? 'step-card-exit' : 'step-card-enter'}`}
-      >
-        {/* Glow border effect */}
-        <div className="absolute inset-0 rounded-2xl step-card-glow" />
+      {/* Cinematic Card Container */}
+      <div className="step-card-v2">
+        {/* Animated border glow */}
+        <div className="step-card-border-glow" />
         
-        {/* Card content */}
-        <div className="relative z-10 p-5">
-          {/* Step number + name row */}
-          <div className="flex items-start gap-4">
-            {/* Large step number */}
-            <div 
-              className="step-number"
-              style={{
-                color: 'hsl(168 80% 55%)',
-                textShadow: '0 0 30px hsl(168 80% 50% / 0.8), 0 0 60px hsl(168 80% 50% / 0.4)',
-              }}
-            >
+        {/* Scanline overlay for cyberpunk effect */}
+        <div className="step-card-scanlines" />
+        
+        {/* Corner accents */}
+        <div className="step-corner step-corner-tl" />
+        <div className="step-corner step-corner-tr" />
+        <div className="step-corner step-corner-bl" />
+        <div className="step-corner step-corner-br" />
+        
+        {/* Main content */}
+        <div className="relative z-10 p-6">
+          {/* Step Number - Massive with breathing glow */}
+          <div 
+            className={`step-num-massive ${
+              phase === 'exiting' ? 'step-num-exit' : 
+              phase === 'entering' ? 'step-num-enter' : ''
+            }`}
+          >
+            <span className="step-num-text">
               {String(displayedStep + 1).padStart(2, '0')}
-            </div>
-            
-            {/* Name and description */}
-            <div className="flex-1 pt-1">
-              <h3 
-                className="text-lg font-bold tracking-wide"
-                style={{
-                  color: 'hsl(0 0% 95%)',
-                }}
-              >
-                {material.name}
-              </h3>
-              <p 
-                className="text-sm mt-1.5 leading-relaxed"
-                style={{
-                  color: 'hsl(168 20% 65%)',
-                }}
-              >
-                {material.description}
-              </p>
-            </div>
+            </span>
+            <span className="step-num-ghost">
+              {String(displayedStep + 1).padStart(2, '0')}
+            </span>
           </div>
-
-          {/* Progress dots */}
-          <div className="flex items-center justify-center gap-2 mt-5">
+          
+          {/* Title - Bold slide animation */}
+          <h3 
+            className={`step-title-cinematic ${
+              phase === 'exiting' ? 'step-title-exit' : 
+              phase === 'entering' ? 'step-title-enter' : ''
+            }`}
+          >
+            {material.name}
+          </h3>
+          
+          {/* Animated gradient divider */}
+          <div 
+            className={`step-divider-line ${
+              phase === 'entering' ? 'step-divider-draw' : ''
+            }`}
+          />
+          
+          {/* Description - Float up animation */}
+          <p 
+            className={`step-desc-cinematic ${
+              phase === 'exiting' ? 'step-desc-exit' : 
+              phase === 'entering' ? 'step-desc-enter' : ''
+            }`}
+          >
+            {material.description}
+          </p>
+          
+          {/* Segment Progress Bar */}
+          <div className="step-progress-bar">
             {materialInfo.map((_, index) => (
               <div
                 key={index}
-                className={`step-dot ${
+                className={`step-progress-segment ${
                   index === displayedStep 
-                    ? 'step-dot-active' 
+                    ? 'step-segment-active' 
                     : index < displayedStep 
-                      ? 'step-dot-complete' 
-                      : 'step-dot-upcoming'
+                      ? 'step-segment-complete' 
+                      : 'step-segment-upcoming'
                 }`}
-              />
+              >
+                {/* Active segment glow ring */}
+                {index === displayedStep && (
+                  <div className="step-segment-pulse" />
+                )}
+              </div>
             ))}
           </div>
         </div>
