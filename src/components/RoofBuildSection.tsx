@@ -83,19 +83,19 @@ const RoofBuildSection: React.FC = () => {
             </div>
 
             {/* Material labels - left side (positioned as overlay) */}
-            <div className="absolute left-0 xl:left-8 top-1/2 -translate-y-1/2 pr-8 hidden xl:block w-48">
-              <div className="space-y-4">
+            <div className="absolute left-0 xl:left-4 top-1/2 -translate-y-1/2 pr-4 hidden xl:block w-56">
+              <div className="space-y-5">
                 {materialInfo.slice(0, 5).map((material, index) => (
                   <div
                     key={material.id}
-                    className="text-right transition-all duration-500 ease-out"
+                    className={`text-right transition-all duration-500 ease-out pb-4 ${index < 4 ? 'border-b border-teal-800/20' : ''}`}
                     style={{
                       opacity: lockedMaterials[index] ? 1 : 0.25,
                       transform: `translateX(${lockedMaterials[index] ? 0 : -20}px)`,
                     }}
                   >
                     <div 
-                      className="text-sm font-semibold tracking-wide"
+                      className="text-sm font-semibold tracking-wide whitespace-nowrap"
                       style={{
                         color: lockedMaterials[index] ? 'hsl(168 80% 60%)' : 'hsl(168 50% 40%)',
                         textShadow: lockedMaterials[index] 
@@ -103,10 +103,11 @@ const RoofBuildSection: React.FC = () => {
                           : 'none',
                       }}
                     >
+                      <span className="text-xs font-normal opacity-60 mr-1.5">{index + 1}.</span>
                       {material.name}
                     </div>
                     <div 
-                      className="text-xs text-muted-foreground/70 mt-0.5 leading-tight"
+                      className="text-xs text-muted-foreground/70 mt-1 leading-relaxed"
                       style={{
                         opacity: lockedMaterials[index] ? 1 : 0.5,
                       }}
@@ -119,19 +120,19 @@ const RoofBuildSection: React.FC = () => {
             </div>
 
             {/* Material labels - right side (positioned as overlay) */}
-            <div className="absolute right-0 xl:right-8 top-1/2 -translate-y-1/2 pl-8 hidden xl:block w-48">
-              <div className="space-y-4">
+            <div className="absolute right-0 xl:right-4 top-1/2 -translate-y-1/2 pl-4 hidden xl:block w-56">
+              <div className="space-y-5">
                 {materialInfo.slice(5).map((material, index) => (
                   <div
                     key={material.id}
-                    className="text-left transition-all duration-500 ease-out"
+                    className={`text-left transition-all duration-500 ease-out pb-4 ${index < 4 ? 'border-b border-teal-800/20' : ''}`}
                     style={{
                       opacity: lockedMaterials[index + 5] ? 1 : 0.25,
                       transform: `translateX(${lockedMaterials[index + 5] ? 0 : 20}px)`,
                     }}
                   >
                     <div 
-                      className="text-sm font-semibold tracking-wide"
+                      className="text-sm font-semibold tracking-wide whitespace-nowrap"
                       style={{
                         color: lockedMaterials[index + 5] ? 'hsl(168 80% 60%)' : 'hsl(168 50% 40%)',
                         textShadow: lockedMaterials[index + 5] 
@@ -139,10 +140,11 @@ const RoofBuildSection: React.FC = () => {
                           : 'none',
                       }}
                     >
+                      <span className="text-xs font-normal opacity-60 mr-1.5">{index + 6}.</span>
                       {material.name}
                     </div>
                     <div 
-                      className="text-xs text-muted-foreground/70 mt-0.5 leading-tight"
+                      className="text-xs text-muted-foreground/70 mt-1 leading-relaxed"
                       style={{
                         opacity: lockedMaterials[index + 5] ? 1 : 0.5,
                       }}
