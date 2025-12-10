@@ -20,16 +20,18 @@ const RoofBuildSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const progress = useScrollProgress(sectionRef);
 
-  // Layer timing - each layer gets ~12.5% of the scroll
+  // Layer timing - each layer gets 10% of the scroll (10 steps)
   const layers = [
-    { start: 0, end: 0.12 },
-    { start: 0.12, end: 0.25 },
-    { start: 0.25, end: 0.37 },
-    { start: 0.37, end: 0.50 },
-    { start: 0.50, end: 0.62 },
-    { start: 0.62, end: 0.75 },
-    { start: 0.75, end: 0.87 },
-    { start: 0.87, end: 1.0 },
+    { start: 0, end: 0.10 },
+    { start: 0.10, end: 0.20 },
+    { start: 0.20, end: 0.30 },
+    { start: 0.30, end: 0.40 },
+    { start: 0.40, end: 0.50 },
+    { start: 0.50, end: 0.60 },
+    { start: 0.60, end: 0.70 },
+    { start: 0.70, end: 0.80 },
+    { start: 0.80, end: 0.90 },
+    { start: 0.90, end: 1.0 },
   ];
 
   // Calculate which materials are "locked in"
