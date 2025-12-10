@@ -3,14 +3,16 @@ import { useScrollProgress } from '@/hooks/useScrollProgress';
 import GridBackground from './RoofBuild/GridBackground';
 import HouseSVG from './RoofBuild/HouseSVG';
 import {
-  DripEdgeLayer,
+  DeckingLayer,
+  DripEdgeEavesLayer,
   IceWaterShieldLayer,
   UnderlaymentLayer,
+  DripEdgeRakesLayer,
   StarterStripLayer,
-  FlashingLayer,
   FieldShinglesLayer,
-  RidgeCapLayer,
   VentsLayer,
+  FlashingLayer,
+  RidgeCapLayer,
   materialInfo,
 } from './RoofBuild/RoofLayers';
 import MobileStepCard from './RoofBuild/MobileStepCard';
@@ -70,15 +72,27 @@ const RoofBuildSection: React.FC = () => {
                   {/* House base */}
                   <HouseSVG />
                   
-                  {/* Animated roof layers */}
-                  <DripEdgeLayer progress={progress} startProgress={layers[0].start} endProgress={layers[0].end} />
-                  <IceWaterShieldLayer progress={progress} startProgress={layers[1].start} endProgress={layers[1].end} />
-                  <UnderlaymentLayer progress={progress} startProgress={layers[2].start} endProgress={layers[2].end} />
-                  <StarterStripLayer progress={progress} startProgress={layers[3].start} endProgress={layers[3].end} />
-                  <FlashingLayer progress={progress} startProgress={layers[4].start} endProgress={layers[4].end} />
-                  <FieldShinglesLayer progress={progress} startProgress={layers[5].start} endProgress={layers[5].end} />
-                  <RidgeCapLayer progress={progress} startProgress={layers[6].start} endProgress={layers[6].end} />
+                  {/* Animated roof layers - 10 layers in correct installation order */}
+                  {/* 1. Replace Decking */}
+                  <DeckingLayer progress={progress} startProgress={layers[0].start} endProgress={layers[0].end} />
+                  {/* 2. Drip Edge (Eaves) */}
+                  <DripEdgeEavesLayer progress={progress} startProgress={layers[1].start} endProgress={layers[1].end} />
+                  {/* 3. Ice & Water Shield */}
+                  <IceWaterShieldLayer progress={progress} startProgress={layers[2].start} endProgress={layers[2].end} />
+                  {/* 4. Underlayment */}
+                  <UnderlaymentLayer progress={progress} startProgress={layers[3].start} endProgress={layers[3].end} />
+                  {/* 5. Drip Edge (Rakes) */}
+                  <DripEdgeRakesLayer progress={progress} startProgress={layers[4].start} endProgress={layers[4].end} />
+                  {/* 6. Starter Strip */}
+                  <StarterStripLayer progress={progress} startProgress={layers[5].start} endProgress={layers[5].end} />
+                  {/* 7. Shingles */}
+                  <FieldShinglesLayer progress={progress} startProgress={layers[6].start} endProgress={layers[6].end} />
+                  {/* 8. Pipe Boots & Vents */}
                   <VentsLayer progress={progress} startProgress={layers[7].start} endProgress={layers[7].end} />
+                  {/* 9. Flashing */}
+                  <FlashingLayer progress={progress} startProgress={layers[8].start} endProgress={layers[8].end} />
+                  {/* 10. Ridge Vent & Cap */}
+                  <RidgeCapLayer progress={progress} startProgress={layers[9].start} endProgress={layers[9].end} />
                 </svg>
               </div>
             </div>
