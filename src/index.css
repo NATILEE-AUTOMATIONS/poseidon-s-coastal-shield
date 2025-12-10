@@ -237,7 +237,7 @@
     animation: neon-pulse 2.5s ease-in-out infinite;
   }
   
-  /* Premium Multi-Phase Orange Shimmer */
+  /* Blazing Orange Light Beam Shimmer */
   .btn-neon::before {
     content: '';
     position: absolute;
@@ -246,23 +246,28 @@
     width: 100%;
     height: 100%;
     background: linear-gradient(
-      110deg,
+      105deg,
       transparent 0%,
-      transparent 25%,
-      hsl(var(--orange-glow) / 0.05) 35%,
-      hsl(var(--orange-glow) / 0.2) 42%,
-      hsl(var(--orange-glow) / 0.6) 48%,
-      hsl(30 90% 65%) 50%,
-      hsl(var(--orange-glow) / 0.6) 52%,
-      hsl(var(--orange-glow) / 0.2) 58%,
-      hsl(var(--orange-glow) / 0.05) 65%,
-      transparent 75%,
+      transparent 35%,
+      hsl(35 100% 60% / 0.15) 40%,
+      hsl(30 100% 55% / 0.5) 44%,
+      hsl(28 100% 60% / 0.9) 48%,
+      hsl(30 100% 85%) 50%,
+      hsl(28 100% 60% / 0.9) 52%,
+      hsl(30 100% 55% / 0.5) 56%,
+      hsl(35 100% 60% / 0.15) 60%,
+      transparent 65%,
       transparent 100%
     );
     transform: translateX(-100%);
-    animation: shimmer-sweep 4s ease-in-out infinite;
-    animation-delay: 1s;
+    animation: shimmer-sweep 3.5s ease-in-out infinite;
+    animation-delay: 0.5s;
     pointer-events: none;
+  }
+  
+  .btn-neon:hover::before {
+    animation: shimmer-sweep 0.8s ease-out;
+    filter: brightness(1.2);
   }
   
   /* Light pool reflection (outside button via wrapper) */
