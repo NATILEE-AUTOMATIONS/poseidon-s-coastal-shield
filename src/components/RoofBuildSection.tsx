@@ -45,12 +45,12 @@ const RoofBuildSection: React.FC = () => {
       className="relative"
       style={{ height: '300vh' }}
     >
-      {/* Sticky container */}
+      {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
         <GridBackground />
         
-        {/* Content container */}
-        <div className="relative z-10 h-full flex flex-col items-center justify-center px-4">
+        {/* Content container - with top padding for navbar clearance */}
+        <div className="relative z-10 h-full flex flex-col items-center justify-start pt-44 lg:pt-52 px-4">
           {/* Header */}
           <div 
             className="text-center mb-6 transition-all duration-700 ease-out"
