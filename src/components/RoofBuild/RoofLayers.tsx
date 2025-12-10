@@ -18,6 +18,7 @@ const calculateLayerState = (progress: number, start: number, end: number) => {
 
 // Layer colors
 const colors = {
+  decking: { fill: 'hsl(35 45% 30%)', stroke: 'hsl(35 50% 45%)', glow: 'hsl(35 60% 50%)' },
   dripEdge: { fill: 'hsl(210 15% 65%)', stroke: 'hsl(210 20% 75%)', glow: 'hsl(210 30% 70%)' },
   iceWater: { fill: 'hsl(260 45% 35%)', stroke: 'hsl(260 50% 50%)', glow: 'hsl(260 60% 55%)' },
   underlayment: { fill: 'hsl(35 15% 28%)', stroke: 'hsl(35 20% 40%)', glow: 'hsl(35 30% 45%)' },
@@ -28,8 +29,60 @@ const colors = {
   vents: { fill: 'hsl(0 0% 18%)', stroke: 'hsl(168 70% 50%)', glow: 'hsl(168 80% 55%)' },
 };
 
-// Layer 1: Drip Edge - Clean metallic strips
-export const DripEdgeLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress }) => {
+// Layer 1: Decking - Plywood panels
+export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress }) => {
+  const { layerProgress, isLocked } = calculateLayerState(progress, startProgress, endProgress);
+  const yOffset = (1 - layerProgress) * -120;
+  const opacity = 0.4 + layerProgress * 0.6;
+  const scale = isLocked ? 1 : 0.98 + layerProgress * 0.02;
+
+  return (
+    <g
+      style={{
+        transform: `translateY(${yOffset}px) scale(${scale})`,
+        transformOrigin: '200px 110px',
+        opacity,
+        transition: isLocked ? 'all 0.3s ease-out' : 'none',
+      }}
+    >
+      {/* Left side plywood panels */}
+      <path
+        d="M52 158 L200 58 L200 68 L60 158 Z"
+        fill={colors.decking.fill}
+        stroke={colors.decking.stroke}
+        strokeWidth="1.5"
+        style={{
+          filter: isLocked 
+            ? `drop-shadow(0 0 12px ${colors.decking.glow})` 
+            : `drop-shadow(0 0 4px ${colors.decking.glow})`,
+        }}
+      />
+      {/* Right side plywood panels */}
+      <path
+        d="M200 58 L348 158 L340 158 L200 68 Z"
+        fill={colors.decking.fill}
+        stroke={colors.decking.stroke}
+        strokeWidth="1.5"
+        style={{
+          filter: isLocked 
+            ? `drop-shadow(0 0 12px ${colors.decking.glow})` 
+            : `drop-shadow(0 0 4px ${colors.decking.glow})`,
+        }}
+      />
+      {/* Wood grain lines - left */}
+      <line x1="80" y1="145" x2="200" y2="68" stroke={colors.decking.stroke} strokeWidth="0.5" opacity="0.4" />
+      <line x1="120" y1="130" x2="200" y2="78" stroke={colors.decking.stroke} strokeWidth="0.5" opacity="0.3" />
+      {/* Wood grain lines - right */}
+      <line x1="200" y1="68" x2="320" y2="145" stroke={colors.decking.stroke} strokeWidth="0.5" opacity="0.4" />
+      <line x1="200" y1="78" x2="280" y2="130" stroke={colors.decking.stroke} strokeWidth="0.5" opacity="0.3" />
+      {/* Panel seam at ridge */}
+      <line x1="200" y1="58" x2="200" y2="158" stroke={colors.decking.stroke} strokeWidth="1" opacity="0.6" />
+    </g>
+  );
+};
+
+// Layer 2: Drip Edge (Eaves) - Bottom horizontal edges only
+export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress }) => {
   const { layerProgress, isLocked } = calculateLayerState(progress, startProgress, endProgress);
   const yOffset = (1 - layerProgress) * -150;
   const opacity = 0.4 + layerProgress * 0.6;
@@ -68,19 +121,49 @@ export const DripEdgeLayer: React.FC<LayerProps> = ({ progress, startProgress, e
             : `drop-shadow(0 0 4px ${colors.dripEdge.glow})`,
         }}
       />
+    </g>
+  );
+};
+
+// Layer 5: Drip Edge (Rakes) - Angled side edges only
+export const DripEdgeRakesLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress }) => {
+  const { layerProgress, isLocked } = calculateLayerState(progress, startProgress, endProgress);
+  const yOffset = (1 - layerProgress) * -180;
+  const opacity = 0.4 + layerProgress * 0.6;
+  const scale = isLocked ? 1 : 0.98 + layerProgress * 0.02;
+
+  return (
+    <g
+      style={{
+        transform: `translateY(${yOffset}px) scale(${scale})`,
+        transformOrigin: '200px 110px',
+        opacity,
+        transition: isLocked ? 'all 0.3s ease-out' : 'none',
+      }}
+    >
       {/* Left rake drip edge */}
       <path
         d="M38 162 L200 52 L205 55 L45 160"
         fill={colors.dripEdge.fill}
         stroke={colors.dripEdge.stroke}
-        strokeWidth="1"
+        strokeWidth="1.5"
+        style={{
+          filter: isLocked 
+            ? `drop-shadow(0 0 12px ${colors.dripEdge.glow})` 
+            : `drop-shadow(0 0 4px ${colors.dripEdge.glow})`,
+        }}
       />
       {/* Right rake drip edge */}
       <path
         d="M195 55 L200 52 L362 162 L355 160"
         fill={colors.dripEdge.fill}
         stroke={colors.dripEdge.stroke}
-        strokeWidth="1"
+        strokeWidth="1.5"
+        style={{
+          filter: isLocked 
+            ? `drop-shadow(0 0 12px ${colors.dripEdge.glow})` 
+            : `drop-shadow(0 0 4px ${colors.dripEdge.glow})`,
+        }}
       />
     </g>
   );
