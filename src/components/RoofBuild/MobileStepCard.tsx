@@ -15,7 +15,6 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({ currentStep, isVisible 
 
   useEffect(() => {
     if (currentStep !== prevStepRef.current) {
-      // Start exit animation
       setPhase('exiting');
       
       const exitTimer = setTimeout(() => {
@@ -24,7 +23,7 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({ currentStep, isVisible 
         
         const enterTimer = setTimeout(() => {
           setPhase('idle');
-        }, 600);
+        }, 700);
         
         return () => clearTimeout(enterTimer);
       }, 250);
@@ -37,89 +36,77 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({ currentStep, isVisible 
   const material = materialInfo[displayedStep];
   if (!material) return null;
 
+  const progressPercent = ((displayedStep + 1) / materialInfo.length) * 100;
+
   return (
     <div 
-      className={`w-full mt-6 xl:hidden transition-all duration-500 ease-out ${
+      className={`w-full mt-8 xl:hidden transition-all duration-500 ease-out ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 pointer-events-none'
       }`}
     >
-      {/* Cinematic Card Container */}
-      <div className="step-card-v2">
-        {/* Animated border glow */}
-        <div className="step-card-border-glow" />
+      {/* Minimal Theatre Card */}
+      <div className="step-v3-card">
+        {/* Left accent bar */}
+        <div className="step-v3-accent" />
         
-        {/* Scanline overlay for cyberpunk effect */}
-        <div className="step-card-scanlines" />
-        
-        {/* Corner accents */}
-        <div className="step-corner step-corner-tl" />
-        <div className="step-corner step-corner-tr" />
-        <div className="step-corner step-corner-bl" />
-        <div className="step-corner step-corner-br" />
-        
-        {/* Main content */}
-        <div className="relative z-10 p-6">
-          {/* Step Number - Massive with breathing glow */}
+        {/* Content */}
+        <div className="relative z-10 pl-6 pr-5 py-6">
+          {/* Step Number - Giant, thin, clip-path reveal */}
           <div 
-            className={`step-num-massive ${
-              phase === 'exiting' ? 'step-num-exit' : 
-              phase === 'entering' ? 'step-num-enter' : ''
+            className={`step-v3-number ${
+              phase === 'exiting' ? 'step-v3-number-exit' : 
+              phase === 'entering' ? 'step-v3-number-enter' : ''
             }`}
           >
-            <span className="step-num-text">
-              {String(displayedStep + 1).padStart(2, '0')}
-            </span>
-            <span className="step-num-ghost">
-              {String(displayedStep + 1).padStart(2, '0')}
-            </span>
+            {String(displayedStep + 1).padStart(2, '0')}
           </div>
           
-          {/* Title - Bold slide animation */}
+          {/* Title - Typewriter effect */}
           <h3 
-            className={`step-title-cinematic ${
-              phase === 'exiting' ? 'step-title-exit' : 
-              phase === 'entering' ? 'step-title-enter' : ''
+            className={`step-v3-title ${
+              phase === 'exiting' ? 'step-v3-title-exit' : 
+              phase === 'entering' ? 'step-v3-title-enter' : ''
             }`}
+            key={phase === 'entering' ? displayedStep : undefined}
           >
-            {material.name}
+            <span className="step-v3-title-text">{material.name}</span>
+            {phase === 'entering' && <span className="step-v3-cursor" />}
           </h3>
           
-          {/* Animated gradient divider */}
+          {/* Divider - Line wipe */}
           <div 
-            className={`step-divider-line ${
-              phase === 'entering' ? 'step-divider-draw' : ''
+            className={`step-v3-divider ${
+              phase === 'entering' ? 'step-v3-divider-animate' : ''
             }`}
           />
           
-          {/* Description - Float up animation */}
+          {/* Description - Blur in */}
           <p 
-            className={`step-desc-cinematic ${
-              phase === 'exiting' ? 'step-desc-exit' : 
-              phase === 'entering' ? 'step-desc-enter' : ''
+            className={`step-v3-desc ${
+              phase === 'exiting' ? 'step-v3-desc-exit' : 
+              phase === 'entering' ? 'step-v3-desc-enter' : ''
             }`}
           >
             {material.description}
           </p>
           
-          {/* Segment Progress Bar */}
-          <div className="step-progress-bar">
-            {materialInfo.map((_, index) => (
-              <div
-                key={index}
-                className={`step-progress-segment ${
-                  index === displayedStep 
-                    ? 'step-segment-active' 
-                    : index < displayedStep 
-                      ? 'step-segment-complete' 
-                      : 'step-segment-upcoming'
-                }`}
-              >
-                {/* Active segment glow ring */}
-                {index === displayedStep && (
-                  <div className="step-segment-pulse" />
-                )}
-              </div>
-            ))}
+          {/* Linear Progress Bar */}
+          <div className="step-v3-progress">
+            <div className="step-v3-progress-track">
+              <div 
+                className="step-v3-progress-fill"
+                style={{ width: `${progressPercent}%` }}
+              />
+              <div 
+                className="step-v3-progress-glow"
+                style={{ left: `${progressPercent}%` }}
+              />
+            </div>
+            <div className="step-v3-progress-label">
+              <span className="step-v3-progress-current">{displayedStep + 1}</span>
+              <span className="step-v3-progress-sep">/</span>
+              <span className="step-v3-progress-total">{materialInfo.length}</span>
+            </div>
           </div>
         </div>
       </div>
