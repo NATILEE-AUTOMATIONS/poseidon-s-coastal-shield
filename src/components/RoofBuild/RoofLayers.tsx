@@ -29,20 +29,25 @@ const colors = {
   vents: { fill: 'hsl(0 0% 18%)', stroke: 'hsl(168 70% 50%)', glow: 'hsl(168 80% 55%)' },
 };
 
-// Layer 1: Decking - Plywood panels
+// Layer 1: Decking - Plywood panels (DRAMATIC first layer)
 export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress }) => {
   const { layerProgress, isLocked } = calculateLayerState(progress, startProgress, endProgress);
-  const yOffset = (1 - layerProgress) * -120;
-  const opacity = 0.4 + layerProgress * 0.6;
-  const scale = isLocked ? 1 : 0.98 + layerProgress * 0.02;
+  // Increased drop distance for dramatic entrance
+  const yOffset = (1 - layerProgress) * -200;
+  // Starts more visible
+  const opacity = 0.5 + layerProgress * 0.5;
+  // More pronounced scale
+  const scale = isLocked ? 1.02 : 0.95 + layerProgress * 0.07;
+  // Bounce effect when landing
+  const bounceOffset = isLocked ? Math.sin(Date.now() / 200) * 0.5 : 0;
 
   return (
     <g
       style={{
-        transform: `translateY(${yOffset}px) scale(${scale})`,
+        transform: `translateY(${yOffset + bounceOffset}px) scale(${scale})`,
         transformOrigin: '200px 110px',
         opacity,
-        transition: isLocked ? 'all 0.3s ease-out' : 'none',
+        transition: isLocked ? 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
       }}
     >
       {/* Left side plywood panels */}
@@ -50,11 +55,11 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
         d="M52 158 L200 58 L200 68 L60 158 Z"
         fill={colors.decking.fill}
         stroke={colors.decking.stroke}
-        strokeWidth="1.5"
+        strokeWidth="2"
         style={{
           filter: isLocked 
-            ? `drop-shadow(0 0 12px ${colors.decking.glow})` 
-            : `drop-shadow(0 0 4px ${colors.decking.glow})`,
+            ? `drop-shadow(0 0 20px ${colors.decking.glow}) drop-shadow(0 0 40px ${colors.decking.glow})` 
+            : `drop-shadow(0 0 8px ${colors.decking.glow})`,
         }}
       />
       {/* Right side plywood panels */}
@@ -62,11 +67,11 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
         d="M200 58 L348 158 L340 158 L200 68 Z"
         fill={colors.decking.fill}
         stroke={colors.decking.stroke}
-        strokeWidth="1.5"
+        strokeWidth="2"
         style={{
           filter: isLocked 
-            ? `drop-shadow(0 0 12px ${colors.decking.glow})` 
-            : `drop-shadow(0 0 4px ${colors.decking.glow})`,
+            ? `drop-shadow(0 0 20px ${colors.decking.glow}) drop-shadow(0 0 40px ${colors.decking.glow})` 
+            : `drop-shadow(0 0 8px ${colors.decking.glow})`,
         }}
       />
       {/* Wood grain lines - left */}

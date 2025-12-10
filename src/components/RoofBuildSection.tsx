@@ -23,19 +23,23 @@ const RoofBuildSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const progress = useScrollProgress(sectionRef);
 
-  // Layer timing - each layer gets 10% of the scroll (10 steps)
+  // Layer timing - delayed start at 8% for "settle in" period
+  // Each layer gets ~9.2% of scroll (92% total / 10 layers)
   const layers = [
-    { start: 0, end: 0.10 },
-    { start: 0.10, end: 0.20 },
-    { start: 0.20, end: 0.30 },
-    { start: 0.30, end: 0.40 },
-    { start: 0.40, end: 0.50 },
-    { start: 0.50, end: 0.60 },
-    { start: 0.60, end: 0.70 },
-    { start: 0.70, end: 0.80 },
-    { start: 0.80, end: 0.90 },
-    { start: 0.90, end: 1.0 },
+    { start: 0.08, end: 0.17 },   // 1. Decking
+    { start: 0.17, end: 0.26 },   // 2. Drip Edge Eaves
+    { start: 0.26, end: 0.35 },   // 3. Ice & Water
+    { start: 0.35, end: 0.44 },   // 4. Underlayment
+    { start: 0.44, end: 0.53 },   // 5. Drip Edge Rakes
+    { start: 0.53, end: 0.62 },   // 6. Starter Strip
+    { start: 0.62, end: 0.71 },   // 7. Shingles
+    { start: 0.71, end: 0.80 },   // 8. Vents
+    { start: 0.80, end: 0.89 },   // 9. Flashing
+    { start: 0.89, end: 0.98 },   // 10. Ridge Cap
   ];
+
+  // Show hint during buffer period (0-8%)
+  const showScrollHint = progress < 0.08;
 
   // Calculate which materials are "locked in"
   const getLockedMaterials = () => {
@@ -69,6 +73,21 @@ const RoofBuildSection: React.FC = () => {
                     filter: 'drop-shadow(0 0 40px hsl(168 80% 45% / 0.15))',
                   }}
                 >
+                  {/* Pulsing roof outline hint during buffer period */}
+                  {showScrollHint && (
+                    <path
+                      d="M45 162 L200 52 L355 162"
+                      fill="none"
+                      stroke="hsl(168 80% 50%)"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      className="animate-roof-pulse"
+                      style={{
+                        filter: 'drop-shadow(0 0 15px hsl(168 80% 50% / 0.8)) drop-shadow(0 0 30px hsl(168 80% 50% / 0.5))',
+                      }}
+                    />
+                  )}
+                  
                   {/* House base */}
                   <HouseSVG />
                   
@@ -97,10 +116,30 @@ const RoofBuildSection: React.FC = () => {
               </div>
             </div>
 
+            {/* Scroll hint text during buffer */}
+            {showScrollHint && (
+              <div 
+                className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-center animate-pulse"
+                style={{
+                  opacity: 1 - progress * 12.5, // Fades out as we approach 8%
+                }}
+              >
+                <span 
+                  className="text-sm font-medium tracking-wider uppercase"
+                  style={{
+                    color: 'hsl(168 70% 55%)',
+                    textShadow: '0 0 20px hsl(168 80% 50% / 0.6)',
+                  }}
+                >
+                  Scroll to build
+                </span>
+              </div>
+            )}
+
             {/* Mobile Step Card - positioned below house */}
             <MobileStepCard 
-              currentStep={Math.min(9, Math.floor(progress * 10))} 
-              isVisible={progress >= 0.05 && progress <= 0.92}
+              currentStep={Math.max(0, Math.min(9, Math.floor((progress - 0.08) / 0.092)))} 
+              isVisible={progress >= 0.10 && progress <= 0.95}
             />
 
             {/* Material labels - left side (positioned as overlay) */}
