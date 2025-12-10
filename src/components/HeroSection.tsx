@@ -33,10 +33,9 @@ const HeroSection = () => {
           <a href="#contact" className="hover:text-foreground transition-colors">Contact</a>
         </div>
         
-        <button className="btn-premium-nav">
-          <span className="btn-shimmer" />
+        <button className="btn-neon">
           <span className="btn-text">Free Assessment</span>
-          <ArrowRight className="btn-icon w-4 h-4 relative z-10" />
+          <ArrowRight className="btn-icon w-4 h-4" />
         </button>
       </nav>
 
