@@ -300,19 +300,38 @@
   }
   
   
-  .btn-neon .btn-icon {
-    transition: transform 0.3s ease;
-    filter: drop-shadow(0 0 4px hsl(var(--teal-glow) / 0.8));
-  }
-  
-  .btn-neon:hover .btn-icon {
-    transform: translateX(5px);
-    filter: drop-shadow(0 0 8px hsl(var(--teal-glow)));
-  }
-  
+  /* Orange glowing text and icon */
   .btn-neon .btn-text {
     position: relative;
     z-index: 1;
+    color: hsl(32 100% 65%);
+    text-shadow: 
+      0 0 8px hsl(32 100% 55% / 0.6),
+      0 0 16px hsl(30 100% 50% / 0.3);
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+  }
+  
+  .btn-neon .btn-icon {
+    color: hsl(32 100% 65%);
+    filter: drop-shadow(0 0 6px hsl(32 100% 55% / 0.7));
+    transition: transform 0.3s ease, color 0.3s ease, filter 0.3s ease;
+  }
+  
+  .btn-neon:hover .btn-text {
+    color: hsl(35 100% 70%);
+    text-shadow: 
+      0 0 10px hsl(35 100% 60%),
+      0 0 20px hsl(32 100% 55% / 0.8),
+      0 0 35px hsl(30 100% 50% / 0.5),
+      0 0 5px hsl(45 100% 85% / 0.9);
+  }
+  
+  .btn-neon:hover .btn-icon {
+    color: hsl(35 100% 75%);
+    transform: translateX(5px);
+    filter: 
+      drop-shadow(0 0 12px hsl(35 100% 60%)) 
+      drop-shadow(0 0 20px hsl(30 100% 50% / 0.6));
   }
 }
 
