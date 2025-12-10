@@ -1,6 +1,5 @@
-import { Zap, ArrowRight } from "lucide-react";
+import { Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import poseidonLogo from "@/assets/poseidon-logo.png";
 
 const HeroSection = () => {
   return (
@@ -16,33 +15,8 @@ const HeroSection = () => {
         <div className="absolute top-1/2 right-1/4 w-2.5 h-2.5 rounded-full bg-orange-glow/20 animate-float animation-delay-600" />
       </div>
 
-      {/* Navigation */}
-      <nav className="relative z-50 flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4 lg:px-12 lg:py-6">
-        <div className="flex items-center">
-          <img 
-            src={poseidonLogo} 
-            alt="Poseidon Roofing" 
-            className="h-24 sm:h-20 lg:h-28 w-auto object-contain"
-          />
-        </div>
-        
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
-          <a href="#services" className="hover:text-foreground transition-colors">Services</a>
-          <a href="#about" className="hover:text-foreground transition-colors">About</a>
-          <a href="#gallery" className="hover:text-foreground transition-colors">Gallery</a>
-          <a href="#contact" className="hover:text-foreground transition-colors">Contact</a>
-        </div>
-        
-        <div className="btn-neon-wrapper">
-          <button className="btn-neon btn-neon-sm sm:btn-neon-default">
-            <span className="btn-text text-xs sm:text-sm">Free Assessment</span>
-            <ArrowRight className="btn-icon w-3 h-3 sm:w-4 sm:h-4" />
-          </button>
-        </div>
-      </nav>
-
-      {/* Hero Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center pt-8 lg:pt-12 pb-20 px-6 text-center">
+      {/* Hero Content - Added padding-top to account for fixed navbar */}
+      <div className="relative z-10 flex flex-col items-center justify-center pt-36 sm:pt-32 lg:pt-40 pb-20 px-6 text-center">
         
         {/* Pill Badge */}
         <div 
