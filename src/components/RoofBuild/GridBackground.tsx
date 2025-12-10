@@ -10,8 +10,8 @@ const GridBackground: React.FC = () => {
       <div 
         className="absolute inset-0"
         style={{
-          perspective: '500px',
-          perspectiveOrigin: '50% 40%',
+          perspective: '600px',
+          perspectiveOrigin: '50% 35%',
         }}
       >
         {/* Horizontal grid (ground plane) */}
@@ -21,23 +21,23 @@ const GridBackground: React.FC = () => {
             background: `
               linear-gradient(90deg, 
                 transparent 0%, 
-                hsl(168 80% 45% / 0.03) 49.5%, 
-                hsl(168 80% 45% / 0.15) 50%, 
-                hsl(168 80% 45% / 0.03) 50.5%, 
+                hsl(168 80% 45% / 0.06) 49%, 
+                hsl(168 80% 45% / 0.25) 50%, 
+                hsl(168 80% 45% / 0.06) 51%, 
                 transparent 100%
               ),
               repeating-linear-gradient(
                 90deg,
                 transparent 0px,
                 transparent 78px,
-                hsl(168 80% 45% / 0.08) 79px,
-                hsl(168 80% 45% / 0.08) 80px
+                hsl(168 80% 45% / 0.12) 79px,
+                hsl(168 80% 45% / 0.12) 80px
               )
             `,
-            transform: 'rotateX(75deg) translateZ(-100px)',
+            transform: 'rotateX(75deg) translateZ(-50px)',
             transformOrigin: '50% 100%',
-            height: '200%',
-            top: '30%',
+            height: '250%',
+            top: '25%',
           }}
         />
         
@@ -49,26 +49,39 @@ const GridBackground: React.FC = () => {
               repeating-linear-gradient(
                 0deg,
                 transparent 0px,
-                transparent 58px,
-                hsl(168 80% 45% / 0.06) 59px,
-                hsl(168 80% 45% / 0.06) 60px
+                transparent 48px,
+                hsl(168 80% 45% / 0.1) 49px,
+                hsl(168 80% 45% / 0.1) 50px
               )
             `,
-            transform: 'rotateX(75deg) translateZ(-100px)',
+            transform: 'rotateX(75deg) translateZ(-50px)',
             transformOrigin: '50% 100%',
-            height: '200%',
-            top: '30%',
+            height: '250%',
+            top: '25%',
           }}
         />
       </div>
       
-      {/* Horizon glow line */}
+      {/* Horizon glow line - more dramatic */}
       <div 
-        className="absolute left-0 right-0 h-px"
+        className="absolute left-0 right-0"
         style={{
-          top: '30%',
-          background: 'linear-gradient(90deg, transparent, hsl(168 80% 50% / 0.6) 20%, hsl(168 80% 55% / 0.8) 50%, hsl(168 80% 50% / 0.6) 80%, transparent)',
-          boxShadow: '0 0 30px 10px hsl(168 80% 45% / 0.3), 0 0 60px 20px hsl(168 80% 45% / 0.15)',
+          top: '25%',
+          height: '2px',
+          background: 'linear-gradient(90deg, transparent 5%, hsl(168 80% 55% / 0.8) 25%, hsl(168 80% 60% / 1) 50%, hsl(168 80% 55% / 0.8) 75%, transparent 95%)',
+          boxShadow: `
+            0 0 40px 15px hsl(168 80% 45% / 0.4), 
+            0 0 80px 30px hsl(168 80% 45% / 0.2),
+            0 0 120px 50px hsl(168 80% 45% / 0.1)
+          `,
+        }}
+      />
+      
+      {/* Upper gradient fade */}
+      <div 
+        className="absolute inset-x-0 top-0 h-1/3"
+        style={{
+          background: 'linear-gradient(to bottom, hsl(168 20% 4%), transparent)',
         }}
       />
       
@@ -76,31 +89,9 @@ const GridBackground: React.FC = () => {
       <div 
         className="absolute inset-0"
         style={{
-          background: 'radial-gradient(ellipse 80% 50% at 50% 40%, transparent 0%, hsl(168 30% 5% / 0.6) 100%)',
+          background: 'radial-gradient(ellipse 100% 70% at 50% 35%, transparent 0%, hsl(168 30% 4% / 0.8) 100%)',
         }}
       />
-      
-      {/* Floating particles */}
-      {[...Array(15)].map((_, i) => (
-        <div
-          key={i}
-          className="absolute rounded-full animate-float"
-          style={{
-            width: `${Math.random() * 3 + 1}px`,
-            height: `${Math.random() * 3 + 1}px`,
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            background: i % 3 === 0 
-              ? 'hsl(32 100% 55% / 0.4)' 
-              : 'hsl(168 80% 50% / 0.5)',
-            boxShadow: i % 3 === 0 
-              ? '0 0 6px hsl(32 100% 55% / 0.6)' 
-              : '0 0 6px hsl(168 80% 50% / 0.6)',
-            animationDelay: `${i * 0.5}s`,
-            animationDuration: `${6 + Math.random() * 4}s`,
-          }}
-        />
-      ))}
     </div>
   );
 };
