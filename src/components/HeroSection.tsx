@@ -17,12 +17,12 @@ const HeroSection = () => {
       </div>
 
       {/* Navigation */}
-      <nav className="relative z-50 flex items-center justify-between px-6 py-4 lg:px-12 lg:py-6">
+      <nav className="relative z-50 flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4 lg:px-12 lg:py-6">
         <div className="flex items-center">
           <img 
             src={poseidonLogo} 
             alt="Poseidon Roofing" 
-            className="h-20 lg:h-28 w-auto object-contain"
+            className="h-16 sm:h-20 lg:h-28 w-auto object-contain"
           />
         </div>
         
@@ -34,9 +34,9 @@ const HeroSection = () => {
         </div>
         
         <div className="btn-neon-wrapper">
-          <button className="btn-neon">
-            <span className="btn-text">Free Assessment</span>
-            <ArrowRight className="btn-icon w-4 h-4" />
+          <button className="btn-neon btn-neon-sm sm:btn-neon-default">
+            <span className="btn-text text-xs sm:text-sm">Free Assessment</span>
+            <ArrowRight className="btn-icon w-3 h-3 sm:w-4 sm:h-4" />
           </button>
         </div>
       </nav>
