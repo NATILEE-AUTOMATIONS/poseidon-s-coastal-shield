@@ -50,7 +50,7 @@ const RoofBuildSection: React.FC = () => {
         <GridBackground />
         
         {/* Content container - with top padding for navbar clearance */}
-        <div className="relative z-10 h-full flex flex-col items-center justify-start pt-44 lg:pt-52 px-4">
+        <div className="relative z-10 h-full flex flex-col items-center justify-start pt-56 lg:pt-64 px-4">
           {/* Header */}
           <div 
             className="text-center mb-6 transition-all duration-700 ease-out"
