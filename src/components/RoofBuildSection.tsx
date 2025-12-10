@@ -13,6 +13,7 @@ import {
   VentsLayer,
   materialInfo,
 } from './RoofBuild/RoofLayers';
+import MobileStepCard from './RoofBuild/MobileStepCard';
 import { Button } from './ui/button';
 import { ArrowRight } from 'lucide-react';
 
@@ -156,32 +157,10 @@ const RoofBuildSection: React.FC = () => {
               </div>
             </div>
 
-            {/* Mobile material list */}
-            <div className="xl:hidden absolute -bottom-24 left-0 right-0">
-              <div className="grid grid-cols-4 gap-1 px-2">
-                {materialInfo.map((material, index) => (
-                  <div
-                    key={material.id}
-                    className="text-center p-1.5 rounded transition-all duration-300"
-                    style={{
-                      opacity: lockedMaterials[index] ? 1 : 0.3,
-                      background: lockedMaterials[index] ? 'hsl(168 80% 45% / 0.1)' : 'transparent',
-                    }}
-                  >
-                    <div 
-                      className="text-[10px] font-medium leading-tight"
-                      style={{
-                        color: lockedMaterials[index] ? 'hsl(168 80% 60%)' : 'hsl(168 50% 40%)',
-                        textShadow: lockedMaterials[index] ? '0 0 8px hsl(168 80% 50% / 0.6)' : 'none',
-                      }}
-                    >
-                      {material.name}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
+
+          {/* Mobile Step Card */}
+          <MobileStepCard currentStep={Math.min(9, Math.floor(progress * 10))} />
 
           {/* Progress bar - minimal and elegant */}
           <div 
