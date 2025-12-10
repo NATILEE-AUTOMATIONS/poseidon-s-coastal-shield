@@ -193,153 +193,156 @@
     animation-delay: 0.4s;
   }
   
-  .animation-delay-600 {
+  .hero-subheadline {
     animation-delay: 0.6s;
   }
   
-  /* Premium Nav Button with Swirling Gradient */
-  .btn-premium-nav {
+  /* ⚡ NEON GLOW BUTTON */
+  .btn-neon {
     position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
     padding: 0.85rem 2rem;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--deep-bg) / 0.9) 0%,
+      hsl(var(--teal) / 0.15) 50%,
+      hsl(var(--deep-bg) / 0.95) 100%
+    );
+    border: 1.5px solid hsl(var(--teal-glow));
     border-radius: 0.5rem;
     font-weight: 600;
     font-size: 0.875rem;
-    color: hsl(var(--primary-foreground));
+    color: hsl(0 0% 100%);
     cursor: pointer;
-    overflow: hidden;
-    isolation: isolate;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border: none;
-    background: transparent;
-  }
-  
-  /* Swirling gradient background layer */
-  .btn-premium-nav::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: conic-gradient(
-      from var(--swirl-angle, 0deg) at 50% 50%,
-      hsl(var(--teal)) 0deg,
-      hsl(var(--teal-glow)) 60deg,
-      hsl(var(--orange)) 120deg,
-      hsl(var(--orange-glow)) 180deg,
-      hsl(var(--teal-glow)) 240deg,
-      hsl(var(--teal)) 300deg,
-      hsl(var(--teal)) 360deg
-    );
-    animation: swirl-gradient 6s linear infinite;
-    z-index: -2;
-  }
-  
-  /* Inner softening overlay for depth */
-  .btn-premium-nav::after {
-    content: '';
-    position: absolute;
-    inset: 2px;
-    background: linear-gradient(
-      135deg,
-      hsl(var(--deep-bg) / 0.6) 0%,
-      hsl(var(--deep-bg) / 0.4) 50%,
-      hsl(var(--deep-bg) / 0.5) 100%
-    );
-    border-radius: calc(0.5rem - 2px);
-    z-index: -1;
-  }
-  
-  /* Outer pulsing glow */
-  .btn-premium-nav {
+    overflow: visible;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Multi-layer neon glow */
     box-shadow: 
-      0 0 20px hsl(var(--teal-glow) / 0.4),
-      0 0 40px hsl(var(--orange-glow) / 0.2),
-      0 4px 15px hsl(0 0% 0% / 0.3);
-    animation: btn-glow-pulse 3s ease-in-out infinite;
+      0 0 5px hsl(var(--teal-glow)),
+      0 0 15px hsl(var(--teal-glow) / 0.6),
+      0 0 30px hsl(var(--teal-glow) / 0.4),
+      0 0 50px hsl(var(--teal-glow) / 0.2),
+      inset 0 0 20px hsl(var(--teal-glow) / 0.1),
+      inset 0 1px 0 hsl(0 0% 100% / 0.1);
+    
+    /* Glowing text */
+    text-shadow: 
+      0 0 10px hsl(var(--teal-glow) / 0.8),
+      0 0 20px hsl(var(--teal-glow) / 0.4);
+    
+    animation: neon-pulse 2.5s ease-in-out infinite;
   }
   
-  /* Shimmer sweep overlay */
-  .btn-shimmer {
+  /* Shimmer sweep */
+  .btn-neon::before {
+    content: '';
     position: absolute;
     inset: 0;
+    border-radius: 0.5rem;
     background: linear-gradient(
       105deg,
       transparent 0%,
-      transparent 40%,
-      hsl(0 0% 100% / 0.15) 45%,
-      hsl(0 0% 100% / 0.25) 50%,
-      hsl(0 0% 100% / 0.15) 55%,
-      transparent 60%,
+      transparent 35%,
+      hsl(0 0% 100% / 0.2) 45%,
+      hsl(0 0% 100% / 0.4) 50%,
+      hsl(0 0% 100% / 0.2) 55%,
+      transparent 65%,
       transparent 100%
     );
-    animation: shimmer-sweep 4s ease-in-out infinite;
-    animation-delay: 1s;
-    border-radius: 0.5rem;
+    transform: translateX(-150%);
+    animation: neon-shimmer 4s ease-in-out infinite;
+    animation-delay: 1.5s;
     pointer-events: none;
   }
   
-  .btn-premium-nav:hover {
-    transform: translateY(-3px) scale(1.03);
+  /* Reflection/light pool below button */
+  .btn-neon::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 10%;
+    right: 10%;
+    height: 12px;
+    background: radial-gradient(
+      ellipse at center,
+      hsl(var(--teal-glow) / 0.4) 0%,
+      hsl(var(--teal-glow) / 0.1) 50%,
+      transparent 80%
+    );
+    filter: blur(6px);
+    border-radius: 50%;
+    animation: neon-pulse 2.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+  
+  .btn-neon:hover {
+    transform: translateY(-3px) scale(1.02);
+    border-color: hsl(var(--teal-glow));
+    background: linear-gradient(
+      135deg,
+      hsl(var(--deep-bg) / 0.85) 0%,
+      hsl(var(--teal) / 0.25) 50%,
+      hsl(var(--deep-bg) / 0.9) 100%
+    );
+    
+    /* Intensified glow on hover */
     box-shadow: 
-      0 0 35px hsl(var(--teal-glow) / 0.6),
-      0 0 70px hsl(var(--orange-glow) / 0.4),
-      0 8px 25px hsl(0 0% 0% / 0.4);
+      0 0 10px hsl(var(--teal-glow)),
+      0 0 25px hsl(var(--teal-glow) / 0.8),
+      0 0 50px hsl(var(--teal-glow) / 0.6),
+      0 0 80px hsl(var(--teal-glow) / 0.3),
+      0 0 100px hsl(var(--teal-glow) / 0.2),
+      inset 0 0 30px hsl(var(--teal-glow) / 0.15),
+      inset 0 1px 0 hsl(0 0% 100% / 0.15);
+    
+    text-shadow: 
+      0 0 15px hsl(var(--teal-glow)),
+      0 0 30px hsl(var(--teal-glow) / 0.6),
+      0 0 5px hsl(0 0% 100% / 0.8);
   }
   
-  .btn-premium-nav:hover::before {
-    animation: swirl-gradient 3s linear infinite;
+  .btn-neon:hover::after {
+    background: radial-gradient(
+      ellipse at center,
+      hsl(var(--teal-glow) / 0.6) 0%,
+      hsl(var(--teal-glow) / 0.2) 50%,
+      transparent 80%
+    );
+    filter: blur(8px);
   }
   
-  .btn-premium-nav:hover .btn-text {
-    text-shadow: 0 0 10px hsl(0 0% 100% / 0.5);
+  .btn-neon .btn-icon {
+    transition: transform 0.3s ease;
+    filter: drop-shadow(0 0 4px hsl(var(--teal-glow) / 0.8));
   }
   
-  .btn-premium-nav .btn-icon {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  .btn-neon:hover .btn-icon {
+    transform: translateX(5px);
+    filter: drop-shadow(0 0 8px hsl(var(--teal-glow)));
   }
   
-  .btn-premium-nav:hover .btn-icon {
-    transform: translateX(4px);
-  }
-  
-  .btn-text {
+  .btn-neon .btn-text {
     position: relative;
     z-index: 1;
-    text-shadow: 0 1px 2px hsl(0 0% 0% / 0.3);
   }
 }
 
-@keyframes swirl-gradient {
-  0% { --swirl-angle: 0deg; }
-  100% { --swirl-angle: 360deg; }
-}
-
-@keyframes shimmer-sweep {
-  0%, 20% { transform: translateX(-150%); }
-  50%, 100% { transform: translateX(150%); }
-}
-
-@keyframes btn-glow-pulse {
+@keyframes neon-pulse {
   0%, 100% { 
-    box-shadow: 
-      0 0 20px hsl(var(--teal-glow) / 0.4),
-      0 0 40px hsl(var(--orange-glow) / 0.2),
-      0 4px 15px hsl(0 0% 0% / 0.3);
+    opacity: 1;
   }
   50% { 
-    box-shadow: 
-      0 0 30px hsl(var(--teal-glow) / 0.5),
-      0 0 60px hsl(var(--orange-glow) / 0.3),
-      0 4px 15px hsl(0 0% 0% / 0.3);
+    opacity: 0.85;
   }
 }
 
-@property --swirl-angle {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: false;
+@keyframes neon-shimmer {
+  0%, 25% { transform: translateX(-150%); }
+  50%, 100% { transform: translateX(150%); }
 }
 
 @keyframes float {
