@@ -52,10 +52,36 @@ const RoofBuildSection: React.FC = () => {
         {/* Content container - with top padding for navbar clearance */}
         <div className="relative z-10 h-full flex flex-col items-center justify-start pt-56 lg:pt-64 px-4">
 
-          {/* Main visualization container */}
-          <div className="relative w-full max-w-5xl mx-auto flex items-center justify-center">
-            {/* Material labels - left side */}
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 pr-8 hidden xl:block w-48">
+          {/* Main visualization container - house centered independently */}
+          <div className="relative w-full max-w-5xl mx-auto">
+            {/* House + Layers SVG - perfectly centered */}
+            <div className="flex justify-center">
+              <div className="w-full max-w-2xl">
+                <svg
+                  viewBox="0 0 400 280"
+                  className="w-full"
+                  style={{
+                    filter: 'drop-shadow(0 0 40px hsl(168 80% 45% / 0.15))',
+                  }}
+                >
+                  {/* House base */}
+                  <HouseSVG />
+                  
+                  {/* Animated roof layers */}
+                  <DripEdgeLayer progress={progress} startProgress={layers[0].start} endProgress={layers[0].end} />
+                  <IceWaterShieldLayer progress={progress} startProgress={layers[1].start} endProgress={layers[1].end} />
+                  <UnderlaymentLayer progress={progress} startProgress={layers[2].start} endProgress={layers[2].end} />
+                  <StarterStripLayer progress={progress} startProgress={layers[3].start} endProgress={layers[3].end} />
+                  <FlashingLayer progress={progress} startProgress={layers[4].start} endProgress={layers[4].end} />
+                  <FieldShinglesLayer progress={progress} startProgress={layers[5].start} endProgress={layers[5].end} />
+                  <RidgeCapLayer progress={progress} startProgress={layers[6].start} endProgress={layers[6].end} />
+                  <VentsLayer progress={progress} startProgress={layers[7].start} endProgress={layers[7].end} />
+                </svg>
+              </div>
+            </div>
+
+            {/* Material labels - left side (positioned as overlay) */}
+            <div className="absolute left-0 xl:left-8 top-1/2 -translate-y-1/2 pr-8 hidden xl:block w-48">
               <div className="space-y-4">
                 {materialInfo.slice(0, 4).map((material, index) => (
                   <div
@@ -90,8 +116,8 @@ const RoofBuildSection: React.FC = () => {
               </div>
             </div>
 
-            {/* Material labels - right side */}
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 pl-8 hidden xl:block w-48">
+            {/* Material labels - right side (positioned as overlay) */}
+            <div className="absolute right-0 xl:right-8 top-1/2 -translate-y-1/2 pl-8 hidden xl:block w-48">
               <div className="space-y-4">
                 {materialInfo.slice(4).map((material, index) => (
                   <div
@@ -124,30 +150,6 @@ const RoofBuildSection: React.FC = () => {
                   </div>
                 ))}
               </div>
-            </div>
-
-            {/* House + Layers SVG */}
-            <div className="relative w-full max-w-2xl">
-              <svg
-                viewBox="0 0 400 280"
-                className="w-full"
-                style={{
-                  filter: 'drop-shadow(0 0 40px hsl(168 80% 45% / 0.15))',
-                }}
-              >
-                {/* House base */}
-                <HouseSVG />
-                
-                {/* Animated roof layers */}
-                <DripEdgeLayer progress={progress} startProgress={layers[0].start} endProgress={layers[0].end} />
-                <IceWaterShieldLayer progress={progress} startProgress={layers[1].start} endProgress={layers[1].end} />
-                <UnderlaymentLayer progress={progress} startProgress={layers[2].start} endProgress={layers[2].end} />
-                <StarterStripLayer progress={progress} startProgress={layers[3].start} endProgress={layers[3].end} />
-                <FlashingLayer progress={progress} startProgress={layers[4].start} endProgress={layers[4].end} />
-                <FieldShinglesLayer progress={progress} startProgress={layers[5].start} endProgress={layers[5].end} />
-                <RidgeCapLayer progress={progress} startProgress={layers[6].start} endProgress={layers[6].end} />
-                <VentsLayer progress={progress} startProgress={layers[7].start} endProgress={layers[7].end} />
-              </svg>
             </div>
 
             {/* Mobile material list */}
