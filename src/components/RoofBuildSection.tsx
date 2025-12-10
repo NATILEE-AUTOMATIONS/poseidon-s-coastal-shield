@@ -22,14 +22,14 @@ const RoofBuildSection: React.FC = () => {
 
   // Layer timing - each layer gets ~12.5% of the scroll
   const layers = [
-    { start: 0, end: 0.12 },      // Drip Edge
-    { start: 0.12, end: 0.25 },   // Ice & Water Shield
-    { start: 0.25, end: 0.37 },   // Underlayment
-    { start: 0.37, end: 0.50 },   // Starter Strip
-    { start: 0.50, end: 0.62 },   // Flashing
-    { start: 0.62, end: 0.75 },   // Field Shingles
-    { start: 0.75, end: 0.87 },   // Ridge Cap
-    { start: 0.87, end: 1.0 },    // Vents
+    { start: 0, end: 0.12 },
+    { start: 0.12, end: 0.25 },
+    { start: 0.25, end: 0.37 },
+    { start: 0.37, end: 0.50 },
+    { start: 0.50, end: 0.62 },
+    { start: 0.62, end: 0.75 },
+    { start: 0.75, end: 0.87 },
+    { start: 0.87, end: 1.0 },
   ];
 
   // Calculate which materials are "locked in"
@@ -45,7 +45,7 @@ const RoofBuildSection: React.FC = () => {
       className="relative"
       style={{ height: '300vh' }}
     >
-      {/* Sticky container that stays in view while scrolling */}
+      {/* Sticky container */}
       <div className="sticky top-0 h-screen overflow-hidden">
         <GridBackground />
         
@@ -53,41 +53,51 @@ const RoofBuildSection: React.FC = () => {
         <div className="relative z-10 h-full flex flex-col items-center justify-center px-4">
           {/* Header */}
           <div 
-            className="text-center mb-8 transition-opacity duration-500"
-            style={{ opacity: progress < 0.1 ? 1 : Math.max(0.3, 1 - progress * 0.7) }}
+            className="text-center mb-6 transition-all duration-700 ease-out"
+            style={{ 
+              opacity: progress < 0.05 ? 1 : Math.max(0.2, 1 - progress * 1.5),
+              transform: `translateY(${progress * -30}px)`,
+            }}
           >
-            <h2 className="text-3xl md:text-5xl font-bold text-glow-teal mb-4">
+            <h2 className="text-3xl md:text-5xl font-bold text-glow-teal mb-3">
               What Goes Into Your New Roof?
             </h2>
-            <p className="text-lg md:text-xl text-glow-orange opacity-80">
+            <p className="text-lg md:text-xl text-glow-orange opacity-90">
               More than just shingles...
             </p>
           </div>
 
           {/* Main visualization container */}
-          <div className="relative w-full max-w-4xl mx-auto">
+          <div className="relative w-full max-w-5xl mx-auto flex items-center justify-center">
             {/* Material labels - left side */}
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-full pr-6 hidden lg:block">
-              <div className="space-y-3">
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 pr-8 hidden xl:block w-48">
+              <div className="space-y-4">
                 {materialInfo.slice(0, 4).map((material, index) => (
                   <div
                     key={material.id}
-                    className="text-right transition-all duration-300"
+                    className="text-right transition-all duration-500 ease-out"
                     style={{
-                      opacity: lockedMaterials[index] ? 1 : 0.3,
-                      transform: lockedMaterials[index] ? 'translateX(0)' : 'translateX(-10px)',
+                      opacity: lockedMaterials[index] ? 1 : 0.25,
+                      transform: `translateX(${lockedMaterials[index] ? 0 : -20}px)`,
                     }}
                   >
                     <div 
-                      className="text-sm font-semibold"
+                      className="text-sm font-semibold tracking-wide"
                       style={{
-                        color: lockedMaterials[index] ? 'hsl(168 80% 55%)' : 'hsl(168 80% 45% / 0.5)',
-                        textShadow: lockedMaterials[index] ? '0 0 10px hsl(168 80% 50% / 0.6)' : 'none',
+                        color: lockedMaterials[index] ? 'hsl(168 80% 60%)' : 'hsl(168 50% 40%)',
+                        textShadow: lockedMaterials[index] 
+                          ? '0 0 20px hsl(168 80% 50% / 0.8), 0 0 40px hsl(168 80% 50% / 0.4)' 
+                          : 'none',
                       }}
                     >
                       {material.name}
                     </div>
-                    <div className="text-xs text-muted-foreground max-w-[160px]">
+                    <div 
+                      className="text-xs text-muted-foreground/70 mt-0.5 leading-tight"
+                      style={{
+                        opacity: lockedMaterials[index] ? 1 : 0.5,
+                      }}
+                    >
                       {material.description}
                     </div>
                   </div>
@@ -96,27 +106,34 @@ const RoofBuildSection: React.FC = () => {
             </div>
 
             {/* Material labels - right side */}
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full pl-6 hidden lg:block">
-              <div className="space-y-3">
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 pl-8 hidden xl:block w-48">
+              <div className="space-y-4">
                 {materialInfo.slice(4).map((material, index) => (
                   <div
                     key={material.id}
-                    className="text-left transition-all duration-300"
+                    className="text-left transition-all duration-500 ease-out"
                     style={{
-                      opacity: lockedMaterials[index + 4] ? 1 : 0.3,
-                      transform: lockedMaterials[index + 4] ? 'translateX(0)' : 'translateX(10px)',
+                      opacity: lockedMaterials[index + 4] ? 1 : 0.25,
+                      transform: `translateX(${lockedMaterials[index + 4] ? 0 : 20}px)`,
                     }}
                   >
                     <div 
-                      className="text-sm font-semibold"
+                      className="text-sm font-semibold tracking-wide"
                       style={{
-                        color: lockedMaterials[index + 4] ? 'hsl(168 80% 55%)' : 'hsl(168 80% 45% / 0.5)',
-                        textShadow: lockedMaterials[index + 4] ? '0 0 10px hsl(168 80% 50% / 0.6)' : 'none',
+                        color: lockedMaterials[index + 4] ? 'hsl(168 80% 60%)' : 'hsl(168 50% 40%)',
+                        textShadow: lockedMaterials[index + 4] 
+                          ? '0 0 20px hsl(168 80% 50% / 0.8), 0 0 40px hsl(168 80% 50% / 0.4)' 
+                          : 'none',
                       }}
                     >
                       {material.name}
                     </div>
-                    <div className="text-xs text-muted-foreground max-w-[160px]">
+                    <div 
+                      className="text-xs text-muted-foreground/70 mt-0.5 leading-tight"
+                      style={{
+                        opacity: lockedMaterials[index + 4] ? 1 : 0.5,
+                      }}
+                    >
                       {material.description}
                     </div>
                   </div>
@@ -125,15 +142,15 @@ const RoofBuildSection: React.FC = () => {
             </div>
 
             {/* House + Layers SVG */}
-            <div className="relative">
+            <div className="relative w-full max-w-2xl">
               <svg
                 viewBox="0 0 400 280"
-                className="w-full max-w-2xl mx-auto"
+                className="w-full"
                 style={{
-                  filter: 'drop-shadow(0 0 30px hsl(168 80% 45% / 0.2))',
+                  filter: 'drop-shadow(0 0 40px hsl(168 80% 45% / 0.15))',
                 }}
               >
-                {/* House base is always visible */}
+                {/* House base */}
                 <HouseSVG />
                 
                 {/* Animated roof layers */}
@@ -149,60 +166,72 @@ const RoofBuildSection: React.FC = () => {
             </div>
 
             {/* Mobile material list */}
-            <div className="lg:hidden mt-6 grid grid-cols-2 gap-2 px-4">
-              {materialInfo.map((material, index) => (
-                <div
-                  key={material.id}
-                  className="text-center p-2 rounded-lg transition-all duration-300"
-                  style={{
-                    opacity: lockedMaterials[index] ? 1 : 0.4,
-                    background: lockedMaterials[index] ? 'hsl(168 80% 45% / 0.1)' : 'transparent',
-                  }}
-                >
-                  <div 
-                    className="text-xs font-semibold"
+            <div className="xl:hidden absolute -bottom-24 left-0 right-0">
+              <div className="grid grid-cols-4 gap-1 px-2">
+                {materialInfo.map((material, index) => (
+                  <div
+                    key={material.id}
+                    className="text-center p-1.5 rounded transition-all duration-300"
                     style={{
-                      color: lockedMaterials[index] ? 'hsl(168 80% 55%)' : 'hsl(168 80% 45% / 0.5)',
+                      opacity: lockedMaterials[index] ? 1 : 0.3,
+                      background: lockedMaterials[index] ? 'hsl(168 80% 45% / 0.1)' : 'transparent',
                     }}
                   >
-                    {material.name}
+                    <div 
+                      className="text-[10px] font-medium leading-tight"
+                      style={{
+                        color: lockedMaterials[index] ? 'hsl(168 80% 60%)' : 'hsl(168 50% 40%)',
+                        textShadow: lockedMaterials[index] ? '0 0 8px hsl(168 80% 50% / 0.6)' : 'none',
+                      }}
+                    >
+                      {material.name}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Progress indicator */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3">
-            <div className="w-48 h-1 bg-muted rounded-full overflow-hidden">
-              <div 
-                className="h-full rounded-full transition-all duration-100"
-                style={{
-                  width: `${progress * 100}%`,
-                  background: 'linear-gradient(90deg, hsl(168 80% 45%), hsl(32 90% 50%))',
-                  boxShadow: '0 0 10px hsl(168 80% 50% / 0.5)',
-                }}
-              />
-            </div>
-            <span className="text-xs text-muted-foreground font-mono">
-              {Math.round(progress * 100)}%
-            </span>
+          {/* Progress bar - minimal and elegant */}
+          <div 
+            className="absolute bottom-12 left-1/2 -translate-x-1/2 w-32 h-0.5 bg-muted/30 rounded-full overflow-hidden"
+            style={{
+              opacity: progress > 0.95 ? 0 : 1,
+              transition: 'opacity 0.5s ease-out',
+            }}
+          >
+            <div 
+              className="h-full rounded-full"
+              style={{
+                width: `${progress * 100}%`,
+                background: 'linear-gradient(90deg, hsl(168 80% 50%), hsl(32 80% 55%))',
+                boxShadow: '0 0 12px hsl(168 80% 50% / 0.6)',
+                transition: 'width 0.1s ease-out',
+              }}
+            />
           </div>
 
           {/* Completion message */}
           <div 
-            className="absolute bottom-20 left-1/2 -translate-x-1/2 text-center transition-all duration-500"
+            className="absolute bottom-16 left-1/2 -translate-x-1/2 text-center transition-all duration-700 ease-out"
             style={{
               opacity: progress > 0.95 ? 1 : 0,
-              transform: progress > 0.95 ? 'translateY(0)' : 'translateY(20px)',
+              transform: `translateY(${progress > 0.95 ? 0 : 30}px)`,
+              pointerEvents: progress > 0.95 ? 'auto' : 'none',
             }}
           >
-            <p className="text-lg text-glow-teal mb-4">
+            <p 
+              className="text-xl md:text-2xl font-medium mb-6"
+              style={{
+                color: 'hsl(168 70% 60%)',
+                textShadow: '0 0 30px hsl(168 80% 50% / 0.6), 0 0 60px hsl(168 80% 50% / 0.3)',
+              }}
+            >
               Every layer matters. Trust the experts.
             </p>
             <Button className="btn-neon group">
               <span className="btn-text">Free Assessment</span>
-              <ArrowRight className="btn-icon ml-2 h-4 w-4 group-hover:translate-x-1" />
+              <ArrowRight className="btn-icon ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
         </div>
