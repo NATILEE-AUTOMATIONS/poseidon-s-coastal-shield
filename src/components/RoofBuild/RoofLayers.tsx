@@ -440,7 +440,7 @@ export const materialInfo = [
   { id: 3, name: "Underlayment", description: "Secondary waterproof barrier over decking" },
   { id: 4, name: "Starter Strip", description: "Seals shingle edges at eaves and rakes" },
   { id: 5, name: "Flashing", description: "Metal barriers at joints and penetrations" },
-  { id: 6, name: "Field Shingles", description: "Primary weatherproofing layer" },
+  { id: 6, name: "Shingles / Roofing", description: "Asphalt, metal, tile, and more" },
   { id: 7, name: "Ridge Cap", description: "Ventilated shingles along roof peak" },
   { id: 8, name: "Pipe Boots & Vents", description: "Sealed penetrations for plumbing and exhaust" },
 ];
