@@ -25,18 +25,9 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '' }) => {
 
       {/* House walls with gradient fill */}
       <g className="walls">
-        {/* Left wall */}
+        {/* Combined walls - single path to avoid center line */}
         <path
-          d="M50 160 L50 265 L175 265 L175 160"
-          fill="url(#wallGradient)"
-          stroke="hsl(168 60% 40%)"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          style={{ filter: 'drop-shadow(0 0 8px hsl(168 80% 40% / 0.2))' }}
-        />
-        {/* Right wall */}
-        <path
-          d="M175 160 L175 265 L350 265 L350 160"
+          d="M50 160 L50 265 L350 265 L350 160"
           fill="url(#wallGradient)"
           stroke="hsl(168 60% 40%)"
           strokeWidth="1.5"
