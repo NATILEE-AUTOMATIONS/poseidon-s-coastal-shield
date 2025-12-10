@@ -41,7 +41,7 @@ const HeroSection = () => {
       </nav>
 
       {/* Hero Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-100px)] px-6 text-center">
+      <div className="relative z-10 flex flex-col items-center justify-center pt-8 lg:pt-12 pb-20 px-6 text-center">
         
         {/* Pill Badge */}
         <div 
