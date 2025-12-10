@@ -197,15 +197,14 @@
     animation-delay: 0.6s;
   }
   
-  /* Premium Nav Button */
+  /* Premium Nav Button with Swirling Gradient */
   .btn-premium-nav {
     position: relative;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
-    padding: 0.75rem 1.75rem;
-    background: linear-gradient(135deg, hsl(var(--teal)) 0%, hsl(var(--teal) / 0.85) 100%);
-    border: 1px solid hsl(var(--teal-glow) / 0.3);
+    padding: 0.85rem 2rem;
     border-radius: 0.5rem;
     font-weight: 600;
     font-size: 0.875rem;
@@ -214,41 +213,87 @@
     overflow: hidden;
     isolation: isolate;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 
-      0 4px 20px hsl(var(--teal) / 0.3),
-      inset 0 1px 0 hsl(var(--teal-glow) / 0.2);
+    border: none;
+    background: transparent;
   }
   
+  /* Swirling gradient background layer */
   .btn-premium-nav::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
+    inset: 0;
+    background: conic-gradient(
+      from var(--swirl-angle, 0deg) at 50% 50%,
+      hsl(var(--teal)) 0deg,
+      hsl(var(--teal-glow)) 60deg,
+      hsl(var(--orange)) 120deg,
+      hsl(var(--orange-glow)) 180deg,
+      hsl(var(--teal-glow)) 240deg,
+      hsl(var(--teal)) 300deg,
+      hsl(var(--teal)) 360deg
+    );
+    animation: swirl-gradient 6s linear infinite;
+    z-index: -2;
+  }
+  
+  /* Inner softening overlay for depth */
+  .btn-premium-nav::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
     background: linear-gradient(
-      90deg,
+      135deg,
+      hsl(var(--deep-bg) / 0.6) 0%,
+      hsl(var(--deep-bg) / 0.4) 50%,
+      hsl(var(--deep-bg) / 0.5) 100%
+    );
+    border-radius: calc(0.5rem - 2px);
+    z-index: -1;
+  }
+  
+  /* Outer pulsing glow */
+  .btn-premium-nav {
+    box-shadow: 
+      0 0 20px hsl(var(--teal-glow) / 0.4),
+      0 0 40px hsl(var(--orange-glow) / 0.2),
+      0 4px 15px hsl(0 0% 0% / 0.3);
+    animation: btn-glow-pulse 3s ease-in-out infinite;
+  }
+  
+  /* Shimmer sweep overlay */
+  .btn-shimmer {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
       transparent 0%,
-      hsl(0 0% 100% / 0.2) 50%,
+      transparent 40%,
+      hsl(0 0% 100% / 0.15) 45%,
+      hsl(0 0% 100% / 0.25) 50%,
+      hsl(0 0% 100% / 0.15) 55%,
+      transparent 60%,
       transparent 100%
     );
-    animation: auto-shimmer 3s ease-in-out infinite;
+    animation: shimmer-sweep 4s ease-in-out infinite;
     animation-delay: 1s;
+    border-radius: 0.5rem;
+    pointer-events: none;
   }
   
   .btn-premium-nav:hover {
-    transform: translateY(-2px);
-    background: linear-gradient(135deg, hsl(var(--teal-glow)) 0%, hsl(var(--teal)) 100%);
+    transform: translateY(-3px) scale(1.03);
     box-shadow: 
-      0 8px 32px hsl(var(--teal-glow) / 0.4),
-      0 0 0 1px hsl(var(--teal-glow) / 0.5),
-      inset 0 1px 0 hsl(0 0% 100% / 0.15);
+      0 0 35px hsl(var(--teal-glow) / 0.6),
+      0 0 70px hsl(var(--orange-glow) / 0.4),
+      0 8px 25px hsl(0 0% 0% / 0.4);
   }
   
   .btn-premium-nav:hover::before {
-    animation: none;
-    left: 100%;
-    transition: left 0.5s ease;
+    animation: swirl-gradient 3s linear infinite;
+  }
+  
+  .btn-premium-nav:hover .btn-text {
+    text-shadow: 0 0 10px hsl(0 0% 100% / 0.5);
   }
   
   .btn-premium-nav .btn-icon {
@@ -258,11 +303,43 @@
   .btn-premium-nav:hover .btn-icon {
     transform: translateX(4px);
   }
+  
+  .btn-text {
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 1px 2px hsl(0 0% 0% / 0.3);
+  }
 }
 
-@keyframes auto-shimmer {
-  0%, 15% { left: -100%; }
-  35%, 100% { left: 100%; }
+@keyframes swirl-gradient {
+  0% { --swirl-angle: 0deg; }
+  100% { --swirl-angle: 360deg; }
+}
+
+@keyframes shimmer-sweep {
+  0%, 20% { transform: translateX(-150%); }
+  50%, 100% { transform: translateX(150%); }
+}
+
+@keyframes btn-glow-pulse {
+  0%, 100% { 
+    box-shadow: 
+      0 0 20px hsl(var(--teal-glow) / 0.4),
+      0 0 40px hsl(var(--orange-glow) / 0.2),
+      0 4px 15px hsl(0 0% 0% / 0.3);
+  }
+  50% { 
+    box-shadow: 
+      0 0 30px hsl(var(--teal-glow) / 0.5),
+      0 0 60px hsl(var(--orange-glow) / 0.3),
+      0 4px 15px hsl(0 0% 0% / 0.3);
+  }
+}
+
+@property --swirl-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
 }
 
 @keyframes float {

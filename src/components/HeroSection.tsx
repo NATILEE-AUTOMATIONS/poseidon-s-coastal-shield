@@ -34,8 +34,9 @@ const HeroSection = () => {
         </div>
         
         <button className="btn-premium-nav">
-          Free Assessment
-          <ArrowRight className="btn-icon w-4 h-4" />
+          <span className="btn-shimmer" />
+          <span className="btn-text">Free Assessment</span>
+          <ArrowRight className="btn-icon w-4 h-4 relative z-10" />
         </button>
       </nav>
 
