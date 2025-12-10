@@ -85,7 +85,7 @@ const RoofBuildSection: React.FC = () => {
             {/* Material labels - left side (positioned as overlay) */}
             <div className="absolute left-0 xl:left-8 top-1/2 -translate-y-1/2 pr-8 hidden xl:block w-48">
               <div className="space-y-4">
-                {materialInfo.slice(0, 4).map((material, index) => (
+                {materialInfo.slice(0, 5).map((material, index) => (
                   <div
                     key={material.id}
                     className="text-right transition-all duration-500 ease-out"
@@ -121,20 +121,20 @@ const RoofBuildSection: React.FC = () => {
             {/* Material labels - right side (positioned as overlay) */}
             <div className="absolute right-0 xl:right-8 top-1/2 -translate-y-1/2 pl-8 hidden xl:block w-48">
               <div className="space-y-4">
-                {materialInfo.slice(4).map((material, index) => (
+                {materialInfo.slice(5).map((material, index) => (
                   <div
                     key={material.id}
                     className="text-left transition-all duration-500 ease-out"
                     style={{
-                      opacity: lockedMaterials[index + 4] ? 1 : 0.25,
-                      transform: `translateX(${lockedMaterials[index + 4] ? 0 : 20}px)`,
+                      opacity: lockedMaterials[index + 5] ? 1 : 0.25,
+                      transform: `translateX(${lockedMaterials[index + 5] ? 0 : 20}px)`,
                     }}
                   >
                     <div 
                       className="text-sm font-semibold tracking-wide"
                       style={{
-                        color: lockedMaterials[index + 4] ? 'hsl(168 80% 60%)' : 'hsl(168 50% 40%)',
-                        textShadow: lockedMaterials[index + 4] 
+                        color: lockedMaterials[index + 5] ? 'hsl(168 80% 60%)' : 'hsl(168 50% 40%)',
+                        textShadow: lockedMaterials[index + 5] 
                           ? '0 0 20px hsl(168 80% 50% / 0.8), 0 0 40px hsl(168 80% 50% / 0.4)' 
                           : 'none',
                       }}
@@ -144,7 +144,7 @@ const RoofBuildSection: React.FC = () => {
                     <div 
                       className="text-xs text-muted-foreground/70 mt-0.5 leading-tight"
                       style={{
-                        opacity: lockedMaterials[index + 4] ? 1 : 0.5,
+                        opacity: lockedMaterials[index + 5] ? 1 : 0.5,
                       }}
                     >
                       {material.description}
