@@ -213,17 +213,18 @@ const RoofBuildSection: React.FC = () => {
 
         </div>
 
-        {/* Completion message - outside content container for perfect centering */}
+        {/* Completion message - positioned at very bottom with backdrop */}
         <div 
-          className="absolute bottom-16 left-0 right-0 flex flex-col items-center text-center z-20 transition-all duration-700 ease-out"
+          className="absolute bottom-0 left-0 right-0 flex flex-col items-center text-center z-20 transition-all duration-700 ease-out py-6"
           style={{
             opacity: progress > 0.95 ? 1 : 0,
             transform: `translateY(${progress > 0.95 ? 0 : 30}px)`,
             pointerEvents: progress > 0.95 ? 'auto' : 'none',
+            background: 'linear-gradient(to top, hsl(160 30% 6% / 0.95) 0%, hsl(160 30% 6% / 0.8) 50%, transparent 100%)',
           }}
         >
           <p 
-            className="text-xl md:text-2xl font-medium mb-6"
+            className="text-xl md:text-2xl font-medium mb-4"
             style={{
               color: 'hsl(168 70% 60%)',
               textShadow: '0 0 30px hsl(168 80% 50% / 0.6), 0 0 60px hsl(168 80% 50% / 0.3)',
