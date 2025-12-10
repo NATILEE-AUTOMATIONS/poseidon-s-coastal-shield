@@ -3,9 +3,10 @@ import { materialInfo } from './RoofLayers';
 
 interface MobileStepCardProps {
   currentStep: number;
+  isVisible: boolean;
 }
 
-const MobileStepCard: React.FC<MobileStepCardProps> = ({ currentStep }) => {
+const MobileStepCard: React.FC<MobileStepCardProps> = ({ currentStep, isVisible }) => {
   const [displayedStep, setDisplayedStep] = useState(currentStep);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -24,7 +25,11 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({ currentStep }) => {
   if (!material) return null;
 
   return (
-    <div className="fixed bottom-6 left-4 right-4 z-50 xl:hidden">
+    <div 
+      className={`w-full mt-6 xl:hidden transition-all duration-500 ease-out ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 pointer-events-none'
+      }`}
+    >
       {/* Main Card */}
       <div
         className={`step-card ${isAnimating ? 'step-card-exit' : 'step-card-enter'}`}
