@@ -732,3 +732,19 @@
     opacity: 0;
   }
 }
+
+/* Pulsing roof outline for scroll hint */
+@keyframes roof-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    stroke-width: 2;
+  }
+  50% {
+    opacity: 1;
+    stroke-width: 4;
+  }
+}
+
+.animate-roof-pulse {
+  animation: roof-pulse 1.5s ease-in-out infinite;
+}
