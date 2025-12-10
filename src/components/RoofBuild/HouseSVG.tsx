@@ -101,8 +101,6 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '' }) => {
             fill="url(#windowGlassGradient)"
             rx="1"
           />
-          {/* Warm interior light glow */}
-          <ellipse cx="120" cy="205" rx="12" ry="10" fill="hsl(40 70% 55%)" opacity="0.12" />
           {/* 6-pane colonial grid (2 cols × 3 rows) */}
           {/* Vertical center mullion */}
           <line x1="120" y1="185" x2="120" y2="225" stroke="hsl(168 60% 50%)" strokeWidth="1.5" />
@@ -146,8 +144,6 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '' }) => {
             fill="url(#windowGlassGradient)"
             rx="1"
           />
-          {/* Warm interior light glow */}
-          <ellipse cx="280" cy="205" rx="12" ry="10" fill="hsl(40 70% 55%)" opacity="0.12" />
           {/* 6-pane colonial grid (2 cols × 3 rows) */}
           {/* Vertical center mullion */}
           <line x1="280" y1="185" x2="280" y2="225" stroke="hsl(168 60% 50%)" strokeWidth="1.5" />
