@@ -237,7 +237,7 @@
     animation: neon-pulse 2.5s ease-in-out infinite;
   }
   
-  /* Premium Multi-Phase Shimmer with Perfect Clipping */
+  /* Premium Multi-Phase Orange Shimmer */
   .btn-neon::before {
     content: '';
     position: absolute;
@@ -248,13 +248,15 @@
     background: linear-gradient(
       110deg,
       transparent 0%,
-      transparent 30%,
-      hsl(0 0% 100% / 0.06) 38%,
-      hsl(0 0% 100% / 0.15) 42%,
-      hsl(0 0% 100% / 0.5) 50%,
-      hsl(0 0% 100% / 0.15) 58%,
-      hsl(0 0% 100% / 0.06) 62%,
-      transparent 70%,
+      transparent 25%,
+      hsl(var(--orange-glow) / 0.05) 35%,
+      hsl(var(--orange-glow) / 0.2) 42%,
+      hsl(var(--orange-glow) / 0.6) 48%,
+      hsl(30 90% 65%) 50%,
+      hsl(var(--orange-glow) / 0.6) 52%,
+      hsl(var(--orange-glow) / 0.2) 58%,
+      hsl(var(--orange-glow) / 0.05) 65%,
+      transparent 75%,
       transparent 100%
     );
     transform: translateX(-100%);
