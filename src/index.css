@@ -453,103 +453,360 @@
 }
 
 /* ========================================
-   Mobile Step Card Styles
+   CINEMATIC MOBILE STEP CARD V2
    ======================================== */
 
-.step-card {
+/* Main Card Container */
+.step-card-v2 {
   position: relative;
-  background: hsl(160 30% 8% / 0.85);
-  backdrop-filter: blur(20px);
-  border-radius: 1rem;
-  border: 1px solid hsl(168 60% 40% / 0.3);
+  background: linear-gradient(
+    135deg,
+    hsl(160 30% 6% / 0.95) 0%,
+    hsl(168 25% 8% / 0.9) 50%,
+    hsl(160 30% 6% / 0.95) 100%
+  );
+  backdrop-filter: blur(24px);
+  border-radius: 1.25rem;
+  border: 1px solid hsl(168 50% 35% / 0.4);
   overflow: hidden;
-}
-
-.step-card-glow {
-  background: transparent;
   box-shadow: 
-    0 0 30px hsl(168 80% 45% / 0.15),
+    0 4px 30px hsl(168 80% 45% / 0.15),
     0 0 60px hsl(168 80% 45% / 0.08),
-    inset 0 1px 0 hsl(168 60% 50% / 0.1);
-  animation: card-glow-pulse 3s ease-in-out infinite;
+    inset 0 1px 0 hsl(168 60% 60% / 0.15),
+    inset 0 -1px 0 hsl(160 30% 20% / 0.5);
 }
 
-.step-card-enter {
-  animation: step-card-slide-up 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+/* Animated border glow */
+.step-card-border-glow {
+  position: absolute;
+  inset: -1px;
+  border-radius: 1.25rem;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    hsl(168 80% 50% / 0.6) 25%,
+    hsl(30 80% 55% / 0.4) 50%,
+    hsl(168 80% 50% / 0.6) 75%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: border-gradient-flow 4s linear infinite;
+  opacity: 0.5;
+  z-index: 0;
+  pointer-events: none;
 }
 
-.step-card-exit {
-  animation: step-card-slide-down 0.2s ease-in forwards;
+/* Scanlines for cyberpunk effect */
+.step-card-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 2px,
+    hsl(168 50% 50% / 0.02) 2px,
+    hsl(168 50% 50% / 0.02) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
 }
 
-.step-number {
-  font-size: 2.5rem;
-  font-weight: 800;
+/* Corner geometric accents */
+.step-corner {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-color: hsl(168 70% 50% / 0.6);
+  z-index: 2;
+}
+
+.step-corner-tl {
+  top: 8px;
+  left: 8px;
+  border-left: 2px solid;
+  border-top: 2px solid;
+}
+
+.step-corner-tr {
+  top: 8px;
+  right: 8px;
+  border-right: 2px solid;
+  border-top: 2px solid;
+}
+
+.step-corner-bl {
+  bottom: 8px;
+  left: 8px;
+  border-left: 2px solid;
+  border-bottom: 2px solid;
+}
+
+.step-corner-br {
+  bottom: 8px;
+  right: 8px;
+  border-right: 2px solid;
+  border-bottom: 2px solid;
+}
+
+/* ===== MASSIVE STEP NUMBER ===== */
+.step-num-massive {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.step-num-text {
+  font-size: 4rem;
+  font-weight: 900;
   line-height: 1;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.04em;
+  color: hsl(168 80% 55%);
+  text-shadow: 
+    0 0 20px hsl(168 80% 50% / 0.9),
+    0 0 40px hsl(168 80% 50% / 0.6),
+    0 0 60px hsl(168 80% 50% / 0.4),
+    0 0 80px hsl(168 80% 50% / 0.2);
+  animation: step-num-breathe 3s ease-in-out infinite;
 }
 
-/* Progress dots */
-.step-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  transition: all 0.3s ease;
+/* Ghost shadow for depth */
+.step-num-ghost {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 1px hsl(168 60% 40% / 0.3);
+  z-index: -1;
 }
 
-.step-dot-active {
-  width: 10px;
-  height: 10px;
+.step-num-exit {
+  animation: step-num-scale-exit 0.25s ease-in forwards;
+}
+
+.step-num-enter {
+  animation: step-num-scale-enter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ===== CINEMATIC TITLE ===== */
+.step-title-cinematic {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: hsl(0 0% 96%);
+  margin-bottom: 0.75rem;
+  text-shadow: 0 0 20px hsl(168 50% 50% / 0.3);
+}
+
+.step-title-exit {
+  animation: title-slide-exit 0.2s ease-in forwards;
+}
+
+.step-title-enter {
+  animation: title-slide-enter 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+
+/* ===== GRADIENT DIVIDER LINE ===== */
+.step-divider-line {
+  height: 2px;
+  width: 100%;
+  margin-bottom: 0.75rem;
+  background: linear-gradient(
+    90deg,
+    hsl(168 80% 50%) 0%,
+    hsl(40 80% 55%) 50%,
+    transparent 100%
+  );
+  opacity: 0.7;
+  transform-origin: left;
+  box-shadow: 0 0 12px hsl(168 80% 50% / 0.5);
+}
+
+.step-divider-draw {
+  animation: divider-draw 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+/* ===== DESCRIPTION ===== */
+.step-desc-cinematic {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: hsl(168 25% 65%);
+  margin-bottom: 1.25rem;
+}
+
+.step-desc-exit {
+  animation: desc-fade-exit 0.15s ease-in forwards;
+}
+
+.step-desc-enter {
+  animation: desc-float-enter 0.4s ease-out 0.3s both;
+}
+
+/* ===== SEGMENT PROGRESS BAR ===== */
+.step-progress-bar {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  padding-top: 0.5rem;
+}
+
+.step-progress-segment {
+  position: relative;
+  width: 24px;
+  height: 4px;
+  border-radius: 2px;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.step-segment-active {
   background: hsl(168 80% 50%);
   box-shadow: 
-    0 0 12px hsl(168 80% 50% / 0.8),
-    0 0 24px hsl(168 80% 50% / 0.4);
+    0 0 10px hsl(168 80% 50% / 0.8),
+    0 0 20px hsl(168 80% 50% / 0.5);
 }
 
-.step-dot-complete {
+.step-segment-complete {
   background: hsl(168 60% 45%);
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
-.step-dot-upcoming {
-  background: transparent;
-  border: 1.5px solid hsl(168 40% 35% / 0.5);
+.step-segment-upcoming {
+  background: hsl(168 30% 25% / 0.5);
+  border: 1px solid hsl(168 40% 35% / 0.3);
 }
 
-/* Keyframes */
-@keyframes step-card-slide-up {
+.step-segment-pulse {
+  position: absolute;
+  inset: -3px;
+  border-radius: 4px;
+  background: hsl(168 80% 50% / 0.3);
+  animation: segment-pulse 1.5s ease-in-out infinite;
+}
+
+/* ===== KEYFRAME ANIMATIONS ===== */
+
+@keyframes border-gradient-flow {
   0% {
-    opacity: 0;
-    transform: translateY(30px) scale(0.95);
+    background-position: 200% 0;
   }
   100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+    background-position: -200% 0;
   }
 }
 
-@keyframes step-card-slide-down {
-  0% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(20px) scale(0.97);
-  }
-}
-
-@keyframes card-glow-pulse {
+@keyframes step-num-breathe {
   0%, 100% {
-    box-shadow: 
-      0 0 30px hsl(168 80% 45% / 0.15),
-      0 0 60px hsl(168 80% 45% / 0.08),
-      inset 0 1px 0 hsl(168 60% 50% / 0.1);
+    text-shadow: 
+      0 0 20px hsl(168 80% 50% / 0.9),
+      0 0 40px hsl(168 80% 50% / 0.6),
+      0 0 60px hsl(168 80% 50% / 0.4),
+      0 0 80px hsl(168 80% 50% / 0.2);
   }
   50% {
-    box-shadow: 
-      0 0 40px hsl(168 80% 45% / 0.25),
-      0 0 80px hsl(168 80% 45% / 0.12),
-      inset 0 1px 0 hsl(168 60% 50% / 0.15);
+    text-shadow: 
+      0 0 30px hsl(168 80% 55% / 1),
+      0 0 60px hsl(168 80% 50% / 0.8),
+      0 0 90px hsl(168 80% 50% / 0.5),
+      0 0 120px hsl(168 80% 50% / 0.3);
+  }
+}
+
+@keyframes step-num-scale-enter {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) translateY(10px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes step-num-scale-exit {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.85) translateY(8px);
+  }
+}
+
+@keyframes title-slide-enter {
+  0% {
+    opacity: 0;
+    transform: translateX(30px);
+    letter-spacing: 0.08em;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+    letter-spacing: 0.02em;
+  }
+}
+
+@keyframes title-slide-exit {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+}
+
+@keyframes divider-draw {
+  0% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0.7;
+  }
+}
+
+@keyframes desc-float-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes desc-fade-exit {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes segment-pulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.15);
   }
 }
