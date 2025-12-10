@@ -1,4 +1,4 @@
-import { Zap } from "lucide-react";
+import { Zap, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import poseidonLogo from "@/assets/poseidon-logo.png";
 
@@ -33,11 +33,13 @@ const HeroSection = () => {
           <a href="#contact" className="hover:text-foreground transition-colors">Contact</a>
         </div>
         
-        <Button 
-          className="btn-gradient border-0 text-primary-foreground font-semibold px-6 py-2 rounded-full"
-        >
-          Free Assessment
-        </Button>
+        <button className="btn-premium-nav">
+          <div className="btn-glow" />
+          <span className="btn-premium-inner">
+            Free Assessment
+            <ArrowRight className="btn-icon w-4 h-4" />
+          </span>
+        </button>
       </nav>
 
       {/* Hero Content */}
