@@ -433,14 +433,16 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
   );
 };
 
-// Material info data
+// Material info data - 10 steps in proper installation order
 export const materialInfo = [
-  { id: 1, name: "Drip Edge", description: "Directs water away from fascia into gutters" },
-  { id: 2, name: "Ice & Water Shield", description: "Self-sealing membrane for leak protection" },
-  { id: 3, name: "Underlayment", description: "Secondary waterproof barrier over decking" },
-  { id: 4, name: "Starter Strip", description: "Seals shingle edges at eaves and rakes" },
-  { id: 5, name: "Flashing", description: "Metal barriers at joints and penetrations" },
-  { id: 6, name: "Shingles / Roofing", description: "Asphalt, metal, tile, and more" },
-  { id: 7, name: "Ridge Cap", description: "Ventilated shingles along roof peak" },
-  { id: 8, name: "Pipe Boots & Vents", description: "Sealed penetrations for plumbing and exhaust" },
+  { id: 1, name: "Replace Decking", description: "Replace any damaged plywood or decking" },
+  { id: 2, name: "Drip Edge (Eaves)", description: "Install drip edge at the eaves" },
+  { id: 3, name: "Ice & Water Shield", description: "Apply ice & water shield membrane" },
+  { id: 4, name: "Underlayment", description: "Install underlayment over decking" },
+  { id: 5, name: "Drip Edge (Rakes)", description: "Install drip edge at the rakes" },
+  { id: 6, name: "Starter Strip", description: "Install starter strip at edges" },
+  { id: 7, name: "Shingles", description: "Install field shingles" },
+  { id: 8, name: "Pipe Boots & Vents", description: "Install pipe boots & vents" },
+  { id: 9, name: "Flashing", description: "Install all flashing" },
+  { id: 10, name: "Ridge Vent & Cap", description: "Install ridge vent and ridge cap" },
 ];
