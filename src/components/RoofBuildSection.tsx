@@ -53,7 +53,7 @@ const RoofBuildSection: React.FC = () => {
         <GridBackground />
         
         {/* Content container - with top padding for navbar clearance */}
-        <div className="relative z-10 h-full flex flex-col items-center justify-start pt-56 lg:pt-64 px-4">
+        <div className="relative z-10 h-full flex flex-col items-center justify-start pt-32 md:pt-56 lg:pt-64 px-4">
 
           {/* Main visualization container - house centered independently */}
           <div className="relative w-full max-w-5xl mx-auto">
@@ -82,6 +82,12 @@ const RoofBuildSection: React.FC = () => {
                 </svg>
               </div>
             </div>
+
+            {/* Mobile Step Card - positioned below house */}
+            <MobileStepCard 
+              currentStep={Math.min(9, Math.floor(progress * 10))} 
+              isVisible={progress >= 0.05 && progress <= 0.92}
+            />
 
             {/* Material labels - left side (positioned as overlay) */}
             <div className="absolute left-0 xl:left-4 top-1/2 -translate-y-1/2 pr-4 hidden xl:block w-56">
@@ -159,8 +165,6 @@ const RoofBuildSection: React.FC = () => {
 
           </div>
 
-          {/* Mobile Step Card */}
-          <MobileStepCard currentStep={Math.min(9, Math.floor(progress * 10))} />
 
           {/* Progress bar - minimal and elegant */}
           <div 
