@@ -211,29 +211,30 @@ const RoofBuildSection: React.FC = () => {
             />
           </div>
 
-          {/* Completion message */}
-          <div 
-            className="absolute bottom-16 left-1/2 -translate-x-1/2 text-center transition-all duration-700 ease-out"
+        </div>
+
+        {/* Completion message - outside content container for perfect centering */}
+        <div 
+          className="absolute bottom-16 left-0 right-0 flex flex-col items-center text-center z-20 transition-all duration-700 ease-out"
+          style={{
+            opacity: progress > 0.95 ? 1 : 0,
+            transform: `translateY(${progress > 0.95 ? 0 : 30}px)`,
+            pointerEvents: progress > 0.95 ? 'auto' : 'none',
+          }}
+        >
+          <p 
+            className="text-xl md:text-2xl font-medium mb-6"
             style={{
-              opacity: progress > 0.95 ? 1 : 0,
-              transform: `translateY(${progress > 0.95 ? 0 : 30}px)`,
-              pointerEvents: progress > 0.95 ? 'auto' : 'none',
+              color: 'hsl(168 70% 60%)',
+              textShadow: '0 0 30px hsl(168 80% 50% / 0.6), 0 0 60px hsl(168 80% 50% / 0.3)',
             }}
           >
-            <p 
-              className="text-xl md:text-2xl font-medium mb-6"
-              style={{
-                color: 'hsl(168 70% 60%)',
-                textShadow: '0 0 30px hsl(168 80% 50% / 0.6), 0 0 60px hsl(168 80% 50% / 0.3)',
-              }}
-            >
-              Every layer matters. Trust the experts.
-            </p>
-            <Button className="btn-neon group">
-              <span className="btn-text">Free Assessment</span>
-              <ArrowRight className="btn-icon ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </div>
+            Every layer matters. Trust the experts.
+          </p>
+          <Button className="btn-neon group">
+            <span className="btn-text">Free Assessment</span>
+            <ArrowRight className="btn-icon ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+          </Button>
         </div>
       </div>
     </section>
