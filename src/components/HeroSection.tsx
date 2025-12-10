@@ -66,7 +66,7 @@ const HeroSection = () => {
           className="opacity-0 animate-fade-up mt-6 lg:mt-8 text-lg sm:text-xl lg:text-2xl font-medium text-glow-orange max-w-2xl leading-relaxed"
           style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}
         >
-          No stress, no mess, no surprises. Just a new, beautiful roof that keeps your home safe.
+          No stress, mess, or surprises. Just a clean, new roof that you know was done right.
         </p>
 
         {/* CTA Button */}
