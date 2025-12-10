@@ -51,21 +51,6 @@ const RoofBuildSection: React.FC = () => {
         
         {/* Content container - with top padding for navbar clearance */}
         <div className="relative z-10 h-full flex flex-col items-center justify-start pt-56 lg:pt-64 px-4">
-          {/* Header */}
-          <div 
-            className="text-center mb-6 transition-all duration-700 ease-out"
-            style={{ 
-              opacity: progress < 0.05 ? 1 : Math.max(0.2, 1 - progress * 1.5),
-              transform: `translateY(${progress * -30}px)`,
-            }}
-          >
-            <h2 className="text-3xl md:text-5xl font-bold text-glow-teal mb-3">
-              What Goes Into Your New Roof?
-            </h2>
-            <p className="text-lg md:text-xl text-glow-orange opacity-90">
-              More than just shingles...
-            </p>
-          </div>
 
           {/* Main visualization container */}
           <div className="relative w-full max-w-5xl mx-auto flex items-center justify-center">
