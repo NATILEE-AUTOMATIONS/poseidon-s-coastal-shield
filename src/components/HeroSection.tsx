@@ -22,7 +22,7 @@ const HeroSection = () => {
           <img 
             src={poseidonLogo} 
             alt="Poseidon Roofing" 
-            className="h-16 sm:h-20 lg:h-28 w-auto object-contain"
+            className="h-24 sm:h-20 lg:h-28 w-auto object-contain"
           />
         </div>
         
