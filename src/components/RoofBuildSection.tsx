@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useScrollProgress } from '@/hooks/useScrollProgress';
 import GridBackground from './RoofBuild/GridBackground';
 import HouseSVG from './RoofBuild/HouseSVG';
@@ -16,6 +16,7 @@ import {
   materialInfo,
 } from './RoofBuild/RoofLayers';
 import MobileStepCard from './RoofBuild/MobileStepCard';
+import { useScrollContext } from '@/context/ScrollContext';
 
 
 import { Button } from './ui/button';
@@ -24,6 +25,7 @@ import { ArrowRight } from 'lucide-react';
 const RoofBuildSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const progress = useScrollProgress(sectionRef);
+  const { setZoomProgress } = useScrollContext();
 
   // Layer timing - delayed start at 8% for "settle in" period
   // Roof layers use 0-75% of scroll, door animation uses 75-100%
@@ -55,6 +57,11 @@ const RoofBuildSection: React.FC = () => {
     ? Math.min(1, (progress - 0.88) / 0.12) // 12% scroll window for smoother motion
     : 0;
   
+  // Update scroll context so navbar can fade
+  useEffect(() => {
+    setZoomProgress(zoomProgress);
+  }, [zoomProgress, setZoomProgress]);
+  
   // easeOutQuart - accelerates through the door (momentum feeling)
   const easeOutQuart = (x: number) => 1 - Math.pow(1 - x, 4);
   const easedZoom = easeOutQuart(zoomProgress);
@@ -62,10 +69,10 @@ const RoofBuildSection: React.FC = () => {
   // Scale: 1x → 20x (pass completely through the door)
   const zoomScale = 1 + (easedZoom * 19);
   
-  // Fade out elements during zoom - house gone before zoom completes
-  const gridFadeOut = Math.max(0, 1 - (zoomProgress * 1.5)); // Grid fades gradually
-  const houseFadeOut = Math.max(0, 1 - (easedZoom * 1.4)); // House fully gone by 70% of zoom
-  const ctaZoomFade = Math.max(0, 1 - (zoomProgress * 2.5)); // CTA fades smoothly
+  // Fade out elements during zoom - FASTER fades for cleaner transition
+  const gridFadeOut = Math.max(0, 1 - (zoomProgress * 3)); // Grid gone by 33% of zoom
+  const houseFadeOut = Math.max(0, 1 - (easedZoom * 2)); // House gone by 50% of zoom
+  const ctaZoomFade = Math.max(0, 1 - (zoomProgress * 5)); // CTA gone by 20% of zoom
 
 
   
@@ -104,17 +111,18 @@ const RoofBuildSection: React.FC = () => {
       style={{ height: '400vh' }}
     >
 
-      {/* Warm light overlay - fills screen as user enters through door */}
+      {/* Warm light overlay - fills screen as user enters through door - z-[100] to cover EVERYTHING including navbar */}
       <div 
-        className="fixed inset-0 pointer-events-none z-30"
+        className="fixed inset-0 pointer-events-none z-[100]"
         style={{
           background: `radial-gradient(circle at 50% 45%, 
-            hsl(35 95% 70% / ${easedZoom * 0.95}), 
-            hsl(30 90% 60% / ${easedZoom * 0.85}) 30%,
-            hsl(25 80% 45% / ${easedZoom * 0.7}) 60%,
+            hsl(35 98% 75% / ${easedZoom ** 0.5 * 0.98}), 
+            hsl(30 95% 65% / ${easedZoom * 0.92}) 25%,
+            hsl(25 85% 50% / ${easedZoom * 0.85}) 50%,
+            hsl(20 75% 35% / ${easedZoom * 0.7}) 80%,
             transparent 100%)`,
           opacity: easedZoom > 0.02 ? 1 : 0,
-          willChange: 'background',
+          willChange: 'background, opacity',
         }}
       />
 
@@ -330,12 +338,12 @@ const RoofBuildSection: React.FC = () => {
         </div>
 
 
-        {/* Progress bar - always visible during roof build, positioned at bottom */}
+        {/* Progress bar - fades earlier (70-78%) before zoom starts */}
         <div 
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 w-32 h-0.5 bg-muted/30 rounded-full overflow-hidden z-30"
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 w-32 h-0.5 bg-muted/30 rounded-full overflow-hidden z-20"
           style={{
-            opacity: progress > 0.75 ? 0 : 1,
-            transition: 'opacity 0.5s ease-out',
+            opacity: progress > 0.70 ? Math.max(0, 1 - ((progress - 0.70) / 0.08)) : 1,
+            transition: 'opacity 0.15s ease-out',
           }}
         >
           <div 
