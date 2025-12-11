@@ -53,9 +53,9 @@ const RoofBuildSection: React.FC = () => {
     ? Math.min(75, ((progress - 0.78) / 0.14) * 75) 
     : 0;
 
-  // Door zoom: starts at 88% (earlier for smoother feel), completes at 100%
-  const zoomProgress = progress > 0.88 
-    ? Math.min(1, (progress - 0.88) / 0.12) // 12% scroll window for smoother motion
+  // Door zoom: starts at 80%, completes at 100% (20% scroll window for slower, smoother motion)
+  const zoomProgress = progress > 0.80 
+    ? Math.min(1, (progress - 0.80) / 0.20) // 20% scroll window for much smoother, slower zoom
     : 0;
   
   // Update scroll context so navbar can fade
