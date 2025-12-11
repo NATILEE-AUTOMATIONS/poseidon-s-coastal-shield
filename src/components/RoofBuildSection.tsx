@@ -330,9 +330,28 @@ const RoofBuildSection: React.FC = () => {
         </div>
 
 
+        {/* Progress bar - always visible during roof build, positioned at bottom */}
+        <div 
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 w-32 h-0.5 bg-muted/30 rounded-full overflow-hidden z-30"
+          style={{
+            opacity: progress > 0.75 ? 0 : 1,
+            transition: 'opacity 0.5s ease-out',
+          }}
+        >
+          <div 
+            className="h-full rounded-full"
+            style={{
+              width: `${Math.min(progress / 0.75, 1) * 100}%`,
+              background: 'linear-gradient(90deg, hsl(168 80% 50%), hsl(32 80% 55%))',
+              boxShadow: '0 0 12px hsl(168 80% 50% / 0.6)',
+              transition: 'width 0.1s ease-out',
+            }}
+          />
+        </div>
+
         {/* "Welcome home" message and CTA - CTA appears earlier, fades during zoom */}
         <div 
-          className="absolute bottom-0 left-0 right-0 flex flex-col items-center text-center z-20 py-6"
+          className="absolute bottom-12 left-0 right-0 flex flex-col items-center text-center z-20 py-6"
           style={{
             opacity: showCTA ? ctaZoomFade : 0,
             pointerEvents: showCTA && ctaZoomFade > 0.1 ? 'auto' : 'none',
@@ -362,25 +381,6 @@ const RoofBuildSection: React.FC = () => {
               <span className="btn-text">Free Assessment</span>
               <ArrowRight className="btn-icon ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Button>
-          </div>
-
-          {/* Progress bar - below the button */}
-          <div 
-            className="mt-4 w-32 h-0.5 bg-muted/30 rounded-full overflow-hidden"
-            style={{
-              opacity: progress > 0.75 ? 0 : 1,
-              transition: 'opacity 0.5s ease-out',
-            }}
-          >
-            <div 
-              className="h-full rounded-full"
-              style={{
-                width: `${Math.min(progress / 0.75, 1) * 100}%`,
-                background: 'linear-gradient(90deg, hsl(168 80% 50%), hsl(32 80% 55%))',
-                boxShadow: '0 0 12px hsl(168 80% 50% / 0.6)',
-                transition: 'width 0.1s ease-out',
-              }}
-            />
           </div>
         </div>
       </div>
