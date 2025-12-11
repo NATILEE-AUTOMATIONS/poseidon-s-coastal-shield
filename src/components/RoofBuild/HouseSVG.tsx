@@ -3,10 +3,12 @@ import React from 'react';
 interface HouseSVGProps {
   className?: string;
   doorAngle?: number; // 0-75 degrees
+  lightBoost?: number; // 0-1 additional light intensity during zoom
 }
 
-const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0 }) => {
-  const lightIntensity = doorAngle / 75;
+const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, lightBoost = 0 }) => {
+  const baseLightIntensity = doorAngle / 75;
+  const lightIntensity = Math.min(1, baseLightIntensity + (lightBoost * 0.5));
   
   return (
     <g className={className}>

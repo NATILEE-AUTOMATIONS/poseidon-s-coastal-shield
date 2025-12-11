@@ -47,6 +47,14 @@ const RoofBuildSection: React.FC = () => {
   const doorAngle = progress > 0.78 
     ? Math.min(75, ((progress - 0.78) / 0.14) * 75) 
     : 0;
+
+  // Zoom into doorway: starts at 90%, max at 100%
+  const zoomProgress = progress > 0.90 
+    ? Math.min(1, (progress - 0.90) / 0.10) 
+    : 0;
+  const zoomScale = 1 + (zoomProgress * 2.5); // 1x → 3.5x
+  const zoomTranslateY = zoomProgress * -150; // Move up to center door
+  const gridFadeOut = Math.max(0, 1 - (zoomProgress * 1.5)); // Grid fades faster
   
   // Typography states
   const showRoofComplete = progress >= 0.75 && progress < 0.85;
@@ -84,15 +92,24 @@ const RoofBuildSection: React.FC = () => {
     >
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
-        <GridBackground />
+        <div style={{ opacity: gridFadeOut, transition: 'opacity 0.15s ease-out' }}>
+          <GridBackground />
+        </div>
         
         {/* Content container - with top padding for navbar clearance */}
         <div className="relative z-10 h-full flex flex-col items-center justify-start pt-32 md:pt-56 lg:pt-64 px-4">
 
           {/* Main visualization container - house centered independently */}
           <div className="relative w-full max-w-5xl mx-auto">
-            {/* House + Layers SVG - perfectly centered */}
-            <div className="flex justify-center">
+            {/* House + Layers SVG - perfectly centered with zoom effect */}
+            <div 
+              className="flex justify-center"
+              style={{
+                transform: `scale(${zoomScale}) translateY(${zoomTranslateY}px)`,
+                transformOrigin: 'center 75%',
+                transition: 'transform 0.12s ease-out',
+              }}
+            >
               <div className="w-full max-w-2xl">
                 <svg
                   viewBox="0 0 400 280"
@@ -117,7 +134,7 @@ const RoofBuildSection: React.FC = () => {
                   )}
                   
                   {/* House base with animated door */}
-                  <HouseSVG doorAngle={doorAngle} />
+                  <HouseSVG doorAngle={doorAngle} lightBoost={zoomProgress} />
                   
                   {/* Animated roof layers - 10 layers in correct installation order */}
                   {/* 1. Replace Decking */}
