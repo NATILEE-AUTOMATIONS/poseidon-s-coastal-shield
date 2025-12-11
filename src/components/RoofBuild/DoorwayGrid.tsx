@@ -15,185 +15,6 @@ const DoorwayGrid: React.FC<DoorwayGridProps> = ({ lightIntensity, lightBoost = 
   const doorBottom = 265;
   const doorWidth = doorRight - doorLeft;
   const doorHeight = doorBottom - doorTop;
-  const doorCenterX = doorLeft + doorWidth / 2;
-  
-  // 3D Room dimensions
-  const backWallY = doorTop + doorHeight * 0.25; // Back wall at 25% from top
-  const backWallWidth = doorWidth * 0.4; // Back wall is narrower (perspective)
-  const backWallLeft = doorCenterX - backWallWidth / 2;
-  const backWallRight = doorCenterX + backWallWidth / 2;
-  
-  // Generate floor grid lines
-  const floorLines = [];
-  const numFloorHLines = 8;
-  const numFloorVLines = 7;
-  
-  // Horizontal floor lines (receding into distance)
-  for (let i = 0; i <= numFloorHLines; i++) {
-    const t = i / numFloorHLines;
-    // Exponential spacing - lines get closer together as they recede
-    const perspectiveT = Math.pow(t, 0.6);
-    const y = backWallY + (doorBottom - backWallY) * (1 - perspectiveT);
-    
-    // Width narrows toward back wall
-    const widthFactor = 0.4 + (1 - perspectiveT) * 0.6;
-    const lineLeft = doorCenterX - (doorWidth / 2) * widthFactor;
-    const lineRight = doorCenterX + (doorWidth / 2) * widthFactor;
-    
-    // Opacity fades toward back
-    const opacity = 0.3 + (1 - perspectiveT) * 0.5;
-    const strokeWidth = 0.3 + (1 - perspectiveT) * 0.5;
-    
-    floorLines.push(
-      <line
-        key={`fh-${i}`}
-        x1={lineLeft}
-        y1={y}
-        x2={lineRight}
-        y2={y}
-        stroke="hsl(32 75% 45%)"
-        strokeWidth={strokeWidth}
-        opacity={opacity * totalIntensity}
-      />
-    );
-  }
-  
-  // Vertical floor lines (converging to back wall)
-  for (let i = 0; i <= numFloorVLines; i++) {
-    const t = i / numFloorVLines;
-    
-    // Start at door bottom, spread across width
-    const startX = doorLeft + doorWidth * t;
-    
-    // End at back wall, converged
-    const endX = backWallLeft + backWallWidth * t;
-    
-    // Center lines brighter
-    const centerDistance = Math.abs(t - 0.5) * 2;
-    const opacity = 0.25 + (1 - centerDistance) * 0.35;
-    
-    floorLines.push(
-      <line
-        key={`fv-${i}`}
-        x1={startX}
-        y1={doorBottom}
-        x2={endX}
-        y2={backWallY}
-        stroke="hsl(32 70% 42%)"
-        strokeWidth={0.4}
-        opacity={opacity * totalIntensity}
-      />
-    );
-  }
-  
-  // Left wall grid
-  const leftWallLines = [];
-  const numWallHLines = 5;
-  
-  for (let i = 0; i <= numWallHLines; i++) {
-    const t = i / numWallHLines;
-    const perspectiveT = Math.pow(t, 0.7);
-    
-    // Y position from back wall top to door bottom
-    const y = backWallY + (doorBottom - backWallY) * perspectiveT;
-    
-    // X positions - from door edge to back wall edge
-    const startX = doorLeft + (backWallLeft - doorLeft) * (1 - perspectiveT);
-    const endX = backWallLeft;
-    
-    const opacity = 0.2 + perspectiveT * 0.3;
-    
-    leftWallLines.push(
-      <line
-        key={`lw-${i}`}
-        x1={startX}
-        y1={y}
-        x2={endX}
-        y2={y}
-        stroke="hsl(32 65% 38%)"
-        strokeWidth={0.3 + perspectiveT * 0.3}
-        opacity={opacity * totalIntensity}
-      />
-    );
-  }
-  
-  // Left wall vertical lines
-  const numWallVLines = 3;
-  for (let i = 0; i <= numWallVLines; i++) {
-    const t = i / numWallVLines;
-    
-    // Bottom edge of left wall
-    const bottomX = doorLeft + (backWallLeft - doorLeft) * t;
-    
-    // Top edge converges to back wall corner
-    const topX = backWallLeft;
-    const topY = backWallY;
-    const bottomY = doorBottom - (doorBottom - backWallY) * t;
-    
-    leftWallLines.push(
-      <line
-        key={`lwv-${i}`}
-        x1={bottomX}
-        y1={doorBottom}
-        x2={topX}
-        y2={topY + (bottomY - topY) * (1 - t)}
-        stroke="hsl(32 60% 35%)"
-        strokeWidth={0.3}
-        opacity={0.2 * totalIntensity}
-      />
-    );
-  }
-  
-  // Right wall grid (mirror of left)
-  const rightWallLines = [];
-  
-  for (let i = 0; i <= numWallHLines; i++) {
-    const t = i / numWallHLines;
-    const perspectiveT = Math.pow(t, 0.7);
-    
-    const y = backWallY + (doorBottom - backWallY) * perspectiveT;
-    
-    const startX = backWallRight;
-    const endX = doorRight - (doorRight - backWallRight) * (1 - perspectiveT);
-    
-    const opacity = 0.2 + perspectiveT * 0.3;
-    
-    rightWallLines.push(
-      <line
-        key={`rw-${i}`}
-        x1={startX}
-        y1={y}
-        x2={endX}
-        y2={y}
-        stroke="hsl(32 65% 38%)"
-        strokeWidth={0.3 + perspectiveT * 0.3}
-        opacity={opacity * totalIntensity}
-      />
-    );
-  }
-  
-  // Right wall vertical lines
-  for (let i = 0; i <= numWallVLines; i++) {
-    const t = i / numWallVLines;
-    
-    const bottomX = doorRight - (doorRight - backWallRight) * t;
-    const topX = backWallRight;
-    const topY = backWallY;
-    const bottomY = doorBottom - (doorBottom - backWallY) * t;
-    
-    rightWallLines.push(
-      <line
-        key={`rwv-${i}`}
-        x1={bottomX}
-        y1={doorBottom}
-        x2={topX}
-        y2={topY + (bottomY - topY) * (1 - t)}
-        stroke="hsl(32 60% 35%)"
-        strokeWidth={0.3}
-        opacity={0.2 * totalIntensity}
-      />
-    );
-  }
   
   return (
     <g className="doorway-grid">
@@ -202,52 +23,137 @@ const DoorwayGrid: React.FC<DoorwayGridProps> = ({ lightIntensity, lightBoost = 
           <rect x={doorLeft} y={doorTop} width={doorWidth} height={doorHeight} />
         </clipPath>
         
-        {/* Warm ambient gradient for back wall */}
-        <linearGradient id="backWallGradient" x1="50%" y1="0%" x2="50%" y2="100%">
-          <stop offset="0%" stopColor="hsl(32 85% 50%)" stopOpacity="0.5" />
-          <stop offset="50%" stopColor="hsl(32 75% 40%)" stopOpacity="0.4" />
-          <stop offset="100%" stopColor="hsl(28 70% 30%)" stopOpacity="0.3" />
+        {/* Deep warm radial gradient for ambient glow */}
+        <radialGradient id="portalAmbient" cx="50%" cy="100%" r="120%">
+          <stop offset="0%" stopColor="hsl(32 70% 25%)" stopOpacity="0.9" />
+          <stop offset="40%" stopColor="hsl(28 60% 15%)" stopOpacity="0.8" />
+          <stop offset="100%" stopColor="hsl(25 50% 6%)" stopOpacity="1" />
+        </radialGradient>
+        
+        {/* Horizon glow gradient */}
+        <linearGradient id="horizonGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(32 90% 60%)" stopOpacity="0.9" />
+          <stop offset="30%" stopColor="hsl(32 80% 50%)" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="hsl(32 70% 40%)" stopOpacity="0" />
         </linearGradient>
         
-        {/* Ambient room glow */}
-        <radialGradient id="roomAmbient" cx="50%" cy="30%" r="90%">
-          <stop offset="0%" stopColor="hsl(32 80% 55%)" stopOpacity="0.4" />
-          <stop offset="70%" stopColor="hsl(30 70% 35%)" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="hsl(25 60% 20%)" stopOpacity="0.5" />
+        {/* Edge vignette */}
+        <radialGradient id="portalVignette" cx="50%" cy="50%" r="70%">
+          <stop offset="0%" stopColor="transparent" stopOpacity="0" />
+          <stop offset="70%" stopColor="hsl(25 40% 3%)" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="hsl(25 40% 3%)" stopOpacity="0.7" />
         </radialGradient>
       </defs>
       
-      {/* Ambient room warmth */}
+      {/* Deep warm background base */}
       <rect
         x={doorLeft}
         y={doorTop}
         width={doorWidth}
         height={doorHeight}
-        fill="url(#roomAmbient)"
-        opacity={totalIntensity * 0.8}
+        fill="hsl(25 50% 6%)"
+        opacity={totalIntensity}
       />
       
-      {/* Back wall (simple warm glow, no grid) */}
-      <polygon
-        points={`
-          ${backWallLeft},${backWallY}
-          ${backWallRight},${backWallY}
-          ${backWallRight},${backWallY + 15}
-          ${backWallLeft},${backWallY + 15}
-        `}
-        fill="url(#backWallGradient)"
+      {/* Ambient radial glow */}
+      <rect
+        x={doorLeft}
+        y={doorTop}
+        width={doorWidth}
+        height={doorHeight}
+        fill="url(#portalAmbient)"
         opacity={totalIntensity * 0.9}
       />
       
-      {/* All grid lines clipped to doorway */}
-      <g clipPath="url(#doorwayClip)">
-        {/* Side walls first (behind floor) */}
-        {leftWallLines}
-        {rightWallLines}
-        
-        {/* Floor grid on top */}
-        {floorLines}
-      </g>
+      {/* CSS Perspective Grid via foreignObject */}
+      <foreignObject
+        x={doorLeft}
+        y={doorTop}
+        width={doorWidth}
+        height={doorHeight}
+        clipPath="url(#doorwayClip)"
+      >
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            perspective: '80px',
+            perspectiveOrigin: '50% 0%',
+            overflow: 'hidden',
+          }}
+        >
+          {/* The infinite grid plane */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '15%',
+              left: '-50%',
+              width: '200%',
+              height: '300%',
+              transform: 'rotateX(-75deg)',
+              transformOrigin: 'center top',
+              background: `
+                repeating-linear-gradient(
+                  90deg,
+                  transparent,
+                  transparent 8px,
+                  hsl(32 80% 50% / ${0.25 * totalIntensity}) 8px,
+                  hsl(32 80% 50% / ${0.25 * totalIntensity}) 9px
+                ),
+                repeating-linear-gradient(
+                  0deg,
+                  transparent,
+                  transparent 8px,
+                  hsl(32 70% 45% / ${0.2 * totalIntensity}) 8px,
+                  hsl(32 70% 45% / ${0.2 * totalIntensity}) 9px
+                )
+              `,
+              opacity: totalIntensity,
+            }}
+          />
+        </div>
+      </foreignObject>
+      
+      {/* Horizon glow line at the "back" */}
+      <rect
+        x={doorLeft + doorWidth * 0.1}
+        y={doorTop + 8}
+        width={doorWidth * 0.8}
+        height={3}
+        rx={1.5}
+        fill="hsl(32 90% 60%)"
+        opacity={totalIntensity * (0.6 + lightBoost * 0.4)}
+        style={{
+          filter: `
+            drop-shadow(0 0 4px hsl(32 90% 60%))
+            drop-shadow(0 0 8px hsl(32 85% 55%))
+            drop-shadow(0 0 16px hsl(32 80% 50% / 0.6))
+          `,
+        }}
+      />
+      
+      {/* Secondary glow bloom */}
+      <ellipse
+        cx={doorLeft + doorWidth / 2}
+        cy={doorTop + 12}
+        rx={doorWidth * 0.35}
+        ry={8}
+        fill="hsl(32 80% 55%)"
+        opacity={totalIntensity * 0.3 * (1 + lightBoost * 0.5)}
+        style={{
+          filter: 'blur(4px)',
+        }}
+      />
+      
+      {/* Edge vignette overlay */}
+      <rect
+        x={doorLeft}
+        y={doorTop}
+        width={doorWidth}
+        height={doorHeight}
+        fill="url(#portalVignette)"
+        opacity={totalIntensity * 0.8}
+      />
       
       {/* Subtle floor edge glow */}
       <line
@@ -256,9 +162,12 @@ const DoorwayGrid: React.FC<DoorwayGridProps> = ({ lightIntensity, lightBoost = 
         x2={doorRight - 2}
         y2={doorBottom - 1}
         stroke="hsl(32 80% 50%)"
-        strokeWidth={1}
-        opacity={0.3 * totalIntensity}
+        strokeWidth={1.5}
+        opacity={0.4 * totalIntensity}
         strokeLinecap="round"
+        style={{
+          filter: 'drop-shadow(0 0 3px hsl(32 80% 50%))',
+        }}
       />
     </g>
   );
