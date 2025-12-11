@@ -55,6 +55,7 @@ const RoofBuildSection: React.FC = () => {
   const zoomScale = 1 + (zoomProgress * 2.5); // 1x → 3.5x
   const zoomTranslateY = zoomProgress * -150; // Move up to center door
   const gridFadeOut = Math.max(0, 1 - (zoomProgress * 1.5)); // Grid fades faster
+  const ctaZoomFade = Math.max(0, 1 - (zoomProgress * 2)); // CTA fades out by 95%
   
   // Typography states
   const showRoofComplete = progress >= 0.75 && progress < 0.85;
@@ -106,7 +107,7 @@ const RoofBuildSection: React.FC = () => {
               className="flex justify-center"
               style={{
                 transform: `scale(${zoomScale}) translateY(${zoomTranslateY}px)`,
-                transformOrigin: 'center 75%',
+                transformOrigin: 'center 82%',
                 transition: 'transform 0.12s ease-out',
               }}
             >
@@ -320,14 +321,14 @@ const RoofBuildSection: React.FC = () => {
         </div>
 
 
-        {/* "Welcome home" message and CTA - CTA appears earlier */}
+        {/* "Welcome home" message and CTA - CTA appears earlier, fades during zoom */}
         <div 
           className="absolute bottom-0 left-0 right-0 flex flex-col items-center text-center z-20 py-6"
           style={{
-            opacity: showCTA ? 1 : 0,
-            pointerEvents: showCTA ? 'auto' : 'none',
+            opacity: showCTA ? ctaZoomFade : 0,
+            pointerEvents: showCTA && ctaZoomFade > 0.1 ? 'auto' : 'none',
             background: 'linear-gradient(to top, hsl(160 30% 6% / 0.95) 0%, hsl(160 30% 6% / 0.8) 50%, transparent 100%)',
-            transition: 'opacity 0.7s ease-out',
+            transition: 'opacity 0.3s ease-out',
           }}
         >
           <h2 
