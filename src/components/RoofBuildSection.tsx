@@ -16,6 +16,7 @@ import {
   materialInfo,
 } from './RoofBuild/RoofLayers';
 import MobileStepCard from './RoofBuild/MobileStepCard';
+import YardSign from './RoofBuild/YardSign';
 import { useScrollContext } from '@/context/ScrollContext';
 
 
@@ -204,6 +205,9 @@ const RoofBuildSection: React.FC = () => {
                   <FlashingLayer progress={progress} startProgress={layers[8].start} endProgress={layers[8].end} />
                   {/* 10. Ridge Vent & Cap */}
                   <RidgeCapLayer progress={progress} startProgress={layers[9].start} endProgress={layers[9].end} />
+                  
+                  {/* Yard sign drops in as door opens */}
+                  <YardSign progress={progress} />
                 </svg>
               </div>
             </div>
