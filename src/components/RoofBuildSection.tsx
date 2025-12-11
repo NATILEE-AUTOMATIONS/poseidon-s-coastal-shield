@@ -257,25 +257,6 @@ const RoofBuildSection: React.FC = () => {
 
         </div>
 
-        {/* "Your roof is complete" message - appears after roof build */}
-        <div 
-          className="absolute top-24 md:top-32 left-0 right-0 flex justify-center z-20 transition-all duration-700 ease-out"
-          style={{
-            opacity: showRoofComplete ? 1 : 0,
-            transform: `translateY(${showRoofComplete ? 0 : -20}px)`,
-            pointerEvents: 'none',
-          }}
-        >
-          <h2 
-            className="text-2xl md:text-4xl lg:text-5xl font-bold tracking-tight"
-            style={{
-              color: 'hsl(168 70% 55%)',
-              textShadow: '0 0 40px hsl(168 80% 50% / 0.6), 0 0 80px hsl(168 80% 50% / 0.3)',
-            }}
-          >
-            Your roof is complete.
-          </h2>
-        </div>
 
         {/* "Welcome home" message and CTA - final state */}
         <div 
