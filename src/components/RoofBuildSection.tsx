@@ -100,7 +100,7 @@ const RoofBuildSection: React.FC = () => {
       style={{ height: '400vh' }}
     >
       {/* Door crossing overlay - user enters through the door */}
-      <DoorwayCrossing progress={doorCrossingProgress} />
+      <DoorwayCrossing progress={doorCrossingProgress} zoomProgress={zoomProgress} />
 
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
