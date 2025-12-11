@@ -16,7 +16,7 @@ import {
   materialInfo,
 } from './RoofBuild/RoofLayers';
 import MobileStepCard from './RoofBuild/MobileStepCard';
-import DoorwayRevealImage from './RoofBuild/DoorwayRevealImage';
+
 import { Button } from './ui/button';
 import { ArrowRight } from 'lucide-react';
 
@@ -58,10 +58,6 @@ const RoofBuildSection: React.FC = () => {
   const gridFadeOut = Math.max(0, 1 - (zoomProgress * 1.5)); // Grid fades faster
   const ctaZoomFade = Math.max(0, 1 - (zoomProgress * 2)); // CTA fades out by 95%
 
-  // Image reveal: starts at 93%, fully visible at 100%
-  const imageRevealProgress = progress > 0.93 
-    ? Math.min(1, (progress - 0.93) / 0.07) 
-    : 0;
   
   // Typography states
   const showRoofComplete = progress >= 0.75 && progress < 0.85;
@@ -99,8 +95,6 @@ const RoofBuildSection: React.FC = () => {
     >
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
-        {/* Image reveal overlay - appears as user "enters" the door */}
-        <DoorwayRevealImage progress={imageRevealProgress} />
         
         <div style={{ opacity: gridFadeOut, transition: 'opacity 0.15s ease-out' }}>
           <GridBackground />
