@@ -16,8 +16,7 @@ const YardSign: React.FC<YardSignProps> = ({ progress }) => {
   // Animation timing
   const dropStart = 0.78;
   const dropEnd = 0.82;
-  const fadeStart = 0.86;
-  const fadeEnd = 0.88;
+  // No fade out - sign stays visible until zoom takes over
 
   // Calculate drop animation (enters from above)
   let dropProgress = 0;
@@ -36,13 +35,9 @@ const YardSign: React.FC<YardSignProps> = ({ progress }) => {
     entryOpacity = 0.4 + 0.6 * easedDrop;
   }
 
-  // Calculate fade out
+  // No fade out - just hide before drop starts
   let opacity = entryOpacity;
   if (progress < dropStart) {
-    opacity = 0;
-  } else if (progress >= fadeStart && progress < fadeEnd) {
-    opacity = 1 - (progress - fadeStart) / (fadeEnd - fadeStart);
-  } else if (progress >= fadeEnd) {
     opacity = 0;
   }
 
@@ -83,7 +78,7 @@ const YardSign: React.FC<YardSignProps> = ({ progress }) => {
       />
       
       {/* Logo container */}
-      <foreignObject x="4" y="-34" width="64" height="36">
+      <foreignObject x="2" y="-36" width="68" height="40">
         <div 
           style={{ 
             width: '100%', 
@@ -97,10 +92,10 @@ const YardSign: React.FC<YardSignProps> = ({ progress }) => {
             src={poseidonLogo} 
             alt="Poseidon Roofing" 
             style={{ 
-              maxWidth: '56px', 
-              maxHeight: '30px', 
+              maxWidth: '64px', 
+              maxHeight: '38px', 
               objectFit: 'contain' 
-            }} 
+            }}
           />
         </div>
       </foreignObject>
