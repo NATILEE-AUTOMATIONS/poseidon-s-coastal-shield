@@ -55,18 +55,16 @@ const RoofBuildSection: React.FC = () => {
     ? Math.min(1, (progress - 0.88) / 0.12) // 12% scroll window for smoother motion
     : 0;
   
-  // Smoother easing - easeInOutQuart for natural acceleration/deceleration
-  const easeInOutQuart = (x: number) => x < 0.5 
-    ? 8 * x * x * x * x 
-    : 1 - Math.pow(-2 * x + 2, 4) / 2;
-  const easedZoom = easeInOutQuart(zoomProgress);
+  // easeOutQuart - accelerates through the door (momentum feeling)
+  const easeOutQuart = (x: number) => 1 - Math.pow(1 - x, 4);
+  const easedZoom = easeOutQuart(zoomProgress);
   
-  // Scale: 1x → 12x (enough to make door fill and pass through screen)
-  const zoomScale = 1 + (easedZoom * 11);
+  // Scale: 1x → 20x (pass completely through the door)
+  const zoomScale = 1 + (easedZoom * 19);
   
-  // Fade out elements during zoom - slower, more natural
-  const gridFadeOut = Math.max(0, 1 - (zoomProgress * 1.5)); // Grid fades more gradually
-  const houseFadeOut = Math.max(0, 1 - (easedZoom * 0.8)); // House stays visible longer
+  // Fade out elements during zoom - house gone before zoom completes
+  const gridFadeOut = Math.max(0, 1 - (zoomProgress * 1.5)); // Grid fades gradually
+  const houseFadeOut = Math.max(0, 1 - (easedZoom * 1.4)); // House fully gone by 70% of zoom
   const ctaZoomFade = Math.max(0, 1 - (zoomProgress * 2.5)); // CTA fades smoothly
 
 
@@ -111,9 +109,9 @@ const RoofBuildSection: React.FC = () => {
         className="fixed inset-0 pointer-events-none z-30"
         style={{
           background: `radial-gradient(circle at 50% 45%, 
-            hsl(35 95% 65% / ${easedZoom * 0.85}), 
-            hsl(30 90% 55% / ${easedZoom * 0.65}) 35%,
-            hsl(25 80% 40% / ${easedZoom * 0.45}) 65%,
+            hsl(35 95% 70% / ${easedZoom * 0.95}), 
+            hsl(30 90% 60% / ${easedZoom * 0.85}) 30%,
+            hsl(25 80% 45% / ${easedZoom * 0.7}) 60%,
             transparent 100%)`,
           opacity: easedZoom > 0.02 ? 1 : 0,
           willChange: 'background',
