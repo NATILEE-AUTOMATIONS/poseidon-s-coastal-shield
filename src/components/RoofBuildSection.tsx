@@ -327,25 +327,6 @@ const RoofBuildSection: React.FC = () => {
           </div>
 
 
-          {/* Progress bar - minimal and elegant */}
-          <div 
-            className="absolute bottom-12 left-1/2 -translate-x-1/2 w-32 h-0.5 bg-muted/30 rounded-full overflow-hidden"
-            style={{
-              opacity: progress > 0.95 ? 0 : 1,
-              transition: 'opacity 0.5s ease-out',
-            }}
-          >
-            <div 
-              className="h-full rounded-full"
-              style={{
-                width: `${progress * 100}%`,
-                background: 'linear-gradient(90deg, hsl(168 80% 50%), hsl(32 80% 55%))',
-                boxShadow: '0 0 12px hsl(168 80% 50% / 0.6)',
-                transition: 'width 0.1s ease-out',
-              }}
-            />
-          </div>
-
         </div>
 
 
@@ -381,6 +362,25 @@ const RoofBuildSection: React.FC = () => {
               <span className="btn-text">Free Assessment</span>
               <ArrowRight className="btn-icon ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Button>
+          </div>
+
+          {/* Progress bar - below the button */}
+          <div 
+            className="mt-4 w-32 h-0.5 bg-muted/30 rounded-full overflow-hidden"
+            style={{
+              opacity: progress > 0.75 ? 0 : 1,
+              transition: 'opacity 0.5s ease-out',
+            }}
+          >
+            <div 
+              className="h-full rounded-full"
+              style={{
+                width: `${Math.min(progress / 0.75, 1) * 100}%`,
+                background: 'linear-gradient(90deg, hsl(168 80% 50%), hsl(32 80% 55%))',
+                boxShadow: '0 0 12px hsl(168 80% 50% / 0.6)',
+                transition: 'width 0.1s ease-out',
+              }}
+            />
           </div>
         </div>
       </div>
