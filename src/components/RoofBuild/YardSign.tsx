@@ -5,19 +5,11 @@ interface YardSignProps {
   progress: number;
 }
 
-// easeOutBounce for satisfying drop animation
-const easeOutBounce = (x: number): number => {
-  const n1 = 7.5625;
-  const d1 = 2.75;
-  if (x < 1 / d1) {
-    return n1 * x * x;
-  } else if (x < 2 / d1) {
-    return n1 * (x -= 1.5 / d1) * x + 0.75;
-  } else if (x < 2.5 / d1) {
-    return n1 * (x -= 2.25 / d1) * x + 0.9375;
-  } else {
-    return n1 * (x -= 2.625 / d1) * x + 0.984375;
-  }
+// easeInOutQuad for smooth drop animation (same as roofing materials)
+const easeInOutQuad = (x: number): number => {
+  return x < 0.5 
+    ? 2 * x * x 
+    : 1 - Math.pow(-2 * x + 2, 2) / 2;
 };
 
 const YardSign: React.FC<YardSignProps> = ({ progress }) => {
@@ -35,11 +27,17 @@ const YardSign: React.FC<YardSignProps> = ({ progress }) => {
     dropProgress = 1;
   }
 
-  const easedDrop = easeOutBounce(dropProgress);
-  const translateY = -80 * (1 - easedDrop); // Drops from -80 to 0
+  const easedDrop = easeInOutQuad(dropProgress);
+  const translateY = -150 * (1 - easedDrop); // Drops from -150 to 0
+
+  // Calculate entry opacity (fades in from 0.4 to 1 like materials)
+  let entryOpacity = 1;
+  if (dropProgress < 1) {
+    entryOpacity = 0.4 + 0.6 * easedDrop;
+  }
 
   // Calculate fade out
-  let opacity = 1;
+  let opacity = entryOpacity;
   if (progress < dropStart) {
     opacity = 0;
   } else if (progress >= fadeStart && progress < fadeEnd) {
@@ -60,10 +58,10 @@ const YardSign: React.FC<YardSignProps> = ({ progress }) => {
     >
       {/* Sign post */}
       <rect
-        x="22"
+        x="32"
         y="0"
-        width="4"
-        height="45"
+        width="6"
+        height="60"
         fill="hsl(160 25% 20%)"
         stroke="hsl(160 30% 30%)"
         strokeWidth="0.5"
@@ -72,20 +70,20 @@ const YardSign: React.FC<YardSignProps> = ({ progress }) => {
       {/* Sign board background */}
       <rect
         x="0"
-        y="-25"
-        width="48"
-        height="28"
-        rx="2"
+        y="-38"
+        width="72"
+        height="42"
+        rx="3"
         fill="hsl(160 30% 8%)"
         stroke="hsl(174 62% 38%)"
-        strokeWidth="1"
+        strokeWidth="1.5"
         style={{
-          filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))',
+          filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.5))',
         }}
       />
       
       {/* Logo container */}
-      <foreignObject x="4" y="-22" width="40" height="22">
+      <foreignObject x="4" y="-34" width="64" height="36">
         <div 
           style={{ 
             width: '100%', 
@@ -99,8 +97,8 @@ const YardSign: React.FC<YardSignProps> = ({ progress }) => {
             src={poseidonLogo} 
             alt="Poseidon Roofing" 
             style={{ 
-              maxWidth: '36px', 
-              maxHeight: '18px', 
+              maxWidth: '56px', 
+              maxHeight: '30px', 
               objectFit: 'contain' 
             }} 
           />
