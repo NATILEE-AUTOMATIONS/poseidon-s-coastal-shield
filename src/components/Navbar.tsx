@@ -1,9 +1,22 @@
 import { ArrowRight } from "lucide-react";
 import poseidonLogo from "@/assets/poseidon-logo.png";
+import { useScrollContext } from "@/context/ScrollContext";
 
 const Navbar = () => {
+  const { zoomProgress } = useScrollContext();
+  
+  // Fade out navbar during zoom (starts at 0%, fully gone by 30% of zoom)
+  const navbarOpacity = Math.max(0, 1 - (zoomProgress * 3.5));
+  
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 glass-nav border-b border-teal/20">
+    <nav 
+      className="fixed top-0 left-0 right-0 z-50 glass-nav border-b border-teal/20"
+      style={{
+        opacity: navbarOpacity,
+        pointerEvents: navbarOpacity < 0.1 ? 'none' : 'auto',
+        transition: 'opacity 0.15s ease-out',
+      }}
+    >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-5 lg:py-6">
         <div className="relative flex items-center justify-between lg:justify-center">
           {/* Logo - Left aligned */}
