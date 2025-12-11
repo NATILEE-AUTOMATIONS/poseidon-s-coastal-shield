@@ -16,7 +16,7 @@ import {
   materialInfo,
 } from './RoofBuild/RoofLayers';
 import MobileStepCard from './RoofBuild/MobileStepCard';
-import DoorwayCrossing from './RoofBuild/DoorwayCrossing';
+
 
 import { Button } from './ui/button';
 import { ArrowRight } from 'lucide-react';
@@ -57,10 +57,6 @@ const RoofBuildSection: React.FC = () => {
   const gridFadeOut = Math.max(0, 1 - (zoomProgress * 1.5)); // Grid fades faster
   const ctaZoomFade = Math.max(0, 1 - (zoomProgress * 2)); // CTA fades out by 95%
 
-  // Door crossing: starts at 93%, fully immersed at 100%
-  const doorCrossingProgress = progress > 0.93 
-    ? Math.min(1, (progress - 0.93) / 0.07) 
-    : 0;
 
   
   // Typography states
@@ -97,8 +93,6 @@ const RoofBuildSection: React.FC = () => {
       className="relative"
       style={{ height: '400vh' }}
     >
-      {/* Door crossing overlay - user enters through the door */}
-      <DoorwayCrossing progress={doorCrossingProgress} zoomProgress={zoomProgress} />
 
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
