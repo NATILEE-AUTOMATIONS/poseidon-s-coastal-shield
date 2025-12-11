@@ -120,21 +120,17 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0 }) =>
             y="195"
             width="45"
             height="70"
-            fill={doorAngle > 0 ? "url(#doorWood)" : "hsl(168 20% 10%)"}
-            stroke={doorAngle > 0 ? "hsl(25 45% 40%)" : "hsl(168 60% 45%)"}
+            fill="url(#doorWood)"
+            stroke="hsl(25 45% 40%)"
             strokeWidth="1.5"
             rx="2"
           />
-          {/* Door panels - only show when door is animated */}
-          {doorAngle > 0 && (
-            <>
-              <rect x="182" y="200" width="16" height="25" fill="none" stroke="hsl(25 35% 35%)" strokeWidth="1" rx="1" />
-              <rect x="202" y="200" width="16" height="25" fill="none" stroke="hsl(25 35% 35%)" strokeWidth="1" rx="1" />
-              <rect x="182" y="232" width="16" height="28" fill="none" stroke="hsl(25 35% 35%)" strokeWidth="1" rx="1" />
-              <rect x="202" y="232" width="16" height="28" fill="none" stroke="hsl(25 35% 35%)" strokeWidth="1" rx="1" />
-            </>
-          )}
-          <circle cx="214.5" cy={doorAngle > 0 ? 235 : 230} r={doorAngle > 0 ? 2.5 : 2} fill="hsl(32 80% 50%)" />
+          {/* Door panels - always visible */}
+          <rect x="182" y="200" width="16" height="25" fill="none" stroke="hsl(25 35% 35%)" strokeWidth="1" rx="1" />
+          <rect x="202" y="200" width="16" height="25" fill="none" stroke="hsl(25 35% 35%)" strokeWidth="1" rx="1" />
+          <rect x="182" y="232" width="16" height="28" fill="none" stroke="hsl(25 35% 35%)" strokeWidth="1" rx="1" />
+          <rect x="202" y="232" width="16" height="28" fill="none" stroke="hsl(25 35% 35%)" strokeWidth="1" rx="1" />
+          <circle cx="214.5" cy="230" r="2" fill="hsl(32 80% 50%)" />
         </g>
         
         {/* ===== LEFT WINDOW (Premium 6-pane colonial) ===== */}
