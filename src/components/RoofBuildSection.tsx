@@ -50,12 +50,22 @@ const RoofBuildSection: React.FC = () => {
     ? Math.min(75, ((progress - 0.78) / 0.14) * 75) 
     : 0;
 
-  // No zoom - just track progress for door crossing
-  const zoomProgress = progress > 0.90 
-    ? Math.min(1, (progress - 0.90) / 0.10) 
+  // Door zoom: starts at 92% (when door is fully open), completes at 100%
+  const zoomProgress = progress > 0.92 
+    ? Math.min(1, (progress - 0.92) / 0.08) 
     : 0;
-  const gridFadeOut = Math.max(0, 1 - (zoomProgress * 1.5)); // Grid fades faster
-  const ctaZoomFade = Math.max(0, 1 - (zoomProgress * 2)); // CTA fades out by 95%
+  
+  // Smooth easing for natural "entering" feel
+  const easeOutExpo = (x: number) => x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
+  const easedZoom = easeOutExpo(zoomProgress);
+  
+  // Scale: 1x → 12x (enough to make door fill and pass through screen)
+  const zoomScale = 1 + (easedZoom * 11);
+  
+  // Fade out elements during zoom
+  const gridFadeOut = Math.max(0, 1 - (zoomProgress * 2)); // Grid fades quickly
+  const houseFadeOut = Math.max(0, 1 - (easedZoom * 1.2)); // House fades as we enter
+  const ctaZoomFade = Math.max(0, 1 - (zoomProgress * 3)); // CTA fades out fast
 
 
   
@@ -94,6 +104,20 @@ const RoofBuildSection: React.FC = () => {
       style={{ height: '400vh' }}
     >
 
+      {/* Warm light overlay - fills screen as user enters through door */}
+      <div 
+        className="fixed inset-0 pointer-events-none z-30"
+        style={{
+          background: `radial-gradient(circle at 50% 45%, 
+            hsl(32 90% 60% / ${easedZoom * 0.9}), 
+            hsl(28 85% 50% / ${easedZoom * 0.7}) 30%,
+            hsl(25 80% 35% / ${easedZoom * 0.5}) 60%,
+            transparent 100%)`,
+          opacity: zoomProgress > 0 ? 1 : 0,
+          transition: 'opacity 0.2s ease-out',
+        }}
+      />
+
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
         <div style={{ opacity: gridFadeOut, transition: 'opacity 0.15s ease-out' }}>
@@ -109,6 +133,10 @@ const RoofBuildSection: React.FC = () => {
             <div 
               className="flex justify-center"
               style={{
+                transform: `scale(${zoomScale})`,
+                transformOrigin: '50% 75%', // Door is at ~75% vertical position
+                opacity: houseFadeOut,
+                transition: 'transform 0.05s linear, opacity 0.1s ease-out',
               }}
             >
               <div className="w-full max-w-2xl">
