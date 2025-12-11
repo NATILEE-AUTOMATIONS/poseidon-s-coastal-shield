@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import RoofBuildSection from "@/components/RoofBuildSection";
+import DoorRevealSection from "@/components/DoorReveal/DoorRevealSection";
 
 const Index = () => {
   return (
@@ -8,6 +9,7 @@ const Index = () => {
       <Navbar />
       <HeroSection />
       <RoofBuildSection />
+      <DoorRevealSection />
     </main>
   );
 };

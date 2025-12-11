@@ -818,3 +818,40 @@
 .animate-roof-glow {
   animation: roof-glow 2s ease-in-out infinite;
 }
+
+/* Door Reveal Section Animations */
+@keyframes warm-glow-pulse {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scaleY(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleY(1.05);
+  }
+}
+
+.animate-warm-glow-pulse {
+  animation: warm-glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes light-particle-float {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.8;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-60px) translateX(10px);
+    opacity: 0;
+  }
+}
+
+.animate-light-particle-float {
+  animation: light-particle-float 3s ease-out infinite;
+}
