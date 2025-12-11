@@ -51,6 +51,7 @@ const RoofBuildSection: React.FC = () => {
   // Typography states
   const showRoofComplete = progress >= 0.75 && progress < 0.85;
   const showWelcomeHome = progress >= 0.88;
+  const showCTA = progress >= 0.80; // CTA appears earlier than welcome text
 
   // Calculate which materials are "locked in"
   const getLockedMaterials = () => {
@@ -258,29 +259,39 @@ const RoofBuildSection: React.FC = () => {
         </div>
 
 
-        {/* "Welcome home" message and CTA - final state */}
+        {/* "Welcome home" message and CTA - CTA appears earlier */}
         <div 
-          className="absolute bottom-0 left-0 right-0 flex flex-col items-center text-center z-20 transition-all duration-700 ease-out py-6"
+          className="absolute bottom-0 left-0 right-0 flex flex-col items-center text-center z-20 py-6"
           style={{
-            opacity: showWelcomeHome ? 1 : 0,
-            transform: `translateY(${showWelcomeHome ? 0 : 30}px)`,
-            pointerEvents: showWelcomeHome ? 'auto' : 'none',
+            opacity: showCTA ? 1 : 0,
+            pointerEvents: showCTA ? 'auto' : 'none',
             background: 'linear-gradient(to top, hsl(160 30% 6% / 0.95) 0%, hsl(160 30% 6% / 0.8) 50%, transparent 100%)',
+            transition: 'opacity 0.7s ease-out',
           }}
         >
           <h2 
-            className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6"
+            className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 transition-all duration-700 ease-out"
             style={{
               color: 'hsl(32 85% 55%)',
               textShadow: '0 0 40px hsl(32 90% 50% / 0.7), 0 0 80px hsl(32 90% 50% / 0.4)',
+              opacity: showWelcomeHome ? 1 : 0,
+              transform: `translateY(${showWelcomeHome ? 0 : 20}px)`,
             }}
           >
             Welcome home.
           </h2>
-          <Button className="btn-neon group">
-            <span className="btn-text">Free Assessment</span>
-            <ArrowRight className="btn-icon ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-          </Button>
+          <div 
+            className="transition-all duration-500 ease-out"
+            style={{
+              opacity: showCTA ? 1 : 0,
+              transform: `translateY(${showCTA ? 0 : 20}px)`,
+            }}
+          >
+            <Button className="btn-neon group">
+              <span className="btn-text">Free Assessment</span>
+              <ArrowRight className="btn-icon ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </div>
         </div>
       </div>
     </section>
