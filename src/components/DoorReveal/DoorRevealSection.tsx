@@ -18,7 +18,7 @@ const DoorRevealSection: React.FC = () => {
 
   // Typography visibility
   const showWelcomeHome = progress >= 0.60;
-  const showCTA = progress >= 0.60;
+  const showCTA = progress >= 0.20;
 
   return (
     <section
