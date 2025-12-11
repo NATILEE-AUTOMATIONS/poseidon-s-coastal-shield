@@ -50,12 +50,10 @@ const RoofBuildSection: React.FC = () => {
     ? Math.min(75, ((progress - 0.78) / 0.14) * 75) 
     : 0;
 
-  // Zoom into doorway: starts at 90%, max at 100%
+  // No zoom - just track progress for door crossing
   const zoomProgress = progress > 0.90 
     ? Math.min(1, (progress - 0.90) / 0.10) 
     : 0;
-  const zoomScale = 1 + (zoomProgress * 4); // 1x → 5x (more dramatic)
-  const zoomTranslateY = zoomProgress * -180; // Move up to center door
   const gridFadeOut = Math.max(0, 1 - (zoomProgress * 1.5)); // Grid fades faster
   const ctaZoomFade = Math.max(0, 1 - (zoomProgress * 2)); // CTA fades out by 95%
 
@@ -117,9 +115,6 @@ const RoofBuildSection: React.FC = () => {
             <div 
               className="flex justify-center"
               style={{
-                transform: `scale(${zoomScale}) translateY(${zoomTranslateY}px)`,
-                transformOrigin: 'center 82%',
-                transition: 'transform 0.12s ease-out',
               }}
             >
               <div className="w-full max-w-2xl">
