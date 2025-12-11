@@ -1,4 +1,5 @@
 import React from 'react';
+import DoorwayGrid from './DoorwayGrid';
 
 interface HouseSVGProps {
   className?: string;
@@ -81,18 +82,8 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
           style={{ filter: 'drop-shadow(0 0 10px hsl(168 80% 45% / 0.5))' }}
         />
         
-        {/* Interior warm glow visible through doorway */}
-        <rect
-          x="177.5"
-          y="195"
-          width="45"
-          height="70"
-          fill="url(#interiorGlow)"
-          filter="url(#interiorGlowFilter)"
-          style={{
-            opacity: lightIntensity * 0.9,
-          }}
-        />
+        {/* Doorway portal grid - replaces flat orange glow */}
+        <DoorwayGrid lightIntensity={lightIntensity} lightBoost={lightBoost} />
         
         
         {/* Animated door with 3D perspective rotation */}
