@@ -15,40 +15,6 @@ const DoorwayGrid: React.FC<DoorwayGridProps> = ({ lightIntensity, lightBoost = 
   const doorBottom = 265;
   const doorWidth = doorRight - doorLeft;
   const doorHeight = doorBottom - doorTop;
-  const doorCenterX = doorLeft + doorWidth / 2;
-  
-  // Vanishing point - 18% from top of door
-  const vanishingY = doorTop + doorHeight * 0.18;
-  
-  // Generate horizontal floor lines with exponential spacing
-  const horizontalLines = Array.from({ length: 12 }, (_, i) => {
-    const t = (i + 1) / 12;
-    const y = vanishingY + Math.pow(t, 1.6) * (doorBottom - vanishingY);
-    const progress = i / 11;
-    const opacity = 0.15 + progress * 0.45;
-    const strokeWidth = 0.3 + progress * 1.2;
-    // Lines get wider as they come forward
-    const halfWidth = (doorWidth * 0.1) + (doorWidth * 0.4 * Math.pow(progress, 0.8));
-    return { y, opacity, strokeWidth, halfWidth };
-  });
-  
-  // Generate converging vertical lines from vanishing point
-  const verticalLines = Array.from({ length: 9 }, (_, i) => {
-    const spread = (i - 4) / 4; // -1 to 1
-    const endX = doorCenterX + spread * doorWidth * 0.45;
-    const opacity = 0.12 + (1 - Math.abs(spread)) * 0.25;
-    return { endX, opacity };
-  });
-  
-  // Side wall diagonal lines
-  const wallLines = [
-    // Left wall
-    { x1: doorLeft + 2, y1: doorBottom - 5, x2: doorLeft + 8, y2: vanishingY + 15, opacity: 0.2 },
-    { x1: doorLeft + 5, y1: doorBottom - 2, x2: doorLeft + 12, y2: vanishingY + 25, opacity: 0.15 },
-    // Right wall
-    { x1: doorRight - 2, y1: doorBottom - 5, x2: doorRight - 8, y2: vanishingY + 15, opacity: 0.2 },
-    { x1: doorRight - 5, y1: doorBottom - 2, x2: doorRight - 12, y2: vanishingY + 25, opacity: 0.15 },
-  ];
   
   return (
     <g className="doorway-grid">
@@ -57,136 +23,178 @@ const DoorwayGrid: React.FC<DoorwayGridProps> = ({ lightIntensity, lightBoost = 
           <rect x={doorLeft} y={doorTop} width={doorWidth} height={doorHeight} />
         </clipPath>
         
-        {/* Deep warm radial gradient - glowing center */}
-        <radialGradient id="portalAmbient" cx="50%" cy="25%" r="80%">
-          <stop offset="0%" stopColor="hsl(32 60% 22%)" stopOpacity="1" />
-          <stop offset="50%" stopColor="hsl(28 50% 12%)" stopOpacity="1" />
-          <stop offset="100%" stopColor="hsl(25 40% 5%)" stopOpacity="1" />
-        </radialGradient>
+        {/* Deep warm background gradient */}
+        <linearGradient id="portalBg" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(32 50% 18%)" />
+          <stop offset="50%" stopColor="hsl(28 45% 10%)" />
+          <stop offset="100%" stopColor="hsl(25 40% 5%)" />
+        </linearGradient>
         
-        {/* Inner glow bloom */}
-        <radialGradient id="portalGlow" cx="50%" cy="20%" r="60%">
-          <stop offset="0%" stopColor="hsl(35 70% 45%)" stopOpacity="0.5" />
-          <stop offset="40%" stopColor="hsl(32 60% 30%)" stopOpacity="0.2" />
+        {/* Radial glow from horizon */}
+        <radialGradient id="portalGlow" cx="50%" cy="0%" r="100%">
+          <stop offset="0%" stopColor="hsl(35 75% 50%)" stopOpacity="0.6" />
+          <stop offset="30%" stopColor="hsl(32 65% 35%)" stopOpacity="0.3" />
           <stop offset="100%" stopColor="transparent" stopOpacity="0" />
         </radialGradient>
-        
-        {/* Edge vignette */}
-        <radialGradient id="portalVignette" cx="50%" cy="40%" r="65%">
-          <stop offset="0%" stopColor="transparent" stopOpacity="0" />
-          <stop offset="60%" stopColor="hsl(25 30% 3%)" stopOpacity="0.4" />
-          <stop offset="100%" stopColor="hsl(25 30% 2%)" stopOpacity="0.85" />
-        </radialGradient>
-        
-        {/* Line glow filter */}
-        <filter id="lineGlow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="1" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
       </defs>
       
-      <g clipPath="url(#doorwayClip)">
-        {/* Deep warm background */}
-        <rect
-          x={doorLeft}
-          y={doorTop}
-          width={doorWidth}
-          height={doorHeight}
-          fill="url(#portalAmbient)"
-          opacity={totalIntensity}
-        />
-        
-        {/* Inner glow bloom near vanishing point */}
-        <rect
-          x={doorLeft}
-          y={doorTop}
-          width={doorWidth}
-          height={doorHeight}
-          fill="url(#portalGlow)"
-          opacity={totalIntensity * 0.8}
-        />
-        
-        {/* Converging vertical lines */}
-        {verticalLines.map((line, i) => (
-          <line
-            key={`v-${i}`}
-            x1={doorCenterX}
-            y1={vanishingY}
-            x2={line.endX}
-            y2={doorBottom}
-            stroke="hsl(32 75% 50%)"
-            strokeWidth={0.6}
-            opacity={line.opacity * totalIntensity}
-            filter="url(#lineGlow)"
+      {/* Deep warm background */}
+      <rect
+        x={doorLeft}
+        y={doorTop}
+        width={doorWidth}
+        height={doorHeight}
+        fill="url(#portalBg)"
+        opacity={totalIntensity}
+        clipPath="url(#doorwayClip)"
+      />
+      
+      {/* Radial glow from back */}
+      <rect
+        x={doorLeft}
+        y={doorTop}
+        width={doorWidth}
+        height={doorHeight}
+        fill="url(#portalGlow)"
+        opacity={totalIntensity * 0.8}
+        clipPath="url(#doorwayClip)"
+      />
+      
+      {/* CSS Perspective Grid via foreignObject */}
+      <foreignObject
+        x={doorLeft}
+        y={doorTop}
+        width={doorWidth}
+        height={doorHeight}
+        clipPath="url(#doorwayClip)"
+      >
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            overflow: 'hidden',
+            perspective: '120px',
+            perspectiveOrigin: '50% 0%',
+          }}
+        >
+          {/* Grid plane receding DOWN into the home */}
+          <div
+            style={{
+              position: 'absolute',
+              left: '-100%',
+              top: '0',
+              width: '300%',
+              height: '400%',
+              transformOrigin: '50% 0%',
+              transform: 'rotateX(85deg)',
+              background: `
+                repeating-linear-gradient(
+                  90deg,
+                  transparent 0px,
+                  transparent 6px,
+                  hsl(32 75% 50% / ${0.35 * totalIntensity}) 6px,
+                  hsl(32 75% 50% / ${0.35 * totalIntensity}) 7px
+                ),
+                repeating-linear-gradient(
+                  0deg,
+                  transparent 0px,
+                  transparent 6px,
+                  hsl(32 70% 45% / ${0.25 * totalIntensity}) 6px,
+                  hsl(32 70% 45% / ${0.25 * totalIntensity}) 7px
+                )
+              `,
+            }}
           />
-        ))}
-        
-        {/* Horizontal floor lines */}
-        {horizontalLines.map((line, i) => (
-          <line
-            key={`h-${i}`}
-            x1={doorCenterX - line.halfWidth}
-            y1={line.y}
-            x2={doorCenterX + line.halfWidth}
-            y2={line.y}
-            stroke="hsl(32 70% 48%)"
-            strokeWidth={line.strokeWidth}
-            opacity={line.opacity * totalIntensity}
-            strokeLinecap="round"
-            filter="url(#lineGlow)"
+          
+          {/* Horizon glow line at the back */}
+          <div
+            style={{
+              position: 'absolute',
+              left: '10%',
+              right: '10%',
+              top: '8%',
+              height: '2px',
+              background: `linear-gradient(90deg, transparent, hsl(35 90% 60%), transparent)`,
+              boxShadow: `
+                0 0 8px 2px hsl(35 90% 55% / 0.8),
+                0 0 16px 4px hsl(32 80% 50% / 0.5),
+                0 0 32px 8px hsl(32 70% 45% / 0.3)
+              `,
+              opacity: totalIntensity * (0.7 + lightBoost * 0.3),
+            }}
           />
-        ))}
-        
-        {/* Side wall hints */}
-        {wallLines.map((line, i) => (
-          <line
-            key={`w-${i}`}
-            x1={line.x1}
-            y1={line.y1}
-            x2={line.x2}
-            y2={line.y2}
-            stroke="hsl(32 65% 40%)"
-            strokeWidth={0.5}
-            opacity={line.opacity * totalIntensity}
-            filter="url(#lineGlow)"
+          
+          {/* Secondary bloom */}
+          <div
+            style={{
+              position: 'absolute',
+              left: '20%',
+              right: '20%',
+              top: '6%',
+              height: '12px',
+              background: `radial-gradient(ellipse at center, hsl(35 80% 55% / 0.4), transparent)`,
+              filter: 'blur(4px)',
+              opacity: totalIntensity * 0.6,
+            }}
           />
-        ))}
-        
-        {/* Central vanishing point glow */}
-        <ellipse
-          cx={doorCenterX}
-          cy={vanishingY + 5}
-          rx={doorWidth * 0.25}
-          ry={8}
-          fill="hsl(35 80% 55%)"
-          opacity={totalIntensity * (0.35 + lightBoost * 0.3)}
-          style={{ filter: 'blur(3px)' }}
-        />
-        
-        {/* Secondary glow ring */}
-        <ellipse
-          cx={doorCenterX}
-          cy={vanishingY + 8}
-          rx={doorWidth * 0.35}
-          ry={12}
-          fill="hsl(32 70% 45%)"
-          opacity={totalIntensity * 0.2}
-          style={{ filter: 'blur(5px)' }}
-        />
-        
-        {/* Edge vignette overlay */}
-        <rect
-          x={doorLeft}
-          y={doorTop}
-          width={doorWidth}
-          height={doorHeight}
-          fill="url(#portalVignette)"
-          opacity={totalIntensity * 0.9}
-        />
-      </g>
+        </div>
+      </foreignObject>
+      
+      {/* Edge vignette for depth */}
+      <rect
+        x={doorLeft}
+        y={doorTop}
+        width={doorWidth}
+        height={doorHeight}
+        fill="transparent"
+        clipPath="url(#doorwayClip)"
+        style={{
+          boxShadow: 'inset 0 0 15px 8px hsl(25 40% 3%)',
+        }}
+      />
+      
+      {/* Corner vignettes using rects */}
+      <rect
+        x={doorLeft}
+        y={doorTop}
+        width={doorWidth * 0.3}
+        height={doorHeight}
+        fill="url(#leftVignette)"
+        opacity={totalIntensity * 0.7}
+        clipPath="url(#doorwayClip)"
+      />
+      <defs>
+        <linearGradient id="leftVignette" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="hsl(25 30% 3%)" stopOpacity="0.9" />
+          <stop offset="100%" stopColor="transparent" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id="rightVignette" x1="100%" y1="0%" x2="0%" y2="0%">
+          <stop offset="0%" stopColor="hsl(25 30% 3%)" stopOpacity="0.9" />
+          <stop offset="100%" stopColor="transparent" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id="bottomVignette" x1="0%" y1="100%" x2="0%" y2="0%">
+          <stop offset="0%" stopColor="hsl(25 30% 3%)" stopOpacity="0.8" />
+          <stop offset="100%" stopColor="transparent" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <rect
+        x={doorRight - doorWidth * 0.3}
+        y={doorTop}
+        width={doorWidth * 0.3}
+        height={doorHeight}
+        fill="url(#rightVignette)"
+        opacity={totalIntensity * 0.7}
+        clipPath="url(#doorwayClip)"
+      />
+      <rect
+        x={doorLeft}
+        y={doorBottom - doorHeight * 0.25}
+        width={doorWidth}
+        height={doorHeight * 0.25}
+        fill="url(#bottomVignette)"
+        opacity={totalIntensity * 0.5}
+        clipPath="url(#doorwayClip)"
+      />
     </g>
   );
 };
