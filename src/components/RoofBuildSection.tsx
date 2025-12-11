@@ -75,12 +75,12 @@ const RoofBuildSection: React.FC = () => {
   const showCTA = progress >= 0.80; // CTA appears earlier than welcome text
 
   // Calculate staggered exit progress for label pairs (desktop only)
-  // Door opens from 0.78 to 0.92, labels exit in 5 pairs during this window
+  // Labels exit from 0.75 to 0.85 (before zoom starts at 0.88)
   const getLabelExitProgress = (pairIndex: number): number => {
-    const doorStart = 0.78;
-    const doorEnd = 0.92;
-    const doorRange = doorEnd - doorStart; // 0.14
-    const pairWindow = doorRange / 5; // ~0.028 per pair
+    const doorStart = 0.75;
+    const doorEnd = 0.85;
+    const doorRange = doorEnd - doorStart; // 0.10
+    const pairWindow = doorRange / 5; // 0.02 per pair
     
     const pairStart = doorStart + (pairIndex * pairWindow);
     const pairEnd = pairStart + pairWindow;
@@ -223,7 +223,7 @@ const RoofBuildSection: React.FC = () => {
               <div className="space-y-5">
                 {materialInfo.slice(0, 5).map((material, index) => {
                   const exitProgress = getLabelExitProgress(index);
-                  const isExiting = progress >= 0.78;
+                  const isExiting = progress >= 0.75;
                   
                   // During exit: slide left and fade out
                   // Before exit: normal lock-in animation
@@ -277,7 +277,7 @@ const RoofBuildSection: React.FC = () => {
               <div className="space-y-5">
                 {materialInfo.slice(5).map((material, index) => {
                   const exitProgress = getLabelExitProgress(index); // Same pair index as left side
-                  const isExiting = progress >= 0.78;
+                  const isExiting = progress >= 0.75;
                   
                   // During exit: slide right and fade out (positive X)
                   // Before exit: normal lock-in animation
