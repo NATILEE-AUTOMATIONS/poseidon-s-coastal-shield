@@ -367,63 +367,6 @@ const RoofBuildSection: React.FC = () => {
           </div>
         )}
 
-        {/* "Welcome home" message and CTA - smooth entrance/exit */}
-        {(() => {
-          // Entrance: 80-82% (fade up), Exit: 84-86% (fade down fast)
-          const ctaEnterStart = 0.80;
-          const ctaEnterEnd = 0.82;
-          const ctaExitStart = 0.84;
-          const ctaExitEnd = 0.86;
-          
-          let ctaOpacity = 0;
-          let ctaTranslateY = 30;
-          
-          if (progress >= ctaEnterStart && progress < ctaEnterEnd) {
-            // Entrance animation
-            const enterProgress = (progress - ctaEnterStart) / (ctaEnterEnd - ctaEnterStart);
-            const eased = 1 - Math.pow(1 - enterProgress, 3); // easeOutCubic
-            ctaOpacity = eased;
-            ctaTranslateY = 30 * (1 - eased);
-          } else if (progress >= ctaEnterEnd && progress < ctaExitStart) {
-            // Fully visible
-            ctaOpacity = 1;
-            ctaTranslateY = 0;
-          } else if (progress >= ctaExitStart && progress < ctaExitEnd) {
-            // Exit animation - fade down and scale slightly
-            const exitProgress = (progress - ctaExitStart) / (ctaExitEnd - ctaExitStart);
-            const eased = exitProgress * exitProgress; // easeInQuad for snappy exit
-            ctaOpacity = 1 - eased;
-            ctaTranslateY = -20 * eased;
-          }
-          
-          if (progress < ctaEnterStart || progress >= ctaExitEnd) return null;
-          
-          return (
-            <div 
-              className="absolute bottom-12 left-0 right-0 flex flex-col items-center text-center z-20 py-6"
-              style={{
-                opacity: ctaOpacity,
-                transform: `translateY(${ctaTranslateY}px)`,
-                background: 'linear-gradient(to top, hsl(160 30% 6% / 0.95) 0%, hsl(160 30% 6% / 0.8) 50%, transparent 100%)',
-                pointerEvents: ctaOpacity > 0.5 ? 'auto' : 'none',
-              }}
-            >
-              <h2 
-                className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6"
-                style={{
-                  color: 'hsl(32 85% 55%)',
-                  textShadow: '0 0 40px hsl(32 90% 50% / 0.7), 0 0 80px hsl(32 90% 50% / 0.4)',
-                }}
-              >
-                Welcome home.
-              </h2>
-              <Button className="btn-neon group">
-                <span className="btn-text">Free Assessment</span>
-                <ArrowRight className="btn-icon ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </div>
-          );
-        })()}
       </div>
     </section>
   );
