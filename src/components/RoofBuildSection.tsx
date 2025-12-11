@@ -111,16 +111,26 @@ const RoofBuildSection: React.FC = () => {
       style={{ height: '400vh' }}
     >
 
-      {/* Warm light overlay - fills screen as user enters through door - z-[100] to cover EVERYTHING including navbar */}
+      {/* Solid backup overlay - catches ANYTHING that escapes */}
+      <div 
+        className="fixed inset-0 pointer-events-none z-[99]"
+        style={{
+          backgroundColor: `hsl(25 60% 20% / ${Math.min(1, easedZoom * 2.5)})`,
+          opacity: easedZoom > 0.05 ? 1 : 0,
+          willChange: 'opacity',
+        }}
+      />
+
+      {/* Warm light overlay - fills screen as user enters through door - z-[100] to cover EVERYTHING */}
       <div 
         className="fixed inset-0 pointer-events-none z-[100]"
         style={{
           background: `radial-gradient(circle at 50% 45%, 
-            hsl(35 98% 75% / ${easedZoom ** 0.5 * 0.98}), 
-            hsl(30 95% 65% / ${easedZoom * 0.92}) 25%,
-            hsl(25 85% 50% / ${easedZoom * 0.85}) 50%,
-            hsl(20 75% 35% / ${easedZoom * 0.7}) 80%,
-            transparent 100%)`,
+            hsl(35 98% 75% / ${Math.min(1, easedZoom * 3)}), 
+            hsl(30 95% 65% / ${Math.min(1, easedZoom * 2.5)}) 25%,
+            hsl(25 85% 50% / ${Math.min(1, easedZoom * 2)}) 50%,
+            hsl(20 75% 35% / ${Math.min(1, easedZoom * 1.5)}) 80%,
+            hsl(15 65% 20% / ${easedZoom}) 100%)`,
           opacity: easedZoom > 0.02 ? 1 : 0,
           willChange: 'background, opacity',
         }}
@@ -338,59 +348,59 @@ const RoofBuildSection: React.FC = () => {
         </div>
 
 
-        {/* Progress bar - fades earlier (70-78%) before zoom starts */}
-        <div 
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 w-32 h-0.5 bg-muted/30 rounded-full overflow-hidden z-20"
-          style={{
-            opacity: progress > 0.70 ? Math.max(0, 1 - ((progress - 0.70) / 0.08)) : 1,
-            transition: 'opacity 0.15s ease-out',
-          }}
-        >
+        {/* Progress bar - HARD HIDE at 78% before zoom starts */}
+        {progress < 0.78 && (
           <div 
-            className="h-full rounded-full"
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 w-32 h-0.5 bg-muted/30 rounded-full overflow-hidden z-20"
             style={{
-              width: `${Math.min(progress / 0.75, 1) * 100}%`,
-              background: 'linear-gradient(90deg, hsl(168 80% 50%), hsl(32 80% 55%))',
-              boxShadow: '0 0 12px hsl(168 80% 50% / 0.6)',
-              transition: 'width 0.1s ease-out',
-            }}
-          />
-        </div>
-
-        {/* "Welcome home" message and CTA - CTA appears earlier, fades during zoom */}
-        <div 
-          className="absolute bottom-12 left-0 right-0 flex flex-col items-center text-center z-20 py-6"
-          style={{
-            opacity: showCTA ? ctaZoomFade : 0,
-            pointerEvents: showCTA && ctaZoomFade > 0.1 ? 'auto' : 'none',
-            background: 'linear-gradient(to top, hsl(160 30% 6% / 0.95) 0%, hsl(160 30% 6% / 0.8) 50%, transparent 100%)',
-            transition: 'opacity 0.3s ease-out',
-          }}
-        >
-          <h2 
-            className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 transition-all duration-700 ease-out"
-            style={{
-              color: 'hsl(32 85% 55%)',
-              textShadow: '0 0 40px hsl(32 90% 50% / 0.7), 0 0 80px hsl(32 90% 50% / 0.4)',
-              opacity: showWelcomeHome ? 1 : 0,
-              transform: `translateY(${showWelcomeHome ? 0 : 20}px)`,
+              opacity: progress > 0.70 ? Math.max(0, 1 - ((progress - 0.70) / 0.08)) : 1,
             }}
           >
-            Welcome home.
-          </h2>
-          <div 
-            className="transition-all duration-500 ease-out"
-            style={{
-              opacity: showCTA ? 1 : 0,
-              transform: `translateY(${showCTA ? 0 : 20}px)`,
-            }}
-          >
-            <Button className="btn-neon group">
-              <span className="btn-text">Free Assessment</span>
-              <ArrowRight className="btn-icon ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            <div 
+              className="h-full rounded-full"
+              style={{
+                width: `${Math.min(progress / 0.75, 1) * 100}%`,
+                background: 'linear-gradient(90deg, hsl(168 80% 50%), hsl(32 80% 55%))',
+                boxShadow: '0 0 12px hsl(168 80% 50% / 0.6)',
+              }}
+            />
           </div>
-        </div>
+        )}
+
+        {/* "Welcome home" message and CTA - HARD HIDE at 86% before zoom starts */}
+        {progress >= 0.80 && progress < 0.86 && (
+          <div 
+            className="absolute bottom-12 left-0 right-0 flex flex-col items-center text-center z-20 py-6"
+            style={{
+              opacity: 1,
+              background: 'linear-gradient(to top, hsl(160 30% 6% / 0.95) 0%, hsl(160 30% 6% / 0.8) 50%, transparent 100%)',
+            }}
+          >
+            <h2 
+              className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6"
+              style={{
+                color: 'hsl(32 85% 55%)',
+                textShadow: '0 0 40px hsl(32 90% 50% / 0.7), 0 0 80px hsl(32 90% 50% / 0.4)',
+                opacity: showWelcomeHome ? 1 : 0,
+                transform: `translateY(${showWelcomeHome ? 0 : 20}px)`,
+                transition: 'all 0.7s ease-out',
+              }}
+            >
+              Welcome home.
+            </h2>
+            <div 
+              style={{
+                opacity: 1,
+                transform: 'translateY(0)',
+              }}
+            >
+              <Button className="btn-neon group">
+                <span className="btn-text">Free Assessment</span>
+                <ArrowRight className="btn-icon ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

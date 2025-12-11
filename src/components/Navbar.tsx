@@ -5,8 +5,8 @@ import { useScrollContext } from "@/context/ScrollContext";
 const Navbar = () => {
   const { zoomProgress } = useScrollContext();
   
-  // Fade out navbar during zoom (starts at 0%, fully gone by 30% of zoom)
-  const navbarOpacity = Math.max(0, 1 - (zoomProgress * 3.5));
+  // NUCLEAR: Navbar completely gone the moment zoom starts
+  const navbarOpacity = zoomProgress > 0.01 ? 0 : 1;
   
   return (
     <nav 
