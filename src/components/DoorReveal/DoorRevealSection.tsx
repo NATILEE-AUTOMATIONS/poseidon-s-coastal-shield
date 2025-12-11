@@ -17,9 +17,8 @@ const DoorRevealSection: React.FC = () => {
   const lightIntensity = doorAngle / 75;
 
   // Typography visibility
-  const showRoofComplete = progress >= 0.05 && progress < 0.55;
   const showWelcomeHome = progress >= 0.60;
-  const showCTA = progress >= 0.80;
+  const showCTA = progress >= 0.60;
 
   return (
     <section
@@ -31,24 +30,6 @@ const DoorRevealSection: React.FC = () => {
         <GridBackground />
         
         <div className="relative z-10 h-full flex flex-col items-center justify-center px-4">
-          {/* Typography - "Your roof is complete." */}
-          <div 
-            className="absolute top-24 md:top-32 left-1/2 -translate-x-1/2 text-center transition-all duration-700 ease-out"
-            style={{
-              opacity: showRoofComplete ? 1 : 0,
-              transform: `translateY(${showRoofComplete ? 0 : -20}px)`,
-            }}
-          >
-            <h2 
-              className="text-2xl md:text-4xl lg:text-5xl font-bold tracking-tight"
-              style={{
-                color: 'hsl(168 70% 55%)',
-                textShadow: '0 0 40px hsl(168 80% 50% / 0.6), 0 0 80px hsl(168 80% 50% / 0.3)',
-              }}
-            >
-              Your roof is complete.
-            </h2>
-          </div>
 
           {/* Main visualization container */}
           <div className="relative w-full max-w-2xl mx-auto">
