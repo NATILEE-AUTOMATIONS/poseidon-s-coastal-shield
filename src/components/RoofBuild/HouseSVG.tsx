@@ -2,9 +2,12 @@ import React from 'react';
 
 interface HouseSVGProps {
   className?: string;
+  doorAngle?: number; // 0-75 degrees
 }
 
-const HouseSVG: React.FC<HouseSVGProps> = ({ className = '' }) => {
+const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0 }) => {
+  const lightIntensity = doorAngle / 75;
+  
   return (
     <g className={className}>
       {/* Definitions for gradients and filters */}
@@ -26,6 +29,26 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '' }) => {
         {/* Window glow filter */}
         <filter id="windowGlow" x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="4" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+        {/* Door interior warm glow */}
+        <linearGradient id="interiorGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="hsl(32 90% 60%)" stopOpacity="0.9" />
+          <stop offset="50%" stopColor="hsl(32 85% 50%)" stopOpacity="0.7" />
+          <stop offset="100%" stopColor="hsl(28 80% 40%)" stopOpacity="0.5" />
+        </linearGradient>
+        {/* Door wood gradient */}
+        <linearGradient id="doorWood" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="hsl(25 40% 25%)" />
+          <stop offset="50%" stopColor="hsl(25 45% 30%)" />
+          <stop offset="100%" stopColor="hsl(25 35% 20%)" />
+        </linearGradient>
+        {/* Interior glow filter */}
+        <filter id="interiorGlowFilter" x="-100%" y="-100%" width="300%" height="300%">
+          <feGaussianBlur stdDeviation="8" result="blur" />
           <feMerge>
             <feMergeNode in="blur" />
             <feMergeNode in="SourceGraphic" />
@@ -56,18 +79,63 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '' }) => {
           style={{ filter: 'drop-shadow(0 0 10px hsl(168 80% 45% / 0.5))' }}
         />
         
-        {/* Door - centered at x=200 */}
+        {/* Interior warm glow visible through doorway */}
         <rect
           x="177.5"
           y="195"
           width="45"
           height="70"
-          fill="hsl(168 20% 10%)"
-          stroke="hsl(168 60% 45%)"
-          strokeWidth="1.5"
-          rx="2"
+          fill="url(#interiorGlow)"
+          filter="url(#interiorGlowFilter)"
+          style={{
+            opacity: lightIntensity * 0.9,
+          }}
         />
-        <circle cx="214.5" cy="230" r="2" fill="hsl(32 80% 50%)" />
+        
+        {/* Door frame */}
+        <rect
+          x="175"
+          y="193"
+          width="50"
+          height="74"
+          fill="none"
+          stroke="hsl(25 40% 35%)"
+          strokeWidth="3"
+          rx="1"
+          style={{
+            opacity: doorAngle > 0 ? 1 : 0,
+          }}
+        />
+        
+        {/* Animated door with 3D perspective rotation */}
+        <g
+          style={{
+            transformOrigin: '177.5px 230px',
+            transform: `perspective(400px) rotateY(-${doorAngle}deg)`,
+            transformStyle: 'preserve-3d',
+          }}
+        >
+          <rect
+            x="177.5"
+            y="195"
+            width="45"
+            height="70"
+            fill={doorAngle > 0 ? "url(#doorWood)" : "hsl(168 20% 10%)"}
+            stroke={doorAngle > 0 ? "hsl(25 45% 40%)" : "hsl(168 60% 45%)"}
+            strokeWidth="1.5"
+            rx="2"
+          />
+          {/* Door panels - only show when door is animated */}
+          {doorAngle > 0 && (
+            <>
+              <rect x="182" y="200" width="16" height="25" fill="none" stroke="hsl(25 35% 35%)" strokeWidth="1" rx="1" />
+              <rect x="202" y="200" width="16" height="25" fill="none" stroke="hsl(25 35% 35%)" strokeWidth="1" rx="1" />
+              <rect x="182" y="232" width="16" height="28" fill="none" stroke="hsl(25 35% 35%)" strokeWidth="1" rx="1" />
+              <rect x="202" y="232" width="16" height="28" fill="none" stroke="hsl(25 35% 35%)" strokeWidth="1" rx="1" />
+            </>
+          )}
+          <circle cx="214.5" cy={doorAngle > 0 ? 235 : 230} r={doorAngle > 0 ? 2.5 : 2} fill="hsl(32 80% 50%)" />
+        </g>
         
         {/* ===== LEFT WINDOW (Premium 6-pane colonial) ===== */}
         <g className="window-left" filter="url(#windowGlow)">
@@ -208,6 +276,22 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '' }) => {
           ROOF DECK
         </text>
       </g>
+      
+      {/* Light rays from doorway */}
+      {lightIntensity > 0 && (
+        <g className="light-rays" style={{ opacity: lightIntensity }}>
+          {/* Central warm glow */}
+          <ellipse
+            cx="200"
+            cy="265"
+            rx={30 + lightIntensity * 40}
+            ry={10 + lightIntensity * 15}
+            fill="hsl(32 90% 55%)"
+            opacity={0.3 * lightIntensity}
+            style={{ filter: 'blur(8px)' }}
+          />
+        </g>
+      )}
     </g>
   );
 };

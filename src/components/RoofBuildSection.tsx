@@ -24,22 +24,33 @@ const RoofBuildSection: React.FC = () => {
   const progress = useScrollProgress(sectionRef);
 
   // Layer timing - delayed start at 8% for "settle in" period
-  // Each layer gets ~9.2% of scroll (92% total / 10 layers)
+  // Roof layers use 0-75% of scroll, door animation uses 75-100%
+  const roofProgress = Math.min(1, progress / 0.75); // Normalize roof progress to 0-1
+  
   const layers = [
-    { start: 0.08, end: 0.17 },   // 1. Decking
-    { start: 0.17, end: 0.26 },   // 2. Drip Edge Eaves
-    { start: 0.26, end: 0.35 },   // 3. Ice & Water
-    { start: 0.35, end: 0.44 },   // 4. Underlayment
-    { start: 0.44, end: 0.53 },   // 5. Drip Edge Rakes
-    { start: 0.53, end: 0.62 },   // 6. Starter Strip
-    { start: 0.62, end: 0.71 },   // 7. Shingles
-    { start: 0.71, end: 0.80 },   // 8. Vents
-    { start: 0.80, end: 0.89 },   // 9. Flashing
-    { start: 0.89, end: 0.98 },   // 10. Ridge Cap
+    { start: 0.08, end: 0.15 },   // 1. Decking
+    { start: 0.15, end: 0.22 },   // 2. Drip Edge Eaves
+    { start: 0.22, end: 0.29 },   // 3. Ice & Water
+    { start: 0.29, end: 0.36 },   // 4. Underlayment
+    { start: 0.36, end: 0.43 },   // 5. Drip Edge Rakes
+    { start: 0.43, end: 0.50 },   // 6. Starter Strip
+    { start: 0.50, end: 0.57 },   // 7. Shingles
+    { start: 0.57, end: 0.64 },   // 8. Vents
+    { start: 0.64, end: 0.71 },   // 9. Flashing
+    { start: 0.71, end: 0.75 },   // 10. Ridge Cap
   ];
 
   // Show hint during buffer period (0-8%)
   const showScrollHint = progress < 0.08;
+  
+  // Door animation: starts at 78%, fully open at 92%
+  const doorAngle = progress > 0.78 
+    ? Math.min(75, ((progress - 0.78) / 0.14) * 75) 
+    : 0;
+  
+  // Typography states
+  const showRoofComplete = progress >= 0.75 && progress < 0.85;
+  const showWelcomeHome = progress >= 0.88;
 
   // Calculate which materials are "locked in"
   const getLockedMaterials = () => {
@@ -52,7 +63,7 @@ const RoofBuildSection: React.FC = () => {
     <section
       ref={sectionRef}
       className="relative"
-      style={{ height: '300vh' }}
+      style={{ height: '400vh' }}
     >
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
@@ -88,8 +99,8 @@ const RoofBuildSection: React.FC = () => {
                     />
                   )}
                   
-                  {/* House base */}
-                  <HouseSVG />
+                  {/* House base with animated door */}
+                  <HouseSVG doorAngle={doorAngle} />
                   
                   {/* Animated roof layers - 10 layers in correct installation order */}
                   {/* 1. Replace Decking */}
@@ -138,12 +149,15 @@ const RoofBuildSection: React.FC = () => {
 
             {/* Mobile Step Card - positioned below house */}
             <MobileStepCard 
-              currentStep={Math.max(0, Math.min(9, Math.floor((progress - 0.08) / 0.092)))} 
-              isVisible={progress >= 0.10 && progress <= 0.95}
+              currentStep={Math.max(0, Math.min(9, Math.floor((progress - 0.08) / 0.067)))} 
+              isVisible={progress >= 0.10 && progress <= 0.75}
             />
 
             {/* Material labels - left side (positioned as overlay) */}
-            <div className="absolute left-0 xl:left-4 top-1/2 -translate-y-1/2 pr-4 hidden xl:block w-56">
+            <div 
+              className="absolute left-0 xl:left-4 top-1/2 -translate-y-1/2 pr-4 hidden xl:block w-56 transition-opacity duration-500"
+              style={{ opacity: progress > 0.75 ? 0 : 1 }}
+            >
               <div className="space-y-5">
                 {materialInfo.slice(0, 5).map((material, index) => (
                   <div
@@ -180,7 +194,10 @@ const RoofBuildSection: React.FC = () => {
             </div>
 
             {/* Material labels - right side (positioned as overlay) */}
-            <div className="absolute right-0 xl:right-4 top-1/2 -translate-y-1/2 pl-4 hidden xl:block w-56">
+            <div 
+              className="absolute right-0 xl:right-4 top-1/2 -translate-y-1/2 pl-4 hidden xl:block w-56 transition-opacity duration-500"
+              style={{ opacity: progress > 0.75 ? 0 : 1 }}
+            >
               <div className="space-y-5">
                 {materialInfo.slice(5).map((material, index) => (
                   <div
@@ -240,25 +257,45 @@ const RoofBuildSection: React.FC = () => {
 
         </div>
 
-        {/* Completion message - positioned at very bottom with backdrop */}
+        {/* "Your roof is complete" message - appears after roof build */}
+        <div 
+          className="absolute top-24 md:top-32 left-0 right-0 flex justify-center z-20 transition-all duration-700 ease-out"
+          style={{
+            opacity: showRoofComplete ? 1 : 0,
+            transform: `translateY(${showRoofComplete ? 0 : -20}px)`,
+            pointerEvents: 'none',
+          }}
+        >
+          <h2 
+            className="text-2xl md:text-4xl lg:text-5xl font-bold tracking-tight"
+            style={{
+              color: 'hsl(168 70% 55%)',
+              textShadow: '0 0 40px hsl(168 80% 50% / 0.6), 0 0 80px hsl(168 80% 50% / 0.3)',
+            }}
+          >
+            Your roof is complete.
+          </h2>
+        </div>
+
+        {/* "Welcome home" message and CTA - final state */}
         <div 
           className="absolute bottom-0 left-0 right-0 flex flex-col items-center text-center z-20 transition-all duration-700 ease-out py-6"
           style={{
-            opacity: progress > 0.95 ? 1 : 0,
-            transform: `translateY(${progress > 0.95 ? 0 : 30}px)`,
-            pointerEvents: progress > 0.95 ? 'auto' : 'none',
+            opacity: showWelcomeHome ? 1 : 0,
+            transform: `translateY(${showWelcomeHome ? 0 : 30}px)`,
+            pointerEvents: showWelcomeHome ? 'auto' : 'none',
             background: 'linear-gradient(to top, hsl(160 30% 6% / 0.95) 0%, hsl(160 30% 6% / 0.8) 50%, transparent 100%)',
           }}
         >
-          <p 
-            className="text-xl md:text-2xl font-medium mb-4"
+          <h2 
+            className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6"
             style={{
-              color: 'hsl(168 70% 60%)',
-              textShadow: '0 0 30px hsl(168 80% 50% / 0.6), 0 0 60px hsl(168 80% 50% / 0.3)',
+              color: 'hsl(32 85% 55%)',
+              textShadow: '0 0 40px hsl(32 90% 50% / 0.7), 0 0 80px hsl(32 90% 50% / 0.4)',
             }}
           >
-            Every layer matters. Trust the experts.
-          </p>
+            Welcome home.
+          </h2>
           <Button className="btn-neon group">
             <span className="btn-text">Free Assessment</span>
             <ArrowRight className="btn-icon ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
