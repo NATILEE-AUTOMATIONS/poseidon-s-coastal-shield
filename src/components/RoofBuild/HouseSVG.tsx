@@ -92,20 +92,6 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0 }) =>
           }}
         />
         
-        {/* Door frame */}
-        <rect
-          x="175"
-          y="193"
-          width="50"
-          height="74"
-          fill="none"
-          stroke="hsl(25 40% 35%)"
-          strokeWidth="3"
-          rx="1"
-          style={{
-            opacity: doorAngle > 0 ? 1 : 0,
-          }}
-        />
         
         {/* Animated door with 3D perspective rotation */}
         <g
