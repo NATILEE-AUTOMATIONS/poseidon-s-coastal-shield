@@ -53,6 +53,22 @@ const RoofBuildSection: React.FC = () => {
   const showWelcomeHome = progress >= 0.88;
   const showCTA = progress >= 0.80; // CTA appears earlier than welcome text
 
+  // Calculate staggered exit progress for label pairs (desktop only)
+  // Door opens from 0.78 to 0.92, labels exit in 5 pairs during this window
+  const getLabelExitProgress = (pairIndex: number): number => {
+    const doorStart = 0.78;
+    const doorEnd = 0.92;
+    const doorRange = doorEnd - doorStart; // 0.14
+    const pairWindow = doorRange / 5; // ~0.028 per pair
+    
+    const pairStart = doorStart + (pairIndex * pairWindow);
+    const pairEnd = pairStart + pairWindow;
+    
+    if (progress < pairStart) return 0; // Not started
+    if (progress >= pairEnd) return 1; // Fully exited
+    return (progress - pairStart) / pairWindow; // Mid-animation 0-1
+  };
+
   // Calculate which materials are "locked in"
   const getLockedMaterials = () => {
     return materialInfo.map((_, index) => progress >= layers[index].end);
@@ -156,81 +172,109 @@ const RoofBuildSection: React.FC = () => {
 
             {/* Material labels - left side (positioned as overlay) */}
             <div 
-              className="absolute left-0 xl:left-4 top-1/2 -translate-y-1/2 pr-4 hidden xl:block w-56 transition-opacity duration-500"
-              style={{ opacity: progress > 0.75 ? 0 : 1 }}
+              className="absolute left-0 xl:left-4 top-1/2 -translate-y-1/2 pr-4 hidden xl:block w-56"
             >
               <div className="space-y-5">
-                {materialInfo.slice(0, 5).map((material, index) => (
-                  <div
-                    key={material.id}
-                    className={`text-right transition-all duration-500 ease-out pb-4 ${index < 4 ? 'border-b border-teal-800/20' : ''}`}
-                    style={{
-                      opacity: lockedMaterials[index] ? 1 : 0.25,
-                      transform: `translateX(${lockedMaterials[index] ? 0 : -20}px)`,
-                    }}
-                  >
-                    <div 
-                      className="text-sm font-semibold tracking-wide whitespace-nowrap"
+                {materialInfo.slice(0, 5).map((material, index) => {
+                  const exitProgress = getLabelExitProgress(index);
+                  const isExiting = progress >= 0.78;
+                  
+                  // During exit: slide left and fade out
+                  // Before exit: normal lock-in animation
+                  const translateX = isExiting 
+                    ? -150 * exitProgress 
+                    : (lockedMaterials[index] ? 0 : -20);
+                  const opacity = isExiting 
+                    ? Math.max(0, 1 - exitProgress) 
+                    : (lockedMaterials[index] ? 1 : 0.25);
+                  
+                  return (
+                    <div
+                      key={material.id}
+                      className={`text-right pb-4 ${index < 4 ? 'border-b border-teal-800/20' : ''}`}
                       style={{
-                        color: lockedMaterials[index] ? 'hsl(168 80% 60%)' : 'hsl(168 50% 40%)',
-                        textShadow: lockedMaterials[index] 
-                          ? '0 0 20px hsl(168 80% 50% / 0.8), 0 0 40px hsl(168 80% 50% / 0.4)' 
-                          : 'none',
+                        opacity,
+                        transform: `translateX(${translateX}px)`,
+                        transition: isExiting ? 'none' : 'all 0.5s ease-out',
                       }}
                     >
-                      <span className="text-xs font-normal opacity-60 mr-1.5">{index + 1}.</span>
-                      {material.name}
+                      <div 
+                        className="text-sm font-semibold tracking-wide whitespace-nowrap"
+                        style={{
+                          color: lockedMaterials[index] ? 'hsl(168 80% 60%)' : 'hsl(168 50% 40%)',
+                          textShadow: lockedMaterials[index] 
+                            ? '0 0 20px hsl(168 80% 50% / 0.8), 0 0 40px hsl(168 80% 50% / 0.4)' 
+                            : 'none',
+                        }}
+                      >
+                        <span className="text-xs font-normal opacity-60 mr-1.5">{index + 1}.</span>
+                        {material.name}
+                      </div>
+                      <div 
+                        className="text-xs text-muted-foreground/70 mt-1 leading-relaxed"
+                        style={{
+                          opacity: lockedMaterials[index] ? 1 : 0.5,
+                        }}
+                      >
+                        {material.description}
+                      </div>
                     </div>
-                    <div 
-                      className="text-xs text-muted-foreground/70 mt-1 leading-relaxed"
-                      style={{
-                        opacity: lockedMaterials[index] ? 1 : 0.5,
-                      }}
-                    >
-                      {material.description}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
             {/* Material labels - right side (positioned as overlay) */}
             <div 
-              className="absolute right-0 xl:right-4 top-1/2 -translate-y-1/2 pl-4 hidden xl:block w-56 transition-opacity duration-500"
-              style={{ opacity: progress > 0.75 ? 0 : 1 }}
+              className="absolute right-0 xl:right-4 top-1/2 -translate-y-1/2 pl-4 hidden xl:block w-56"
             >
               <div className="space-y-5">
-                {materialInfo.slice(5).map((material, index) => (
-                  <div
-                    key={material.id}
-                    className={`text-left transition-all duration-500 ease-out pb-4 ${index < 4 ? 'border-b border-teal-800/20' : ''}`}
-                    style={{
-                      opacity: lockedMaterials[index + 5] ? 1 : 0.25,
-                      transform: `translateX(${lockedMaterials[index + 5] ? 0 : 20}px)`,
-                    }}
-                  >
-                    <div 
-                      className="text-sm font-semibold tracking-wide whitespace-nowrap"
+                {materialInfo.slice(5).map((material, index) => {
+                  const exitProgress = getLabelExitProgress(index); // Same pair index as left side
+                  const isExiting = progress >= 0.78;
+                  
+                  // During exit: slide right and fade out (positive X)
+                  // Before exit: normal lock-in animation
+                  const translateX = isExiting 
+                    ? 150 * exitProgress 
+                    : (lockedMaterials[index + 5] ? 0 : 20);
+                  const opacity = isExiting 
+                    ? Math.max(0, 1 - exitProgress) 
+                    : (lockedMaterials[index + 5] ? 1 : 0.25);
+                  
+                  return (
+                    <div
+                      key={material.id}
+                      className={`text-left pb-4 ${index < 4 ? 'border-b border-teal-800/20' : ''}`}
                       style={{
-                        color: lockedMaterials[index + 5] ? 'hsl(168 80% 60%)' : 'hsl(168 50% 40%)',
-                        textShadow: lockedMaterials[index + 5] 
-                          ? '0 0 20px hsl(168 80% 50% / 0.8), 0 0 40px hsl(168 80% 50% / 0.4)' 
-                          : 'none',
+                        opacity,
+                        transform: `translateX(${translateX}px)`,
+                        transition: isExiting ? 'none' : 'all 0.5s ease-out',
                       }}
                     >
-                      <span className="text-xs font-normal opacity-60 mr-1.5">{index + 6}.</span>
-                      {material.name}
+                      <div 
+                        className="text-sm font-semibold tracking-wide whitespace-nowrap"
+                        style={{
+                          color: lockedMaterials[index + 5] ? 'hsl(168 80% 60%)' : 'hsl(168 50% 40%)',
+                          textShadow: lockedMaterials[index + 5] 
+                            ? '0 0 20px hsl(168 80% 50% / 0.8), 0 0 40px hsl(168 80% 50% / 0.4)' 
+                            : 'none',
+                        }}
+                      >
+                        <span className="text-xs font-normal opacity-60 mr-1.5">{index + 6}.</span>
+                        {material.name}
+                      </div>
+                      <div 
+                        className="text-xs text-muted-foreground/70 mt-1 leading-relaxed"
+                        style={{
+                          opacity: lockedMaterials[index + 5] ? 1 : 0.5,
+                        }}
+                      >
+                        {material.description}
+                      </div>
                     </div>
-                    <div 
-                      className="text-xs text-muted-foreground/70 mt-1 leading-relaxed"
-                      style={{
-                        opacity: lockedMaterials[index + 5] ? 1 : 0.5,
-                      }}
-                    >
-                      {material.description}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
