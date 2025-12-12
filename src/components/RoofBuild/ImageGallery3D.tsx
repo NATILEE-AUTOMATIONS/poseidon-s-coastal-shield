@@ -54,10 +54,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
       ? 1 - ((anim2Progress - fadeOutStart) / (1 - fadeOutStart))
       : 1;
 
-  // Image 3: Position drifts LEFT from top-right (60% → -35%) - NO FADE OUT (hero shot for testimonial)
-  const left3Percent = 60 - (anim3Progress * 95);
+  // Image 3: Position drifts LEFT (55% → -30%) - SAME AS IMAGE 1, NO FADE OUT
+  const left3Percent = 55 - (anim3Progress * 85);
   const scale3 = 0.25 + (anim3Progress * 1.3);
-  const top3Percent = 40 + (Math.sin(anim3Progress * Math.PI) * 10);
+  const top3Percent = 50 - (Math.sin(anim3Progress * Math.PI) * 15);
   const opacity3 = anim3Progress < 0.1 
     ? anim3Progress * 10
     : 1; // No fade out - stays visible with testimonial
