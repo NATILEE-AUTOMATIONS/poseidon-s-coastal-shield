@@ -16,8 +16,9 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   // Normalize progress: 0 = start, 1 = end of animation
   const animProgress = Math.min(1, (progress - animStart) / (1 - animStart));
   
-  // Simple fade in from zero
-  const opacity = Math.min(1, animProgress * 3); // Quick fade in over first 33%
+  // Start small, grow to viewable size
+  const scale = 0.3 + (animProgress * 0.7); // 0.3 → 1.0
+  const opacity = Math.min(1, animProgress * 4); // Quick fade in
 
   return (
     <div 
@@ -34,7 +35,7 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
       <div
         style={{
           opacity,
-          transition: 'opacity 0.1s ease-out',
+          transform: `scale(${scale})`,
         }}
       >
         <div
