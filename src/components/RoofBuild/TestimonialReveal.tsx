@@ -9,11 +9,11 @@ const TestimonialReveal: React.FC<TestimonialRevealProps> = ({ progress }) => {
   const name = "Bruce Gombar";
   const quote = "We were very pleased with the final results of our roof replacement";
   
-  // Animation timing - delayed to avoid competing with images
-  const starsStart = 0.93;
-  const nameStart = 0.95;
-  const quoteStart = 0.97;
-  const fadeOutStart = 0.99;
+  // Animation timing
+  const starsStart = 0.90;
+  const nameStart = 0.92;
+  const quoteStart = 0.94;
+  const fadeOutStart = 0.98;
   
   // Calculate individual progress values
   const starsProgress = progress >= starsStart 
