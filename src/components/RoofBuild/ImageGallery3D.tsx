@@ -60,10 +60,11 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
       ? 1 - ((anim2Progress - fadeOutStart) / (1 - fadeOutStart))
       : 1;
 
-  // Image 3: Position drifts LEFT (55% → -30%) - SAME AS IMAGE 1, with fade out
-  const left3Percent = 55 - (anim3Progress * 85);
-  const scale3 = 0.25 + (anim3Progress * 1.3);
-  const top3Percent = 50 - (Math.sin(anim3Progress * Math.PI) * 15);
+  // Image 3: TOP-DOWN DESCENT - drops from above with subtle rotation
+  const left3Percent = 50; // Stays centered horizontally
+  const scale3 = 0.3 + (anim3Progress * 1.25); // Starts slightly larger, grows
+  const top3Percent = -20 + (anim3Progress * 70); // Drops from -20% → 50%
+  const rotate3 = -8 + (anim3Progress * 8); // Slight rotation -8° → 0°
   const opacity3 = anim3Progress < 0.1 
     ? anim3Progress * 10
     : anim3Progress > fadeOutStart 
@@ -190,14 +191,14 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
         </div>
       )}
 
-      {/* Image 3 - drive-by from right to left */}
+      {/* Image 3 - top-down descent */}
       {anim3Progress > 0 && opacity3 > 0 && (
         <div
           className="absolute"
           style={{
             left: `${left3Percent}%`,
             top: `${top3Percent}%`,
-            transform: `translate(-50%, -50%) scale(${scale3})`,
+            transform: `translate(-50%, -50%) scale(${scale3}) rotate(${rotate3}deg)`,
             opacity: opacity3,
             transformStyle: 'preserve-3d',
           }}
