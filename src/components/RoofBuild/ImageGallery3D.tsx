@@ -2,6 +2,7 @@ import React from 'react';
 import coastalRoofImage from '@/assets/coastal-roof-project.png';
 import coastalRoofInProgress from '@/assets/coastal-roof-inprogress.png';
 import { useIsMobile } from '@/hooks/use-mobile';
+import TestimonialReveal from './TestimonialReveal';
 
 interface ImageGallery3DProps {
   progress: number;
@@ -138,6 +139,9 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
           </div>
         </div>
       )}
+      
+      {/* Testimonial Reveal */}
+      <TestimonialReveal progress={progress} />
     </div>
   );
 };
