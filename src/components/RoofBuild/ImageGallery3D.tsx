@@ -21,7 +21,7 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   // Image 1: Animation starts at 88% scroll (drifts LEFT)
   const anim1Start = 0.88;
   const anim1Progress = progress >= anim1Start 
-    ? Math.min(1, (progress - anim1Start) / 0.08) 
+    ? Math.min(1, (progress - anim1Start) / 0.05) 
     : 0;
   
   // Image 2: Animation starts at 91% scroll (drifts RIGHT - mirrored), ends by 95%
@@ -30,10 +30,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
     ? Math.min(1, (progress - anim2Start) / 0.04)
     : 0;
   
-  // Image 3: Animation starts at 94.5% scroll (drifts LEFT like Image 1), ends by 97%
-  const anim3Start = 0.945;
+  // Image 3: Animation starts at 93.5% scroll (drifts LEFT like Image 1), ends by 96.5%
+  const anim3Start = 0.935;
   const anim3Progress = progress >= anim3Start 
-    ? Math.min(1, (progress - anim3Start) / 0.025)
+    ? Math.min(1, (progress - anim3Start) / 0.03)
     : 0;
   
   // Don't render anything until first animation starts
