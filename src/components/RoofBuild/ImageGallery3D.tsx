@@ -20,8 +20,8 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   const scale = 0.2 + (animProgress * 0.8); // 0.2 → 1.0
   const opacity = Math.min(1, animProgress * 5); // Quick fade in
   
-  // Slight drift from further right to final position
-  const translateX = 15 - (animProgress * 15); // starts 15% right, ends at 0
+  // Drift from left to right (comes in from the left)
+  const translateX = -20 + (animProgress * 20); // starts 20% left, ends at 0
   const translateY = -10 + (animProgress * 10); // starts 10% up, ends at 0
 
   return (
