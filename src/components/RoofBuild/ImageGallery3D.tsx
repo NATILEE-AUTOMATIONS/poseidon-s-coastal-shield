@@ -1,12 +1,14 @@
 import React from 'react';
 import coastalRoofImage from '@/assets/coastal-roof-project.png';
 import inProgressImage from '@/assets/coastal-roof-inprogress.png';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ImageGallery3DProps {
   progress: number;
 }
 
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
+  const isMobile = useIsMobile();
   const galleryStart = 0.92;
   
   if (progress < galleryStart - 0.01) return null;
@@ -34,21 +36,31 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
     ? Math.min(1, img1Raw * 3) 
     : Math.max(0, 1 - (img1Raw - 0.5) * 2);
 
-  // === CONTINUOUS SCALE (never stops growing) ===
+  // === SCALE ===
   const img1ScaleProgress = easeInOutQuad(img1Raw);
-  const img1Scale = 0.5 + (img1ScaleProgress * 1.0); // 0.5 → 1.5
-
   const img2ScaleProgress = easeInOutQuad(img2Raw);
-  const img2Scale = 0.45 + (img2ScaleProgress * 0.95); // 0.45 → 1.4
 
-  // === CONTINUOUS POSITION (fly to corners) ===
-  // Image 1: starts center-ish, flies toward top-right corner
-  const img1Right = 30 - (img1Raw * 80); // 30% → -50% (flies RIGHT off screen)
-  const img1Top = 40 - (img1Raw * 60); // 40% → -20% (flies UP off screen)
+  // Mobile: gentle scale 0.7 → 1.0 | Desktop: dramatic 0.5 → 1.5
+  const img1Scale = isMobile 
+    ? 0.7 + (img1ScaleProgress * 0.3) 
+    : 0.5 + (img1ScaleProgress * 1.0);
+  const img2Scale = isMobile 
+    ? 0.65 + (img2ScaleProgress * 0.35) 
+    : 0.45 + (img2ScaleProgress * 0.95);
 
-  // Image 2: starts center-ish, flies toward bottom-left corner
-  const img2Left = 30 - (img2Raw * 70); // 30% → -40% (flies LEFT off screen)
-  const img2Bottom = 35 - (img2Raw * 55); // 35% → -20% (flies DOWN off screen)
+  // === POSITION ===
+  // Mobile: slide up from bottom, stay centered
+  // Desktop: fly to corners
+  const img1Top = isMobile 
+    ? 80 - (img1Raw * 65) // 80% → 15% (slides up)
+    : 40 - (img1Raw * 60);
+  const img1Right = isMobile ? undefined : 30 - (img1Raw * 80);
+  
+  const img2Top = isMobile 
+    ? 90 - (img2Raw * 35) // 90% → 55% (slides up, below img1)
+    : undefined;
+  const img2Left = isMobile ? undefined : 30 - (img2Raw * 70);
+  const img2Bottom = isMobile ? undefined : 35 - (img2Raw * 55);
 
   // === OPACITY: Quick fade-in only, stay fully visible ===
   const img1Opacity = img1Raw < 0.15 
@@ -59,9 +71,9 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
     ? img2Raw / 0.15 
     : 1.0;
 
-  // === ROTATION: Continuous subtle turn ===
-  const img1RotateY = -15 + (img1Raw * 25); // -15° → +10°
-  const img2RotateY = 15 - (img2Raw * 22); // +15° → -7°
+  // === ROTATION: Desktop only ===
+  const img1RotateY = isMobile ? 0 : -15 + (img1Raw * 25);
+  const img2RotateY = isMobile ? 0 : 15 - (img2Raw * 22);
 
   // === SHINE: Happens during first half (while approaching) ===
   const img1ShineProgress = Math.min(1, img1Raw * 2);
@@ -88,14 +100,16 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
         }}
       />
 
-      {/* Image 1 - Flies from center toward top-right */}
+      {/* Image 1 - Mobile: centered, slides up | Desktop: flies to top-right */}
       {img1Raw > 0 && img1Opacity > 0 && (
         <div
           className="absolute"
           style={{
             top: `${img1Top}%`,
-            right: `${img1Right}%`,
-            transform: `scale(${img1Scale}) rotateY(${img1RotateY}deg)`,
+            ...(isMobile 
+              ? { left: '50%', transform: `translateX(-50%) scale(${img1Scale})` }
+              : { right: `${img1Right}%`, transform: `scale(${img1Scale}) rotateY(${img1RotateY}deg)` }
+            ),
             opacity: img1Opacity,
             transformOrigin: 'center center',
             willChange: 'transform, opacity',
@@ -105,7 +119,7 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
           <div
             className="relative overflow-hidden"
             style={{
-              borderRadius: '20px',
+              borderRadius: isMobile ? '24px' : '20px',
               boxShadow: `
                 0 4px 20px hsl(0 0% 0% / 0.4),
                 0 8px 40px hsl(0 0% 0% / 0.5),
@@ -121,10 +135,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
               src={coastalRoofImage}
               alt="Completed coastal roof project"
               style={{
-                width: '55vw',
-                maxWidth: '700px',
+                width: isMobile ? '85vw' : '55vw',
+                maxWidth: isMobile ? 'none' : '700px',
                 height: 'auto',
-                maxHeight: '50vh',
+                maxHeight: isMobile ? '40vh' : '50vh',
                 objectFit: 'cover',
                 display: 'block',
               }}
@@ -148,14 +162,15 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
         </div>
       )}
 
-      {/* Image 2 - Flies from center toward bottom-left */}
+      {/* Image 2 - Mobile: centered, slides up below img1 | Desktop: flies to bottom-left */}
       {img2Raw > 0 && img2Opacity > 0 && (
         <div
           className="absolute"
           style={{
-            bottom: `${img2Bottom}%`,
-            left: `${img2Left}%`,
-            transform: `scale(${img2Scale}) rotateY(${img2RotateY}deg)`,
+            ...(isMobile 
+              ? { top: `${img2Top}%`, left: '50%', transform: `translateX(-50%) scale(${img2Scale})` }
+              : { bottom: `${img2Bottom}%`, left: `${img2Left}%`, transform: `scale(${img2Scale}) rotateY(${img2RotateY}deg)` }
+            ),
             opacity: img2Opacity,
             transformOrigin: 'center center',
             willChange: 'transform, opacity',
@@ -165,7 +180,7 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
           <div
             className="relative overflow-hidden"
             style={{
-              borderRadius: '16px',
+              borderRadius: isMobile ? '20px' : '16px',
               boxShadow: `
                 0 4px 16px hsl(0 0% 0% / 0.35),
                 0 8px 32px hsl(0 0% 0% / 0.45),
@@ -181,10 +196,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
               src={inProgressImage}
               alt="Roof installation in progress"
               style={{
-                width: '45vw',
-                maxWidth: '550px',
+                width: isMobile ? '80vw' : '45vw',
+                maxWidth: isMobile ? 'none' : '550px',
                 height: 'auto',
-                maxHeight: '42vh',
+                maxHeight: isMobile ? '35vh' : '42vh',
                 objectFit: 'cover',
                 display: 'block',
               }}
