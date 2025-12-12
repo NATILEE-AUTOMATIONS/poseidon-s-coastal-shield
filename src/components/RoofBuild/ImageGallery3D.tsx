@@ -18,68 +18,79 @@ interface ImageGallery3DProps {
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   const isMobile = useIsMobile();
   
-  // Image 1: Animation starts at 88% scroll (drifts LEFT)
+  // MOBILE: Staggered non-overlapping timing with centered positioning
+  // DESKTOP: Original billboard drive-by effect
+  
+  // Image 1 timing
   const anim1Start = 0.88;
+  const anim1Duration = isMobile ? 0.04 : 0.05;
   const anim1Progress = progress >= anim1Start 
-    ? Math.min(1, (progress - anim1Start) / 0.05) 
+    ? Math.min(1, (progress - anim1Start) / anim1Duration) 
     : 0;
   
-  // Image 2: Animation starts at 91% scroll (drifts RIGHT - mirrored), ends by 95%
-  const anim2Start = 0.91;
+  // Image 2 timing - on mobile, starts AFTER image 1 ends
+  const anim2Start = isMobile ? 0.92 : 0.91;
+  const anim2Duration = isMobile ? 0.04 : 0.04;
   const anim2Progress = progress >= anim2Start 
-    ? Math.min(1, (progress - anim2Start) / 0.04)
+    ? Math.min(1, (progress - anim2Start) / anim2Duration)
     : 0;
   
-  // Image 3: Animation starts at 93.5% scroll (drifts LEFT like Image 1), ends by 96.5%
-  const anim3Start = 0.935;
+  // Image 3 timing - on mobile, starts AFTER image 2 ends
+  const anim3Start = isMobile ? 0.96 : 0.935;
+  const anim3Duration = isMobile ? 0.025 : 0.03;
   const anim3Progress = progress >= anim3Start 
-    ? Math.min(1, (progress - anim3Start) / 0.03)
+    ? Math.min(1, (progress - anim3Start) / anim3Duration)
     : 0;
   
   // Don't render anything until first animation starts
   if (progress < anim1Start) return null;
 
-  // Image 1: Position drifts LEFT (55% → -30%)
-  const left1Percent = 55 - (anim1Progress * 85);
+  // Mobile fade timing: quick fade in, delayed fade out for longer visibility
+  const mobileFadeOutStart = 0.85;
+  const desktopFadeOutStart = 0.75;
+  const fadeOutStart = isMobile ? mobileFadeOutStart : desktopFadeOutStart;
+
+  // Image 1: Mobile = centered, Desktop = drifts LEFT
+  const left1Percent = isMobile ? 50 : 55 - (anim1Progress * 85);
   const scale1 = isMobile 
-    ? 0.5 + (anim1Progress * 1.2)   // Mobile: 0.5 → 1.7 (starts 2x bigger)
-    : 0.25 + (anim1Progress * 1.3); // Desktop unchanged
-  const top1Percent = 50 - (Math.sin(anim1Progress * Math.PI) * (isMobile ? 10 : 15));
-  const fadeOutStart = 0.75;
-  const opacity1 = anim1Progress < 0.1 
-    ? anim1Progress * 10
+    ? 0.6 + (anim1Progress * 0.5)   // Mobile: 0.6 → 1.1 (larger, steadier)
+    : 0.25 + (anim1Progress * 1.3);
+  const top1Percent = isMobile ? 45 : 50 - (Math.sin(anim1Progress * Math.PI) * 15);
+  const opacity1 = anim1Progress < 0.15 
+    ? anim1Progress / 0.15
     : anim1Progress > fadeOutStart 
       ? 1 - ((anim1Progress - fadeOutStart) / (1 - fadeOutStart))
       : 1;
 
-  // Image 2: Position drifts RIGHT (45% → 130%) - MIRRORED
-  const left2Percent = 45 + (anim2Progress * 85);
+  // Image 2: Mobile = centered, Desktop = drifts RIGHT
+  const left2Percent = isMobile ? 50 : 45 + (anim2Progress * 85);
   const scale2 = isMobile 
-    ? 0.5 + (anim2Progress * 1.2)
+    ? 0.6 + (anim2Progress * 0.5)
     : 0.25 + (anim2Progress * 1.3);
-  const top2Percent = 50 - (Math.sin(anim2Progress * Math.PI) * (isMobile ? 10 : 15));
-  const opacity2 = anim2Progress < 0.1 
-    ? anim2Progress * 10
+  const top2Percent = isMobile ? 45 : 50 - (Math.sin(anim2Progress * Math.PI) * 15);
+  const opacity2 = anim2Progress < 0.15 
+    ? anim2Progress / 0.15
     : anim2Progress > fadeOutStart 
       ? 1 - ((anim2Progress - fadeOutStart) / (1 - fadeOutStart))
       : 1;
 
-  // Image 3: Billboard drive-by from right to left (SAME AS IMAGE 1)
-  const left3Percent = 55 - (anim3Progress * 85);
+  // Image 3: Mobile = centered, Desktop = drifts LEFT
+  const left3Percent = isMobile ? 50 : 55 - (anim3Progress * 85);
   const scale3 = isMobile 
-    ? 0.5 + (anim3Progress * 1.2)
+    ? 0.6 + (anim3Progress * 0.5)
     : 0.25 + (anim3Progress * 1.3);
-  const top3Percent = 50 - (Math.sin(anim3Progress * Math.PI) * (isMobile ? 10 : 15));
-  const opacity3 = anim3Progress < 0.1 
-    ? anim3Progress * 10
+  const top3Percent = isMobile ? 45 : 50 - (Math.sin(anim3Progress * Math.PI) * 15);
+  const opacity3 = anim3Progress < 0.15 
+    ? anim3Progress / 0.15
     : anim3Progress > fadeOutStart 
       ? 1 - ((anim3Progress - fadeOutStart) / (1 - fadeOutStart))
       : 1;
 
-  // Image 4: CINEMATIC GRAND REVEAL - overlaps with Image 3 exit, slower animation
-  const anim4Start = 0.965;
+  // Image 4: CINEMATIC GRAND REVEAL - starts after Image 3 on mobile
+  const anim4Start = isMobile ? 0.985 : 0.965;
+  const anim4Duration = isMobile ? 0.015 : 0.035;
   const anim4Progress = progress >= anim4Start 
-    ? Math.min(1, (progress - anim4Start) / 0.035)
+    ? Math.min(1, (progress - anim4Start) / anim4Duration)
     : 0;
   
   // Apply exponential easing for dramatic effect
