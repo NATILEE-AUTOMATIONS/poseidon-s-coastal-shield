@@ -7,8 +7,8 @@ interface ImageGallery3DProps {
 }
 
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
-  // Gallery starts appearing at 96% scroll (after door zoom is nearly complete)
-  const galleryStart = 0.96;
+  // Gallery starts appearing at 60% scroll
+  const galleryStart = 0.60;
   
   // Don't render until we're close to gallery time
   if (progress < galleryStart - 0.01) return null;
@@ -21,10 +21,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
     return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
   };
 
-  // Image 1 (Main - completed roof): 96% → 100%
-  const img1Start = 0.96;
-  const img1End = 1.0;
-  const img1Raw = progress > img1Start 
+  // Image 1 (Main - completed roof): 60% → 70%
+  const img1Start = 0.60;
+  const img1End = 0.70;
+  const img1Raw = progress > img1Start
     ? Math.min(1, (progress - img1Start) / (img1End - img1Start))
     : 0;
   const img1Progress = easeOutBack(Math.min(1, img1Raw));
