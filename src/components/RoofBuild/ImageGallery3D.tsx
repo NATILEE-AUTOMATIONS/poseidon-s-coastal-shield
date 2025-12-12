@@ -85,9 +85,12 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
     : 0.05 + (easedProgress4 * 1.1);
   const scale4 = Math.max(0.05, scaleOvershoot);
   
-  // 3D rotation: spinning in from side
-  const rotateY4 = -60 + (easedProgress4 * 60); // -60° → 0°
-  const rotateX4 = 15 - (easedProgress4 * 15);   // 15° → 0°
+  // 3D rotation: descending from top (tilted back → flat)
+  const rotateY4 = 0; // No side rotation
+  const rotateX4 = -45 + (easedProgress4 * 45); // -45° → 0° (tilted back → flat)
+  
+  // Vertical descent: starts above viewport, drops to center
+  const top4Percent = -30 + (easedProgress4 * 65); // -30% → 35%
   
   // Opacity: quick fade in
   const opacity4 = anim4Progress < 0.15 
@@ -237,7 +240,7 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
             className="absolute"
             style={{
               left: '50%',
-              top: '35%',
+              top: `${top4Percent}%`,
               transform: 'translate(-50%, -50%)',
               width: '150vw',
               height: '150vh',
@@ -255,7 +258,7 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
             className="absolute"
             style={{
               left: '50%',
-              top: '35%',
+              top: `${top4Percent}%`,
               transform: `translate(-50%, -50%) 
                 perspective(1200px) 
                 rotateY(${rotateY4}deg) 
