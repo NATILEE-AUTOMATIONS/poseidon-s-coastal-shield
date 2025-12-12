@@ -9,39 +9,28 @@ interface ImageGallery3DProps {
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   const isMobile = useIsMobile();
   
-  // Phase 1: Entry animation (93% → 96.5%)
-  // Phase 2: Exit animation (96.5% → 100%)
+  // Single continuous animation from center to off-screen upper-right
+  // Starts at 93%, image fully exits by 100%
   const animStart = 0.93;
-  const animMidpoint = 0.965;
-  const animEnd = 1.0;
-  
   if (progress < animStart) return null;
 
-  // Easing functions
-  const easeInQuad = (x: number) => x * x;
+  // Normalize progress: 0 = start, 1 = completely off-screen
+  const animProgress = Math.min(1, (progress - animStart) / (1 - animStart));
   
-  let leftPercent: number;
-  let topPercent: number;
-  let scale: number;
-  let opacity: number;
-
-  if (progress < animMidpoint) {
-    // Phase 1: Entry - center to upper-right
-    const entryProgress = (progress - animStart) / (animMidpoint - animStart);
-    leftPercent = 55 + (entryProgress * 30); // 55% → 85%
-    topPercent = 50 - (entryProgress * 25);   // 50% → 25%
-    scale = 0.2 + (entryProgress * 0.8);       // 0.2 → 1.0
-    opacity = Math.min(1, entryProgress * 3);  // Quick fade in
-  } else {
-    // Phase 2: Exit - continue right and off-screen
-    const exitProgress = (progress - animMidpoint) / (animEnd - animMidpoint);
-    const easedExit = easeInQuad(exitProgress); // Accelerate as it exits
-    
-    leftPercent = 85 + (easedExit * 40);        // 85% → 125% (off-screen right)
-    topPercent = 25 - (easedExit * 12);         // 25% → 13% (continue up slightly)
-    scale = 1.0 - (easedExit * 0.15);           // 1.0 → 0.85 (subtle shrink)
-    opacity = 1 - easeInQuad(exitProgress);     // Fade out near end
-  }
+  // Continuous trajectory: center → upper-right → off-screen
+  // Start: 55% left, 50% top (center-ish)
+  // End: 130% left, -5% top (off-screen upper-right)
+  const leftPercent = 55 + (animProgress * 75);  // 55% → 130%
+  const topPercent = 50 - (animProgress * 55);   // 50% → -5%
+  
+  // Scale: grows to full size by 40% of animation, then stays
+  const scaleProgress = Math.min(1, animProgress * 2.5); // Reaches 1.0 at 40% 
+  const scale = 0.2 + (scaleProgress * 0.8); // 0.2 → 1.0
+  
+  // Opacity: fade in quickly at start, fade out in last 20%
+  const fadeIn = Math.min(1, animProgress * 5); // Fully visible by 20%
+  const fadeOut = animProgress > 0.8 ? 1 - ((animProgress - 0.8) / 0.2) : 1;
+  const opacity = fadeIn * fadeOut;
 
   return (
     <div 
@@ -49,12 +38,12 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
       style={{
         zIndex: 105,
         background: `radial-gradient(ellipse 80% 60% at 70% 30%, 
-          hsl(25 40% 15% / ${Math.min(opacity, 1) * 0.95}) 0%, 
-          hsl(20 30% 8% / ${Math.min(opacity, 1)}) 50%,
-          hsl(15 20% 5% / ${Math.min(opacity, 1)}) 100%)`,
+          hsl(25 40% 15% / ${opacity * 0.95}) 0%, 
+          hsl(20 30% 8% / ${opacity}) 50%,
+          hsl(15 20% 5% / ${opacity}) 100%)`,
       }}
     >
-      {/* The Image - animates from center to upper right, then exits off-screen */}
+      {/* The Image - continuous animation from center to off-screen upper-right */}
       <div
         className="absolute"
         style={{
