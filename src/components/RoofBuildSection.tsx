@@ -53,9 +53,9 @@ const RoofBuildSection: React.FC = () => {
     ? Math.min(75, ((progress - 0.78) / 0.14) * 75) 
     : 0;
 
-  // Door zoom: starts at 80%, completes at 100% (20% scroll window for slower, smoother motion)
-  const zoomProgress = progress > 0.80 
-    ? Math.min(1, (progress - 0.80) / 0.20) // 20% scroll window for much smoother, slower zoom
+  // Door zoom: starts at 65%, completes at 100% (35% scroll window for very slow, smooth motion)
+  const zoomProgress = progress > 0.65 
+    ? Math.min(1, (progress - 0.65) / 0.35) // 35% scroll window for much slower zoom
     : 0;
   
   // Update scroll context so navbar can fade
@@ -63,9 +63,9 @@ const RoofBuildSection: React.FC = () => {
     setZoomProgress(zoomProgress);
   }, [zoomProgress, setZoomProgress]);
   
-  // easeOutQuart - accelerates through the door (momentum feeling)
-  const easeOutQuart = (x: number) => 1 - Math.pow(1 - x, 4);
-  const easedZoom = easeOutQuart(zoomProgress);
+  // easeOutCubic - gentler acceleration for smoother feel
+  const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
+  const easedZoom = easeOutCubic(zoomProgress);
   
   // Scale: 1x → 20x (pass completely through the door)
   const zoomScale = 1 + (easedZoom * 19);
