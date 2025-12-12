@@ -48,14 +48,14 @@ const RoofBuildSection: React.FC = () => {
   // Show hint during buffer period (0-8%)
   const showScrollHint = progress < 0.08;
   
-  // Door animation: starts at 70%, fully open at 78% (with 2% buffer before zoom)
+  // Door animation: opens between 70-78% scroll
   const doorAngle = progress > 0.70 
     ? Math.min(75, ((progress - 0.70) / 0.08) * 75) 
     : 0;
 
-  // Door zoom: starts at 80%, completes at 100% (20% scroll window)
-  const zoomProgress = progress > 0.80 
-    ? Math.min(1, (progress - 0.80) / 0.20)
+  // Zoom starts immediately at 78% (no dead zone), ends at 100%
+  const zoomProgress = progress >= 0.78 
+    ? Math.min(1, (progress - 0.78) / 0.22)
     : 0;
   
   // Update scroll context so navbar can fade
@@ -63,37 +63,35 @@ const RoofBuildSection: React.FC = () => {
     setZoomProgress(zoomProgress);
   }, [zoomProgress, setZoomProgress]);
   
-  // Easing functions
-  const easeInOutQuad = (x: number) => 
-    x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
-  const easeInExpo = (x: number) => x === 0 ? 0 : Math.pow(2, 10 * x - 10);
+  // Custom cinematic easing: slow start, smooth acceleration, gentle landing
+  const cinematicEase = (x: number) => {
+    if (x <= 0) return 0;
+    if (x >= 1) return 1;
+    return x < 0.4 
+      ? 1.25 * x * x  // Slow start
+      : 1 - Math.pow(-2.5 * x + 2.5, 3) / 2; // Smooth landing
+  };
+  const easedZoom = cinematicEase(zoomProgress);
   
-  const easedZoom = easeInOutQuad(zoomProgress);
+  // Scale: 1x → 12x (reduced for smoother finish)
+  const zoomScale = 1 + (easedZoom * 11);
   
-  // Anticipation phase (78-80%): subtle scale pulse before zoom
-  const anticipationProgress = progress >= 0.78 && progress < 0.80 
-    ? (progress - 0.78) / 0.02 
-    : 0;
-  const anticipationScale = 1 + Math.sin(anticipationProgress * Math.PI) * 0.015;
+  // Warmth uses smooth cubic easing (not exponential)
+  const easeInOutCubic = (x: number) => 
+    x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  const warmthProgress = Math.max(0, (zoomProgress - 0.10) / 0.90);
+  const easedWarmth = easeInOutCubic(warmthProgress);
   
-  // Scale: 1x → 15x (anticipation feeds into zoom)
-  const zoomScale = anticipationScale + (easedZoom * 14);
+  // Grid fades out 0-60% of zoom (longer fade for smooth transition)
+  const gridFadeOut = Math.max(0, 1 - (zoomProgress * 1.67));
   
-  // Warm light with exponential ease-in for natural warmth feel
-  const warmthProgress = Math.max(0, (zoomProgress - 0.15) / 0.85);
-  const easedWarmth = easeInExpo(warmthProgress);
-  
-  // Staggered fade choreography for depth
-  const gridFadeOut = Math.max(0, 1 - (zoomProgress * 2.5)); // Grid gone by 40% of zoom
-  const houseFadeOut = zoomProgress < 0.25 
+  // House stays visible until 50% of zoom, then fades 50-90%
+  const houseFadeOut = zoomProgress < 0.50 
     ? 1 
-    : Math.max(0, 1 - ((zoomProgress - 0.25) / 0.5)); // House fades 25-75% of zoom
+    : Math.max(0, 1 - ((zoomProgress - 0.50) / 0.40));
   
   // Vignette intensity for tunnel vision effect
   const vignetteIntensity = easedZoom;
-  
-  // Motion blur hint - peaks at middle of animation
-  const motionBlur = Math.sin(easedZoom * Math.PI) * 0.3;
 
 
   
@@ -158,7 +156,7 @@ const RoofBuildSection: React.FC = () => {
 
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
-        <div style={{ opacity: gridFadeOut, transition: 'opacity 0.15s ease-out' }}>
+        <div style={{ opacity: gridFadeOut, transition: 'opacity 0.4s ease-in-out' }}>
           <GridBackground />
         </div>
         
@@ -171,11 +169,10 @@ const RoofBuildSection: React.FC = () => {
               <div 
                 className="flex justify-center"
                 style={{
-                  transform: `scale(${zoomScale}) translateZ(0)`,
-                  transformOrigin: '50% 82.1%', // Precise door center
+                  transform: `perspective(1000px) scale(${zoomScale}) translateZ(0)`,
+                  transformOrigin: '50% 82.1%',
                   opacity: houseFadeOut,
-                  filter: motionBlur > 0.01 ? `blur(${motionBlur}px)` : 'none',
-                  willChange: 'transform, opacity, filter',
+                  willChange: 'transform, opacity',
                   backfaceVisibility: 'hidden',
                   contain: 'layout paint style',
                 }}
