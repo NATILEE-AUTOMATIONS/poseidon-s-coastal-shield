@@ -48,9 +48,9 @@ const RoofBuildSection: React.FC = () => {
   // Show hint during buffer period (0-8%)
   const showScrollHint = progress < 0.08;
   
-  // Door animation: starts at 78%, fully open at 92%
-  const doorAngle = progress > 0.78 
-    ? Math.min(75, ((progress - 0.78) / 0.14) * 75) 
+  // Door animation: starts at 55%, fully open at 70% (before zoom begins at 65%)
+  const doorAngle = progress > 0.55 
+    ? Math.min(75, ((progress - 0.55) / 0.15) * 75) 
     : 0;
 
   // Door zoom: starts at 65%, completes at 100% (35% scroll window for very slow, smooth motion)
