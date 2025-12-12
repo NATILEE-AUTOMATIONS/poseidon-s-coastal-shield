@@ -24,16 +24,16 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
     ? Math.min(1, (progress - anim1Start) / 0.08) 
     : 0;
   
-  // Image 2: Animation starts at 92.5% scroll (drifts RIGHT - mirrored)
-  const anim2Start = 0.925;
+  // Image 2: Animation starts at 91% scroll (drifts RIGHT - mirrored), ends by 95%
+  const anim2Start = 0.91;
   const anim2Progress = progress >= anim2Start 
-    ? Math.min(1, (progress - anim2Start) / 0.055)
+    ? Math.min(1, (progress - anim2Start) / 0.04)
     : 0;
   
-  // Image 3: Animation starts at 94% scroll (drifts LEFT, with fade out before Image 4)
-  const anim3Start = 0.94;
+  // Image 3: Animation starts at 94.5% scroll (drifts LEFT like Image 1), ends by 97%
+  const anim3Start = 0.945;
   const anim3Progress = progress >= anim3Start 
-    ? Math.min(1, (progress - anim3Start) / 0.04)
+    ? Math.min(1, (progress - anim3Start) / 0.025)
     : 0;
   
   // Don't render anything until first animation starts
@@ -60,11 +60,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
       ? 1 - ((anim2Progress - fadeOutStart) / (1 - fadeOutStart))
       : 1;
 
-  // Image 3: TOP-DOWN DESCENT - drops from above with subtle rotation
-  const left3Percent = 50; // Stays centered horizontally
-  const scale3 = 0.3 + (anim3Progress * 1.25); // Starts slightly larger, grows
-  const top3Percent = -20 + (anim3Progress * 70); // Drops from -20% → 50%
-  const rotate3 = -8 + (anim3Progress * 8); // Slight rotation -8° → 0°
+  // Image 3: Billboard drive-by from right to left (SAME AS IMAGE 1)
+  const left3Percent = 55 - (anim3Progress * 85);
+  const scale3 = 0.25 + (anim3Progress * 1.3);
+  const top3Percent = 50 - (Math.sin(anim3Progress * Math.PI) * 15);
   const opacity3 = anim3Progress < 0.1 
     ? anim3Progress * 10
     : anim3Progress > fadeOutStart 
@@ -191,14 +190,14 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
         </div>
       )}
 
-      {/* Image 3 - top-down descent */}
+      {/* Image 3 - drive-by from right to left (SAME AS IMAGE 1) */}
       {anim3Progress > 0 && opacity3 > 0 && (
         <div
           className="absolute"
           style={{
             left: `${left3Percent}%`,
             top: `${top3Percent}%`,
-            transform: `translate(-50%, -50%) scale(${scale3}) rotate(${rotate3}deg)`,
+            transform: `translate(-50%, -50%) scale(${scale3})`,
             opacity: opacity3,
             transformStyle: 'preserve-3d',
           }}
