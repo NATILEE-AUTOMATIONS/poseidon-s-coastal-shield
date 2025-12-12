@@ -48,14 +48,14 @@ const RoofBuildSection: React.FC = () => {
   // Show hint during buffer period (0-8%)
   const showScrollHint = progress < 0.08;
   
-  // Door animation: opens between 70-78% scroll
+  // Door animation: starts at 70%, fully open at 78% (with 2% buffer before zoom)
   const doorAngle = progress > 0.70 
     ? Math.min(75, ((progress - 0.70) / 0.08) * 75) 
     : 0;
 
-  // Zoom starts immediately at 78% (no dead zone), ends at 100%
-  const zoomProgress = progress >= 0.78 
-    ? Math.min(1, (progress - 0.78) / 0.22)
+  // Door zoom: starts at 80%, completes at 100% (20% scroll window)
+  const zoomProgress = progress > 0.80 
+    ? Math.min(1, (progress - 0.80) / 0.20)
     : 0;
   
   // Update scroll context so navbar can fade
@@ -63,35 +63,21 @@ const RoofBuildSection: React.FC = () => {
     setZoomProgress(zoomProgress);
   }, [zoomProgress, setZoomProgress]);
   
-  // Custom cinematic easing: slow start, smooth acceleration, gentle landing
-  const cinematicEase = (x: number) => {
-    if (x <= 0) return 0;
-    if (x >= 1) return 1;
-    return x < 0.4 
-      ? 1.25 * x * x  // Slow start
-      : 1 - Math.pow(-2.5 * x + 2.5, 3) / 2; // Smooth landing
-  };
-  const easedZoom = cinematicEase(zoomProgress);
+  // easeInOutQuad - smooth start AND end for natural approach feel
+  const easeInOutQuad = (x: number) => 
+    x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+  const easedZoom = easeInOutQuad(zoomProgress);
   
-  // Scale: 1x → 12x (reduced for smoother finish)
-  const zoomScale = 1 + (easedZoom * 11);
+  // Scale: 1x → 15x (reduced from 20x for smoother finish)
+  const zoomScale = 1 + (easedZoom * 14);
   
-  // Warmth uses smooth cubic easing (not exponential)
-  const easeInOutCubic = (x: number) => 
-    x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
-  const warmthProgress = Math.max(0, (zoomProgress - 0.10) / 0.90);
-  const easedWarmth = easeInOutCubic(warmthProgress);
+  // Delayed warm light - starts at 20% zoom progress for gentler fade-in
+  const lightProgress = Math.max(0, (zoomProgress - 0.2) / 0.8);
+  const easedLight = easeInOutQuad(lightProgress);
   
-  // Grid fades out 0-60% of zoom (longer fade for smooth transition)
-  const gridFadeOut = Math.max(0, 1 - (zoomProgress * 1.67));
-  
-  // House stays visible until 50% of zoom, then fades 50-90%
-  const houseFadeOut = zoomProgress < 0.50 
-    ? 1 
-    : Math.max(0, 1 - ((zoomProgress - 0.50) / 0.40));
-  
-  // Vignette intensity for tunnel vision effect
-  const vignetteIntensity = easedZoom;
+  // Fade out elements during zoom - FASTER fades for cleaner transition
+  const gridFadeOut = Math.max(0, 1 - (zoomProgress * 3)); // Grid gone by 33% of zoom
+  const houseFadeOut = Math.max(0, 1 - (easedZoom * 2)); // House gone by 50% of zoom
 
 
   
@@ -130,33 +116,34 @@ const RoofBuildSection: React.FC = () => {
       style={{ height: '400vh' }}
     >
 
-      {/* Unified warm light + vignette overlay */}
+      {/* Solid backup overlay - catches ANYTHING that escapes */}
+      <div 
+        className="fixed inset-0 pointer-events-none z-[99]"
+        style={{
+          backgroundColor: `hsl(25 60% 20% / ${Math.min(1, easedLight * 1.5)})`,
+          opacity: easedLight > 0.02 ? 1 : 0,
+          willChange: 'opacity',
+        }}
+      />
+
+      {/* Warm light overlay - delayed fade-in for smoother experience - z-[100] to cover EVERYTHING */}
       <div 
         className="fixed inset-0 pointer-events-none z-[100]"
         style={{
-          background: `
-            radial-gradient(ellipse 70% 60% at 50% 45%, 
-              hsl(35 98% 80% / ${Math.min(1, easedWarmth * 1.3)}), 
-              hsl(32 95% 70% / ${Math.min(1, easedWarmth * 1.1)}) 20%,
-              hsl(28 90% 55% / ${Math.min(1, easedWarmth * 0.9)}) 40%,
-              hsl(22 80% 40% / ${Math.min(1, easedWarmth * 0.7)}) 60%,
-              hsl(18 70% 25% / ${easedWarmth * 0.5}) 80%,
-              hsl(15 60% 12% / ${easedWarmth * 0.3}) 100%),
-            radial-gradient(ellipse 85% 75% at 50% 50%, 
-              transparent 0%, 
-              transparent 35%,
-              hsl(20 50% 8% / ${vignetteIntensity * 0.5}) 65%,
-              hsl(15 40% 5% / ${vignetteIntensity * 0.8}) 85%,
-              hsl(10 30% 3% / ${vignetteIntensity}) 100%)
-          `,
-          opacity: zoomProgress > 0.01 ? 1 : 0,
+          background: `radial-gradient(circle at 50% 45%, 
+            hsl(35 98% 75% / ${Math.min(1, easedLight * 1.2)}), 
+            hsl(30 95% 65% / ${Math.min(1, easedLight * 1.0)}) 25%,
+            hsl(25 85% 50% / ${Math.min(1, easedLight * 0.85)}) 50%,
+            hsl(20 75% 35% / ${Math.min(1, easedLight * 0.7)}) 80%,
+            hsl(15 65% 20% / ${easedLight * 0.5}) 100%)`,
+          opacity: easedLight > 0.01 ? 1 : 0,
           willChange: 'background, opacity',
         }}
       />
 
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
-        <div style={{ opacity: gridFadeOut, transition: 'opacity 0.4s ease-in-out' }}>
+        <div style={{ opacity: gridFadeOut, transition: 'opacity 0.15s ease-out' }}>
           <GridBackground />
         </div>
         
@@ -169,12 +156,11 @@ const RoofBuildSection: React.FC = () => {
               <div 
                 className="flex justify-center"
                 style={{
-                  transform: `perspective(1000px) scale(${zoomScale}) translateZ(0)`,
-                  transformOrigin: '50% 82.1%',
+                  transform: `scale(${zoomScale})`,
+                  transformOrigin: '50% 82%', // Exact door center (door at ~82% of viewBox height)
                   opacity: houseFadeOut,
                   willChange: 'transform, opacity',
-                  backfaceVisibility: 'hidden',
-                  contain: 'layout paint style',
+                  backfaceVisibility: 'hidden', // Prevent flicker
                 }}
               >
               <div className="w-full max-w-2xl">
