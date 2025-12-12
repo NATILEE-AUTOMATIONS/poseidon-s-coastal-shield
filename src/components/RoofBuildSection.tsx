@@ -18,10 +18,9 @@ import {
 import MobileStepCard from './RoofBuild/MobileStepCard';
 import YardSign from './RoofBuild/YardSign';
 import { useScrollContext } from '@/context/ScrollContext';
-
-
 import { Button } from './ui/button';
 import { ArrowRight } from 'lucide-react';
+import coastalRoofImage from '@/assets/coastal-roof-project.png';
 
 const RoofBuildSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -79,12 +78,25 @@ const RoofBuildSection: React.FC = () => {
   const gridFadeOut = Math.max(0, 1 - (zoomProgress * 3)); // Grid gone by 33% of zoom
   const houseFadeOut = Math.max(0, 1 - (easedZoom * 2)); // House gone by 50% of zoom
 
-
+  // Image reveal: starts at 85% overall progress, completes at 95%
+  const imageProgress = progress > 0.85 
+    ? Math.min(1, (progress - 0.85) / 0.10)
+    : 0;
   
-  // Typography states
-  const showRoofComplete = progress >= 0.75 && progress < 0.85;
-  const showWelcomeHome = progress >= 0.96; // Delayed to appear over image
-  const showCTA = progress >= 0.80; // CTA appears earlier than welcome text
+  // easeOutCubic for smooth deceleration
+  const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
+  const easedImage = easeOutCubic(imageProgress);
+  
+  // Image scale: 0.1 → 1.1 (slight overshoot for impact)
+  const imageScale = 0.1 + (easedImage * 1.0);
+  const imageOpacity = easedImage;
+  
+  // Fade overlay as image appears (overlay goes from 1 → 0.3)
+  const overlayFade = imageProgress > 0 ? 1 - (easedImage * 0.7) : 1;
+  
+  // Welcome text and CTA timing
+  const showWelcomeHome = progress >= 0.92;
+  const showCTA = progress >= 0.96;
 
   // Calculate staggered exit progress for label pairs (desktop only)
   // Labels exit from 0.70 to 0.78 (as door opens, before zoom starts at 0.80)
@@ -131,15 +143,79 @@ const RoofBuildSection: React.FC = () => {
         className="fixed inset-0 pointer-events-none z-[100]"
         style={{
           background: `radial-gradient(circle at 50% 45%, 
-            hsl(35 98% 75% / ${Math.min(1, easedLight * 1.2)}), 
-            hsl(30 95% 65% / ${Math.min(1, easedLight * 1.0)}) 25%,
-            hsl(25 85% 50% / ${Math.min(1, easedLight * 0.85)}) 50%,
-            hsl(20 75% 35% / ${Math.min(1, easedLight * 0.7)}) 80%,
-            hsl(15 65% 20% / ${easedLight * 0.5}) 100%)`,
+            hsl(35 98% 75% / ${Math.min(1, easedLight * 1.2 * overlayFade)}), 
+            hsl(30 95% 65% / ${Math.min(1, easedLight * 1.0 * overlayFade)}) 25%,
+            hsl(25 85% 50% / ${Math.min(1, easedLight * 0.85 * overlayFade)}) 50%,
+            hsl(20 75% 35% / ${Math.min(1, easedLight * 0.7 * overlayFade)}) 80%,
+            hsl(15 65% 20% / ${easedLight * 0.5 * overlayFade}) 100%)`,
           opacity: easedLight > 0.01 ? 1 : 0,
           willChange: 'background, opacity',
         }}
       />
+
+      {/* Coastal roof project image - fades in during zoom */}
+      {imageProgress > 0 && (
+        <div 
+          className="fixed inset-0 flex items-center justify-center z-[101] pointer-events-none"
+          style={{
+            opacity: imageOpacity,
+            willChange: 'opacity, transform',
+          }}
+        >
+          <img
+            src={coastalRoofImage}
+            alt="Beautiful coastal roof project by Poseidon Roofing"
+            className="rounded-lg shadow-2xl"
+            style={{
+              transform: `scale(${imageScale})`,
+              maxWidth: '85vw',
+              maxHeight: '70vh',
+              objectFit: 'cover',
+              willChange: 'transform',
+              backfaceVisibility: 'hidden',
+              boxShadow: '0 25px 80px -12px rgba(0, 0, 0, 0.5), 0 0 60px hsl(32 80% 50% / 0.3)',
+            }}
+          />
+        </div>
+      )}
+
+      {/* Welcome home text overlay */}
+      {showWelcomeHome && (
+        <div 
+          className="fixed inset-0 flex flex-col items-center justify-end pb-24 z-[102] pointer-events-none"
+          style={{
+            opacity: Math.min(1, (progress - 0.92) / 0.04),
+          }}
+        >
+          <h2 
+            className="text-4xl md:text-6xl font-bold tracking-tight mb-6"
+            style={{
+              color: 'hsl(35 95% 85%)',
+              textShadow: '0 0 40px hsl(32 80% 50% / 0.8), 0 0 80px hsl(32 80% 50% / 0.4)',
+            }}
+          >
+            Welcome home.
+          </h2>
+        </div>
+      )}
+
+      {/* CTA Button overlay */}
+      {showCTA && (
+        <div 
+          className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[103]"
+          style={{
+            opacity: Math.min(1, (progress - 0.96) / 0.04),
+          }}
+        >
+          <Button 
+            size="lg" 
+            className="group bg-gradient-to-r from-teal-600 to-orange-500 hover:from-teal-500 hover:to-orange-400 text-white font-semibold px-8 py-6 text-lg rounded-full shadow-xl hover:shadow-2xl transition-all duration-300"
+          >
+            Free Assessment
+            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+          </Button>
+        </div>
+      )}
 
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
