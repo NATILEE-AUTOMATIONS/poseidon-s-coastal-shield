@@ -48,14 +48,14 @@ const RoofBuildSection: React.FC = () => {
   // Show hint during buffer period (0-8%)
   const showScrollHint = progress < 0.08;
   
-  // Door animation: starts at 55%, fully open at 70% (before zoom begins at 65%)
-  const doorAngle = progress > 0.55 
-    ? Math.min(75, ((progress - 0.55) / 0.15) * 75) 
+  // Door animation: starts at 70%, fully open at 78% (with 2% buffer before zoom)
+  const doorAngle = progress > 0.70 
+    ? Math.min(75, ((progress - 0.70) / 0.08) * 75) 
     : 0;
 
-  // Door zoom: starts at 65%, completes at 100% (35% scroll window for very slow, smooth motion)
-  const zoomProgress = progress > 0.65 
-    ? Math.min(1, (progress - 0.65) / 0.35) // 35% scroll window for much slower zoom
+  // Door zoom: starts at 80%, completes at 100% (20% scroll window)
+  const zoomProgress = progress > 0.80 
+    ? Math.min(1, (progress - 0.80) / 0.20)
     : 0;
   
   // Update scroll context so navbar can fade
@@ -63,17 +63,21 @@ const RoofBuildSection: React.FC = () => {
     setZoomProgress(zoomProgress);
   }, [zoomProgress, setZoomProgress]);
   
-  // easeOutCubic - gentler acceleration for smoother feel
-  const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
-  const easedZoom = easeOutCubic(zoomProgress);
+  // easeInOutQuad - smooth start AND end for natural approach feel
+  const easeInOutQuad = (x: number) => 
+    x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+  const easedZoom = easeInOutQuad(zoomProgress);
   
-  // Scale: 1x → 20x (pass completely through the door)
-  const zoomScale = 1 + (easedZoom * 19);
+  // Scale: 1x → 15x (reduced from 20x for smoother finish)
+  const zoomScale = 1 + (easedZoom * 14);
+  
+  // Delayed warm light - starts at 20% zoom progress for gentler fade-in
+  const lightProgress = Math.max(0, (zoomProgress - 0.2) / 0.8);
+  const easedLight = easeInOutQuad(lightProgress);
   
   // Fade out elements during zoom - FASTER fades for cleaner transition
   const gridFadeOut = Math.max(0, 1 - (zoomProgress * 3)); // Grid gone by 33% of zoom
   const houseFadeOut = Math.max(0, 1 - (easedZoom * 2)); // House gone by 50% of zoom
-  const ctaZoomFade = Math.max(0, 1 - (zoomProgress * 5)); // CTA gone by 20% of zoom
 
 
   
@@ -83,12 +87,12 @@ const RoofBuildSection: React.FC = () => {
   const showCTA = progress >= 0.80; // CTA appears earlier than welcome text
 
   // Calculate staggered exit progress for label pairs (desktop only)
-  // Labels exit from 0.75 to 0.85 (before zoom starts at 0.88)
+  // Labels exit from 0.70 to 0.78 (as door opens, before zoom starts at 0.80)
   const getLabelExitProgress = (pairIndex: number): number => {
-    const doorStart = 0.75;
-    const doorEnd = 0.85;
-    const doorRange = doorEnd - doorStart; // 0.10
-    const pairWindow = doorRange / 5; // 0.02 per pair
+    const doorStart = 0.70;
+    const doorEnd = 0.78;
+    const doorRange = doorEnd - doorStart; // 0.08
+    const pairWindow = doorRange / 5; // ~0.016 per pair
     
     const pairStart = doorStart + (pairIndex * pairWindow);
     const pairEnd = pairStart + pairWindow;
@@ -116,23 +120,23 @@ const RoofBuildSection: React.FC = () => {
       <div 
         className="fixed inset-0 pointer-events-none z-[99]"
         style={{
-          backgroundColor: `hsl(25 60% 20% / ${Math.min(1, easedZoom * 2.5)})`,
-          opacity: easedZoom > 0.05 ? 1 : 0,
+          backgroundColor: `hsl(25 60% 20% / ${Math.min(1, easedLight * 1.5)})`,
+          opacity: easedLight > 0.02 ? 1 : 0,
           willChange: 'opacity',
         }}
       />
 
-      {/* Warm light overlay - fills screen as user enters through door - z-[100] to cover EVERYTHING */}
+      {/* Warm light overlay - delayed fade-in for smoother experience - z-[100] to cover EVERYTHING */}
       <div 
         className="fixed inset-0 pointer-events-none z-[100]"
         style={{
           background: `radial-gradient(circle at 50% 45%, 
-            hsl(35 98% 75% / ${Math.min(1, easedZoom * 3)}), 
-            hsl(30 95% 65% / ${Math.min(1, easedZoom * 2.5)}) 25%,
-            hsl(25 85% 50% / ${Math.min(1, easedZoom * 2)}) 50%,
-            hsl(20 75% 35% / ${Math.min(1, easedZoom * 1.5)}) 80%,
-            hsl(15 65% 20% / ${easedZoom}) 100%)`,
-          opacity: easedZoom > 0.02 ? 1 : 0,
+            hsl(35 98% 75% / ${Math.min(1, easedLight * 1.2)}), 
+            hsl(30 95% 65% / ${Math.min(1, easedLight * 1.0)}) 25%,
+            hsl(25 85% 50% / ${Math.min(1, easedLight * 0.85)}) 50%,
+            hsl(20 75% 35% / ${Math.min(1, easedLight * 0.7)}) 80%,
+            hsl(15 65% 20% / ${easedLight * 0.5}) 100%)`,
+          opacity: easedLight > 0.01 ? 1 : 0,
           willChange: 'background, opacity',
         }}
       />
@@ -149,15 +153,16 @@ const RoofBuildSection: React.FC = () => {
           {/* Main visualization container - house centered independently */}
           <div className="relative w-full max-w-5xl mx-auto">
             {/* House + Layers SVG - perfectly centered with zoom effect */}
-            <div 
-              className="flex justify-center"
-              style={{
-                transform: `scale(${zoomScale})`,
-                transformOrigin: '50% 75%', // Door is at ~75% vertical position
-                opacity: houseFadeOut,
-                willChange: 'transform, opacity', // GPU optimization for smooth rendering
-              }}
-            >
+              <div 
+                className="flex justify-center"
+                style={{
+                  transform: `scale(${zoomScale})`,
+                  transformOrigin: '50% 82%', // Exact door center (door at ~82% of viewBox height)
+                  opacity: houseFadeOut,
+                  willChange: 'transform, opacity',
+                  backfaceVisibility: 'hidden', // Prevent flicker
+                }}
+              >
               <div className="w-full max-w-2xl">
                 <svg
                   viewBox="0 0 400 280"
@@ -245,7 +250,7 @@ const RoofBuildSection: React.FC = () => {
               <div className="space-y-5">
                 {materialInfo.slice(0, 5).map((material, index) => {
                   const exitProgress = getLabelExitProgress(index);
-                  const isExiting = progress >= 0.75;
+                  const isExiting = progress >= 0.70;
                   
                   // During exit: slide left and fade out
                   // Before exit: normal lock-in animation
@@ -299,7 +304,7 @@ const RoofBuildSection: React.FC = () => {
               <div className="space-y-5">
                 {materialInfo.slice(5).map((material, index) => {
                   const exitProgress = getLabelExitProgress(index); // Same pair index as left side
-                  const isExiting = progress >= 0.75;
+                  const isExiting = progress >= 0.70;
                   
                   // During exit: slide right and fade out (positive X)
                   // Before exit: normal lock-in animation
@@ -352,12 +357,12 @@ const RoofBuildSection: React.FC = () => {
         </div>
 
 
-        {/* Progress bar - HARD HIDE at 78% before zoom starts */}
-        {progress < 0.78 && (
+        {/* Progress bar - HARD HIDE at 70% before door opens */}
+        {progress < 0.70 && (
           <div 
             className="absolute bottom-6 left-1/2 -translate-x-1/2 w-32 h-0.5 bg-muted/30 rounded-full overflow-hidden z-20"
             style={{
-              opacity: progress > 0.70 ? Math.max(0, 1 - ((progress - 0.70) / 0.08)) : 1,
+              opacity: progress > 0.65 ? Math.max(0, 1 - ((progress - 0.65) / 0.05)) : 1,
             }}
           >
             <div 
