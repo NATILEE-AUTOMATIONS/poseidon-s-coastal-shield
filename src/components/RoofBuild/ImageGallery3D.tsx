@@ -26,7 +26,7 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
   const easeInQuad = (x: number) => x * x;
   
-  // --- PHASE 1: Approaching (image comes toward you) ---
+  // --- PHASE 1: Approaching (image flies toward you from the void) ---
   let scale: number;
   let translateZ: number;
   let translateX: number;
@@ -40,50 +40,50 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
     const approachProgress = animProgress / approachEnd;
     const easedApproach = easeOutCubic(approachProgress);
     
-    // Scale: starts tiny (0.2), grows to full size (1.0)
-    scale = 0.2 + easedApproach * 0.8;
+    // Scale: starts tiny (0.15), grows to full size (1.0)
+    scale = 0.15 + easedApproach * 0.85;
     
-    // Z translation: starts far (-500), comes to 0
-    translateZ = -500 + easedApproach * 500;
+    // Z translation: starts very far (-800), comes to 0 (at eye level)
+    translateZ = -800 + easedApproach * 800;
     
-    // X/Y: starts slightly offset, centers
-    translateX = (1 - easedApproach) * (isMobile ? 0 : 50);
-    translateY = (1 - easedApproach) * -30;
+    // X/Y: stays perfectly centered throughout approach
+    translateX = 0;
+    translateY = 0;
     
-    // Rotation: slight wobble as it approaches
-    rotateY = (1 - easedApproach) * -8;
+    // Rotation: no rotation during approach, straight on
+    rotateY = 0;
     
-    // Opacity: fade in quickly
-    opacity = Math.min(1, approachProgress * 3);
+    // Opacity: quick fade in
+    opacity = Math.min(1, approachProgress * 2.5);
     
-    // Blur: starts blurry, sharpens
-    blur = (1 - easedApproach) * 8;
+    // Blur: starts blurry (distant), sharpens as it arrives
+    blur = (1 - easedApproach) * 12;
     
   } else {
-    // --- PHASE 2: Walking past (image slides to side and recedes) ---
+    // --- PHASE 2: Walking past (you continue forward, image recedes behind you) ---
     const passProgress = (animProgress - approachEnd) / (1 - approachEnd);
     const easedPass = easeInQuad(passProgress);
     
-    // Scale: shrinks slightly as we pass
-    scale = 1.0 - easedPass * 0.3;
+    // Scale: shrinks as it recedes into distance behind you
+    scale = 1.0 - easedPass * 0.6;
     
-    // Z: moves behind us
-    translateZ = easedPass * -200;
+    // Z: moves behind you (negative = receding into distance)
+    translateZ = -easedPass * 600;
     
-    // X: slides dramatically to the left (we're walking past on the right)
-    translateX = isMobile ? -easedPass * 120 : -easedPass * 200;
+    // X: subtle drift to one side as you walk past (perspective effect)
+    translateX = isMobile ? -easedPass * 80 : -easedPass * 120;
     
-    // Y: drops slightly as we pass
-    translateY = easedPass * 50;
+    // Y: slight upward drift (looking back over shoulder effect)
+    translateY = -easedPass * 30;
     
-    // Rotation: rotates as we pass (like looking back at it)
-    rotateY = easedPass * 35;
+    // Rotation: angled view as you pass by it
+    rotateY = easedPass * 25;
     
-    // Opacity: stays visible then fades at the very end
-    opacity = passProgress < 0.7 ? 1 : 1 - (passProgress - 0.7) / 0.3;
+    // Opacity: stays visible then fades as it's fully behind you
+    opacity = 1 - easedPass * 0.9;
     
     // Blur: slight blur as it recedes
-    blur = easedPass * 4;
+    blur = easedPass * 6;
   }
   
   // Background opacity
