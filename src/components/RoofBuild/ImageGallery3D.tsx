@@ -9,28 +9,22 @@ interface ImageGallery3DProps {
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   const isMobile = useIsMobile();
   
-  // Single continuous animation from center to off-screen upper-right
-  // Starts at 93%, image fully exits by 100%
+  // Animation from center to upper-right, stays visible at end
   const animStart = 0.93;
   if (progress < animStart) return null;
 
-  // Normalize progress: 0 = start, 1 = completely off-screen
   const animProgress = Math.min(1, (progress - animStart) / (1 - animStart));
   
-  // Continuous trajectory: center → upper-right → off-screen
-  // Start: 55% left, 50% top (center-ish)
-  // End: 130% left, -5% top (off-screen upper-right)
-  const leftPercent = 55 + (animProgress * 75);  // 55% → 130%
-  const topPercent = 50 - (animProgress * 55);   // 50% → -5%
+  // Trajectory: center → upper-right (stays on screen)
+  const leftPercent = 55 + (animProgress * 30);  // 55% → 85%
+  const topPercent = 50 - (animProgress * 25);   // 50% → 25%
   
   // Scale: grows to full size by 40% of animation, then stays
-  const scaleProgress = Math.min(1, animProgress * 2.5); // Reaches 1.0 at 40% 
+  const scaleProgress = Math.min(1, animProgress * 2.5);
   const scale = 0.2 + (scaleProgress * 0.8); // 0.2 → 1.0
   
-  // Opacity: fade in quickly at start, fade out in last 20%
-  const fadeIn = Math.min(1, animProgress * 5); // Fully visible by 20%
-  const fadeOut = animProgress > 0.8 ? 1 - ((animProgress - 0.8) / 0.2) : 1;
-  const opacity = fadeIn * fadeOut;
+  // Opacity: fade in quickly, stay visible
+  const opacity = Math.min(1, animProgress * 5);
 
   return (
     <div 
