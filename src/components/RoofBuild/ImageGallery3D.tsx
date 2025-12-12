@@ -50,36 +50,42 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   const desktopFadeOutStart = 0.75;
   const fadeOutStart = isMobile ? mobileFadeOutStart : desktopFadeOutStart;
 
-  // Image 1: Mobile = centered, Desktop = drifts LEFT
-  const left1Percent = isMobile ? 50 : 55 - (anim1Progress * 85);
+  // Image 1: drifts LEFT (right to left) on both mobile and desktop
+  const left1Percent = isMobile 
+    ? 60 - (anim1Progress * 70)   // Mobile: 60% → -10%
+    : 55 - (anim1Progress * 85);
   const scale1 = isMobile 
-    ? 0.6 + (anim1Progress * 0.5)   // Mobile: 0.6 → 1.1 (larger, steadier)
+    ? 0.4 + (anim1Progress * 1.2)   // Mobile: 0.4 → 1.6 (dramatic)
     : 0.25 + (anim1Progress * 1.3);
-  const top1Percent = isMobile ? 45 : 50 - (Math.sin(anim1Progress * Math.PI) * 15);
+  const top1Percent = 50 - (Math.sin(anim1Progress * Math.PI) * (isMobile ? 12 : 15));
   const opacity1 = anim1Progress < 0.15 
     ? anim1Progress / 0.15
     : anim1Progress > fadeOutStart 
       ? 1 - ((anim1Progress - fadeOutStart) / (1 - fadeOutStart))
       : 1;
 
-  // Image 2: Mobile = centered, Desktop = drifts RIGHT
-  const left2Percent = isMobile ? 50 : 45 + (anim2Progress * 85);
+  // Image 2: drifts RIGHT (left to right) on both mobile and desktop
+  const left2Percent = isMobile 
+    ? 40 + (anim2Progress * 70)   // Mobile: 40% → 110%
+    : 45 + (anim2Progress * 85);
   const scale2 = isMobile 
-    ? 0.6 + (anim2Progress * 0.5)
+    ? 0.4 + (anim2Progress * 1.2)
     : 0.25 + (anim2Progress * 1.3);
-  const top2Percent = isMobile ? 45 : 50 - (Math.sin(anim2Progress * Math.PI) * 15);
+  const top2Percent = 50 - (Math.sin(anim2Progress * Math.PI) * (isMobile ? 12 : 15));
   const opacity2 = anim2Progress < 0.15 
     ? anim2Progress / 0.15
     : anim2Progress > fadeOutStart 
       ? 1 - ((anim2Progress - fadeOutStart) / (1 - fadeOutStart))
       : 1;
 
-  // Image 3: Mobile = centered, Desktop = drifts LEFT
-  const left3Percent = isMobile ? 50 : 55 - (anim3Progress * 85);
+  // Image 3: drifts LEFT (same as image 1) on both mobile and desktop
+  const left3Percent = isMobile 
+    ? 60 - (anim3Progress * 70)   // Mobile: 60% → -10%
+    : 55 - (anim3Progress * 85);
   const scale3 = isMobile 
-    ? 0.6 + (anim3Progress * 0.5)
+    ? 0.4 + (anim3Progress * 1.2)
     : 0.25 + (anim3Progress * 1.3);
-  const top3Percent = isMobile ? 45 : 50 - (Math.sin(anim3Progress * Math.PI) * 15);
+  const top3Percent = 50 - (Math.sin(anim3Progress * Math.PI) * (isMobile ? 12 : 15));
   const opacity3 = anim3Progress < 0.15 
     ? anim3Progress / 0.15
     : anim3Progress > fadeOutStart 
