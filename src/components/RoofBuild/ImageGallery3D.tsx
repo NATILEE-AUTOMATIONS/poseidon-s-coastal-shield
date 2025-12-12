@@ -73,10 +73,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
             src={coastalRoofImage}
             alt="Completed coastal roof project"
             style={{
-              width: isMobile ? '80vw' : '45vw',
-              maxWidth: isMobile ? 'none' : '580px',
+              width: isMobile ? '90vw' : '60vw',
+              maxWidth: isMobile ? 'none' : '800px',
               height: 'auto',
-              maxHeight: isMobile ? '45vh' : '42vh',
+              maxHeight: isMobile ? '55vh' : '55vh',
               objectFit: 'cover',
               display: 'block',
             }}
