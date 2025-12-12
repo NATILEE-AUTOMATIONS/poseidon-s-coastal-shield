@@ -41,8 +41,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
 
   // Image 1: Position drifts LEFT (55% → -30%)
   const left1Percent = 55 - (anim1Progress * 85);
-  const scale1 = 0.25 + (anim1Progress * 1.3);
-  const top1Percent = 50 - (Math.sin(anim1Progress * Math.PI) * 15);
+  const scale1 = isMobile 
+    ? 0.5 + (anim1Progress * 1.2)   // Mobile: 0.5 → 1.7 (starts 2x bigger)
+    : 0.25 + (anim1Progress * 1.3); // Desktop unchanged
+  const top1Percent = 50 - (Math.sin(anim1Progress * Math.PI) * (isMobile ? 10 : 15));
   const fadeOutStart = 0.75;
   const opacity1 = anim1Progress < 0.1 
     ? anim1Progress * 10
@@ -52,8 +54,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
 
   // Image 2: Position drifts RIGHT (45% → 130%) - MIRRORED
   const left2Percent = 45 + (anim2Progress * 85);
-  const scale2 = 0.25 + (anim2Progress * 1.3);
-  const top2Percent = 50 - (Math.sin(anim2Progress * Math.PI) * 15);
+  const scale2 = isMobile 
+    ? 0.5 + (anim2Progress * 1.2)
+    : 0.25 + (anim2Progress * 1.3);
+  const top2Percent = 50 - (Math.sin(anim2Progress * Math.PI) * (isMobile ? 10 : 15));
   const opacity2 = anim2Progress < 0.1 
     ? anim2Progress * 10
     : anim2Progress > fadeOutStart 
@@ -62,8 +66,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
 
   // Image 3: Billboard drive-by from right to left (SAME AS IMAGE 1)
   const left3Percent = 55 - (anim3Progress * 85);
-  const scale3 = 0.25 + (anim3Progress * 1.3);
-  const top3Percent = 50 - (Math.sin(anim3Progress * Math.PI) * 15);
+  const scale3 = isMobile 
+    ? 0.5 + (anim3Progress * 1.2)
+    : 0.25 + (anim3Progress * 1.3);
+  const top3Percent = 50 - (Math.sin(anim3Progress * Math.PI) * (isMobile ? 10 : 15));
   const opacity3 = anim3Progress < 0.1 
     ? anim3Progress * 10
     : anim3Progress > fadeOutStart 
@@ -79,11 +85,13 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   // Apply exponential easing for dramatic effect
   const easedProgress4 = easeOutExpo(anim4Progress);
   
-  // Scale: tiny dot (0.05) → full size with overshoot (1.15) → settle (1.0)
+  // Scale: tiny dot → full size with overshoot → settle (mobile gets bigger finale)
+  const baseScale4 = isMobile ? 0.15 : 0.05;
+  const maxScale4 = isMobile ? 1.3 : 1.15;
   const scaleOvershoot = anim4Progress > 0.8 
-    ? 1.15 - ((anim4Progress - 0.8) / 0.2) * 0.15 
-    : 0.05 + (easedProgress4 * 1.1);
-  const scale4 = Math.max(0.05, scaleOvershoot);
+    ? maxScale4 - ((anim4Progress - 0.8) / 0.2) * 0.15 
+    : baseScale4 + (easedProgress4 * (maxScale4 - baseScale4 + 0.1));
+  const scale4 = Math.max(baseScale4, scaleOvershoot);
   
   // 3D rotation: descending from top (tilted back → flat)
   const rotateY4 = 0; // No side rotation
