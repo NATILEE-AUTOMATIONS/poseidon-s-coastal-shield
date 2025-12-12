@@ -7,8 +7,8 @@ interface ImageGallery3DProps {
 }
 
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
-  // Gallery starts appearing at 84% scroll
-  const galleryStart = 0.84;
+  // Gallery starts appearing at 96% scroll (after door zoom is nearly complete)
+  const galleryStart = 0.96;
   
   // Don't render until we're close to gallery time
   if (progress < galleryStart - 0.01) return null;
@@ -21,26 +21,26 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
     return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
   };
 
-  // Image 1 (Main - completed roof): 84% → 90%
-  const img1Start = 0.84;
-  const img1End = 0.90;
+  // Image 1 (Main - completed roof): 96% → 100%
+  const img1Start = 0.96;
+  const img1End = 1.0;
   const img1Raw = progress > img1Start 
     ? Math.min(1, (progress - img1Start) / (img1End - img1Start))
     : 0;
   const img1Progress = easeOutBack(Math.min(1, img1Raw));
   const img1Smooth = easeOutCubic(img1Raw);
 
-  // Image 2 (Secondary - in progress): 88% → 95%
-  const img2Start = 0.88;
-  const img2End = 0.95;
+  // Image 2 (Secondary - in progress): 98% → 102% (extends past scroll end)
+  const img2Start = 0.98;
+  const img2End = 1.02;
   const img2Raw = progress > img2Start 
     ? Math.min(1, (progress - img2Start) / (img2End - img2Start))
     : 0;
   const img2Progress = easeOutBack(Math.min(1, img2Raw));
   const img2Smooth = easeOutCubic(img2Raw);
 
-  // Subtle floating after images are settled (after 95%)
-  const floatActive = progress > 0.95;
+  // Subtle floating after images are settled (after 100%)
+  const floatActive = progress >= 1.0;
   const floatTime = progress * 30;
   const float1Y = floatActive ? Math.sin(floatTime) * 6 : 0;
   const float2Y = floatActive ? Math.sin(floatTime * 1.2 + 2) * 5 : 0;
