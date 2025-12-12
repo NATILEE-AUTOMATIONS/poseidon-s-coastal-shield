@@ -40,7 +40,7 @@ const imageConfigs: ImageConfig[] = [
   {
     src: coastalRoofImage,
     alt: 'Completed coastal roof project',
-    startProgress: 0.82,
+    startProgress: 0.94,
     desktop: {
       position: 'top-right',
       width: '48vw',
@@ -65,7 +65,7 @@ const imageConfigs: ImageConfig[] = [
   {
     src: inProgressImage,
     alt: 'Roof installation in progress',
-    startProgress: 0.86,
+    startProgress: 0.955,
     desktop: {
       position: 'bottom-left',
       width: '42vw',
@@ -90,7 +90,7 @@ const imageConfigs: ImageConfig[] = [
   {
     src: aerialEstateImage,
     alt: 'Large estate roof project with pool',
-    startProgress: 0.90,
+    startProgress: 0.97,
     desktop: {
       position: 'top-left',
       width: '44vw',
@@ -115,7 +115,7 @@ const imageConfigs: ImageConfig[] = [
   {
     src: coastalCrewImage,
     alt: 'Coastal home with roofing crew',
-    startProgress: 0.94,
+    startProgress: 0.985,
     desktop: {
       position: 'right-center',
       width: '40vw',
@@ -140,7 +140,7 @@ const imageConfigs: ImageConfig[] = [
   {
     src: multilevelTeamImage,
     alt: 'Multi-level roof installation team',
-    startProgress: 0.97,
+    startProgress: 0.995,
     desktop: {
       position: 'bottom-center',
       width: '38vw',
@@ -166,16 +166,16 @@ const imageConfigs: ImageConfig[] = [
 
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   const isMobile = useIsMobile();
-  const galleryStart = 0.80;
+  const galleryStart = 0.93;
   
   if (progress < galleryStart) return null;
 
   const easeInOutQuad = (x: number) => x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
 
-  // Background opacity based on first image (starts earlier now)
-  const firstImgRaw = progress > 0.82 ? Math.min(1, (progress - 0.82) / 0.18) : 0;
-  const bgOpacity = firstImgRaw < 0.3 
-    ? Math.min(1, firstImgRaw * 4) 
+  // Background opacity based on first image
+  const firstImgRaw = progress > 0.94 ? Math.min(1, (progress - 0.94) / 0.06) : 0;
+  const bgOpacity = firstImgRaw < 0.5 
+    ? Math.min(1, firstImgRaw * 3) 
     : 1;
 
   const getDesktopPosition = (position: ImageConfig['desktop']['position'], rawProgress: number) => {
@@ -215,8 +215,8 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
       />
 
       {imageConfigs.map((config, index) => {
-        // Each image animates over 15% scroll range for slower, more deliberate motion
-        const imgDuration = 0.15;
+        // Each image animates over 6% scroll range (compressed into final 7% of scroll)
+        const imgDuration = 0.06;
         const imgEnd = Math.min(1.0, config.startProgress + imgDuration);
         const imgRaw = progress > config.startProgress 
           ? Math.min(1, (progress - config.startProgress) / imgDuration)
