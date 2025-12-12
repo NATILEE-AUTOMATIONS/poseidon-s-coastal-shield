@@ -18,7 +18,7 @@ import {
 import MobileStepCard from './RoofBuild/MobileStepCard';
 import YardSign from './RoofBuild/YardSign';
 import { useScrollContext } from '@/context/ScrollContext';
-import coastalRoofImage from '@/assets/coastal-roof-project.png';
+import ImageGallery3D from './RoofBuild/ImageGallery3D';
 
 const RoofBuildSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -76,21 +76,12 @@ const RoofBuildSection: React.FC = () => {
   const gridFadeOut = Math.max(0, 1 - (zoomProgress * 3)); // Grid gone by 33% of zoom
   const houseFadeOut = Math.max(0, 1 - (easedZoom * 2)); // House gone by 50% of zoom
 
-  // Image reveal: starts at 88% overall progress, completes at 96%
-  const imageProgress = progress > 0.88 
-    ? Math.min(1, (progress - 0.88) / 0.08)
+  // 3D Gallery visibility check and overlay fade
+  const galleryProgress = progress > 0.88 
+    ? Math.min(1, (progress - 0.88) / 0.10)
     : 0;
-  
-  // easeOutCubic for smooth deceleration
   const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
-  const easedImage = easeOutCubic(imageProgress);
-  
-  // Image scale: 0.1 → 1.1 (slight overshoot for impact)
-  const imageScale = 0.1 + (easedImage * 1.0);
-  const imageOpacity = easedImage;
-  
-  // Fade overlay as image appears (overlay goes from 1 → 0.3)
-  const overlayFade = imageProgress > 0 ? 1 - (easedImage * 0.7) : 1;
+  const overlayFade = galleryProgress > 0 ? 1 - (easeOutCubic(galleryProgress) * 0.7) : 1;
 
   // Calculate staggered exit progress for label pairs (desktop only)
   // Labels exit from 0.70 to 0.78 (as door opens, before zoom starts at 0.80)
@@ -147,31 +138,8 @@ const RoofBuildSection: React.FC = () => {
         }}
       />
 
-      {/* Coastal roof project image - fades in during zoom */}
-      {imageProgress > 0 && (
-        <div 
-          className="fixed inset-0 flex items-center justify-center z-[101] pointer-events-none"
-          style={{
-            opacity: imageOpacity,
-            willChange: 'opacity, transform',
-          }}
-        >
-          <img
-            src={coastalRoofImage}
-            alt="Beautiful coastal roof project by Poseidon Roofing"
-            className="rounded-lg shadow-2xl"
-            style={{
-              transform: `scale(${imageScale})`,
-              maxWidth: '85vw',
-              maxHeight: '70vh',
-              objectFit: 'cover',
-              willChange: 'transform',
-              backfaceVisibility: 'hidden',
-              boxShadow: '0 25px 80px -12px rgba(0, 0, 0, 0.5), 0 0 60px hsl(32 80% 50% / 0.3)',
-            }}
-          />
-        </div>
-      )}
+      {/* 3D Parallax Image Gallery */}
+      <ImageGallery3D progress={progress} />
 
 
       {/* Sticky container - offset for navbar height */}
