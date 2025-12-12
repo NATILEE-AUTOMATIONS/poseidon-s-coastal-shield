@@ -6,193 +6,191 @@ interface ImageGallery3DProps {
   progress: number;
 }
 
-interface GalleryImage {
-  id: string;
-  src: string;
-  alt: string;
-  position: { x: number; y: number };
-  startProgress: number;
-  endProgress: number;
-  initialRotation: { x: number; y: number };
-  finalRotation: { x: number; y: number };
-  initialZ: number;
-  finalZ: number;
-  scale: { start: number; end: number };
-  zIndex: number;
-  size: { maxWidth: string; maxHeight: string };
-}
-
-const galleryImages: GalleryImage[] = [
-  {
-    id: 'completed-roof',
-    src: coastalRoofImage,
-    alt: 'Beautiful completed coastal roof project by Poseidon Roofing',
-    position: { x: 15, y: -8 },
-    startProgress: 0.86,
-    endProgress: 0.94,
-    initialRotation: { x: -8, y: -25 },
-    finalRotation: { x: -2, y: -5 },
-    initialZ: -1200,
-    finalZ: 50,
-    scale: { start: 0.3, end: 1.0 },
-    zIndex: 102,
-    size: { maxWidth: '52vw', maxHeight: '45vh' },
-  },
-  {
-    id: 'in-progress',
-    src: inProgressImage,
-    alt: 'Aerial view of roof installation in progress',
-    position: { x: -28, y: 18 },
-    startProgress: 0.91,
-    endProgress: 0.99,
-    initialRotation: { x: 10, y: 30 },
-    finalRotation: { x: 3, y: 8 },
-    initialZ: -1500,
-    finalZ: -100,
-    scale: { start: 0.2, end: 0.85 },
-    zIndex: 101,
-    size: { maxWidth: '38vw', maxHeight: '35vh' },
-  },
-];
-
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
-  // Easing functions for smooth animations
-  const easeOutExpo = (x: number) => x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
+  // Gallery starts appearing at 84% scroll
+  const galleryStart = 0.84;
+  
+  // Don't render until we're close to gallery time
+  if (progress < galleryStart - 0.02) return null;
+
+  // Easing functions
+  const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
   const easeOutBack = (x: number) => {
     const c1 = 1.70158;
     const c3 = c1 + 1;
     return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
   };
 
-  // Check if gallery should be visible at all
-  const anyVisible = progress > galleryImages[0].startProgress - 0.02;
-  if (!anyVisible) return null;
+  // Image 1 (Main - completed roof): 84% → 92%
+  const img1Start = 0.84;
+  const img1End = 0.92;
+  const img1Raw = progress > img1Start 
+    ? Math.min(1, (progress - img1Start) / (img1End - img1Start))
+    : 0;
+  const img1Progress = easeOutBack(img1Raw);
+  const img1Smooth = easeOutCubic(img1Raw);
+
+  // Image 2 (Secondary - in progress): 88% → 96%
+  const img2Start = 0.88;
+  const img2End = 0.96;
+  const img2Raw = progress > img2Start 
+    ? Math.min(1, (progress - img2Start) / (img2End - img2Start))
+    : 0;
+  const img2Progress = easeOutBack(img2Raw);
+  const img2Smooth = easeOutCubic(img2Raw);
+
+  // Subtle floating after settled
+  const floatTime = progress * 20;
+  const float1 = img1Raw > 0.9 ? Math.sin(floatTime) * 4 * (img1Raw - 0.9) / 0.1 : 0;
+  const float2 = img2Raw > 0.9 ? Math.sin(floatTime * 1.3 + 1) * 3 * (img2Raw - 0.9) / 0.1 : 0;
+
+  // Image 1 transforms - comes from right, rotates into place
+  const img1Scale = 0.1 + (img1Progress * 0.9); // 0.1 → 1.0
+  const img1RotateY = -35 + (img1Smooth * 32); // -35° → -3°
+  const img1RotateX = 8 - (img1Smooth * 6); // 8° → 2°
+  const img1X = 60 - (img1Smooth * 45); // 60% → 15% from center
+  const img1Y = -30 + (img1Smooth * 25) + float1; // -30% → -5%
+  const img1Opacity = Math.min(1, img1Raw * 4);
+
+  // Image 2 transforms - comes from left, rotates opposite direction
+  const img2Scale = 0.1 + (img2Progress * 0.75); // 0.1 → 0.85
+  const img2RotateY = 40 - (img2Smooth * 32); // 40° → 8°
+  const img2RotateX = -10 + (img2Smooth * 7); // -10° → -3°
+  const img2X = -70 + (img2Smooth * 45); // -70% → -25% from center
+  const img2Y = 40 - (img2Smooth * 20) + float2; // 40% → 20%
+  const img2Opacity = Math.min(1, img2Raw * 4);
 
   return (
     <div 
-      className="fixed inset-0 z-[101] pointer-events-none overflow-hidden"
+      className="fixed inset-0 pointer-events-none overflow-hidden"
       style={{
-        perspective: '1800px',
-        perspectiveOrigin: '50% 45%',
+        zIndex: 102, // Above warm light overlay (z-100)
+        perspective: '1200px',
+        perspectiveOrigin: '50% 50%',
       }}
     >
+      {/* Single preserve-3d container */}
       <div
         className="absolute inset-0 flex items-center justify-center"
-        style={{
-          transformStyle: 'preserve-3d',
-        }}
+        style={{ transformStyle: 'preserve-3d' }}
       >
-        {galleryImages.map((image) => {
-          // Calculate individual image progress
-          const imageRange = image.endProgress - image.startProgress;
-          const rawProgress = progress > image.startProgress 
-            ? Math.min(1, (progress - image.startProgress) / imageRange)
-            : 0;
-          
-          if (rawProgress === 0) return null;
-
-          // Use easeOutBack for that satisfying "pop" effect
-          const easedProgress = easeOutBack(Math.min(rawProgress, 1));
-          const smoothProgress = easeOutExpo(rawProgress);
-          
-          // Z-depth animation (fly in from far away)
-          const translateZ = image.initialZ + (smoothProgress * (image.finalZ - image.initialZ));
-          
-          // Rotation animation (dramatic tilt that settles)
-          const rotateX = image.initialRotation.x + (smoothProgress * (image.finalRotation.x - image.initialRotation.x));
-          const rotateY = image.initialRotation.y + (smoothProgress * (image.finalRotation.y - image.initialRotation.y));
-          
-          // Scale with overshoot
-          const scale = image.scale.start + (easedProgress * (image.scale.end - image.scale.start));
-          
-          // Opacity - quick fade in
-          const opacity = Math.min(1, rawProgress * 3);
-          
-          // Subtle floating motion after settled
-          const floatOffset = rawProgress > 0.8 
-            ? Math.sin((progress - image.endProgress) * Math.PI * 8) * 3 * (rawProgress - 0.8) / 0.2
-            : 0;
-
-          // Dynamic shadow intensity based on depth
-          const shadowIntensity = Math.min(1, rawProgress * 1.5);
-
-          return (
+        {/* Image 1 - Main completed roof (appears first, right side) */}
+        {img1Raw > 0 && (
+          <div
+            className="absolute"
+            style={{
+              transform: `
+                translate(${img1X}%, ${img1Y}%)
+                scale(${img1Scale})
+                rotateY(${img1RotateY}deg)
+                rotateX(${img1RotateX}deg)
+              `,
+              opacity: img1Opacity,
+              zIndex: 104,
+              willChange: 'transform, opacity',
+              backfaceVisibility: 'hidden',
+            }}
+          >
             <div
-              key={image.id}
-              className="absolute"
+              className="relative overflow-hidden"
               style={{
-                left: '50%',
-                top: '50%',
-                transform: `
-                  translate(-50%, -50%)
-                  translate(${image.position.x}%, ${image.position.y + floatOffset}%)
-                  translateZ(${translateZ}px)
-                  rotateX(${rotateX}deg)
-                  rotateY(${rotateY}deg)
-                  scale(${scale})
+                borderRadius: '16px',
+                boxShadow: `
+                  0 50px 100px -20px rgba(0, 0, 0, 0.9),
+                  0 30px 60px -15px rgba(0, 0, 0, 0.7),
+                  0 0 80px hsl(32 80% 50% / ${0.4 * img1Smooth}),
+                  0 0 40px hsl(168 60% 45% / ${0.2 * img1Smooth})
                 `,
-                opacity,
-                zIndex: image.zIndex,
-                transformStyle: 'preserve-3d',
-                willChange: 'transform, opacity',
-                backfaceVisibility: 'hidden',
+                border: `2px solid hsl(168 70% 50% / ${0.4 * img1Smooth})`,
               }}
             >
-              <div
-                className="relative rounded-2xl overflow-hidden"
+              <img
+                src={coastalRoofImage}
+                alt="Beautiful completed coastal roof project by Poseidon Roofing"
                 style={{
-                  boxShadow: `
-                    0 ${60 * shadowIntensity}px ${120 * shadowIntensity}px -${30 * shadowIntensity}px rgba(0, 0, 0, 0.85),
-                    0 ${30 * shadowIntensity}px ${60 * shadowIntensity}px -${15 * shadowIntensity}px rgba(0, 0, 0, 0.6),
-                    0 0 ${80 * shadowIntensity}px hsl(32 80% 50% / ${0.25 * shadowIntensity}),
-                    0 0 ${40 * shadowIntensity}px hsl(168 60% 40% / ${0.15 * shadowIntensity}),
-                    inset 0 1px 0 hsl(40 50% 90% / ${0.15 * shadowIntensity})
-                  `,
-                  border: `2px solid hsl(168 70% 45% / ${0.25 * shadowIntensity})`,
+                  maxWidth: '42vw',
+                  maxHeight: '38vh',
+                  objectFit: 'cover',
+                  display: 'block',
                 }}
-              >
-                <img
-                  src={image.src}
-                  alt={image.alt}
-                  style={{
-                    maxWidth: image.size.maxWidth,
-                    maxHeight: image.size.maxHeight,
-                    objectFit: 'cover',
-                    display: 'block',
-                  }}
-                />
-                
-                {/* Shine overlay */}
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    background: `linear-gradient(
-                      135deg,
-                      hsl(40 60% 90% / ${0.08 * shadowIntensity}) 0%,
-                      transparent 50%,
-                      hsl(200 60% 20% / ${0.1 * shadowIntensity}) 100%
-                    )`,
-                  }}
-                />
-              </div>
-              
-              {/* Glow behind image */}
+              />
+              {/* Shine sweep effect */}
               <div
-                className="absolute inset-0 -z-10 rounded-2xl"
+                className="absolute inset-0 pointer-events-none"
                 style={{
-                  background: `radial-gradient(
-                    ellipse 120% 120% at 50% 50%,
-                    hsl(32 70% 55% / ${0.2 * shadowIntensity}),
-                    hsl(168 60% 40% / ${0.1 * shadowIntensity}) 40%,
+                  background: `linear-gradient(
+                    120deg,
+                    transparent 30%,
+                    hsl(40 80% 95% / ${0.15 * img1Smooth}) 45%,
+                    hsl(40 80% 95% / ${0.25 * img1Smooth}) 50%,
+                    hsl(40 80% 95% / ${0.15 * img1Smooth}) 55%,
                     transparent 70%
                   )`,
-                  transform: 'scale(1.4) translateZ(-20px)',
-                  filter: `blur(${40 * shadowIntensity}px)`,
+                  transform: `translateX(${-100 + (img1Raw * 200)}%)`,
                 }}
               />
             </div>
-          );
-        })}
+          </div>
+        )}
+
+        {/* Image 2 - In progress shot (appears second, left side) */}
+        {img2Raw > 0 && (
+          <div
+            className="absolute"
+            style={{
+              transform: `
+                translate(${img2X}%, ${img2Y}%)
+                scale(${img2Scale})
+                rotateY(${img2RotateY}deg)
+                rotateX(${img2RotateX}deg)
+              `,
+              opacity: img2Opacity,
+              zIndex: 103,
+              willChange: 'transform, opacity',
+              backfaceVisibility: 'hidden',
+            }}
+          >
+            <div
+              className="relative overflow-hidden"
+              style={{
+                borderRadius: '14px',
+                boxShadow: `
+                  0 40px 80px -15px rgba(0, 0, 0, 0.85),
+                  0 25px 50px -12px rgba(0, 0, 0, 0.6),
+                  0 0 60px hsl(168 70% 45% / ${0.3 * img2Smooth}),
+                  0 0 30px hsl(32 70% 50% / ${0.15 * img2Smooth})
+                `,
+                border: `2px solid hsl(32 70% 55% / ${0.35 * img2Smooth})`,
+              }}
+            >
+              <img
+                src={inProgressImage}
+                alt="Aerial view of roof installation in progress"
+                style={{
+                  maxWidth: '32vw',
+                  maxHeight: '30vh',
+                  objectFit: 'cover',
+                  display: 'block',
+                }}
+              />
+              {/* Shine sweep effect */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: `linear-gradient(
+                    120deg,
+                    transparent 30%,
+                    hsl(40 80% 95% / ${0.12 * img2Smooth}) 45%,
+                    hsl(40 80% 95% / ${0.2 * img2Smooth}) 50%,
+                    hsl(40 80% 95% / ${0.12 * img2Smooth}) 55%,
+                    transparent 70%
+                  )`,
+                  transform: `translateX(${-100 + (img2Raw * 200)}%)`,
+                }}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
