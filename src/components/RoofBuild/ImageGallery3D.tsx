@@ -40,23 +40,23 @@ const imageConfigs: ImageConfig[] = [
   {
     src: coastalRoofImage,
     alt: 'Completed coastal roof project',
-    startProgress: 0.92,
+    startProgress: 0.82,
     desktop: {
       position: 'top-right',
       width: '48vw',
       maxWidth: '600px',
       maxHeight: '42vh',
-      startScale: 0.5,
-      endScale: 1.4,
-      rotateYStart: -15,
-      rotateYEnd: 10,
+      startScale: 0.85,
+      endScale: 1.1,
+      rotateYStart: -6,
+      rotateYEnd: 3,
     },
     mobile: {
       topStart: 85,
       topEnd: 8,
       width: '88vw',
       maxHeight: '32vh',
-      startScale: 0.7,
+      startScale: 0.8,
       endScale: 1.0,
     },
     zIndex: 5,
@@ -65,23 +65,23 @@ const imageConfigs: ImageConfig[] = [
   {
     src: inProgressImage,
     alt: 'Roof installation in progress',
-    startProgress: 0.925,
+    startProgress: 0.86,
     desktop: {
       position: 'bottom-left',
       width: '42vw',
       maxWidth: '520px',
       maxHeight: '38vh',
-      startScale: 0.45,
-      endScale: 1.35,
-      rotateYStart: 15,
-      rotateYEnd: -7,
+      startScale: 0.8,
+      endScale: 1.08,
+      rotateYStart: 5,
+      rotateYEnd: -2,
     },
     mobile: {
       topStart: 90,
       topEnd: 28,
       width: '82vw',
       maxHeight: '28vh',
-      startScale: 0.65,
+      startScale: 0.75,
       endScale: 1.0,
     },
     zIndex: 4,
@@ -90,23 +90,23 @@ const imageConfigs: ImageConfig[] = [
   {
     src: aerialEstateImage,
     alt: 'Large estate roof project with pool',
-    startProgress: 0.93,
+    startProgress: 0.90,
     desktop: {
       position: 'top-left',
       width: '44vw',
       maxWidth: '540px',
       maxHeight: '40vh',
-      startScale: 0.4,
-      endScale: 1.3,
-      rotateYStart: 12,
-      rotateYEnd: -5,
+      startScale: 0.8,
+      endScale: 1.05,
+      rotateYStart: 4,
+      rotateYEnd: -2,
     },
     mobile: {
       topStart: 95,
       topEnd: 48,
       width: '78vw',
       maxHeight: '26vh',
-      startScale: 0.6,
+      startScale: 0.7,
       endScale: 1.0,
     },
     zIndex: 3,
@@ -115,23 +115,23 @@ const imageConfigs: ImageConfig[] = [
   {
     src: coastalCrewImage,
     alt: 'Coastal home with roofing crew',
-    startProgress: 0.935,
+    startProgress: 0.94,
     desktop: {
       position: 'right-center',
       width: '40vw',
       maxWidth: '480px',
       maxHeight: '36vh',
-      startScale: 0.35,
-      endScale: 1.25,
-      rotateYStart: -10,
-      rotateYEnd: 8,
+      startScale: 0.75,
+      endScale: 1.02,
+      rotateYStart: -4,
+      rotateYEnd: 2,
     },
     mobile: {
       topStart: 100,
       topEnd: 66,
       width: '75vw',
       maxHeight: '24vh',
-      startScale: 0.55,
+      startScale: 0.65,
       endScale: 1.0,
     },
     zIndex: 2,
@@ -140,23 +140,23 @@ const imageConfigs: ImageConfig[] = [
   {
     src: multilevelTeamImage,
     alt: 'Multi-level roof installation team',
-    startProgress: 0.94,
+    startProgress: 0.97,
     desktop: {
       position: 'bottom-center',
       width: '38vw',
       maxWidth: '460px',
       maxHeight: '34vh',
-      startScale: 0.3,
-      endScale: 1.2,
-      rotateYStart: 8,
-      rotateYEnd: -3,
+      startScale: 0.7,
+      endScale: 1.0,
+      rotateYStart: 3,
+      rotateYEnd: -1,
     },
     mobile: {
       topStart: 105,
       topEnd: 82,
       width: '72vw',
       maxHeight: '22vh',
-      startScale: 0.5,
+      startScale: 0.6,
       endScale: 1.0,
     },
     zIndex: 1,
@@ -166,16 +166,16 @@ const imageConfigs: ImageConfig[] = [
 
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   const isMobile = useIsMobile();
-  const galleryStart = 0.91;
+  const galleryStart = 0.80;
   
   if (progress < galleryStart) return null;
 
   const easeInOutQuad = (x: number) => x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
 
-  // Background opacity based on first image
-  const firstImgRaw = progress > 0.92 ? Math.min(1, (progress - 0.92) / 0.08) : 0;
-  const bgOpacity = firstImgRaw < 0.5 
-    ? Math.min(1, firstImgRaw * 3) 
+  // Background opacity based on first image (starts earlier now)
+  const firstImgRaw = progress > 0.82 ? Math.min(1, (progress - 0.82) / 0.18) : 0;
+  const bgOpacity = firstImgRaw < 0.3 
+    ? Math.min(1, firstImgRaw * 4) 
     : 1;
 
   const getDesktopPosition = (position: ImageConfig['desktop']['position'], rawProgress: number) => {
@@ -215,9 +215,11 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
       />
 
       {imageConfigs.map((config, index) => {
-        const imgEnd = 1.0;
+        // Each image animates over 15% scroll range for slower, more deliberate motion
+        const imgDuration = 0.15;
+        const imgEnd = Math.min(1.0, config.startProgress + imgDuration);
         const imgRaw = progress > config.startProgress 
-          ? Math.min(1, (progress - config.startProgress) / (imgEnd - config.startProgress))
+          ? Math.min(1, (progress - config.startProgress) / imgDuration)
           : 0;
 
         if (imgRaw <= 0) return null;
