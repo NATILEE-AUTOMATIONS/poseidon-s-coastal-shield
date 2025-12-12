@@ -6,9 +6,14 @@ import multilevelRoofTeam from '@/assets/multilevel-roof-team.png';
 import { useIsMobile } from '@/hooks/use-mobile';
 import TestimonialReveal from './TestimonialReveal';
 
-// Exponential ease-out for dramatic zoom effect
+// Exponential ease-out for dramatic zoom effect (desktop)
 const easeOutExpo = (t: number): number => {
   return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+};
+
+// Gentler cubic ease-out for smoother mobile animations
+const easeOutCubic = (t: number): number => {
+  return 1 - Math.pow(1 - t, 3);
 };
 
 interface ImageGallery3DProps {
@@ -93,27 +98,33 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
       ? 1 - ((anim3Progress - fadeOutStart) / (1 - fadeOutStart))
       : 1;
 
-  // Image 4: CINEMATIC GRAND REVEAL - spaced a bit later on mobile
-  const anim4Start = isMobile ? 0.98 : 0.965;
-  const anim4Duration = isMobile ? 0.035 : 0.035;
+  // Image 4: CINEMATIC GRAND REVEAL - more scroll space on mobile for smoothness
+  const anim4Start = isMobile ? 0.965 : 0.965;
+  const anim4Duration = isMobile ? 0.06 : 0.035;  // Mobile: 6% scroll space (was 3.5%)
   const anim4Progress = progress >= anim4Start 
     ? Math.min(1, (progress - anim4Start) / anim4Duration)
     : 0;
   
-  // Apply exponential easing for dramatic effect
-  const easedProgress4 = easeOutExpo(anim4Progress);
+  // Apply gentler easing on mobile for smoother animation
+  const easedProgress4 = isMobile ? easeOutCubic(anim4Progress) : easeOutExpo(anim4Progress);
   
-  // Scale: tiny dot → full size with overshoot → settle (mobile gets bigger finale)
-  const baseScale4 = isMobile ? 0.15 : 0.05;
-  const maxScale4 = isMobile ? 1.3 : 1.15;
-  const scaleOvershoot = anim4Progress > 0.8 
-    ? maxScale4 - ((anim4Progress - 0.8) / 0.2) * 0.15 
-    : baseScale4 + (easedProgress4 * (maxScale4 - baseScale4 + 0.1));
-  const scale4 = Math.max(baseScale4, scaleOvershoot);
+  // Scale: mobile uses simple smooth scale without overshoot
+  const baseScale4 = isMobile ? 0.2 : 0.05;
+  const maxScale4 = isMobile ? 1.2 : 1.15;
+  const scale4 = isMobile
+    ? baseScale4 + (easedProgress4 * (maxScale4 - baseScale4))  // Simple smooth scale
+    : (() => {
+        const scaleOvershoot = anim4Progress > 0.8 
+          ? maxScale4 - ((anim4Progress - 0.8) / 0.2) * 0.15 
+          : baseScale4 + (easedProgress4 * (maxScale4 - baseScale4 + 0.1));
+        return Math.max(baseScale4, scaleOvershoot);
+      })();
   
-  // 3D rotation: descending from top (tilted back → flat)
+  // 3D rotation: reduced on mobile for smoother effect
   const rotateY4 = 0; // No side rotation
-  const rotateX4 = -45 + (easedProgress4 * 45); // -45° → 0° (tilted back → flat)
+  const rotateX4 = isMobile 
+    ? -20 + (easedProgress4 * 20)   // Mobile: -20° → 0° (gentler tilt)
+    : -45 + (easedProgress4 * 45);  // Desktop: -45° → 0°
   
   // Vertical descent: starts above viewport, drops to center
   const top4Percent = -30 + (easedProgress4 * 65); // -30% → 35%
