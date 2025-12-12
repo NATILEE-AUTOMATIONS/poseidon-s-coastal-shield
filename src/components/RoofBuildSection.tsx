@@ -111,7 +111,7 @@ const RoofBuildSection: React.FC = () => {
     <section
       ref={sectionRef}
       className="relative"
-      style={{ height: '400vh' }}
+      style={{ height: '450vh' }}
     >
 
       {/* Solid backup overlay - catches ANYTHING that escapes */}
