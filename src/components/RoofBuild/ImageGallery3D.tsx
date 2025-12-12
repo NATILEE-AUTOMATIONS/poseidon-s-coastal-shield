@@ -16,36 +16,37 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   // Normalize progress: 0 = start, 1 = end of animation
   const animProgress = Math.min(1, (progress - animStart) / (1 - animStart));
   
-  // --- LUMA-STYLE LATERAL GALLERY WALK ---
-  // Image sweeps from left edge → center → right edge (like walking past a painting)
+  // --- WALKING PAST A PAINTING ON THE WALL ---
+  // Image stays anchored to the LEFT, rotates as you "walk" past it
   
-  // TranslateX: sweeps from far left (-60vw) → center (0) → far right (+80vw)
-  const translateXvw = -60 + (animProgress * 140);
+  // Image stays on the LEFT side of viewport with subtle drift
+  const baseOffsetX = isMobile ? -25 : -30; // vw - anchored to the left
+  const driftX = (animProgress - 0.5) * 15; // subtle -7.5vw to +7.5vw drift
+  const translateXvw = baseOffsetX + driftX;
   
-  // Scale: peaks at center (50% progress), smaller at edges
-  // Creates perspective effect - bigger when "closer" to you
-  const distanceFromCenter = Math.abs(animProgress - 0.5) * 2; // 0 at center, 1 at edges
-  const scalePeak = 1 - distanceFromCenter;
+  // Rotation: THE MAIN ANIMATION - simulates walking past
+  // Start: see left edge (approaching), Middle: flat (beside it), End: see right edge (passed it)
+  const rotateY = 40 - (animProgress * 80); // 40° → 0° → -40°
+  
+  // Scale: slightly smaller when angled (further from eye), larger when flat
+  const angleAmount = Math.abs(animProgress - 0.5) * 2; // 1 at edges, 0 at center
   const scale = isMobile 
-    ? 0.6 + scalePeak * 0.5  // Mobile: 0.6 → 1.1 → 0.6
-    : 0.5 + scalePeak * 0.6; // Desktop: 0.5 → 1.1 → 0.5
+    ? 0.9 - (angleAmount * 0.15)  // Mobile: 0.75 → 0.9 → 0.75
+    : 1.0 - (angleAmount * 0.15); // Desktop: 0.85 → 1.0 → 0.85
   
-  // RotateY: angled toward you as it approaches, angled away as it passes
-  const rotateY = -15 + (animProgress * 35); // -15° → +20°
-  
-  // Opacity: fade in first 20%, full visibility middle, fade out last 20%
-  const opacity = animProgress < 0.2 
-    ? animProgress * 5 
-    : animProgress > 0.8 
-      ? (1 - animProgress) * 5 
+  // Opacity: fade in first 15%, full visibility middle, fade out last 15%
+  const opacity = animProgress < 0.15 
+    ? animProgress / 0.15 
+    : animProgress > 0.85 
+      ? (1 - animProgress) / 0.15 
       : 1;
   
   // Background opacity (matches image visibility)
   const bgOpacity = opacity;
   
-  // Shine effect: peaks when image is closest (40-60% progress)
-  const shineProgress = animProgress > 0.4 && animProgress < 0.6 
-    ? 1 - Math.abs(animProgress - 0.5) * 10 
+  // Shine effect: peaks when image is flat (45-55% progress)
+  const shineProgress = animProgress > 0.45 && animProgress < 0.55 
+    ? 1 - Math.abs(animProgress - 0.5) * 20 
     : 0;
 
   return (
