@@ -76,9 +76,9 @@ const RoofBuildSection: React.FC = () => {
   const gridFadeOut = Math.max(0, 1 - (zoomProgress * 3)); // Grid gone by 33% of zoom
   const houseFadeOut = Math.max(0, 1 - (easedZoom * 2)); // House gone by 50% of zoom
 
-  // Image reveal: starts at 95% overall progress, completes at 100%
-  const imageProgress = progress > 0.95 
-    ? Math.min(1, (progress - 0.95) / 0.05)
+  // Image reveal: starts at 88% overall progress, completes at 96%
+  const imageProgress = progress > 0.88 
+    ? Math.min(1, (progress - 0.88) / 0.08)
     : 0;
   
   // easeOutCubic for smooth deceleration
