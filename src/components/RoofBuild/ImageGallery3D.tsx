@@ -98,19 +98,20 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
       ? 1 - ((anim3Progress - fadeOutStart) / (1 - fadeOutStart))
       : 1;
 
-  // Image 4: CINEMATIC GRAND REVEAL - more scroll space on mobile for smoothness
-  const anim4Start = isMobile ? 0.965 : 0.965;
-  const anim4Duration = isMobile ? 0.06 : 0.035;  // Mobile: 6% scroll space (was 3.5%)
+  // Image 4: CINEMATIC GRAND REVEAL - delayed start on mobile for gap after image 3
+  const anim4Start = isMobile ? 0.99 : 0.965;  // Mobile: starts later (was 0.965)
+  const anim4Duration = isMobile ? 0.08 : 0.035;  // Mobile: 8% scroll space for extra smooth
   const anim4Progress = progress >= anim4Start 
     ? Math.min(1, (progress - anim4Start) / anim4Duration)
     : 0;
   
-  // Apply gentler easing on mobile for smoother animation
-  const easedProgress4 = isMobile ? easeOutCubic(anim4Progress) : easeOutExpo(anim4Progress);
+  // Apply even gentler easing on mobile - linear blend for maximum smoothness
+  const easeOutQuad = (t: number): number => 1 - (1 - t) * (1 - t);
+  const easedProgress4 = isMobile ? easeOutQuad(anim4Progress) : easeOutExpo(anim4Progress);
   
-  // Scale: mobile uses simple smooth scale without overshoot
-  const baseScale4 = isMobile ? 0.2 : 0.05;
-  const maxScale4 = isMobile ? 1.2 : 1.15;
+  // Scale: mobile uses simple smooth scale without overshoot, smaller range
+  const baseScale4 = isMobile ? 0.4 : 0.05;  // Mobile: start bigger (less scale change)
+  const maxScale4 = isMobile ? 1.1 : 1.15;   // Mobile: end slightly smaller
   const scale4 = isMobile
     ? baseScale4 + (easedProgress4 * (maxScale4 - baseScale4))  // Simple smooth scale
     : (() => {
@@ -120,11 +121,11 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
         return Math.max(baseScale4, scaleOvershoot);
       })();
   
-  // 3D rotation: reduced on mobile for smoother effect
-  const rotateY4 = 0; // No side rotation
+  // 3D rotation: minimal on mobile for smoothest effect
+  const rotateY4 = 0;
   const rotateX4 = isMobile 
-    ? -20 + (easedProgress4 * 20)   // Mobile: -20° → 0° (gentler tilt)
-    : -45 + (easedProgress4 * 45);  // Desktop: -45° → 0°
+    ? -10 + (easedProgress4 * 10)   // Mobile: -10° → 0° (very gentle tilt)
+    : -45 + (easedProgress4 * 45);
   
   // Vertical descent: starts above viewport, drops to center
   const top4Percent = -30 + (easedProgress4 * 65); // -30% → 35%
