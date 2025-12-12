@@ -50,31 +50,29 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
     : 0;
   const exitProgress = easeOutCubic(exitRaw);
 
-  // Image 1 exit: flies off to the right while scaling up
-  const img1ExitOffset = exitProgress * 60; // slides right off screen
+  // Image 1 exit: flies off to the right while scaling up (NO FADE)
+  const img1ExitOffset = exitProgress * 120; // slides far right off screen
   const img1ExitScale = 1 + (exitProgress * 0.6); // 1.0 → 1.6
-  const img1ExitOpacity = 1 - exitProgress; // fade out
 
-  // Image 2 exit: flies off to the left while scaling up
-  const img2ExitOffset = exitProgress * 50; // slides left off screen
+  // Image 2 exit: flies off to the left while scaling up (NO FADE)
+  const img2ExitOffset = exitProgress * 100; // slides far left off screen
   const img2ExitScale = 0.85 + (exitProgress * 0.55); // 0.85 → 1.4
-  const img2ExitOpacity = 1 - exitProgress; // fade out
 
   // Gallery background opacity - fades in during enter, fades out during exit
   const bgOpacity = Math.min(1, img1Raw * 2.5) * (1 - exitProgress);
 
   // === COMBINED TRANSFORMS ===
-  // Image 1: enter transforms + exit transforms
+  // Image 1: enter transforms + exit transforms (opacity stays at 1.0)
   const img1Scale = (0.3 + (img1EnterProgress * 0.7)) * (exitRaw > 0 ? img1ExitScale : 1);
   const img1RotateY = -25 + (img1EnterSmooth * 20); // -25° → -5°
-  const img1Opacity = Math.min(1, img1Raw * 3) * Math.max(0, img1ExitOpacity);
-  const img1RightOffset = 8 - img1ExitOffset; // 8% → -52% (off right edge)
+  const img1Opacity = Math.min(1, img1Raw * 3); // Just fade in, stay at 1.0
+  const img1RightOffset = 8 - img1ExitOffset; // 8% → -112% (way off right edge)
 
-  // Image 2: enter transforms + exit transforms
+  // Image 2: enter transforms + exit transforms (opacity stays at 1.0)
   const img2Scale = (0.2 + (img2EnterProgress * 0.65)) * (exitRaw > 0 ? img2ExitScale / 0.85 : 1);
   const img2RotateY = 30 - (img2EnterSmooth * 22); // 30° → 8°
-  const img2Opacity = Math.min(1, img2Raw * 3) * Math.max(0, img2ExitOpacity);
-  const img2LeftOffset = 5 - img2ExitOffset; // 5% → -45% (off left edge)
+  const img2Opacity = Math.min(1, img2Raw * 3); // Just fade in, stay at 1.0
+  const img2LeftOffset = 5 - img2ExitOffset; // 5% → -95% (way off left edge)
 
   return (
     <div 
