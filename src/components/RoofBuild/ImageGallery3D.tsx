@@ -9,35 +9,45 @@ interface ImageGallery3DProps {
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   const isMobile = useIsMobile();
   
-  // Animation starts at 93% scroll (after door zoom completes)
-  const animStart = 0.93;
+  // Animation starts at 88% scroll (extended range for full drive-by)
+  const animStart = 0.88;
   if (progress < animStart) return null;
 
   // Normalize progress: 0 = start, 1 = end of animation
   const animProgress = Math.min(1, (progress - animStart) / (1 - animStart));
   
-  // Start small, grow to viewable size
-  const scale = 0.2 + (animProgress * 0.8); // 0.2 → 1.0
-  const opacity = Math.min(1, animProgress * 5); // Quick fade in
+  // Position: Start center-right, drift LEFT and exit off-screen left
+  // 55% → -30% (continuous leftward movement)
+  const leftPercent = 55 - (animProgress * 85); // 55% → -30%
   
-  // Position: Start at CENTER (slightly right of center), end at UPPER RIGHT
-  // Start: 55% from left (center-ish), 50% from top (vertical center)
-  // End: 85% from left (right side), 25% from top (upper area)
-  const leftPercent = 55 + (animProgress * 30); // 55% → 85%
-  const topPercent = 50 - (animProgress * 25); // 50% → 25%
+  // Scale: Grows as it approaches, peaks as it passes
+  // 0.2 → 1.2 (grows throughout, peaks near end)
+  const scale = 0.2 + (animProgress * 1.0); // 0.2 → 1.2
+  
+  // Vertical position: slight rise then fall as it passes
+  const topPercent = 50 - (Math.sin(animProgress * Math.PI) * 15); // 50% → 35% → 50%
+  
+  // Opacity: Quick fade in, fade out in last 25%
+  const fadeOutStart = 0.75;
+  const opacity = animProgress < 0.1 
+    ? animProgress * 10 // Quick fade in
+    : animProgress > fadeOutStart 
+      ? 1 - ((animProgress - fadeOutStart) / (1 - fadeOutStart)) // Fade out
+      : 1;
 
   return (
     <div 
       className="fixed inset-0 pointer-events-none"
       style={{
         zIndex: 105,
+        perspective: '1200px',
         background: `radial-gradient(ellipse 80% 60% at 70% 30%, 
-          hsl(25 40% 15% / ${opacity * 0.95}) 0%, 
-          hsl(20 30% 8% / ${opacity}) 50%,
-          hsl(15 20% 5% / ${opacity}) 100%)`,
+          hsl(25 40% 15% / ${Math.min(opacity, 0.95)}) 0%, 
+          hsl(20 30% 8% / ${Math.min(opacity, 1)}) 50%,
+          hsl(15 20% 5% / ${Math.min(opacity, 1)}) 100%)`,
       }}
     >
-      {/* The Image - animates from center to upper right */}
+      {/* The Image - continuous drive-by from right to left */}
       <div
         className="absolute"
         style={{
@@ -45,6 +55,7 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
           top: `${topPercent}%`,
           transform: `translate(-50%, -50%) scale(${scale})`,
           opacity,
+          transformStyle: 'preserve-3d',
         }}
       >
         <div
