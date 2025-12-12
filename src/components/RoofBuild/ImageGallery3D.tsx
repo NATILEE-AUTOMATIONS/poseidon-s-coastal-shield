@@ -7,50 +7,69 @@ interface ImageGallery3DProps {
 }
 
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
-  // Gallery appears as user "enters" through the door (door zoom is 80-100%)
-  // Start at 92% so images emerge as zoom nears completion
   const galleryStart = 0.92;
   
-  // Don't render until we're close to gallery time
   if (progress < galleryStart - 0.01) return null;
 
   // Easing functions
-  const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
-  const easeOutBack = (x: number) => {
-    const c1 = 1.70158;
-    const c3 = c1 + 1;
-    return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
-  };
-  const easeInQuad = (x: number) => x * x; // Accelerates during exit
+  const easeInOutQuad = (x: number) => x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
 
-  // === PHASE 1: ENTER (92% → 96%) ===
+  // === SINGLE CONTINUOUS MOTION: APPEAR → SHINE → FLY PAST ===
+  // Image 1: 92% → 100% (full 8% scroll range)
   const img1Start = 0.92;
-  const img1End = 0.96;
+  const img1End = 1.0;
   const img1Raw = progress > img1Start 
     ? Math.min(1, (progress - img1Start) / (img1End - img1Start))
     : 0;
-  const img1EnterProgress = easeOutBack(Math.min(1, img1Raw));
-  const img1EnterSmooth = easeOutCubic(img1Raw);
 
+  // Image 2: 93% → 100% (slightly delayed start)
   const img2Start = 0.93;
-  const img2End = 0.97;
+  const img2End = 1.0;
   const img2Raw = progress > img2Start 
     ? Math.min(1, (progress - img2Start) / (img2End - img2Start))
     : 0;
-  const img2EnterProgress = easeOutBack(Math.min(1, img2Raw));
-  const img2EnterSmooth = easeOutCubic(img2Raw);
 
-  // Gallery background opacity
-  const bgOpacity = Math.min(1, img1Raw * 2.5);
+  // Gallery background opacity - fades in then out
+  const bgOpacity = img1Raw < 0.5 
+    ? Math.min(1, img1Raw * 3) 
+    : Math.max(0, 1 - (img1Raw - 0.5) * 2);
 
-  // === COMBINED TRANSFORMS (enter only, no exit) ===
-  const img1Scale = 0.3 + (img1EnterProgress * 0.7); // 0.3 → 1.0
-  const img1RotateY = -25 + (img1EnterSmooth * 20); // -25° → -5°
-  const img1Opacity = Math.min(1, img1Raw * 3);
+  // === CONTINUOUS SCALE (never stops growing) ===
+  const img1ScaleProgress = easeInOutQuad(img1Raw);
+  const img1Scale = 0.25 + (img1ScaleProgress * 1.35); // 0.25 → 1.6
 
-  const img2Scale = 0.2 + (img2EnterProgress * 0.65); // 0.2 → 0.85
-  const img2RotateY = 30 - (img2EnterSmooth * 22); // 30° → 8°
-  const img2Opacity = Math.min(1, img2Raw * 3);
+  const img2ScaleProgress = easeInOutQuad(img2Raw);
+  const img2Scale = 0.2 + (img2ScaleProgress * 1.2); // 0.2 → 1.4
+
+  // === CONTINUOUS POSITION (fly to corners) ===
+  // Image 1: starts center-ish, flies toward top-right corner
+  const img1Right = 30 - (img1Raw * 80); // 30% → -50% (flies RIGHT off screen)
+  const img1Top = 40 - (img1Raw * 60); // 40% → -20% (flies UP off screen)
+
+  // Image 2: starts center-ish, flies toward bottom-left corner
+  const img2Left = 30 - (img2Raw * 70); // 30% → -40% (flies LEFT off screen)
+  const img2Bottom = 35 - (img2Raw * 55); // 35% → -20% (flies DOWN off screen)
+
+  // === OPACITY: Quick fade-in, stay visible, quick fade-out ===
+  const img1Opacity = img1Raw < 0.15 
+    ? img1Raw / 0.15 
+    : img1Raw > 0.85 
+      ? (1 - img1Raw) / 0.15 
+      : 1.0;
+
+  const img2Opacity = img2Raw < 0.15 
+    ? img2Raw / 0.15 
+    : img2Raw > 0.85 
+      ? (1 - img2Raw) / 0.15 
+      : 1.0;
+
+  // === ROTATION: Continuous subtle turn ===
+  const img1RotateY = -15 + (img1Raw * 25); // -15° → +10°
+  const img2RotateY = 15 - (img2Raw * 22); // +15° → -7°
+
+  // === SHINE: Happens during first half (while approaching) ===
+  const img1ShineProgress = Math.min(1, img1Raw * 2);
+  const img2ShineProgress = Math.min(1, img2Raw * 2);
 
   return (
     <div 
@@ -74,13 +93,13 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
         }}
       />
 
-      {/* Image 1 - Main completed roof (top-right, exits right) */}
+      {/* Image 1 - Flies from center toward top-right */}
       {img1Raw > 0 && img1Opacity > 0 && (
         <div
           className="absolute"
           style={{
-            top: '10%',
-            right: '8%',
+            top: `${img1Top}%`,
+            right: `${img1Right}%`,
             transform: `scale(${img1Scale}) rotateY(${img1RotateY}deg)`,
             opacity: img1Opacity,
             transformOrigin: 'center center',
@@ -97,50 +116,50 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
                 0 8px 40px hsl(0 0% 0% / 0.5),
                 0 16px 60px hsl(0 0% 0% / 0.6),
                 0 32px 100px hsl(0 0% 0% / 0.7),
-                0 0 60px hsl(32 80% 50% / ${0.35 * img1EnterSmooth}),
+                0 0 60px hsl(32 80% 50% / ${0.35 * img1ShineProgress}),
                 inset 0 1px 0 hsl(40 60% 80% / 0.1)
               `,
-              border: `2px solid hsl(168 70% 45% / ${0.5 * img1EnterSmooth})`,
+              border: `2px solid hsl(168 70% 45% / ${0.5 * img1ShineProgress})`,
             }}
           >
             <img
               src={coastalRoofImage}
               alt="Completed coastal roof project"
               style={{
-                width: '45vw',
-                maxWidth: '600px',
+                width: '28vw',
+                maxWidth: '380px',
                 height: 'auto',
-                maxHeight: '40vh',
+                maxHeight: '28vh',
                 objectFit: 'cover',
                 display: 'block',
               }}
             />
-            {/* Shine sweep effect */}
+            {/* Shine sweep effect - happens during first half */}
             <div
               className="absolute inset-0 pointer-events-none"
               style={{
                 background: `linear-gradient(
                   110deg,
                   transparent 20%,
-                  hsl(45 90% 95% / ${0.2 * img1EnterSmooth}) 40%,
-                  hsl(45 90% 95% / ${0.35 * img1EnterSmooth}) 50%,
-                  hsl(45 90% 95% / ${0.2 * img1EnterSmooth}) 60%,
+                  hsl(45 90% 95% / ${0.2 * img1ShineProgress}) 40%,
+                  hsl(45 90% 95% / ${0.35 * img1ShineProgress}) 50%,
+                  hsl(45 90% 95% / ${0.2 * img1ShineProgress}) 60%,
                   transparent 80%
                 )`,
-                transform: `translateX(${-120 + (img1Raw * 240)}%)`,
+                transform: `translateX(${-120 + (img1ShineProgress * 240)}%)`,
               }}
             />
           </div>
         </div>
       )}
 
-      {/* Image 2 - In progress shot (bottom-left, exits left) */}
+      {/* Image 2 - Flies from center toward bottom-left */}
       {img2Raw > 0 && img2Opacity > 0 && (
         <div
           className="absolute"
           style={{
-            bottom: '15%',
-            left: '5%',
+            bottom: `${img2Bottom}%`,
+            left: `${img2Left}%`,
             transform: `scale(${img2Scale}) rotateY(${img2RotateY}deg)`,
             opacity: img2Opacity,
             transformOrigin: 'center center',
@@ -157,37 +176,37 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
                 0 8px 32px hsl(0 0% 0% / 0.45),
                 0 16px 50px hsl(0 0% 0% / 0.55),
                 0 24px 80px hsl(0 0% 0% / 0.65),
-                0 0 50px hsl(168 70% 45% / ${0.3 * img2EnterSmooth}),
+                0 0 50px hsl(168 70% 45% / ${0.3 * img2ShineProgress}),
                 inset 0 1px 0 hsl(40 60% 80% / 0.08)
               `,
-              border: `2px solid hsl(32 70% 50% / ${0.45 * img2EnterSmooth})`,
+              border: `2px solid hsl(32 70% 50% / ${0.45 * img2ShineProgress})`,
             }}
           >
             <img
               src={inProgressImage}
               alt="Roof installation in progress"
               style={{
-                width: '35vw',
-                maxWidth: '450px',
+                width: '22vw',
+                maxWidth: '300px',
                 height: 'auto',
-                maxHeight: '32vh',
+                maxHeight: '22vh',
                 objectFit: 'cover',
                 display: 'block',
               }}
             />
-            {/* Shine sweep effect */}
+            {/* Shine sweep effect - happens during first half */}
             <div
               className="absolute inset-0 pointer-events-none"
               style={{
                 background: `linear-gradient(
                   110deg,
                   transparent 20%,
-                  hsl(45 90% 95% / ${0.15 * img2EnterSmooth}) 40%,
-                  hsl(45 90% 95% / ${0.25 * img2EnterSmooth}) 50%,
-                  hsl(45 90% 95% / ${0.15 * img2EnterSmooth}) 60%,
+                  hsl(45 90% 95% / ${0.15 * img2ShineProgress}) 40%,
+                  hsl(45 90% 95% / ${0.25 * img2ShineProgress}) 50%,
+                  hsl(45 90% 95% / ${0.15 * img2ShineProgress}) 60%,
                   transparent 80%
                 )`,
-                transform: `translateX(${-120 + (img2Raw * 240)}%)`,
+                transform: `translateX(${-120 + (img2ShineProgress * 240)}%)`,
               }}
             />
           </div>
