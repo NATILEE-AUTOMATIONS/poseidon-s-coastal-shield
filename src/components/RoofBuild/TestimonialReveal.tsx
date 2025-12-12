@@ -28,10 +28,8 @@ const TestimonialReveal: React.FC<TestimonialRevealProps> = ({ progress }) => {
     ? Math.min(1, (progress - quoteStart) / 0.035) 
     : 0;
   
-  // Fade out calculation
-  const fadeOut = progress >= fadeOutStart 
-    ? 1 - ((progress - fadeOutStart) / (1 - fadeOutStart))
-    : 1;
+  // No fade out - testimonial stays visible with Image 3
+  const fadeOut = 1;
   
   // Don't render until stars start
   if (progress < starsStart) return null;

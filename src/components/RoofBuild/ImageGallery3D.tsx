@@ -1,6 +1,7 @@
 import React from 'react';
 import coastalRoofImage from '@/assets/coastal-roof-project.png';
 import coastalRoofInProgress from '@/assets/coastal-roof-inprogress.png';
+import aerialEstatePool from '@/assets/aerial-estate-pool.png';
 import { useIsMobile } from '@/hooks/use-mobile';
 import TestimonialReveal from './TestimonialReveal';
 
@@ -14,13 +15,19 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   // Image 1: Animation starts at 88% scroll (drifts LEFT)
   const anim1Start = 0.88;
   const anim1Progress = progress >= anim1Start 
-    ? Math.min(1, (progress - anim1Start) / (1 - anim1Start)) 
+    ? Math.min(1, (progress - anim1Start) / 0.08) 
     : 0;
   
-  // Image 2: Animation starts at 96% scroll (drifts RIGHT - mirrored)
-  const anim2Start = 0.96;
+  // Image 2: Animation starts at 92.5% scroll (drifts RIGHT - mirrored)
+  const anim2Start = 0.925;
   const anim2Progress = progress >= anim2Start 
-    ? Math.min(1, (progress - anim2Start) / (1 - anim2Start))
+    ? Math.min(1, (progress - anim2Start) / 0.055)
+    : 0;
+  
+  // Image 3: Animation starts at 97% scroll (drifts LEFT from top-right, NO FADE OUT)
+  const anim3Start = 0.97;
+  const anim3Progress = progress >= anim3Start 
+    ? Math.min(1, (progress - anim3Start) / 0.03)
     : 0;
   
   // Don't render anything until first animation starts
@@ -47,8 +54,16 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
       ? 1 - ((anim2Progress - fadeOutStart) / (1 - fadeOutStart))
       : 1;
 
-  // Combined opacity for background (max of both)
-  const bgOpacity = Math.max(opacity1, opacity2);
+  // Image 3: Position drifts LEFT from top-right (60% → -35%) - NO FADE OUT (hero shot for testimonial)
+  const left3Percent = 60 - (anim3Progress * 95);
+  const scale3 = 0.25 + (anim3Progress * 1.3);
+  const top3Percent = 40 + (Math.sin(anim3Progress * Math.PI) * 10);
+  const opacity3 = anim3Progress < 0.1 
+    ? anim3Progress * 10
+    : 1; // No fade out - stays visible with testimonial
+
+  // Combined opacity for background (max of all three)
+  const bgOpacity = Math.max(opacity1, opacity2, opacity3);
 
   return (
     <div 
@@ -127,6 +142,45 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
             <img
               src={coastalRoofInProgress}
               alt="Coastal roof in progress"
+              style={{
+                width: isMobile ? '90vw' : '60vw',
+                maxWidth: isMobile ? 'none' : '800px',
+                height: 'auto',
+                maxHeight: isMobile ? '55vh' : '55vh',
+                objectFit: 'cover',
+                display: 'block',
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Image 3 - drive-by from right to left (HERO SHOT - stays visible with testimonial) */}
+      {anim3Progress > 0 && opacity3 > 0 && (
+        <div
+          className="absolute"
+          style={{
+            left: `${left3Percent}%`,
+            top: `${top3Percent}%`,
+            transform: `translate(-50%, -50%) scale(${scale3})`,
+            opacity: opacity3,
+            transformStyle: 'preserve-3d',
+          }}
+        >
+          <div
+            className="relative overflow-hidden"
+            style={{
+              borderRadius: isMobile ? '16px' : '12px',
+              boxShadow: `
+                0 4px 20px hsl(0 0% 0% / 0.4),
+                0 8px 40px hsl(0 0% 0% / 0.5),
+                0 16px 60px hsl(0 0% 0% / 0.6)
+              `,
+            }}
+          >
+            <img
+              src={aerialEstatePool}
+              alt="Aerial view of estate with pool"
               style={{
                 width: isMobile ? '90vw' : '60vw',
                 maxWidth: isMobile ? 'none' : '800px',
