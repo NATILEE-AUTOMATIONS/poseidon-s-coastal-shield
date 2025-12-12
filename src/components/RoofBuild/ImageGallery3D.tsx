@@ -70,10 +70,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
       ? 1 - ((anim3Progress - fadeOutStart) / (1 - fadeOutStart))
       : 1;
 
-  // Image 4: CINEMATIC GRAND REVEAL - starts after Image 3 exits, slower animation
-  const anim4Start = 0.99;
+  // Image 4: CINEMATIC GRAND REVEAL - overlaps with Image 3 exit, slower animation
+  const anim4Start = 0.965;
   const anim4Progress = progress >= anim4Start 
-    ? Math.min(1, (progress - anim4Start) / 0.01)
+    ? Math.min(1, (progress - anim4Start) / 0.035)
     : 0;
   
   // Apply exponential easing for dramatic effect
@@ -237,7 +237,7 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
             className="absolute"
             style={{
               left: '50%',
-              top: '45%',
+              top: '35%',
               transform: 'translate(-50%, -50%)',
               width: '150vw',
               height: '150vh',
@@ -255,7 +255,7 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
             className="absolute"
             style={{
               left: '50%',
-              top: '45%',
+              top: '35%',
               transform: `translate(-50%, -50%) 
                 perspective(1200px) 
                 rotateY(${rotateY4}deg) 
