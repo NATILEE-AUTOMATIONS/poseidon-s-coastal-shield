@@ -40,9 +40,9 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
     ? Math.min(1, (progress - anim2Start) / anim2Duration)
     : 0;
   
-  // Image 3 timing - on mobile, also spaced later with small overlap
-  const anim3Start = isMobile ? 0.95 : 0.935;
-  const anim3Duration = isMobile ? 0.035 : 0.03;
+  // Image 3 timing - on mobile, ends earlier to leave room for Image 4
+  const anim3Start = isMobile ? 0.93 : 0.935;
+  const anim3Duration = isMobile ? 0.03 : 0.03;
   const anim3Progress = progress >= anim3Start 
     ? Math.min(1, (progress - anim3Start) / anim3Duration)
     : 0;
@@ -98,9 +98,9 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
       ? 1 - ((anim3Progress - fadeOutStart) / (1 - fadeOutStart))
       : 1;
 
-  // Image 4: CINEMATIC GRAND REVEAL - delayed start on mobile for gap after image 3
-  const anim4Start = isMobile ? 0.99 : 0.965;  // Mobile: starts later (was 0.965)
-  const anim4Duration = isMobile ? 0.08 : 0.035;  // Mobile: 8% scroll space for extra smooth
+  // Image 4: CINEMATIC GRAND REVEAL - starts at 96% and completes by 100%
+  const anim4Start = isMobile ? 0.96 : 0.965;
+  const anim4Duration = isMobile ? 0.04 : 0.035;  // Mobile: 4% scroll (96% → 100%)
   const anim4Progress = progress >= anim4Start 
     ? Math.min(1, (progress - anim4Start) / anim4Duration)
     : 0;
