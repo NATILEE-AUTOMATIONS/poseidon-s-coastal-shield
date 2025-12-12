@@ -2,8 +2,14 @@ import React from 'react';
 import coastalRoofImage from '@/assets/coastal-roof-project.png';
 import coastalRoofInProgress from '@/assets/coastal-roof-inprogress.png';
 import aerialEstatePool from '@/assets/aerial-estate-pool.png';
+import multilevelRoofTeam from '@/assets/multilevel-roof-team.png';
 import { useIsMobile } from '@/hooks/use-mobile';
 import TestimonialReveal from './TestimonialReveal';
+
+// Exponential ease-out for dramatic zoom effect
+const easeOutExpo = (t: number): number => {
+  return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+};
 
 interface ImageGallery3DProps {
   progress: number;
@@ -54,16 +60,45 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
       ? 1 - ((anim2Progress - fadeOutStart) / (1 - fadeOutStart))
       : 1;
 
-  // Image 3: Position drifts LEFT (55% → -30%) - SAME AS IMAGE 1, NO FADE OUT
+  // Image 3: Position drifts LEFT (55% → -30%) - SAME AS IMAGE 1, with fade out
   const left3Percent = 55 - (anim3Progress * 85);
   const scale3 = 0.25 + (anim3Progress * 1.3);
   const top3Percent = 50 - (Math.sin(anim3Progress * Math.PI) * 15);
   const opacity3 = anim3Progress < 0.1 
     ? anim3Progress * 10
-    : 1; // No fade out - stays visible with testimonial
+    : anim3Progress > fadeOutStart 
+      ? 1 - ((anim3Progress - fadeOutStart) / (1 - fadeOutStart))
+      : 1;
 
-  // Combined opacity for background (max of all three)
-  const bgOpacity = Math.max(opacity1, opacity2, opacity3);
+  // Image 4: CINEMATIC GRAND REVEAL - dramatic 3D zoom from tiny dot
+  const anim4Start = 0.985;
+  const anim4Progress = progress >= anim4Start 
+    ? Math.min(1, (progress - anim4Start) / 0.015)
+    : 0;
+  
+  // Apply exponential easing for dramatic effect
+  const easedProgress4 = easeOutExpo(anim4Progress);
+  
+  // Scale: tiny dot (0.05) → full size with overshoot (1.15) → settle (1.0)
+  const scaleOvershoot = anim4Progress > 0.8 
+    ? 1.15 - ((anim4Progress - 0.8) / 0.2) * 0.15 
+    : 0.05 + (easedProgress4 * 1.1);
+  const scale4 = Math.max(0.05, scaleOvershoot);
+  
+  // 3D rotation: spinning in from side
+  const rotateY4 = -60 + (easedProgress4 * 60); // -60° → 0°
+  const rotateX4 = 15 - (easedProgress4 * 15);   // 15° → 0°
+  
+  // Opacity: quick fade in
+  const opacity4 = anim4Progress < 0.15 
+    ? anim4Progress / 0.15 
+    : 1;
+  
+  // Light burst intensity: peaks at 40-60% of animation
+  const lightBurstIntensity = Math.sin(anim4Progress * Math.PI) * 0.8;
+
+  // Combined opacity for background (max of all four)
+  const bgOpacity = Math.max(opacity1, opacity2, opacity3, opacity4);
 
   return (
     <div 
@@ -155,7 +190,7 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
         </div>
       )}
 
-      {/* Image 3 - drive-by from right to left (HERO SHOT - stays visible with testimonial) */}
+      {/* Image 3 - drive-by from right to left */}
       {anim3Progress > 0 && opacity3 > 0 && (
         <div
           className="absolute"
@@ -192,6 +227,73 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
             />
           </div>
         </div>
+      )}
+
+      {/* Image 4 - CINEMATIC GRAND REVEAL - 3D zoom from center */}
+      {anim4Progress > 0 && opacity4 > 0 && (
+        <>
+          {/* Light burst behind image */}
+          <div
+            className="absolute"
+            style={{
+              left: '50%',
+              top: '45%',
+              transform: 'translate(-50%, -50%)',
+              width: '150vw',
+              height: '150vh',
+              background: `radial-gradient(ellipse 50% 50% at 50% 50%, 
+                hsl(35 80% 55% / ${lightBurstIntensity * 0.6}) 0%,
+                hsl(168 70% 40% / ${lightBurstIntensity * 0.3}) 30%,
+                transparent 70%)`,
+              filter: 'blur(60px)',
+              pointerEvents: 'none',
+            }}
+          />
+          
+          {/* The image with 3D transform */}
+          <div
+            className="absolute"
+            style={{
+              left: '50%',
+              top: '45%',
+              transform: `translate(-50%, -50%) 
+                perspective(1200px) 
+                rotateY(${rotateY4}deg) 
+                rotateX(${rotateX4}deg) 
+                scale(${scale4})`,
+              opacity: opacity4,
+              transformStyle: 'preserve-3d',
+              willChange: 'transform, opacity',
+            }}
+          >
+            <div
+              className="relative overflow-hidden"
+              style={{
+                borderRadius: isMobile ? '20px' : '16px',
+                boxShadow: `
+                  0 0 ${30 + lightBurstIntensity * 40}px hsl(35 80% 50% / ${0.3 + lightBurstIntensity * 0.4}),
+                  0 0 ${60 + lightBurstIntensity * 60}px hsl(168 70% 45% / ${0.2 + lightBurstIntensity * 0.3}),
+                  0 8px 40px hsl(0 0% 0% / 0.5),
+                  0 16px 80px hsl(0 0% 0% / 0.6),
+                  0 32px 120px hsl(0 0% 0% / 0.4)
+                `,
+              }}
+            >
+              <img
+                src={multilevelRoofTeam}
+                alt="Multilevel coastal home with roofing crew"
+                style={{
+                  width: isMobile ? '85vw' : '65vw',
+                  maxWidth: isMobile ? 'none' : '900px',
+                  height: 'auto',
+                  maxHeight: isMobile ? '60vh' : '65vh',
+                  objectFit: 'cover',
+                  display: 'block',
+                }}
+              />
+            </div>
+          </div>
+        </>
       )}
       
       {/* Testimonial Reveal */}
