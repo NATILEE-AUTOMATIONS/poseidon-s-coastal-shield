@@ -10,21 +10,32 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   const isMobile = useIsMobile();
   
   // Animation starts at 93% scroll (after door zoom completes)
-  const animStart = 0.93;
+  const animStart = 0.85;
   if (progress < animStart) return null;
 
-  // Normalize progress: 0 = start, 1 = end of animation
+  // Normalize progress: 0 = start, 1 = end of animation (now has more room)
   const animProgress = Math.min(1, (progress - animStart) / (1 - animStart));
   
-  // Start small, grow to viewable size
-  const scale = 0.2 + (animProgress * 0.8); // 0.2 → 1.0
-  const opacity = Math.min(1, animProgress * 5); // Quick fade in
+  // Start small, grow to viewable size, then continue off screen
+  const scale = animProgress < 0.5 
+    ? 0.2 + (animProgress * 2 * 0.8) // 0.2 → 1.0 in first half
+    : 1.0; // Stay at full size in second half
   
-  // Position: Start at CENTER (slightly right of center), end at UPPER RIGHT
-  // Start: 55% from left (center-ish), 50% from top (vertical center)
-  // End: 85% from left (right side), 25% from top (upper area)
-  const leftPercent = 55 + (animProgress * 30); // 55% → 85%
-  const topPercent = 50 - (animProgress * 25); // 50% → 25%
+  const opacity = animProgress < 0.1 
+    ? animProgress * 10 // Quick fade in
+    : animProgress > 0.85 
+      ? Math.max(0, 1 - ((animProgress - 0.85) / 0.15)) // Fade out at end
+      : 1;
+  
+  // Position: Start at CENTER, move to UPPER RIGHT, then continue OFF SCREEN
+  // First half (0-50%): center to upper right
+  // Second half (50-100%): upper right to off screen right
+  const leftPercent = animProgress < 0.5
+    ? 55 + (animProgress * 2 * 30) // 55% → 85% in first half
+    : 85 + ((animProgress - 0.5) * 2 * 40); // 85% → 125% in second half (off screen)
+  const topPercent = animProgress < 0.5
+    ? 50 - (animProgress * 2 * 25) // 50% → 25% in first half
+    : 25 - ((animProgress - 0.5) * 2 * 15); // 25% → 10% continue up slightly
 
   return (
     <div 
