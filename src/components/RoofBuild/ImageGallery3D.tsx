@@ -40,46 +40,17 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   const img2EnterProgress = easeOutBack(Math.min(1, img2Raw));
   const img2EnterSmooth = easeOutCubic(img2Raw);
 
-  // === PHASE 2: HOLD (96% → 97%) - brief pause at hero position ===
-  // No additional transforms needed, images stay at their entered position
+  // Gallery background opacity
+  const bgOpacity = Math.min(1, img1Raw * 2.5);
 
-  // === PHASE 3: EXIT (97% → 100%) - FLY PAST, DIAGONAL OUTWARD ===
-  const exitStart = 0.97;
-  const exitEnd = 1.0;
-  const exitRaw = progress > exitStart 
-    ? Math.min(1, (progress - exitStart) / (exitEnd - exitStart))
-    : 0;
-  const exitProgress = easeInQuad(exitRaw); // Accelerates as it leaves!
+  // === COMBINED TRANSFORMS (enter only, no exit) ===
+  const img1Scale = 0.3 + (img1EnterProgress * 0.7); // 0.3 → 1.0
+  const img1RotateY = -25 + (img1EnterSmooth * 20); // -25° → -5°
+  const img1Opacity = Math.min(1, img1Raw * 3);
 
-  // Image 1: Continues trajectory → RIGHT + UP (exits top-right corner)
-  const img1ExitScale = 1 + (exitProgress * 0.6); // 1.0 → 1.6x (MODEST)
-  const img1ExitRight = exitProgress * 70; // slides 70% further right → off-screen
-  const img1ExitUp = exitProgress * 50; // slides 50% up → off top edge
-  const img1ExitRotate = exitProgress * 8; // subtle rotation increase
-
-  // Image 2: Continues trajectory → LEFT + DOWN (exits bottom-left corner)
-  const img2ExitScale = 0.85 + (exitProgress * 0.55); // 0.85 → 1.4x (MODEST)
-  const img2ExitLeft = exitProgress * 60; // slides 60% further left → off-screen
-  const img2ExitDown = exitProgress * 45; // slides 45% down → off bottom edge
-  const img2ExitRotate = exitProgress * 6; // subtle rotation increase
-
-  // Gallery background opacity - fades in during enter, fades out during exit
-  const bgOpacity = Math.min(1, img1Raw * 2.5) * (1 - exitProgress);
-
-  // === COMBINED TRANSFORMS ===
-  // Image 1: enter + diagonal exit (up-right corner)
-  const img1Scale = (0.3 + (img1EnterProgress * 0.7)) * (exitRaw > 0 ? img1ExitScale : 1);
-  const img1RotateY = -25 + (img1EnterSmooth * 20) + img1ExitRotate;
-  const img1Opacity = Math.min(1, img1Raw * 3); // Just fade in, stay at 1.0
-  const img1RightOffset = 8 - img1ExitRight; // 8% → -62% (way off right edge)
-  const img1TopOffset = 10 - img1ExitUp; // 10% → -40% (way off top edge)
-
-  // Image 2: enter + diagonal exit (down-left corner)
-  const img2Scale = (0.2 + (img2EnterProgress * 0.65)) * (exitRaw > 0 ? img2ExitScale / 0.85 : 1);
-  const img2RotateY = 30 - (img2EnterSmooth * 22) - img2ExitRotate;
-  const img2Opacity = Math.min(1, img2Raw * 3); // Just fade in, stay at 1.0
-  const img2LeftOffset = 5 - img2ExitLeft; // 5% → -55% (way off left edge)
-  const img2BottomOffset = 15 - img2ExitDown; // 15% → -30% (way off bottom edge)
+  const img2Scale = 0.2 + (img2EnterProgress * 0.65); // 0.2 → 0.85
+  const img2RotateY = 30 - (img2EnterSmooth * 22); // 30° → 8°
+  const img2Opacity = Math.min(1, img2Raw * 3);
 
   return (
     <div 
@@ -108,8 +79,8 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
         <div
           className="absolute"
           style={{
-            top: `${img1TopOffset}%`,
-            right: `${img1RightOffset}%`,
+            top: '10%',
+            right: '8%',
             transform: `scale(${img1Scale}) rotateY(${img1RotateY}deg)`,
             opacity: img1Opacity,
             transformOrigin: 'center center',
@@ -168,8 +139,8 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
         <div
           className="absolute"
           style={{
-            bottom: `${img2BottomOffset}%`,
-            left: `${img2LeftOffset}%`,
+            bottom: '15%',
+            left: '5%',
             transform: `scale(${img2Scale}) rotateY(${img2RotateY}deg)`,
             opacity: img2Opacity,
             transformOrigin: 'center center',
