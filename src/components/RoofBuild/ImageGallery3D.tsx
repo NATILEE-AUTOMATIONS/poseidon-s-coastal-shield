@@ -30,10 +30,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
     ? Math.min(1, (progress - anim2Start) / 0.055)
     : 0;
   
-  // Image 3: Animation starts at 97% scroll (drifts LEFT from top-right, NO FADE OUT)
-  const anim3Start = 0.97;
+  // Image 3: Animation starts at 94% scroll (drifts LEFT, with fade out before Image 4)
+  const anim3Start = 0.94;
   const anim3Progress = progress >= anim3Start 
-    ? Math.min(1, (progress - anim3Start) / 0.03)
+    ? Math.min(1, (progress - anim3Start) / 0.04)
     : 0;
   
   // Don't render anything until first animation starts
@@ -70,10 +70,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
       ? 1 - ((anim3Progress - fadeOutStart) / (1 - fadeOutStart))
       : 1;
 
-  // Image 4: CINEMATIC GRAND REVEAL - dramatic 3D zoom from tiny dot
-  const anim4Start = 0.985;
+  // Image 4: CINEMATIC GRAND REVEAL - starts after Image 3 exits, slower animation
+  const anim4Start = 0.99;
   const anim4Progress = progress >= anim4Start 
-    ? Math.min(1, (progress - anim4Start) / 0.015)
+    ? Math.min(1, (progress - anim4Start) / 0.01)
     : 0;
   
   // Apply exponential easing for dramatic effect
