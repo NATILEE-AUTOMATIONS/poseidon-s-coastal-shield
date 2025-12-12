@@ -63,21 +63,37 @@ const RoofBuildSection: React.FC = () => {
     setZoomProgress(zoomProgress);
   }, [zoomProgress, setZoomProgress]);
   
-  // easeInOutQuad - smooth start AND end for natural approach feel
+  // Easing functions
   const easeInOutQuad = (x: number) => 
     x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+  const easeInExpo = (x: number) => x === 0 ? 0 : Math.pow(2, 10 * x - 10);
+  
   const easedZoom = easeInOutQuad(zoomProgress);
   
-  // Scale: 1x → 15x (reduced from 20x for smoother finish)
-  const zoomScale = 1 + (easedZoom * 14);
+  // Anticipation phase (78-80%): subtle scale pulse before zoom
+  const anticipationProgress = progress >= 0.78 && progress < 0.80 
+    ? (progress - 0.78) / 0.02 
+    : 0;
+  const anticipationScale = 1 + Math.sin(anticipationProgress * Math.PI) * 0.015;
   
-  // Delayed warm light - starts at 20% zoom progress for gentler fade-in
-  const lightProgress = Math.max(0, (zoomProgress - 0.2) / 0.8);
-  const easedLight = easeInOutQuad(lightProgress);
+  // Scale: 1x → 15x (anticipation feeds into zoom)
+  const zoomScale = anticipationScale + (easedZoom * 14);
   
-  // Fade out elements during zoom - FASTER fades for cleaner transition
-  const gridFadeOut = Math.max(0, 1 - (zoomProgress * 3)); // Grid gone by 33% of zoom
-  const houseFadeOut = Math.max(0, 1 - (easedZoom * 2)); // House gone by 50% of zoom
+  // Warm light with exponential ease-in for natural warmth feel
+  const warmthProgress = Math.max(0, (zoomProgress - 0.15) / 0.85);
+  const easedWarmth = easeInExpo(warmthProgress);
+  
+  // Staggered fade choreography for depth
+  const gridFadeOut = Math.max(0, 1 - (zoomProgress * 2.5)); // Grid gone by 40% of zoom
+  const houseFadeOut = zoomProgress < 0.25 
+    ? 1 
+    : Math.max(0, 1 - ((zoomProgress - 0.25) / 0.5)); // House fades 25-75% of zoom
+  
+  // Vignette intensity for tunnel vision effect
+  const vignetteIntensity = easedZoom;
+  
+  // Motion blur hint - peaks at middle of animation
+  const motionBlur = Math.sin(easedZoom * Math.PI) * 0.3;
 
 
   
@@ -116,27 +132,26 @@ const RoofBuildSection: React.FC = () => {
       style={{ height: '400vh' }}
     >
 
-      {/* Solid backup overlay - catches ANYTHING that escapes */}
-      <div 
-        className="fixed inset-0 pointer-events-none z-[99]"
-        style={{
-          backgroundColor: `hsl(25 60% 20% / ${Math.min(1, easedLight * 1.5)})`,
-          opacity: easedLight > 0.02 ? 1 : 0,
-          willChange: 'opacity',
-        }}
-      />
-
-      {/* Warm light overlay - delayed fade-in for smoother experience - z-[100] to cover EVERYTHING */}
+      {/* Unified warm light + vignette overlay */}
       <div 
         className="fixed inset-0 pointer-events-none z-[100]"
         style={{
-          background: `radial-gradient(circle at 50% 45%, 
-            hsl(35 98% 75% / ${Math.min(1, easedLight * 1.2)}), 
-            hsl(30 95% 65% / ${Math.min(1, easedLight * 1.0)}) 25%,
-            hsl(25 85% 50% / ${Math.min(1, easedLight * 0.85)}) 50%,
-            hsl(20 75% 35% / ${Math.min(1, easedLight * 0.7)}) 80%,
-            hsl(15 65% 20% / ${easedLight * 0.5}) 100%)`,
-          opacity: easedLight > 0.01 ? 1 : 0,
+          background: `
+            radial-gradient(ellipse 70% 60% at 50% 45%, 
+              hsl(35 98% 80% / ${Math.min(1, easedWarmth * 1.3)}), 
+              hsl(32 95% 70% / ${Math.min(1, easedWarmth * 1.1)}) 20%,
+              hsl(28 90% 55% / ${Math.min(1, easedWarmth * 0.9)}) 40%,
+              hsl(22 80% 40% / ${Math.min(1, easedWarmth * 0.7)}) 60%,
+              hsl(18 70% 25% / ${easedWarmth * 0.5}) 80%,
+              hsl(15 60% 12% / ${easedWarmth * 0.3}) 100%),
+            radial-gradient(ellipse 85% 75% at 50% 50%, 
+              transparent 0%, 
+              transparent 35%,
+              hsl(20 50% 8% / ${vignetteIntensity * 0.5}) 65%,
+              hsl(15 40% 5% / ${vignetteIntensity * 0.8}) 85%,
+              hsl(10 30% 3% / ${vignetteIntensity}) 100%)
+          `,
+          opacity: zoomProgress > 0.01 ? 1 : 0,
           willChange: 'background, opacity',
         }}
       />
@@ -156,11 +171,13 @@ const RoofBuildSection: React.FC = () => {
               <div 
                 className="flex justify-center"
                 style={{
-                  transform: `scale(${zoomScale})`,
-                  transformOrigin: '50% 82%', // Exact door center (door at ~82% of viewBox height)
+                  transform: `scale(${zoomScale}) translateZ(0)`,
+                  transformOrigin: '50% 82.1%', // Precise door center
                   opacity: houseFadeOut,
-                  willChange: 'transform, opacity',
-                  backfaceVisibility: 'hidden', // Prevent flicker
+                  filter: motionBlur > 0.01 ? `blur(${motionBlur}px)` : 'none',
+                  willChange: 'transform, opacity, filter',
+                  backfaceVisibility: 'hidden',
+                  contain: 'layout paint style',
                 }}
               >
               <div className="w-full max-w-2xl">
