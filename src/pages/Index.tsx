@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import RoofBuildSection from "@/components/RoofBuildSection";
+import BeachSunsetSection from "@/components/BeachSunset/BeachSunsetSection";
 import { ScrollProvider } from "@/context/ScrollContext";
 
 const Index = () => {
@@ -10,6 +11,7 @@ const Index = () => {
         <Navbar />
         <HeroSection />
         <RoofBuildSection />
+        <BeachSunsetSection />
       </main>
     </ScrollProvider>
   );

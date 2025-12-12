@@ -4,6 +4,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Beach sunset animations */
+@keyframes shimmer {
+  0%, 100% { opacity: 0.2; transform: translateX(-10px); }
+  50% { opacity: 0.5; transform: translateX(10px); }
+}
+
+@keyframes waveMove {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-15px); }
+}
+
+@keyframes foamPulse {
+  0%, 100% { opacity: 0.6; transform: scaleX(0.98); }
+  50% { opacity: 0.9; transform: scaleX(1.02); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  25% { transform: translateY(-10px) translateX(5px); }
+  50% { transform: translateY(-5px) translateX(-3px); }
+  75% { transform: translateY(-15px) translateX(8px); }
+}
+
 @layer base {
   :root {
     /* Poseidon Dark Theme */
