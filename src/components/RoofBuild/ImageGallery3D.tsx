@@ -16,10 +16,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
     ? Math.min(1, (progress - anim1Start) / (1 - anim1Start)) 
     : 0;
   
-  // Image 2: Animation starts at 94% scroll (drifts RIGHT - mirrored)
-  const anim2Start = 0.94;
+  // Image 2: Animation starts at 96% scroll (drifts RIGHT - mirrored)
+  const anim2Start = 0.96;
   const anim2Progress = progress >= anim2Start 
-    ? Math.min(1, (progress - anim2Start) / (1 - anim2Start)) 
+    ? Math.min(1, (progress - anim2Start) / (1 - anim2Start))
     : 0;
   
   // Don't render anything until first animation starts
