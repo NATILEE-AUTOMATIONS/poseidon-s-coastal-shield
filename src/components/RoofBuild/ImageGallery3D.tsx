@@ -22,42 +22,59 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
     return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
   };
 
-  // Image 1 (Main - completed roof): 92% → 98%
+  // === PHASE 1: ENTER (92% → 100%) ===
   const img1Start = 0.92;
   const img1End = 0.98;
   const img1Raw = progress > img1Start 
     ? Math.min(1, (progress - img1Start) / (img1End - img1Start))
     : 0;
-  const img1Progress = easeOutBack(Math.min(1, img1Raw));
-  const img1Smooth = easeOutCubic(img1Raw);
+  const img1EnterProgress = easeOutBack(Math.min(1, img1Raw));
+  const img1EnterSmooth = easeOutCubic(img1Raw);
 
-  // Image 2 (Secondary - in progress): 95% → 100%
   const img2Start = 0.95;
   const img2End = 1.0;
   const img2Raw = progress > img2Start 
     ? Math.min(1, (progress - img2Start) / (img2End - img2Start))
     : 0;
-  const img2Progress = easeOutBack(Math.min(1, img2Raw));
-  const img2Smooth = easeOutCubic(img2Raw);
+  const img2EnterProgress = easeOutBack(Math.min(1, img2Raw));
+  const img2EnterSmooth = easeOutCubic(img2Raw);
 
-  // Subtle floating after images are settled (after 100%)
-  const floatActive = progress >= 1.0;
-  const floatTime = progress * 30;
-  const float1Y = floatActive ? Math.sin(floatTime) * 6 : 0;
-  const float2Y = floatActive ? Math.sin(floatTime * 1.2 + 2) * 5 : 0;
+  // === PHASE 2: HOLD (100% → 105%) - brief pause at hero position ===
+  // No additional transforms needed, images stay at their entered position
 
-  // Gallery background opacity - fades in as images appear
-  const bgOpacity = Math.min(1, img1Raw * 2);
+  // === PHASE 3: EXIT (105% → 120%) ===
+  const exitStart = 1.05;
+  const exitEnd = 1.20;
+  const exitRaw = progress > exitStart 
+    ? Math.min(1, (progress - exitStart) / (exitEnd - exitStart))
+    : 0;
+  const exitProgress = easeOutCubic(exitRaw);
 
-  // Image 1 transforms - enters from right, rotates into place
-  const img1Scale = 0.3 + (img1Progress * 0.7); // 0.3 → 1.0
-  const img1RotateY = -25 + (img1Smooth * 20); // -25° → -5°
-  const img1Opacity = Math.min(1, img1Raw * 3);
+  // Image 1 exit: flies off to the right while scaling up
+  const img1ExitOffset = exitProgress * 70; // slides right off screen
+  const img1ExitScale = 1 + (exitProgress * 0.8); // 1.0 → 1.8
+  const img1ExitOpacity = 1 - (exitProgress * 1.2); // fade out faster
 
-  // Image 2 transforms - enters from left, rotates opposite
-  const img2Scale = 0.2 + (img2Progress * 0.65); // 0.2 → 0.85
-  const img2RotateY = 30 - (img2Smooth * 22); // 30° → 8°
-  const img2Opacity = Math.min(1, img2Raw * 3);
+  // Image 2 exit: flies off to the left while scaling up
+  const img2ExitOffset = exitProgress * 60; // slides left off screen
+  const img2ExitScale = 0.85 + (exitProgress * 0.65); // 0.85 → 1.5
+  const img2ExitOpacity = 1 - (exitProgress * 1.2); // fade out faster
+
+  // Gallery background opacity - fades in during enter, fades out during exit
+  const bgOpacity = Math.min(1, img1Raw * 2) * (1 - exitProgress);
+
+  // === COMBINED TRANSFORMS ===
+  // Image 1: enter transforms + exit transforms
+  const img1Scale = (0.3 + (img1EnterProgress * 0.7)) * (exitRaw > 0 ? img1ExitScale : 1);
+  const img1RotateY = -25 + (img1EnterSmooth * 20); // -25° → -5°
+  const img1Opacity = Math.min(1, img1Raw * 3) * Math.max(0, img1ExitOpacity);
+  const img1RightOffset = 8 - img1ExitOffset; // 8% → -62% (off right edge)
+
+  // Image 2: enter transforms + exit transforms
+  const img2Scale = (0.2 + (img2EnterProgress * 0.65)) * (exitRaw > 0 ? img2ExitScale / 0.85 : 1);
+  const img2RotateY = 30 - (img2EnterSmooth * 22); // 30° → 8°
+  const img2Opacity = Math.min(1, img2Raw * 3) * Math.max(0, img2ExitOpacity);
+  const img2LeftOffset = 5 - img2ExitOffset; // 5% → -55% (off left edge)
 
   return (
     <div 
@@ -81,13 +98,13 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
         }}
       />
 
-      {/* Image 1 - Main completed roof (top-right) */}
-      {img1Raw > 0 && (
+      {/* Image 1 - Main completed roof (top-right, exits right) */}
+      {img1Raw > 0 && img1Opacity > 0 && (
         <div
           className="absolute"
           style={{
-            top: `calc(10% + ${float1Y}px)`,
-            right: '8%',
+            top: '10%',
+            right: `${img1RightOffset}%`,
             transform: `scale(${img1Scale}) rotateY(${img1RotateY}deg)`,
             opacity: img1Opacity,
             transformOrigin: 'center center',
@@ -103,10 +120,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
                 0 8px 40px hsl(0 0% 0% / 0.5),
                 0 16px 60px hsl(0 0% 0% / 0.6),
                 0 32px 100px hsl(0 0% 0% / 0.7),
-                0 0 60px hsl(32 80% 50% / ${0.35 * img1Smooth}),
+                0 0 60px hsl(32 80% 50% / ${0.35 * img1EnterSmooth}),
                 inset 0 1px 0 hsl(40 60% 80% / 0.1)
               `,
-              border: `2px solid hsl(168 70% 45% / ${0.5 * img1Smooth})`,
+              border: `2px solid hsl(168 70% 45% / ${0.5 * img1EnterSmooth})`,
             }}
           >
             <img
@@ -128,9 +145,9 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
                 background: `linear-gradient(
                   110deg,
                   transparent 20%,
-                  hsl(45 90% 95% / ${0.2 * img1Smooth}) 40%,
-                  hsl(45 90% 95% / ${0.35 * img1Smooth}) 50%,
-                  hsl(45 90% 95% / ${0.2 * img1Smooth}) 60%,
+                  hsl(45 90% 95% / ${0.2 * img1EnterSmooth}) 40%,
+                  hsl(45 90% 95% / ${0.35 * img1EnterSmooth}) 50%,
+                  hsl(45 90% 95% / ${0.2 * img1EnterSmooth}) 60%,
                   transparent 80%
                 )`,
                 transform: `translateX(${-120 + (img1Raw * 240)}%)`,
@@ -140,13 +157,13 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
         </div>
       )}
 
-      {/* Image 2 - In progress shot (bottom-left) */}
-      {img2Raw > 0 && (
+      {/* Image 2 - In progress shot (bottom-left, exits left) */}
+      {img2Raw > 0 && img2Opacity > 0 && (
         <div
           className="absolute"
           style={{
-            bottom: `calc(15% + ${float2Y}px)`,
-            left: '5%',
+            bottom: '15%',
+            left: `${img2LeftOffset}%`,
             transform: `scale(${img2Scale}) rotateY(${img2RotateY}deg)`,
             opacity: img2Opacity,
             transformOrigin: 'center center',
@@ -162,10 +179,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
                 0 8px 32px hsl(0 0% 0% / 0.45),
                 0 16px 50px hsl(0 0% 0% / 0.55),
                 0 24px 80px hsl(0 0% 0% / 0.65),
-                0 0 50px hsl(168 70% 45% / ${0.3 * img2Smooth}),
+                0 0 50px hsl(168 70% 45% / ${0.3 * img2EnterSmooth}),
                 inset 0 1px 0 hsl(40 60% 80% / 0.08)
               `,
-              border: `2px solid hsl(32 70% 50% / ${0.45 * img2Smooth})`,
+              border: `2px solid hsl(32 70% 50% / ${0.45 * img2EnterSmooth})`,
             }}
           >
             <img
@@ -187,9 +204,9 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
                 background: `linear-gradient(
                   110deg,
                   transparent 20%,
-                  hsl(45 90% 95% / ${0.15 * img2Smooth}) 40%,
-                  hsl(45 90% 95% / ${0.25 * img2Smooth}) 50%,
-                  hsl(45 90% 95% / ${0.15 * img2Smooth}) 60%,
+                  hsl(45 90% 95% / ${0.15 * img2EnterSmooth}) 40%,
+                  hsl(45 90% 95% / ${0.25 * img2EnterSmooth}) 50%,
+                  hsl(45 90% 95% / ${0.15 * img2EnterSmooth}) 60%,
                   transparent 80%
                 )`,
                 transform: `translateX(${-120 + (img2Raw * 240)}%)`,
