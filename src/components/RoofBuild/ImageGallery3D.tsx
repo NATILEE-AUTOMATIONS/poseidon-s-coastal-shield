@@ -9,22 +9,22 @@ interface ImageGallery3DProps {
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   const isMobile = useIsMobile();
   
-  // Animation from center to upper-right, stays visible at end
+  // Animation starts at 93% scroll (after door zoom completes)
   const animStart = 0.93;
   if (progress < animStart) return null;
 
+  // Normalize progress: 0 = start, 1 = end of animation
   const animProgress = Math.min(1, (progress - animStart) / (1 - animStart));
   
-  // Trajectory: center → upper-right (stays on screen)
-  const leftPercent = 55 + (animProgress * 30);  // 55% → 85%
-  const topPercent = 50 - (animProgress * 25);   // 50% → 25%
+  // Start small, grow to viewable size
+  const scale = 0.2 + (animProgress * 0.8); // 0.2 → 1.0
+  const opacity = Math.min(1, animProgress * 5); // Quick fade in
   
-  // Scale: grows to full size by 40% of animation, then stays
-  const scaleProgress = Math.min(1, animProgress * 2.5);
-  const scale = 0.2 + (scaleProgress * 0.8); // 0.2 → 1.0
-  
-  // Opacity: fade in quickly, stay visible
-  const opacity = Math.min(1, animProgress * 5);
+  // Position: Start at CENTER (slightly right of center), end at UPPER RIGHT
+  // Start: 55% from left (center-ish), 50% from top (vertical center)
+  // End: 85% from left (right side), 25% from top (upper area)
+  const leftPercent = 55 + (animProgress * 30); // 55% → 85%
+  const topPercent = 50 - (animProgress * 25); // 50% → 25%
 
   return (
     <div 
@@ -37,7 +37,7 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
           hsl(15 20% 5% / ${opacity}) 100%)`,
       }}
     >
-      {/* The Image - continuous animation from center to off-screen upper-right */}
+      {/* The Image - animates from center to upper right */}
       <div
         className="absolute"
         style={{
