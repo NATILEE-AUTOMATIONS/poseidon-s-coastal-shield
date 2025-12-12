@@ -22,59 +22,59 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
     return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
   };
 
-  // === PHASE 1: ENTER (92% → 100%) ===
+  // === PHASE 1: ENTER (92% → 96%) ===
   const img1Start = 0.92;
-  const img1End = 0.98;
+  const img1End = 0.96;
   const img1Raw = progress > img1Start 
     ? Math.min(1, (progress - img1Start) / (img1End - img1Start))
     : 0;
   const img1EnterProgress = easeOutBack(Math.min(1, img1Raw));
   const img1EnterSmooth = easeOutCubic(img1Raw);
 
-  const img2Start = 0.95;
-  const img2End = 1.0;
+  const img2Start = 0.93;
+  const img2End = 0.97;
   const img2Raw = progress > img2Start 
     ? Math.min(1, (progress - img2Start) / (img2End - img2Start))
     : 0;
   const img2EnterProgress = easeOutBack(Math.min(1, img2Raw));
   const img2EnterSmooth = easeOutCubic(img2Raw);
 
-  // === PHASE 2: HOLD (100% → 105%) - brief pause at hero position ===
+  // === PHASE 2: HOLD (96% → 97%) - brief pause at hero position ===
   // No additional transforms needed, images stay at their entered position
 
-  // === PHASE 3: EXIT (105% → 120%) ===
-  const exitStart = 1.05;
-  const exitEnd = 1.20;
+  // === PHASE 3: EXIT (97% → 100%) ===
+  const exitStart = 0.97;
+  const exitEnd = 1.0;
   const exitRaw = progress > exitStart 
     ? Math.min(1, (progress - exitStart) / (exitEnd - exitStart))
     : 0;
   const exitProgress = easeOutCubic(exitRaw);
 
   // Image 1 exit: flies off to the right while scaling up
-  const img1ExitOffset = exitProgress * 70; // slides right off screen
-  const img1ExitScale = 1 + (exitProgress * 0.8); // 1.0 → 1.8
-  const img1ExitOpacity = 1 - (exitProgress * 1.2); // fade out faster
+  const img1ExitOffset = exitProgress * 60; // slides right off screen
+  const img1ExitScale = 1 + (exitProgress * 0.6); // 1.0 → 1.6
+  const img1ExitOpacity = 1 - exitProgress; // fade out
 
   // Image 2 exit: flies off to the left while scaling up
-  const img2ExitOffset = exitProgress * 60; // slides left off screen
-  const img2ExitScale = 0.85 + (exitProgress * 0.65); // 0.85 → 1.5
-  const img2ExitOpacity = 1 - (exitProgress * 1.2); // fade out faster
+  const img2ExitOffset = exitProgress * 50; // slides left off screen
+  const img2ExitScale = 0.85 + (exitProgress * 0.55); // 0.85 → 1.4
+  const img2ExitOpacity = 1 - exitProgress; // fade out
 
   // Gallery background opacity - fades in during enter, fades out during exit
-  const bgOpacity = Math.min(1, img1Raw * 2) * (1 - exitProgress);
+  const bgOpacity = Math.min(1, img1Raw * 2.5) * (1 - exitProgress);
 
   // === COMBINED TRANSFORMS ===
   // Image 1: enter transforms + exit transforms
   const img1Scale = (0.3 + (img1EnterProgress * 0.7)) * (exitRaw > 0 ? img1ExitScale : 1);
   const img1RotateY = -25 + (img1EnterSmooth * 20); // -25° → -5°
   const img1Opacity = Math.min(1, img1Raw * 3) * Math.max(0, img1ExitOpacity);
-  const img1RightOffset = 8 - img1ExitOffset; // 8% → -62% (off right edge)
+  const img1RightOffset = 8 - img1ExitOffset; // 8% → -52% (off right edge)
 
   // Image 2: enter transforms + exit transforms
   const img2Scale = (0.2 + (img2EnterProgress * 0.65)) * (exitRaw > 0 ? img2ExitScale / 0.85 : 1);
   const img2RotateY = 30 - (img2EnterSmooth * 22); // 30° → 8°
   const img2Opacity = Math.min(1, img2Raw * 3) * Math.max(0, img2ExitOpacity);
-  const img2LeftOffset = 5 - img2ExitOffset; // 5% → -55% (off left edge)
+  const img2LeftOffset = 5 - img2ExitOffset; // 5% → -45% (off left edge)
 
   return (
     <div 
