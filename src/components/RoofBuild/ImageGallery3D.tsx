@@ -50,18 +50,14 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   const img2Left = 30 - (img2Raw * 70); // 30% → -40% (flies LEFT off screen)
   const img2Bottom = 35 - (img2Raw * 55); // 35% → -20% (flies DOWN off screen)
 
-  // === OPACITY: Quick fade-in, stay visible, quick fade-out ===
+  // === OPACITY: Quick fade-in only, stay fully visible ===
   const img1Opacity = img1Raw < 0.15 
     ? img1Raw / 0.15 
-    : img1Raw > 0.85 
-      ? (1 - img1Raw) / 0.15 
-      : 1.0;
+    : 1.0;
 
   const img2Opacity = img2Raw < 0.15 
     ? img2Raw / 0.15 
-    : img2Raw > 0.85 
-      ? (1 - img2Raw) / 0.15 
-      : 1.0;
+    : 1.0;
 
   // === ROTATION: Continuous subtle turn ===
   const img1RotateY = -15 + (img1Raw * 25); // -15° → +10°
