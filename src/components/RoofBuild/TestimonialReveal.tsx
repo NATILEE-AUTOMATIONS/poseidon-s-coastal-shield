@@ -17,11 +17,11 @@ const TestimonialReveal: React.FC<TestimonialRevealProps> = ({ progress }) => {
   
   // Calculate individual progress values
   const starsProgress = progress >= starsStart 
-    ? Math.min(1, (progress - starsStart) / 0.03) 
+    ? Math.min(1, (progress - starsStart) / 0.04) 
     : 0;
   
   const nameProgress = progress >= nameStart 
-    ? Math.min(1, (progress - nameStart) / 0.025) 
+    ? Math.min(1, (progress - nameStart) / 0.035) 
     : 0;
   
   const quoteProgress = progress >= quoteStart 
@@ -55,8 +55,8 @@ const TestimonialReveal: React.FC<TestimonialRevealProps> = ({ progress }) => {
       {/* Stars Row */}
       <div className="flex items-center gap-2">
         {[0, 1, 2, 3, 4].map((index) => {
-          const starDelay = index * 0.2; // 20% of starsProgress per star
-          const starProgress = Math.max(0, Math.min(1, (starsProgress - starDelay) / 0.25));
+          const starDelay = index * 0.15;
+          const starProgress = Math.max(0, Math.min(1, (starsProgress - starDelay) / 0.20));
           
           // Overshoot bounce: 0->1.2->1
           const scale = starProgress < 0.6 
@@ -92,8 +92,8 @@ const TestimonialReveal: React.FC<TestimonialRevealProps> = ({ progress }) => {
       {/* Name with character reveal */}
       <div className="flex items-center justify-center overflow-hidden">
         {nameChars.map((char, index) => {
-          const charDelay = index * 0.08; // Stagger each character
-          const charProgress = Math.max(0, Math.min(1, (nameProgress - charDelay) / 0.15));
+          const charDelay = index * 0.06;
+          const charProgress = Math.max(0, Math.min(1, (nameProgress - charDelay) / 0.20));
           
           const opacity = charProgress;
           const blur = 8 - (charProgress * 8);
