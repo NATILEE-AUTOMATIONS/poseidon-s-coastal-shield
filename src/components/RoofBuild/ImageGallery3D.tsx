@@ -76,7 +76,6 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
           hsl(25 40% 15% / ${bgOpacity * 0.95}) 0%, 
           hsl(20 30% 8% / ${bgOpacity}) 50%,
           hsl(15 20% 5% / ${bgOpacity}) 100%)`,
-        opacity: bgOpacity,
       }}
     >
       {/* Warm ambient glow in center */}
