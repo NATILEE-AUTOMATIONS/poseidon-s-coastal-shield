@@ -50,29 +50,30 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
     : 0;
   const exitProgress = easeOutCubic(exitRaw);
 
-  // Image 1 exit: flies off to the right while scaling up (NO FADE)
-  const img1ExitOffset = exitProgress * 120; // slides far right off screen
-  const img1ExitScale = 1 + (exitProgress * 0.6); // 1.0 → 1.6
+  // Image 1 exit: FLIES TOWARD VIEWER - scales up dramatically to simulate depth
+  // Moves toward center first, then continues past the camera
+  const img1ExitScale = 1 + (exitProgress * 3.5); // 1.0 → 4.5x (dramatic zoom)
+  const img1ExitMoveToCenter = exitProgress * 40; // moves left toward center initially
 
-  // Image 2 exit: flies off to the left while scaling up (NO FADE)
-  const img2ExitOffset = exitProgress * 100; // slides far left off screen
-  const img2ExitScale = 0.85 + (exitProgress * 0.55); // 0.85 → 1.4
+  // Image 2 exit: FLIES TOWARD VIEWER - scales up dramatically  
+  const img2ExitScale = 0.85 + (exitProgress * 3.0); // 0.85 → 3.85x (dramatic zoom)
+  const img2ExitMoveToCenter = exitProgress * 35; // moves right toward center initially
 
   // Gallery background opacity - fades in during enter, fades out during exit
   const bgOpacity = Math.min(1, img1Raw * 2.5) * (1 - exitProgress);
 
   // === COMBINED TRANSFORMS ===
-  // Image 1: enter transforms + exit transforms (opacity stays at 1.0)
+  // Image 1: enter transforms + "fly toward you" exit (opacity stays at 1.0)
   const img1Scale = (0.3 + (img1EnterProgress * 0.7)) * (exitRaw > 0 ? img1ExitScale : 1);
-  const img1RotateY = -25 + (img1EnterSmooth * 20); // -25° → -5°
+  const img1RotateY = -25 + (img1EnterSmooth * 20) + (exitProgress * 15); // flattens as it approaches
   const img1Opacity = Math.min(1, img1Raw * 3); // Just fade in, stay at 1.0
-  const img1RightOffset = 8 - img1ExitOffset; // 8% → -112% (way off right edge)
+  const img1RightOffset = 8 + img1ExitMoveToCenter; // 8% → 48% (moves toward center/past)
 
-  // Image 2: enter transforms + exit transforms (opacity stays at 1.0)
+  // Image 2: enter transforms + "fly toward you" exit (opacity stays at 1.0)
   const img2Scale = (0.2 + (img2EnterProgress * 0.65)) * (exitRaw > 0 ? img2ExitScale / 0.85 : 1);
-  const img2RotateY = 30 - (img2EnterSmooth * 22); // 30° → 8°
+  const img2RotateY = 30 - (img2EnterSmooth * 22) - (exitProgress * 12); // flattens as it approaches
   const img2Opacity = Math.min(1, img2Raw * 3); // Just fade in, stay at 1.0
-  const img2LeftOffset = 5 - img2ExitOffset; // 5% → -95% (way off left edge)
+  const img2LeftOffset = 5 + img2ExitMoveToCenter; // 5% → 40% (moves toward center/past)
 
   return (
     <div 
