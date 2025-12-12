@@ -23,21 +23,21 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   
   // Image 1 timing
   const anim1Start = 0.88;
-  const anim1Duration = isMobile ? 0.05 : 0.05;
+  const anim1Duration = isMobile ? 0.03 : 0.05;
   const anim1Progress = progress >= anim1Start 
     ? Math.min(1, (progress - anim1Start) / anim1Duration) 
     : 0;
   
-  // Image 2 timing - on mobile, OVERLAP with image 1 to prevent flash
-  const anim2Start = isMobile ? 0.91 : 0.91;
-  const anim2Duration = isMobile ? 0.05 : 0.04;
+  // Image 2 timing - on mobile, sequential with tiny overlap for smooth transition
+  const anim2Start = isMobile ? 0.905 : 0.91;
+  const anim2Duration = isMobile ? 0.03 : 0.04;
   const anim2Progress = progress >= anim2Start 
     ? Math.min(1, (progress - anim2Start) / anim2Duration)
     : 0;
   
-  // Image 3 timing - on mobile, OVERLAP with image 2
-  const anim3Start = isMobile ? 0.94 : 0.935;
-  const anim3Duration = isMobile ? 0.04 : 0.03;
+  // Image 3 timing - on mobile, sequential with tiny overlap
+  const anim3Start = isMobile ? 0.93 : 0.935;
+  const anim3Duration = isMobile ? 0.03 : 0.03;
   const anim3Progress = progress >= anim3Start 
     ? Math.min(1, (progress - anim3Start) / anim3Duration)
     : 0;
@@ -92,9 +92,9 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
       ? 1 - ((anim3Progress - fadeOutStart) / (1 - fadeOutStart))
       : 1;
 
-  // Image 4: CINEMATIC GRAND REVEAL - OVERLAP with Image 3 on mobile
-  const anim4Start = isMobile ? 0.97 : 0.965;
-  const anim4Duration = isMobile ? 0.03 : 0.035;
+  // Image 4: CINEMATIC GRAND REVEAL - sequential on mobile
+  const anim4Start = isMobile ? 0.955 : 0.965;
+  const anim4Duration = isMobile ? 0.045 : 0.035;
   const anim4Progress = progress >= anim4Start 
     ? Math.min(1, (progress - anim4Start) / anim4Duration)
     : 0;
