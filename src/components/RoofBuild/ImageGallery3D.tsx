@@ -36,10 +36,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
 
   // === CONTINUOUS SCALE (never stops growing) ===
   const img1ScaleProgress = easeInOutQuad(img1Raw);
-  const img1Scale = 0.25 + (img1ScaleProgress * 1.35); // 0.25 → 1.6
+  const img1Scale = 0.5 + (img1ScaleProgress * 1.0); // 0.5 → 1.5
 
   const img2ScaleProgress = easeInOutQuad(img2Raw);
-  const img2Scale = 0.2 + (img2ScaleProgress * 1.2); // 0.2 → 1.4
+  const img2Scale = 0.45 + (img2ScaleProgress * 0.95); // 0.45 → 1.4
 
   // === CONTINUOUS POSITION (fly to corners) ===
   // Image 1: starts center-ish, flies toward top-right corner
@@ -126,10 +126,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
               src={coastalRoofImage}
               alt="Completed coastal roof project"
               style={{
-                width: '28vw',
-                maxWidth: '380px',
+                width: '55vw',
+                maxWidth: '700px',
                 height: 'auto',
-                maxHeight: '28vh',
+                maxHeight: '50vh',
                 objectFit: 'cover',
                 display: 'block',
               }}
@@ -186,10 +186,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
               src={inProgressImage}
               alt="Roof installation in progress"
               style={{
-                width: '22vw',
-                maxWidth: '300px',
+                width: '45vw',
+                maxWidth: '550px',
                 height: 'auto',
-                maxHeight: '22vh',
+                maxHeight: '42vh',
                 objectFit: 'cover',
                 display: 'block',
               }}
