@@ -16,81 +16,36 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   // Normalize progress: 0 = start, 1 = end of animation
   const animProgress = Math.min(1, (progress - animStart) / (1 - animStart));
   
-  // Two phases:
-  // Phase 1 (0 - 0.6): Image approaches from distance
-  // Phase 2 (0.6 - 1.0): User walks past image
-  const approachEnd = 0.6;
-  const isApproaching = animProgress <= approachEnd;
-  
-  // Easing functions
+  // Easing function
   const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
-  const easeInQuad = (x: number) => x * x;
   
-  // --- PHASE 1: Approaching (image flies toward you from the void) ---
-  let scale: number;
-  let translateZ: number;
-  let translateX: number;
-  let translateY: number;
-  let rotateY: number;
-  let opacity: number;
-  let blur: number;
+  // Animation values - image approaches and stays
+  const easedProgress = easeOutCubic(animProgress);
   
-  if (isApproaching) {
-    // Normalize within approach phase
-    const approachProgress = animProgress / approachEnd;
-    const easedApproach = easeOutCubic(approachProgress);
-    
-    // Scale: starts tiny (0.15), grows to full size (1.0)
-    scale = 0.15 + easedApproach * 0.85;
-    
-    // Z translation: starts very far (-800), comes to 0 (at eye level)
-    translateZ = -800 + easedApproach * 800;
-    
-    // X/Y: stays perfectly centered throughout approach
-    translateX = 0;
-    translateY = 0;
-    
-    // Rotation: no rotation during approach, straight on
-    rotateY = 0;
-    
-    // Opacity: quick fade in
-    opacity = Math.min(1, approachProgress * 2.5);
-    
-    // Blur: starts blurry (distant), sharpens as it arrives
-    blur = (1 - easedApproach) * 12;
-    
-  } else {
-    // --- PHASE 2: Walking past (you continue forward, image recedes behind you) ---
-    const passProgress = (animProgress - approachEnd) / (1 - approachEnd);
-    const easedPass = easeInQuad(passProgress);
-    
-    // Scale: shrinks as it recedes into distance behind you
-    scale = 1.0 - easedPass * 0.6;
-    
-    // Z: moves behind you (negative = receding into distance)
-    translateZ = -easedPass * 600;
-    
-    // X: subtle drift to one side as you walk past (perspective effect)
-    translateX = isMobile ? -easedPass * 80 : -easedPass * 120;
-    
-    // Y: slight upward drift (looking back over shoulder effect)
-    translateY = -easedPass * 30;
-    
-    // Rotation: angled view as you pass by it
-    rotateY = easedPass * 25;
-    
-    // Opacity: stays visible then fades as it's fully behind you
-    opacity = 1 - easedPass * 0.9;
-    
-    // Blur: slight blur as it recedes
-    blur = easedPass * 6;
-  }
+  // Scale: starts tiny (0.15), grows to full size (1.0)
+  const scale = 0.15 + easedProgress * 0.85;
+  
+  // Z translation: starts very far (-800), comes to 0 (at eye level)
+  const translateZ = -800 + easedProgress * 800;
+  
+  // Stays centered
+  const translateX = 0;
+  const translateY = 0;
+  
+  // No rotation
+  const rotateY = 0;
+  
+  // Opacity: quick fade in
+  const opacity = Math.min(1, animProgress * 2.5);
+  
+  // Blur: starts blurry (distant), sharpens as it arrives
+  const blur = (1 - easedProgress) * 12;
   
   // Background opacity
   const bgOpacity = Math.min(1, animProgress * 2.5);
   
   // Shine effect during approach
-  const shineProgress = isApproaching ? Math.min(1, animProgress / approachEnd * 1.5) : 1;
+  const shineProgress = Math.min(1, animProgress * 1.5);
 
   return (
     <div 
