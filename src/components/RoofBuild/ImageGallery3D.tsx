@@ -16,36 +16,37 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   // Normalize progress: 0 = start, 1 = end of animation
   const animProgress = Math.min(1, (progress - animStart) / (1 - animStart));
   
-  // Easing function
-  const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
+  // --- LUMA-STYLE LATERAL GALLERY WALK ---
+  // Image sweeps from left edge → center → right edge (like walking past a painting)
   
-  // Animation values - image approaches and stays
-  const easedProgress = easeOutCubic(animProgress);
+  // TranslateX: sweeps from far left (-60vw) → center (0) → far right (+80vw)
+  const translateXvw = -60 + (animProgress * 140);
   
-  // Scale: starts tiny (0.15), grows to full size (1.0)
-  const scale = 0.15 + easedProgress * 0.85;
+  // Scale: peaks at center (50% progress), smaller at edges
+  // Creates perspective effect - bigger when "closer" to you
+  const distanceFromCenter = Math.abs(animProgress - 0.5) * 2; // 0 at center, 1 at edges
+  const scalePeak = 1 - distanceFromCenter;
+  const scale = isMobile 
+    ? 0.6 + scalePeak * 0.5  // Mobile: 0.6 → 1.1 → 0.6
+    : 0.5 + scalePeak * 0.6; // Desktop: 0.5 → 1.1 → 0.5
   
-  // Z translation: starts very far (-800), comes to 0 (at eye level)
-  const translateZ = -800 + easedProgress * 800;
+  // RotateY: angled toward you as it approaches, angled away as it passes
+  const rotateY = -15 + (animProgress * 35); // -15° → +20°
   
-  // Stays centered
-  const translateX = 0;
-  const translateY = 0;
+  // Opacity: fade in first 20%, full visibility middle, fade out last 20%
+  const opacity = animProgress < 0.2 
+    ? animProgress * 5 
+    : animProgress > 0.8 
+      ? (1 - animProgress) * 5 
+      : 1;
   
-  // No rotation
-  const rotateY = 0;
+  // Background opacity (matches image visibility)
+  const bgOpacity = opacity;
   
-  // Opacity: quick fade in
-  const opacity = Math.min(1, animProgress * 2.5);
-  
-  // Blur: starts blurry (distant), sharpens as it arrives
-  const blur = (1 - easedProgress) * 12;
-  
-  // Background opacity
-  const bgOpacity = Math.min(1, animProgress * 2.5);
-  
-  // Shine effect during approach
-  const shineProgress = Math.min(1, animProgress * 1.5);
+  // Shine effect: peaks when image is closest (40-60% progress)
+  const shineProgress = animProgress > 0.4 && animProgress < 0.6 
+    ? 1 - Math.abs(animProgress - 0.5) * 10 
+    : 0;
 
   return (
     <div 
@@ -72,19 +73,18 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
 
       {/* The Image */}
       <div
-        className="absolute left-1/2 top-1/2"
+        className="absolute top-1/2"
         style={{
+          left: '50%',
           transform: `
-            translateX(calc(-50% + ${translateX}px)) 
-            translateY(calc(-50% + ${translateY}px)) 
-            translateZ(${translateZ}px) 
+            translateX(calc(-50% + ${translateXvw}vw)) 
+            translateY(-50%) 
             scale(${scale}) 
             rotateY(${rotateY}deg)
           `,
           opacity,
-          filter: `blur(${blur}px)`,
           transformStyle: 'preserve-3d',
-          willChange: 'transform, opacity, filter',
+          willChange: 'transform, opacity',
           zIndex: 5,
         }}
       >
