@@ -17,25 +17,36 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   const animProgress = Math.min(1, (progress - animStart) / (1 - animStart));
   
   // Start small, grow to viewable size
-  const scale = 0.3 + (animProgress * 0.7); // 0.3 → 1.0
-  const opacity = Math.min(1, animProgress * 4); // Quick fade in
+  const scale = 0.2 + (animProgress * 0.8); // 0.2 → 1.0
+  const opacity = Math.min(1, animProgress * 5); // Quick fade in
+  
+  // Slight drift from further right to final position
+  const translateX = 15 - (animProgress * 15); // starts 15% right, ends at 0
+  const translateY = -10 + (animProgress * 10); // starts 10% up, ends at 0
 
   return (
     <div 
-      className="fixed inset-0 flex items-center justify-center pointer-events-none"
+      className="fixed inset-0 pointer-events-none"
       style={{
         zIndex: 105,
-        background: `radial-gradient(ellipse 80% 60% at 50% 40%, 
+        background: `radial-gradient(ellipse 80% 60% at 70% 30%, 
           hsl(25 40% 15% / ${opacity * 0.95}) 0%, 
           hsl(20 30% 8% / ${opacity}) 50%,
           hsl(15 20% 5% / ${opacity}) 100%)`,
       }}
     >
-      {/* The Image */}
+      {/* The Image - positioned in upper right */}
       <div
+        className="absolute"
         style={{
+          top: '25%',
+          right: '8%',
+          transform: `
+            translate(${translateX}%, ${translateY}%)
+            scale(${scale})
+          `,
+          transformOrigin: 'top right',
           opacity,
-          transform: `scale(${scale})`,
         }}
       >
         <div
@@ -53,10 +64,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
             src={coastalRoofImage}
             alt="Completed coastal roof project"
             style={{
-              width: isMobile ? '85vw' : '50vw',
-              maxWidth: isMobile ? 'none' : '600px',
+              width: isMobile ? '80vw' : '45vw',
+              maxWidth: isMobile ? 'none' : '580px',
               height: 'auto',
-              maxHeight: isMobile ? '50vh' : '45vh',
+              maxHeight: isMobile ? '45vh' : '42vh',
               objectFit: 'cover',
               display: 'block',
             }}
