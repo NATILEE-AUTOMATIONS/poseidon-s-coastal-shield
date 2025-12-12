@@ -20,9 +20,9 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   // 55% → -30% (continuous leftward movement)
   const leftPercent = 55 - (animProgress * 85); // 55% → -30%
   
-  // Scale: Grows as it approaches, peaks as it passes
-  // 0.2 → 1.2 (grows throughout, peaks near end)
-  const scale = 0.2 + (animProgress * 1.0); // 0.2 → 1.2
+  // Scale: Grows as it approaches, peaks as it passes (30% bigger)
+  // 0.25 → 1.55 (grows throughout, peaks near end)
+  const scale = 0.25 + (animProgress * 1.3); // 0.25 → 1.55
   
   // Vertical position: slight rise then fall as it passes
   const topPercent = 50 - (Math.sin(animProgress * Math.PI) * 15); // 50% → 35% → 50%
@@ -73,8 +73,8 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
             src={coastalRoofImage}
             alt="Completed coastal roof project"
             style={{
-              width: isMobile ? '100vw' : '78vw',
-              maxWidth: isMobile ? 'none' : '1040px',
+              width: isMobile ? '90vw' : '60vw',
+              maxWidth: isMobile ? 'none' : '800px',
               height: 'auto',
               maxHeight: isMobile ? '55vh' : '55vh',
               objectFit: 'cover',
