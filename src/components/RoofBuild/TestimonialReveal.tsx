@@ -100,7 +100,7 @@ const TestimonialReveal: React.FC<TestimonialRevealProps> = ({ progress }) => {
           return (
             <span
               key={index}
-              className="text-2xl md:text-3xl font-semibold tracking-wide"
+              className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-wide"
               style={{
                 opacity,
                 filter: `blur(${blur}px)`,
@@ -119,13 +119,13 @@ const TestimonialReveal: React.FC<TestimonialRevealProps> = ({ progress }) => {
       
       {/* Quote with typewriter effect */}
       <div 
-        className="max-w-lg md:max-w-xl text-center px-6"
+        className="max-w-xl md:max-w-2xl lg:max-w-3xl text-center px-6"
         style={{
-          minHeight: '3rem',
+          minHeight: '4rem',
         }}
       >
         <p 
-          className="text-base md:text-lg font-light italic"
+          className="text-xl md:text-2xl lg:text-3xl font-light italic"
           style={{
             color: 'hsl(35 70% 85%)',
             textShadow: '0 0 20px hsl(30 80% 60% / 0.4)',
