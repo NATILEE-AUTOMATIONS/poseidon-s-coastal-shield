@@ -23,32 +23,32 @@ interface ImageGallery3DProps {
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   const isMobile = useIsMobile();
   
-  // MOBILE: Extended timing with smooth easing for less sensitive scrolling
-  // DESKTOP: Original billboard drive-by effect
+  // MOBILE: Start gallery AFTER door zoom completes (96%+)
+  // DESKTOP: Original billboard drive-by effect (88%+)
   
-  // Image 1 timing - start earlier on mobile for more scroll space
-  const anim1Start = isMobile ? 0.85 : 0.88;
-  const anim1Duration = isMobile ? 0.05 : 0.05;  // 5% duration on mobile
+  // Image 1 timing - delayed on mobile until after door zoom
+  const anim1Start = isMobile ? 0.96 : 0.88;
+  const anim1Duration = isMobile ? 0.015 : 0.05;  // Tight 1.5% on mobile
   const anim1Progress = progress >= anim1Start 
     ? Math.min(1, (progress - anim1Start) / anim1Duration) 
     : 0;
   
-  // Image 2 timing - properly spaced after Image 1
-  const anim2Start = isMobile ? 0.90 : 0.91;
-  const anim2Duration = isMobile ? 0.045 : 0.04;  // 4.5% duration on mobile
+  // Image 2 timing - compressed into final 4%
+  const anim2Start = isMobile ? 0.975 : 0.91;
+  const anim2Duration = isMobile ? 0.01 : 0.04;
   const anim2Progress = progress >= anim2Start 
     ? Math.min(1, (progress - anim2Start) / anim2Duration)
     : 0;
   
-  // Image 3 timing - starts after Image 2 ends (0.90 + 0.045 = 0.945)
-  const anim3Start = isMobile ? 0.945 : 0.935;
-  const anim3Duration = isMobile ? 0.035 : 0.03;  // 3.5% duration on mobile
+  // Image 3 timing
+  const anim3Start = isMobile ? 0.985 : 0.935;
+  const anim3Duration = isMobile ? 0.01 : 0.03;
   const anim3Progress = progress >= anim3Start 
     ? Math.min(1, (progress - anim3Start) / anim3Duration)
     : 0;
   
-  // Gallery background fade-in: starts 3% before first image for smooth transition
-  const galleryBgStart = isMobile ? 0.82 : 0.85;
+  // Gallery background fade-in: starts just before first image
+  const galleryBgStart = isMobile ? 0.94 : 0.85;
   const galleryBgOpacity = progress >= galleryBgStart 
     ? Math.min(1, (progress - galleryBgStart) / 0.05)  // 5% fade-in window
     : 0;
