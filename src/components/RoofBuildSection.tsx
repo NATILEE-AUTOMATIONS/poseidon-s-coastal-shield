@@ -88,6 +88,11 @@ const RoofBuildSection: React.FC = () => {
   const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
   // Fade overlay completely OUT as gallery takes over with its own background
   const overlayFade = galleryProgress > 0 ? 1 - easeOutCubic(galleryProgress) : 1;
+  
+  // Mobile: force overlays to fade out FASTER - completely gone by 0.90
+  const mobileOverlayMultiplier = isMobile 
+    ? (progress < 0.86 ? 1 : Math.max(0, 1 - ((progress - 0.86) / 0.04)))
+    : 1;
 
   // Calculate staggered exit progress for label pairs (desktop only)
   // Labels exit from 0.70 to 0.78 (as door opens, before zoom starts at 0.80)
@@ -123,8 +128,8 @@ const RoofBuildSection: React.FC = () => {
       <div 
         className="fixed inset-0 pointer-events-none z-[99]"
         style={{
-          backgroundColor: `hsl(25 60% 20% / ${Math.min(1, easedLight * 1.5)})`,
-          opacity: easedLight > 0.02 ? 1 : 0,
+          backgroundColor: `hsl(25 60% 20% / ${Math.min(1, easedLight * 1.5 * mobileOverlayMultiplier)})`,
+          opacity: (easedLight > 0.02 && mobileOverlayMultiplier > 0) ? mobileOverlayMultiplier : 0,
           willChange: 'opacity',
         }}
       />
@@ -134,12 +139,12 @@ const RoofBuildSection: React.FC = () => {
         className="fixed inset-0 pointer-events-none z-[100]"
         style={{
           background: `radial-gradient(circle at 50% 45%, 
-            hsl(35 98% 75% / ${Math.min(1, easedLight * 1.2 * overlayFade)}), 
-            hsl(30 95% 65% / ${Math.min(1, easedLight * 1.0 * overlayFade)}) 25%,
-            hsl(25 85% 50% / ${Math.min(1, easedLight * 0.85 * overlayFade)}) 50%,
-            hsl(20 75% 35% / ${Math.min(1, easedLight * 0.7 * overlayFade)}) 80%,
-            hsl(15 65% 20% / ${easedLight * 0.5 * overlayFade}) 100%)`,
-          opacity: easedLight > 0.01 ? 1 : 0,
+            hsl(35 98% 75% / ${Math.min(1, easedLight * 1.2 * overlayFade * mobileOverlayMultiplier)}), 
+            hsl(30 95% 65% / ${Math.min(1, easedLight * 1.0 * overlayFade * mobileOverlayMultiplier)}) 25%,
+            hsl(25 85% 50% / ${Math.min(1, easedLight * 0.85 * overlayFade * mobileOverlayMultiplier)}) 50%,
+            hsl(20 75% 35% / ${Math.min(1, easedLight * 0.7 * overlayFade * mobileOverlayMultiplier)}) 80%,
+            hsl(15 65% 20% / ${easedLight * 0.5 * overlayFade * mobileOverlayMultiplier}) 100%)`,
+          opacity: (easedLight > 0.01 && mobileOverlayMultiplier > 0) ? mobileOverlayMultiplier : 0,
           willChange: 'background, opacity',
         }}
       />
