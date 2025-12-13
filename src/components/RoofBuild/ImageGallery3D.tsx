@@ -23,26 +23,26 @@ interface ImageGallery3DProps {
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   const isMobile = useIsMobile();
   
-  // UNIFIED TIMING: Same scroll range for mobile and desktop (88% → 100%)
-  // Only visual properties differ (scale, drift, easing)
+  // MOBILE: Sequential NON-OVERLAPPING timing (one image at a time)
+  // DESKTOP: Original overlapping billboard drive-by effect
   
-  // Image 1 timing - UNIFIED
+  // Image 1 timing
   const anim1Start = 0.88;
-  const anim1Duration = 0.05;
+  const anim1Duration = isMobile ? 0.03 : 0.05;
   const anim1Progress = progress >= anim1Start 
     ? Math.min(1, (progress - anim1Start) / anim1Duration) 
     : 0;
   
-  // Image 2 timing - UNIFIED
-  const anim2Start = 0.91;
-  const anim2Duration = 0.04;
+  // Image 2 timing - MOBILE: starts AFTER Image 1 fully exits
+  const anim2Start = isMobile ? 0.91 : 0.91;
+  const anim2Duration = isMobile ? 0.03 : 0.04;
   const anim2Progress = progress >= anim2Start 
     ? Math.min(1, (progress - anim2Start) / anim2Duration)
     : 0;
   
-  // Image 3 timing - UNIFIED
-  const anim3Start = 0.935;
-  const anim3Duration = 0.03;
+  // Image 3 timing - MOBILE: starts AFTER Image 2 fully exits
+  const anim3Start = isMobile ? 0.94 : 0.935;
+  const anim3Duration = isMobile ? 0.03 : 0.03;
   const anim3Progress = progress >= anim3Start 
     ? Math.min(1, (progress - anim3Start) / anim3Duration)
     : 0;
@@ -61,57 +61,77 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   const easedAnim2 = isMobile ? easeOutCubic(anim2Progress) : anim2Progress;
   const easedAnim3 = isMobile ? easeOutCubic(anim3Progress) : anim3Progress;
 
-  // Mobile fade timing: gentler transitions
-  const mobileFadeOutStart = 0.85;
+  // MOBILE: Early aggressive fade-out so images don't overlap
+  // DESKTOP: Original fade timing
+  const mobileFadeOutStart = 0.6;  // Start fading at 60% of animation
   const desktopFadeOutStart = 0.75;
   const fadeOutStart = isMobile ? mobileFadeOutStart : desktopFadeOutStart;
-  const fadeInSpeed = isMobile ? 0.20 : 0.15;  // Slower fade-in on mobile
+  const fadeInSpeed = isMobile ? 0.25 : 0.15;
 
-  // Image 1: drifts LEFT - slower movement on mobile
+  // Image 1: drifts LEFT
   const left1Percent = isMobile 
-    ? 55 - (easedAnim1 * 55)   // Mobile: 55% → 0% (slower, shorter drift)
+    ? 55 - (easedAnim1 * 55)
     : 55 - (anim1Progress * 85);
   const scale1 = isMobile 
-    ? 0.4 + (easedAnim1 * 1.2)   // Mobile: 0.4 → 1.6
+    ? 0.4 + (easedAnim1 * 1.2)
     : 0.25 + (anim1Progress * 1.3);
   const top1Percent = 50 - (Math.sin(easedAnim1 * Math.PI) * (isMobile ? 10 : 15));
-  const opacity1 = anim1Progress < fadeInSpeed 
-    ? anim1Progress / fadeInSpeed
-    : anim1Progress > fadeOutStart 
-      ? 1 - ((anim1Progress - fadeOutStart) / (1 - fadeOutStart))
-      : 1;
+  // MOBILE: Fully hidden by end of animation (before Image 2 starts)
+  const opacity1 = isMobile
+    ? (anim1Progress < fadeInSpeed 
+        ? anim1Progress / fadeInSpeed
+        : anim1Progress > fadeOutStart 
+          ? Math.max(0, 1 - ((anim1Progress - fadeOutStart) / (1 - fadeOutStart)))
+          : 1)
+    : (anim1Progress < fadeInSpeed 
+        ? anim1Progress / fadeInSpeed
+        : anim1Progress > fadeOutStart 
+          ? 1 - ((anim1Progress - fadeOutStart) / (1 - fadeOutStart))
+          : 1);
 
-  // Image 2: drifts RIGHT - slower movement on mobile
+  // Image 2: drifts RIGHT
   const left2Percent = isMobile 
-    ? 45 + (easedAnim2 * 55)   // Mobile: 45% → 100% (slower, shorter drift)
+    ? 45 + (easedAnim2 * 55)
     : 45 + (anim2Progress * 85);
   const scale2 = isMobile 
     ? 0.4 + (easedAnim2 * 1.2)
     : 0.25 + (anim2Progress * 1.3);
   const top2Percent = 50 - (Math.sin(easedAnim2 * Math.PI) * (isMobile ? 10 : 15));
-  const opacity2 = anim2Progress < fadeInSpeed 
-    ? anim2Progress / fadeInSpeed
-    : anim2Progress > fadeOutStart 
-      ? 1 - ((anim2Progress - fadeOutStart) / (1 - fadeOutStart))
-      : 1;
+  const opacity2 = isMobile
+    ? (anim2Progress < fadeInSpeed 
+        ? anim2Progress / fadeInSpeed
+        : anim2Progress > fadeOutStart 
+          ? Math.max(0, 1 - ((anim2Progress - fadeOutStart) / (1 - fadeOutStart)))
+          : 1)
+    : (anim2Progress < fadeInSpeed 
+        ? anim2Progress / fadeInSpeed
+        : anim2Progress > fadeOutStart 
+          ? 1 - ((anim2Progress - fadeOutStart) / (1 - fadeOutStart))
+          : 1);
 
-  // Image 3: drifts LEFT - slower movement on mobile
+  // Image 3: drifts LEFT
   const left3Percent = isMobile 
-    ? 55 - (easedAnim3 * 55)   // Mobile: 55% → 0% (same as Image 1)
+    ? 55 - (easedAnim3 * 55)
     : 55 - (anim3Progress * 85);
   const scale3 = isMobile 
     ? 0.4 + (easedAnim3 * 1.2)
     : 0.25 + (anim3Progress * 1.3);
   const top3Percent = 50 - (Math.sin(easedAnim3 * Math.PI) * (isMobile ? 10 : 15));
-  const opacity3 = anim3Progress < fadeInSpeed 
-    ? anim3Progress / fadeInSpeed
-    : anim3Progress > fadeOutStart 
-      ? 1 - ((anim3Progress - fadeOutStart) / (1 - fadeOutStart))
-      : 1;
+  const opacity3 = isMobile
+    ? (anim3Progress < fadeInSpeed 
+        ? anim3Progress / fadeInSpeed
+        : anim3Progress > fadeOutStart 
+          ? Math.max(0, 1 - ((anim3Progress - fadeOutStart) / (1 - fadeOutStart)))
+          : 1)
+    : (anim3Progress < fadeInSpeed 
+        ? anim3Progress / fadeInSpeed
+        : anim3Progress > fadeOutStart 
+          ? 1 - ((anim3Progress - fadeOutStart) / (1 - fadeOutStart))
+          : 1);
 
-  // Image 4 timing - UNIFIED
-  const anim4Start = 0.965;
-  const anim4Duration = 0.035;
+  // Image 4 timing - MOBILE: starts AFTER Image 3 fully exits
+  const anim4Start = isMobile ? 0.97 : 0.965;
+  const anim4Duration = isMobile ? 0.03 : 0.035;
   const anim4Progress = progress >= anim4Start 
     ? Math.min(1, (progress - anim4Start) / anim4Duration)
     : 0;
