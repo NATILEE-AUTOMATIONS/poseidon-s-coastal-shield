@@ -17,68 +17,72 @@ const easeOutQuart = (x: number): number => {
 };
 
 const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
-  // === TIMING SYNCED WITH DOORWAY ENTRY - 0.86 to 1.00 ===
+  // === GALLERY WINDOW: 0.86 to 1.00 (14% of total scroll = 84vh of 600vh section) ===
+  // Remap progress within gallery window to 0-1 for internal animations
+  const galleryStart = 0.86;
+  const galleryEnd = 1.00;
+  const galleryRange = galleryEnd - galleryStart; // 0.14
   
-  // Container fade: 0.86 - 0.88 (wait for zoom to peak)
-  const containerStart = 0.86;
-  const containerFadeEnd = 0.88;
-  const containerOpacity = progress < containerStart 
+  // Local progress within gallery (0-1 mapped to gallery scroll window)
+  const localProgress = progress < galleryStart 
     ? 0 
-    : progress < containerFadeEnd 
-      ? (progress - containerStart) / (containerFadeEnd - containerStart)
-      : 1;
+    : progress > galleryEnd 
+      ? 1 
+      : (progress - galleryStart) / galleryRange;
   
-  // Group 1: Image 1 + Stars + Name (0.88 - 0.92) - First reveal AFTER doorway
-  const img1Start = 0.88;
-  const img1End = 0.92;
-  const img1Progress = Math.max(0, Math.min(1, (progress - img1Start) / (img1End - img1Start)));
+  // Container fade: first 10% of gallery window
+  const containerOpacity = Math.min(1, localProgress / 0.10);
   
-  // Stars/Name staggered within Group 1 window
-  const starsStart = 0.88;
-  const starsEnd = 0.90;
-  const starsProgress = Math.max(0, Math.min(1, (progress - starsStart) / (starsEnd - starsStart)));
+  // === EXPANDED TIMING using localProgress (0-1 within gallery) ===
+  // Image 1 + Stars + Name: 0.05 - 0.30 (25% of gallery = ~21vh scroll)
+  const img1Start = 0.05;
+  const img1End = 0.30;
+  const img1Progress = Math.max(0, Math.min(1, (localProgress - img1Start) / (img1End - img1Start)));
   
-  const nameStart = 0.88;
-  const nameEnd = 0.91;
-  const nameProgress = Math.max(0, Math.min(1, (progress - nameStart) / (nameEnd - nameStart)));
+  // Stars/Name staggered
+  const starsStart = 0.05;
+  const starsEnd = 0.20;
+  const starsProgress = Math.max(0, Math.min(1, (localProgress - starsStart) / (starsEnd - starsStart)));
   
-  // Quote 1: 0.91 - 0.94
-  const quote1Start = 0.91;
-  const quote1End = 0.94;
-  const quote1Progress = Math.max(0, Math.min(1, (progress - quote1Start) / (quote1End - quote1Start)));
+  const nameStart = 0.08;
+  const nameEnd = 0.22;
+  const nameProgress = Math.max(0, Math.min(1, (localProgress - nameStart) / (nameEnd - nameStart)));
   
-  // Group 2: Image 2 Flip Down (0.94 - 0.96)
-  const flipStart = 0.94;
-  const flipEnd = 0.96;
-  const flipProgress = Math.max(0, Math.min(1, (progress - flipStart) / (flipEnd - flipStart)));
+  // Quote 1: 0.20 - 0.40
+  const quote1Start = 0.20;
+  const quote1End = 0.40;
+  const quote1Progress = Math.max(0, Math.min(1, (localProgress - quote1Start) / (quote1End - quote1Start)));
+  
+  // Image 2 Flip Down: 0.35 - 0.55
+  const flipStart = 0.35;
+  const flipEnd = 0.55;
+  const flipProgress = Math.max(0, Math.min(1, (localProgress - flipStart) / (flipEnd - flipStart)));
 
-  // Quote 2: 0.95 - 0.97
-  const quote2Start = 0.95;
-  const quote2End = 0.97;
-  const quote2Progress = Math.max(0, Math.min(1, (progress - quote2Start) / (quote2End - quote2Start)));
+  // Quote 2: 0.50 - 0.70
+  const quote2Start = 0.50;
+  const quote2End = 0.70;
+  const quote2Progress = Math.max(0, Math.min(1, (localProgress - quote2Start) / (quote2End - quote2Start)));
 
-  // Group 3: Image 3 Slide-In (0.97 - 0.99)
-  const img3Start = 0.97;
-  const img3End = 0.99;
-  const img3Progress = Math.max(0, Math.min(1, (progress - img3Start) / (img3End - img3Start)));
+  // Image 3 Slide-In: 0.65 - 0.85
+  const img3Start = 0.65;
+  const img3End = 0.85;
+  const img3Progress = Math.max(0, Math.min(1, (localProgress - img3Start) / (img3End - img3Start)));
 
-  // Quote 3: 0.98 - 1.00
-  const quote3Start = 0.98;
+  // Quote 3: 0.80 - 1.00
+  const quote3Start = 0.80;
   const quote3End = 1.00;
-  const quote3Progress = Math.max(0, Math.min(1, (progress - quote3Start) / (quote3End - quote3Start)));
+  const quote3Progress = Math.max(0, Math.min(1, (localProgress - quote3Start) / (quote3End - quote3Start)));
 
   // Container visibility - bidirectional
-  const isVisible = progress >= containerStart;
+  const isVisible = progress >= galleryStart;
   
-  // === BIDIRECTIONAL EXIT FADES ===
-  // Group 1 fades when Group 2 starts, but recovers when scrolling back
-  const group1Fade = progress >= flipStart 
-    ? Math.max(0.3, 1 - ((progress - flipStart) / (flipEnd - flipStart)) * 0.7)
+  // === BIDIRECTIONAL EXIT FADES - using local thresholds ===
+  const group1Fade = localProgress >= flipStart 
+    ? Math.max(0.3, 1 - ((localProgress - flipStart) / (flipEnd - flipStart)) * 0.7)
     : 1;
   
-  // Group 2 fades when Group 3 starts, but recovers when scrolling back
-  const group2Fade = progress >= img3Start 
-    ? Math.max(0.3, 1 - ((progress - img3Start) / (img3End - img3Start)) * 0.7)
+  const group2Fade = localProgress >= img3Start 
+    ? Math.max(0.3, 1 - ((localProgress - img3Start) / (img3End - img3Start)) * 0.7)
     : 1;
   
   // === IMAGE 1 "EMERGENCE" - Bidirectional ===
