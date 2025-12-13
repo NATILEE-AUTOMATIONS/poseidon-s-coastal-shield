@@ -12,7 +12,7 @@ const easeOutBack = (x: number): number => {
 };
 
 const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
-  const imageStart = 0.80;
+  const imageStart = 0.90;
   const imageDuration = 0.08;
   
   const imageProgress = progress >= imageStart 
