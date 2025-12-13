@@ -352,14 +352,6 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
           )}
           {visibleQuote3Chars >= quote3.length && <span className="italic">"</span>}
       </div>
-      
-      {/* Debug Scroll Indicator - remove after testing */}
-      <div 
-        className="fixed bottom-4 right-4 z-[120] bg-black/80 text-white px-3 py-2 rounded-lg font-mono text-sm"
-        style={{ opacity: isVisible ? 1 : 0 }}
-      >
-        {Math.round(progress * 100)}%
-      </div>
     </div>
     </div>
   );
