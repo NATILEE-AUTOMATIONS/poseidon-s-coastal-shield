@@ -18,6 +18,8 @@ const images = [
 const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const [firstImageReady, setFirstImageReady] = useState(false);
+  const [isScrollEnabled, setIsScrollEnabled] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const slidesRef = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -27,6 +29,26 @@ const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => 
       setIsVisible(true);
     }
   }, [progress, isVisible]);
+
+  // First image expansion animation sequence
+  useEffect(() => {
+    if (!isVisible) return;
+    
+    // Start first image expansion after a brief delay
+    const expandTimer = setTimeout(() => {
+      setFirstImageReady(true);
+    }, 100);
+    
+    // Enable scrolling after first image animation completes
+    const scrollTimer = setTimeout(() => {
+      setIsScrollEnabled(true);
+    }, 900);
+    
+    return () => {
+      clearTimeout(expandTimer);
+      clearTimeout(scrollTimer);
+    };
+  }, [isVisible]);
 
   // Intersection Observer for active slide detection
   useEffect(() => {
@@ -56,9 +78,10 @@ const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => 
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 z-[110] overflow-y-scroll"
+      className="fixed inset-0 z-[110]"
       style={{
-        scrollSnapType: 'y mandatory',
+        overflowY: isScrollEnabled ? 'scroll' : 'hidden',
+        scrollSnapType: isScrollEnabled ? 'y mandatory' : 'none',
         WebkitOverflowScrolling: 'touch',
         background: `radial-gradient(ellipse 120% 100% at 50% 0%, 
           hsl(35 98% 75% / 0.95) 0%, 
@@ -69,11 +92,11 @@ const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => 
           hsl(168 50% 8%) 100%)`,
       }}
     >
-      {/* Swipe hint - first slide only */}
+      {/* Swipe hint - only after first image is ready */}
       <div 
         className="fixed top-6 left-1/2 -translate-x-1/2 z-[120] text-center transition-opacity duration-1000"
         style={{ 
-          opacity: activeIndex === 0 ? 0.8 : 0,
+          opacity: activeIndex === 0 && isScrollEnabled ? 0.8 : 0,
           pointerEvents: 'none'
         }}
       >
@@ -97,10 +120,18 @@ const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => 
           style={{ scrollSnapAlign: 'center' }}
         >
           <div 
-            className="relative transition-all duration-700"
+            className="relative"
             style={{
-              transform: activeIndex === index ? 'scale(1)' : 'scale(0.9)',
-              opacity: activeIndex === index ? 1 : 0.4,
+              // First image: expand from zero. Others: normal scale behavior
+              transform: index === 0 
+                ? (firstImageReady ? 'scale(1)' : 'scale(0)')
+                : (activeIndex === index ? 'scale(1)' : 'scale(0.9)'),
+              opacity: index === 0 
+                ? (firstImageReady ? 1 : 0)
+                : (activeIndex === index ? 1 : 0.4),
+              transition: index === 0 
+                ? 'transform 800ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 600ms ease-out'
+                : 'all 700ms ease-out',
             }}
           >
             {/* Ambient glow behind image */}
