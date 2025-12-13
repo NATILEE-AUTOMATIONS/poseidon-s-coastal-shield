@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import coastalRoofImage from '@/assets/coastal-roof-project.png';
 import coastalRoofInProgress from '@/assets/coastal-roof-inprogress.png';
+import coastalHomeCrew from '@/assets/coastal-home-crew.png';
 
 interface MobileFirstImageProps {
   progress: number;
@@ -16,31 +17,46 @@ const easeOutQuart = (x: number): number => {
 };
 
 const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
-  // === TIMING ===
-  // Image 1 + Text Emergence: 0.90 - 0.94
-  const img1Start = 0.90;
-  const img1End = 0.94;
+  // === COMPRESSED TIMING FOR EXTENDED NARRATIVE ===
+  
+  // Image 1 + Stars + Name: 0.88 - 0.92
+  const img1Start = 0.88;
+  const img1End = 0.92;
   const img1Progress = Math.max(0, Math.min(1, (progress - img1Start) / (img1End - img1Start)));
   
-  // Text animation (slightly staggered within emergence)
-  const starsStart = 0.90;
-  const starsEnd = 0.92;
+  // Stars/Name staggered
+  const starsStart = 0.88;
+  const starsEnd = 0.90;
   const starsProgress = Math.max(0, Math.min(1, (progress - starsStart) / (starsEnd - starsStart)));
   
-  const nameStart = 0.905;
-  const nameEnd = 0.935;
+  const nameStart = 0.885;
+  const nameEnd = 0.915;
   const nameProgress = Math.max(0, Math.min(1, (progress - nameStart) / (nameEnd - nameStart)));
   
-  const quoteStart = 0.91;
-  const quoteEnd = 0.945;
-  const quoteProgress = Math.max(0, Math.min(1, (progress - quoteStart) / (quoteEnd - quoteStart)));
+  // Quote 1: 0.89 - 0.93
+  const quote1Start = 0.89;
+  const quote1End = 0.93;
+  const quote1Progress = Math.max(0, Math.min(1, (progress - quote1Start) / (quote1End - quote1Start)));
   
-  // Breath moment: 0.94 - 0.96 (Image 1 + text hold)
-  
-  // Image 2 Flip Down: 0.96 - 1.00
-  const flipStart = 0.96;
-  const flipEnd = 1.00;
+  // Image 2 Flip Down: 0.94 - 0.97
+  const flipStart = 0.94;
+  const flipEnd = 0.97;
   const flipProgress = Math.max(0, Math.min(1, (progress - flipStart) / (flipEnd - flipStart)));
+
+  // Quote 2 ("We had some minor issues"): 0.96 - 0.98
+  const quote2Start = 0.96;
+  const quote2End = 0.98;
+  const quote2Progress = Math.max(0, Math.min(1, (progress - quote2Start) / (quote2End - quote2Start)));
+
+  // Image 3 "Slide-In Zoom": 0.97 - 0.995
+  const img3Start = 0.97;
+  const img3End = 0.995;
+  const img3Progress = Math.max(0, Math.min(1, (progress - img3Start) / (img3End - img3Start)));
+
+  // Quote 3 ("But they were quickly corrected..."): 0.985 - 1.00
+  const quote3Start = 0.985;
+  const quote3End = 1.00;
+  const quote3Progress = Math.max(0, Math.min(1, (progress - quote3Start) / (quote3End - quote3Start)));
 
   // Don't render until animation starts
   if (img1Progress <= 0) return null;
@@ -55,23 +71,40 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
 
   // === IMAGE 2 "FLIP DOWN" ===
   const flipEased = easeOutQuart(flipProgress);
-  const img2RotateX = -90 + (flipEased * 90); // -90° → 0°
+  const img2RotateX = -90 + (flipEased * 90);
   const img2Opacity = flipProgress > 0 ? Math.min(1, flipProgress * 3) : 0;
-  const img2Scale = 0.85 + (flipEased * 0.15); // Slight scale up as it settles
+  const img2Scale = 0.85 + (flipEased * 0.15);
   
-  // Image 1 shifts up when Image 2 flips in
-  const img1ShiftY = flipProgress > 0 ? flipEased * -8 : 0; // vh units
-  const img1ScaleAdjust = flipProgress > 0 ? 1 - (flipEased * 0.05) : 1; // Slight shrink
+  // === IMAGE 3 "SLIDE-IN ZOOM" ===
+  const img3Eased = easeOutExpo(img3Progress);
+  const img3TranslateX = (1 - img3Eased) * 100; // 100% → 0
+  const img3Scale = 0.6 + (img3Eased * 0.4); // 0.6 → 1.0
+  const img3Rotate = (1 - img3Eased) * 8; // 8deg → 0
+  const img3Blur = (1 - img3Eased) * 15;
+  const img3Brightness = 1.4 - (img3Eased * 0.4);
+  const img3Opacity = Math.min(1, img3Progress * 4);
+
+  // Shift adjustments for stacking
+  const img1ShiftY = flipProgress > 0 ? flipEased * -6 + (img3Progress > 0 ? easeOutExpo(img3Progress) * -4 : 0) : 0;
+  const img1ScaleAdjust = flipProgress > 0 ? 1 - (flipEased * 0.05) : 1;
 
   // === TESTIMONIAL DATA ===
   const name = "Bruce Gombar";
-  const quote = "We were very pleased with the final results of our roof replacement";
+  const quote1 = "We were very pleased with the final results of our roof replacement";
+  const quote2 = "We had some minor issues";
+  const quote3 = "But they were quickly corrected once we contacted the team";
   
   const nameChars = useMemo(() => name.split(''), []);
   const visibleNameChars = Math.floor(nameProgress * nameChars.length);
   
-  const visibleQuoteChars = Math.floor(quoteProgress * quote.length);
-  const showCursor = quoteProgress > 0 && quoteProgress < 1;
+  const visibleQuote1Chars = Math.floor(quote1Progress * quote1.length);
+  const showCursor1 = quote1Progress > 0 && quote1Progress < 1;
+
+  const visibleQuote2Chars = Math.floor(quote2Progress * quote2.length);
+  const showCursor2 = quote2Progress > 0 && quote2Progress < 1;
+
+  const visibleQuote3Chars = Math.floor(quote3Progress * quote3.length);
+  const showCursor3 = quote3Progress > 0 && quote3Progress < 1;
 
   // === STARS ANIMATION ===
   const starsEased = easeOutExpo(starsProgress);
@@ -80,7 +113,7 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
 
   return (
     <div 
-      className="fixed inset-0 z-[110] flex flex-col items-center justify-center px-4"
+      className="fixed inset-0 z-[110] flex flex-col items-center justify-start pt-8 px-4 overflow-y-auto"
       style={{
         background: `radial-gradient(ellipse at center, hsl(35 40% 15% / ${containerOpacity * 0.95}) 0%, hsl(25 30% 8% / ${containerOpacity * 0.98}) 100%)`,
         pointerEvents: img1Progress > 0 ? 'auto' : 'none',
@@ -88,7 +121,7 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
     >
       {/* Main Content Stack */}
       <div 
-        className="flex flex-col items-center gap-6 w-full max-w-[500px]"
+        className="flex flex-col items-center gap-4 w-full max-w-[500px] pb-12"
         style={{
           transform: `translateY(${img1ShiftY}vh)`,
           transition: 'transform 0.1s ease-out',
@@ -169,7 +202,7 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
           <img
             src={coastalRoofImage}
             alt="Beautiful coastal roof project"
-            className="w-full max-h-[35vh] object-cover rounded-xl"
+            className="w-full max-h-[32vh] object-cover rounded-xl"
             style={{
               boxShadow: `
                 0 25px 50px hsl(0 0% 0% / 0.4),
@@ -180,18 +213,18 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
           />
         </div>
 
-        {/* Quote - BELOW IMAGE 1, LARGER */}
+        {/* Quote 1 - BELOW IMAGE 1 */}
         <div 
           className="text-xl max-w-[320px] leading-relaxed text-center"
           style={{ 
             color: 'hsl(35 30% 65%)',
-            opacity: quoteProgress > 0 ? 1 : 0,
+            opacity: quote1Progress > 0 ? 1 : 0,
             textShadow: '0 0 15px hsl(35 50% 50% / 0.3)',
           }}
         >
           <span className="italic">"</span>
-          <span>{quote.slice(0, visibleQuoteChars)}</span>
-          {showCursor && (
+          <span>{quote1.slice(0, visibleQuote1Chars)}</span>
+          {showCursor1 && (
             <span 
               className="inline-block w-[2px] h-[18px] ml-[2px] align-middle"
               style={{
@@ -201,7 +234,7 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
               }}
             />
           )}
-          {visibleQuoteChars >= quote.length && <span className="italic">"</span>}
+          {visibleQuote1Chars >= quote1.length && <span className="italic">"</span>}
         </div>
 
         {/* Image 2 - Flip Down */}
@@ -223,7 +256,7 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
               <img
                 src={coastalRoofInProgress}
                 alt="Coastal roof in progress"
-                className="w-full max-h-[35vh] object-cover rounded-xl"
+                className="w-full max-h-[32vh] object-cover rounded-xl"
                 style={{
                   boxShadow: `
                     0 25px 50px hsl(0 0% 0% / 0.4),
@@ -233,6 +266,90 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
                 }}
               />
             </div>
+          </div>
+        )}
+
+        {/* Quote 2 - "We had some minor issues" - warmer tone */}
+        {quote2Progress > 0 && (
+          <div 
+            className="text-lg max-w-[320px] leading-relaxed text-center mt-2"
+            style={{ 
+              color: 'hsl(25 50% 65%)',
+              opacity: quote2Progress > 0 ? 1 : 0,
+              textShadow: '0 0 15px hsl(25 60% 50% / 0.4)',
+            }}
+          >
+            <span className="italic">"</span>
+            <span>{quote2.slice(0, visibleQuote2Chars)}</span>
+            {showCursor2 && (
+              <span 
+                className="inline-block w-[2px] h-[16px] ml-[2px] align-middle"
+                style={{
+                  backgroundColor: 'hsl(25 70% 60%)',
+                  boxShadow: '0 0 8px hsl(25 70% 60%)',
+                  animation: 'pulse 0.8s ease-in-out infinite',
+                }}
+              />
+            )}
+            {visibleQuote2Chars >= quote2.length && <span className="italic">"</span>}
+          </div>
+        )}
+
+        {/* Image 3 - Slide-In Zoom */}
+        {img3Progress > 0 && (
+          <div
+            className="relative w-[85vw] max-w-[500px] mt-2"
+            style={{
+              transform: `
+                translateX(${img3TranslateX}%)
+                scale(${img3Scale})
+                rotate(${img3Rotate}deg)
+              `,
+              opacity: img3Opacity,
+              filter: `blur(${img3Blur}px) brightness(${img3Brightness})`,
+              willChange: 'transform, opacity, filter',
+            }}
+          >
+            <img
+              src={coastalHomeCrew}
+              alt="Poseidon roofing team"
+              className="w-full max-h-[32vh] object-cover rounded-xl"
+              style={{
+                boxShadow: `
+                  0 25px 50px hsl(0 0% 0% / 0.5),
+                  0 0 50px hsl(35 70% 55% / ${0.4 * img3Opacity}),
+                  0 0 100px hsl(168 70% 45% / ${0.2 * img3Opacity}),
+                  inset 0 0 30px hsl(35 50% 40% / 0.1)
+                `,
+              }}
+            />
+          </div>
+        )}
+
+        {/* Quote 3 - "But they were quickly corrected..." - satisfaction */}
+        {quote3Progress > 0 && (
+          <div 
+            className="text-lg max-w-[340px] leading-relaxed text-center mt-2"
+            style={{ 
+              color: 'hsl(35 45% 70%)',
+              opacity: quote3Progress > 0 ? 1 : 0,
+              textShadow: `0 0 15px hsl(35 60% 55% / 0.4), 0 0 ${visibleQuote3Chars >= quote3.length ? 30 : 0}px hsl(35 70% 60% / 0.5)`,
+              transition: 'text-shadow 0.3s ease-out',
+            }}
+          >
+            <span className="italic">"</span>
+            <span>{quote3.slice(0, visibleQuote3Chars)}</span>
+            {showCursor3 && (
+              <span 
+                className="inline-block w-[2px] h-[16px] ml-[2px] align-middle"
+                style={{
+                  backgroundColor: 'hsl(35 70% 60%)',
+                  boxShadow: '0 0 10px hsl(35 70% 60%)',
+                  animation: 'pulse 0.8s ease-in-out infinite',
+                }}
+              />
+            )}
+            {visibleQuote3Chars >= quote3.length && <span className="italic">"</span>}
           </div>
         )}
       </div>
