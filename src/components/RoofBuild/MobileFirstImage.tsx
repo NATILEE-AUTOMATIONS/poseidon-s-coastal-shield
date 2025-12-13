@@ -148,7 +148,7 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
 
         {/* Name */}
         <div 
-          className="text-3xl font-bold tracking-widest uppercase"
+          className="text-4xl md:text-5xl font-bold tracking-widest uppercase"
           style={{ 
             color: 'hsl(35 60% 70%)',
             textShadow: '0 0 20px hsl(35 70% 55% / 0.6), 0 0 40px hsl(35 60% 45% / 0.3)',
@@ -200,12 +200,12 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
 
         {/* Quote 1 */}
         <div 
-          className="text-lg max-w-[320px] leading-relaxed text-center"
+          className="text-xl md:text-2xl max-w-[360px] leading-relaxed text-center"
           style={{ 
             color: 'hsl(35 30% 65%)',
             opacity: quote1Progress > 0 ? 1 : 0,
             textShadow: '0 0 15px hsl(35 50% 50% / 0.3)',
-            minHeight: '60px',
+            minHeight: '80px',
           }}
         >
           <span className="italic">"</span>
