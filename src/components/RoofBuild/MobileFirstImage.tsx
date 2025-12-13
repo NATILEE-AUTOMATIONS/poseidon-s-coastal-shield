@@ -46,21 +46,21 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
   // Quote 1: 0.25 - 0.50 (longer typewriter duration)
   const quote1Progress = Math.max(0, Math.min(1, (localProgress - 0.25) / 0.25));
   
-  // Image 2: 0.45 - 0.65 (pushed back, slower flip)
-  const flipStart = 0.45;
-  const flipEnd = 0.65;
+  // Image 2: 0.55 - 0.72 (PUSHED BACK - more scroll before appearing)
+  const flipStart = 0.55;
+  const flipEnd = 0.72;
   const flipProgress = Math.max(0, Math.min(1, (localProgress - flipStart) / (flipEnd - flipStart)));
 
-  // Quote 2: 0.60 - 0.75 (longer duration)
-  const quote2Progress = Math.max(0, Math.min(1, (localProgress - 0.60) / 0.15));
+  // Quote 2: 0.68 - 0.82 (starts after Image 2 settles)
+  const quote2Progress = Math.max(0, Math.min(1, (localProgress - 0.68) / 0.14));
 
-  // Image 3: 0.70 - 0.90 (dramatic slide-in)
-  const img3Start = 0.70;
-  const img3End = 0.90;
+  // Image 3: 0.82 - 0.94 (PUSHED BACK - dramatic delayed entrance)
+  const img3Start = 0.82;
+  const img3End = 0.94;
   const img3Progress = Math.max(0, Math.min(1, (localProgress - img3Start) / (img3End - img3Start)));
 
-  // Quote 3: 0.85 - 1.00 (final reveal)
-  const quote3Progress = Math.max(0, Math.min(1, (localProgress - 0.85) / 0.15));
+  // Quote 3: 0.92 - 1.00 (final reveal after Image 3)
+  const quote3Progress = Math.max(0, Math.min(1, (localProgress - 0.92) / 0.08));
 
   // === IMAGE ANIMATIONS ===
   const img1Eased = easeOutExpo(img1Progress);
