@@ -17,48 +17,46 @@ const easeOutQuart = (x: number): number => {
 };
 
 const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
-  // === BREATHABLE TIMING - 30% scroll window (0.70 - 1.00) ===
+  // === BREATHABLE TIMING - starts at 85% (after door zoom begins) ===
   
-  // Group 1: Image 1 + Stars + Name (0.70 - 0.76)
-  const img1Start = 0.70;
-  const img1End = 0.76;
+  // Group 1: Image 1 + Stars + Name (0.85 - 0.89)
+  const img1Start = 0.85;
+  const img1End = 0.89;
   const img1Progress = Math.max(0, Math.min(1, (progress - img1Start) / (img1End - img1Start)));
   
   // Stars/Name staggered within Group 1 window
-  const starsStart = 0.70;
-  const starsEnd = 0.73;
+  const starsStart = 0.85;
+  const starsEnd = 0.87;
   const starsProgress = Math.max(0, Math.min(1, (progress - starsStart) / (starsEnd - starsStart)));
   
-  const nameStart = 0.71;
-  const nameEnd = 0.75;
+  const nameStart = 0.855;
+  const nameEnd = 0.88;
   const nameProgress = Math.max(0, Math.min(1, (progress - nameStart) / (nameEnd - nameStart)));
   
-  // Quote 1: 0.74 - 0.80
-  const quote1Start = 0.74;
-  const quote1End = 0.80;
+  // Quote 1: 0.87 - 0.91
+  const quote1Start = 0.87;
+  const quote1End = 0.91;
   const quote1Progress = Math.max(0, Math.min(1, (progress - quote1Start) / (quote1End - quote1Start)));
   
-  // Breath moment: 0.80 - 0.82
+  // Breath moment: 0.91 - 0.92
   
-  // Group 2: Image 2 Flip Down (0.82 - 0.87)
-  const flipStart = 0.82;
-  const flipEnd = 0.87;
+  // Group 2: Image 2 Flip Down (0.92 - 0.95)
+  const flipStart = 0.92;
+  const flipEnd = 0.95;
   const flipProgress = Math.max(0, Math.min(1, (progress - flipStart) / (flipEnd - flipStart)));
 
-  // Quote 2: 0.86 - 0.90
-  const quote2Start = 0.86;
-  const quote2End = 0.90;
+  // Quote 2: 0.94 - 0.97
+  const quote2Start = 0.94;
+  const quote2End = 0.97;
   const quote2Progress = Math.max(0, Math.min(1, (progress - quote2Start) / (quote2End - quote2Start)));
 
-  // Breath moment: 0.90 - 0.91
-
-  // Group 3: Image 3 Slide-In (0.91 - 0.96)
-  const img3Start = 0.91;
-  const img3End = 0.96;
+  // Group 3: Image 3 Slide-In (0.96 - 0.99)
+  const img3Start = 0.96;
+  const img3End = 0.99;
   const img3Progress = Math.max(0, Math.min(1, (progress - img3Start) / (img3End - img3Start)));
 
-  // Quote 3: 0.95 - 1.00
-  const quote3Start = 0.95;
+  // Quote 3: 0.98 - 1.00
+  const quote3Start = 0.98;
   const quote3End = 1.00;
   const quote3Progress = Math.max(0, Math.min(1, (progress - quote3Start) / (quote3End - quote3Start)));
 
@@ -66,9 +64,9 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
   const isVisible = progress >= img1Start;
   
   // === EXIT FADES - Previous groups fade when next enters ===
-  // Group 1 fades when Group 2 starts (0.82+)
+  // Group 1 fades when Group 2 starts (0.92+)
   const group1Fade = flipProgress > 0 ? Math.max(0.3, 1 - flipProgress * 0.7) : 1;
-  // Group 2 fades when Group 3 starts (0.91+)
+  // Group 2 fades when Group 3 starts (0.96+)
   const group2Fade = img3Progress > 0 ? Math.max(0.3, 1 - img3Progress * 0.7) : 1;
   
   // === IMAGE 1 "EMERGENCE" ===
