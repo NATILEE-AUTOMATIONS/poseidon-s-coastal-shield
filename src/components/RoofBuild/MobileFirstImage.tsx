@@ -17,8 +17,8 @@ const easeOutQuart = (x: number): number => {
 };
 
 const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
-  // === GALLERY WINDOW: 0.94 to 1.00 (CINEMATIC BREATH - 4% pause after doorway) ===
-  const galleryStart = 0.94;
+  // === GALLERY WINDOW: 0.88 to 1.00 (starts right as user enters doorway) ===
+  const galleryStart = 0.88;
   const galleryEnd = 1.00;
   const galleryRange = galleryEnd - galleryStart;
   
