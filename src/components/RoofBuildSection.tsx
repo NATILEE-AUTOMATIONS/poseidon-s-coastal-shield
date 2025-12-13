@@ -19,7 +19,7 @@ import MobileStepCard from './RoofBuild/MobileStepCard';
 import YardSign from './RoofBuild/YardSign';
 import { useScrollContext } from '@/context/ScrollContext';
 import ImageGallery3D from './RoofBuild/ImageGallery3D';
-import MobileImageGallery from './RoofBuild/MobileImageGallery';
+
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const RoofBuildSection: React.FC = () => {
@@ -143,12 +143,8 @@ const RoofBuildSection: React.FC = () => {
         }}
       />
 
-      {/* Image Gallery - Different experience for mobile vs desktop */}
-      {isMobile ? (
-        <MobileImageGallery progress={progress} />
-      ) : (
-        <ImageGallery3D progress={progress} />
-      )}
+      {/* Image Gallery - Desktop only */}
+      {!isMobile && <ImageGallery3D progress={progress} />}
 
 
       {/* Sticky container - offset for navbar height */}
