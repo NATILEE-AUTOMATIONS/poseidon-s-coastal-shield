@@ -22,6 +22,8 @@ const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => 
   const [isScrollEnabled, setIsScrollEnabled] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const slidesRef = useRef<(HTMLDivElement | null)[]>([]);
+  const firstImageRef = useRef<HTMLDivElement>(null);
+  const hasAnimatedRef = useRef(false);
 
   // Show gallery when door opens (progress > 0.80)
   useEffect(() => {
@@ -30,23 +32,40 @@ const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => 
     }
   }, [progress, isVisible]);
 
-  // First image expansion animation sequence
+  // First image expansion animation - uses transitionend for reliability
   useEffect(() => {
-    if (!isVisible) return;
+    if (!isVisible || hasAnimatedRef.current) return;
+    
+    hasAnimatedRef.current = true;
     
     // Start first image expansion after a brief delay
     const expandTimer = setTimeout(() => {
       setFirstImageReady(true);
     }, 100);
     
-    // Enable scrolling after first image animation completes
-    const scrollTimer = setTimeout(() => {
+    // Listen for transition end on first image
+    const firstImage = firstImageRef.current;
+    const handleTransitionEnd = (e: TransitionEvent) => {
+      if (e.propertyName === 'transform') {
+        setIsScrollEnabled(true);
+      }
+    };
+    
+    if (firstImage) {
+      firstImage.addEventListener('transitionend', handleTransitionEnd);
+    }
+    
+    // Fallback timeout in case transitionend doesn't fire
+    const fallbackTimer = setTimeout(() => {
       setIsScrollEnabled(true);
-    }, 900);
+    }, 1200);
     
     return () => {
       clearTimeout(expandTimer);
-      clearTimeout(scrollTimer);
+      clearTimeout(fallbackTimer);
+      if (firstImage) {
+        firstImage.removeEventListener('transitionend', handleTransitionEnd);
+      }
     };
   }, [isVisible]);
 
@@ -120,6 +139,7 @@ const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => 
           style={{ scrollSnapAlign: 'center' }}
         >
           <div 
+            ref={index === 0 ? firstImageRef : null}
             className="relative"
             style={{
               // First image: expand from zero. Others: normal scale behavior
