@@ -17,8 +17,8 @@ const easeOutQuart = (x: number): number => {
 };
 
 const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
-  // === GALLERY WINDOW: 0.90 to 1.00 (delayed for more doorway experience) ===
-  const galleryStart = 0.90;
+  // === GALLERY WINDOW: 0.94 to 1.00 (CINEMATIC BREATH - 4% pause after doorway) ===
+  const galleryStart = 0.94;
   const galleryEnd = 1.00;
   const galleryRange = galleryEnd - galleryStart;
   
@@ -29,38 +29,38 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
       ? 1 
       : (progress - galleryStart) / galleryRange;
   
-  // Container visibility
-  const containerOpacity = Math.min(1, localProgress / 0.08);
+  // Container visibility - slower fade in
+  const containerOpacity = Math.min(1, localProgress / 0.12);
   const isVisible = progress >= galleryStart - 0.02;
   
-  // === TIMING: Spread across 0-1 local progress ===
-  // Image 1 entrance: 0.0 - 0.25
+  // === TIMING: LUXURIOUS SPREAD across 0-1 local progress ===
+  // Image 1 entrance: 0.0 - 0.35 (slower, more dramatic)
   const img1Start = 0.0;
-  const img1End = 0.25;
+  const img1End = 0.35;
   const img1Progress = Math.max(0, Math.min(1, (localProgress - img1Start) / (img1End - img1Start)));
   
-  // Stars/Name: 0.0 - 0.2
-  const starsProgress = Math.max(0, Math.min(1, localProgress / 0.15));
-  const nameProgress = Math.max(0, Math.min(1, (localProgress - 0.02) / 0.18));
+  // Stars/Name: 0.0 - 0.25 (more time to cascade)
+  const starsProgress = Math.max(0, Math.min(1, localProgress / 0.20));
+  const nameProgress = Math.max(0, Math.min(1, (localProgress - 0.03) / 0.22));
   
-  // Quote 1: 0.15 - 0.35
-  const quote1Progress = Math.max(0, Math.min(1, (localProgress - 0.15) / 0.20));
+  // Quote 1: 0.25 - 0.50 (longer typewriter duration)
+  const quote1Progress = Math.max(0, Math.min(1, (localProgress - 0.25) / 0.25));
   
-  // Image 2: 0.30 - 0.50
-  const flipStart = 0.30;
-  const flipEnd = 0.50;
+  // Image 2: 0.45 - 0.65 (pushed back, slower flip)
+  const flipStart = 0.45;
+  const flipEnd = 0.65;
   const flipProgress = Math.max(0, Math.min(1, (localProgress - flipStart) / (flipEnd - flipStart)));
 
-  // Quote 2: 0.45 - 0.60
-  const quote2Progress = Math.max(0, Math.min(1, (localProgress - 0.45) / 0.15));
+  // Quote 2: 0.60 - 0.75 (longer duration)
+  const quote2Progress = Math.max(0, Math.min(1, (localProgress - 0.60) / 0.15));
 
-  // Image 3: 0.55 - 0.75
-  const img3Start = 0.55;
-  const img3End = 0.75;
+  // Image 3: 0.70 - 0.90 (dramatic slide-in)
+  const img3Start = 0.70;
+  const img3End = 0.90;
   const img3Progress = Math.max(0, Math.min(1, (localProgress - img3Start) / (img3End - img3Start)));
 
-  // Quote 3: 0.70 - 0.90
-  const quote3Progress = Math.max(0, Math.min(1, (localProgress - 0.70) / 0.20));
+  // Quote 3: 0.85 - 1.00 (final reveal)
+  const quote3Progress = Math.max(0, Math.min(1, (localProgress - 0.85) / 0.15));
 
   // === IMAGE ANIMATIONS ===
   const img1Eased = easeOutExpo(img1Progress);
