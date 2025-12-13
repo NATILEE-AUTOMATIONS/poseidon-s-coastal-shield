@@ -1,230 +1,207 @@
-import React from 'react';
-import coastalRoofImage from '@/assets/coastal-roof-project.png';
-import coastalRoofInProgress from '@/assets/coastal-roof-inprogress.png';
+import React, { useRef, useEffect, useState } from 'react';
 import aerialEstatePool from '@/assets/aerial-estate-pool.png';
-import multilevelRoofTeam from '@/assets/multilevel-roof-team.png';
-import TestimonialReveal from './TestimonialReveal';
+import coastalHomeCrew from '@/assets/coastal-home-crew.png';
+import coastalRoofInprogress from '@/assets/coastal-roof-inprogress.png';
+import coastalRoofProject from '@/assets/coastal-roof-project.png';
 
 interface MobileImageGalleryProps {
   progress: number;
 }
 
 const images = [
-  { src: coastalRoofImage, alt: 'Completed coastal roof project', caption: 'Coastal NC Estate' },
-  { src: coastalRoofInProgress, alt: 'Coastal roof in progress', caption: 'Project in Progress' },
-  { src: aerialEstatePool, alt: 'Aerial view of estate with pool', caption: 'Aerial View' },
-  { src: multilevelRoofTeam, alt: 'Multilevel coastal home with roofing crew', caption: 'Our Team at Work' },
+  { src: aerialEstatePool, alt: 'Aerial view of estate with pool', caption: 'Premium Estate Roofing' },
+  { src: coastalHomeCrew, alt: 'Coastal home with crew', caption: 'Expert Installation Team' },
+  { src: coastalRoofInprogress, alt: 'Coastal roof in progress', caption: 'Precision Craftsmanship' },
+  { src: coastalRoofProject, alt: 'Completed coastal roof project', caption: 'Stunning Results' },
 ];
 
 const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => {
-  // Gallery starts at 80% (when door zoom completes), ends at 100%
-  const galleryStart = 0.80;
-  const galleryEnd = 1.0;
-  
-  // Don't render until we're close to gallery start
-  if (progress < galleryStart - 0.02) return null;
-  
-  // Normalize progress within gallery range (0 to 1)
-  const galleryProgress = Math.max(0, Math.min(1, (progress - galleryStart) / (galleryEnd - galleryStart)));
-  
-  // Each image gets 25% of the gallery (4 images)
-  const getActiveImage = (): number => {
-    if (galleryProgress < 0.25) return 0;
-    if (galleryProgress < 0.50) return 1;
-    if (galleryProgress < 0.75) return 2;
-    return 3;
-  };
-  
-  const activeIndex = getActiveImage();
-  
-  // Calculate animation progress for each image (0 to 1 within its segment)
-  const getImageProgress = (index: number): number => {
-    const segmentSize = 0.25;
-    const segmentStart = index * segmentSize;
-    const segmentEnd = segmentStart + segmentSize;
-    
-    if (galleryProgress < segmentStart) return 0;
-    if (galleryProgress >= segmentEnd) return 1;
-    return (galleryProgress - segmentStart) / segmentSize;
-  };
-  
-  // Warm doorway background that fades as gallery progresses
-  const bgWarmth = Math.max(0, 1 - galleryProgress * 0.5);
-  const bgOpacity = Math.min(1, galleryProgress * 5); // Quick fade in
-  
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const slidesRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Show gallery when door opens (progress > 0.80)
+  useEffect(() => {
+    if (progress >= 0.80 && !isVisible) {
+      setIsVisible(true);
+    }
+  }, [progress, isVisible]);
+
+  // Intersection Observer for active slide detection
+  useEffect(() => {
+    if (!isVisible) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = parseInt(entry.target.getAttribute('data-index') || '0');
+            setActiveIndex(index);
+          }
+        });
+      },
+      { threshold: 0.6 }
+    );
+
+    slidesRef.current.forEach((slide) => {
+      if (slide) observer.observe(slide);
+    });
+
+    return () => observer.disconnect();
+  }, [isVisible]);
+
+  if (!isVisible) return null;
+
   return (
-    <div 
-      className="fixed inset-0 pointer-events-none flex flex-col items-center justify-center"
+    <div
+      ref={containerRef}
+      className="fixed inset-0 z-[110] overflow-y-scroll"
       style={{
-        zIndex: 105,
-        opacity: bgOpacity,
-        background: `radial-gradient(ellipse 120% 100% at 50% 30%, 
-          hsl(35 ${85 * bgWarmth}% ${70 * bgWarmth + 10}% / ${0.6 * bgWarmth}) 0%,
-          hsl(30 ${75 * bgWarmth}% ${50 * bgWarmth + 8}% / ${0.4 * bgWarmth}) 30%,
-          hsl(25 40% 12%) 60%,
-          hsl(20 30% 6%) 100%)`,
+        scrollSnapType: 'y mandatory',
+        WebkitOverflowScrolling: 'touch',
+        background: `radial-gradient(ellipse 120% 100% at 50% 0%, 
+          hsl(35 98% 75% / 0.95) 0%, 
+          hsl(30 95% 65% / 0.85) 20%,
+          hsl(25 85% 50% / 0.7) 40%,
+          hsl(20 75% 35% / 0.5) 60%,
+          hsl(15 40% 15%) 85%,
+          hsl(168 50% 8%) 100%)`,
       }}
     >
-      {/* Progress dots */}
-      <div className="absolute top-8 left-1/2 -translate-x-1/2 flex gap-3 z-10">
-        {images.map((_, index) => (
-          <div
-            key={index}
-            className="w-2.5 h-2.5 rounded-full transition-all duration-500"
+      {/* Swipe hint - first slide only */}
+      <div 
+        className="fixed top-6 left-1/2 -translate-x-1/2 z-[120] text-center transition-opacity duration-1000"
+        style={{ 
+          opacity: activeIndex === 0 ? 0.8 : 0,
+          pointerEvents: 'none'
+        }}
+      >
+        <p className="text-sm font-light tracking-widest uppercase" style={{ color: 'hsl(35 70% 85%)' }}>
+          Swipe to explore
+        </p>
+        <div className="mt-2 animate-bounce">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="mx-auto opacity-60">
+            <path d="M12 5v14M5 12l7 7 7-7" stroke="hsl(35 70% 75%)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      {/* Image slides */}
+      {images.map((image, index) => (
+        <div
+          key={index}
+          ref={(el) => (slidesRef.current[index] = el)}
+          data-index={index}
+          className="h-screen w-full flex flex-col items-center justify-center px-4"
+          style={{ scrollSnapAlign: 'center' }}
+        >
+          <div 
+            className="relative transition-all duration-700"
             style={{
-              backgroundColor: index === activeIndex 
+              transform: activeIndex === index ? 'scale(1)' : 'scale(0.9)',
+              opacity: activeIndex === index ? 1 : 0.4,
+            }}
+          >
+            {/* Ambient glow behind image */}
+            <div 
+              className="absolute inset-0 rounded-2xl blur-3xl transition-opacity duration-700"
+              style={{
+                background: 'radial-gradient(circle, hsl(35 80% 55% / 0.5) 0%, transparent 70%)',
+                transform: 'scale(1.2)',
+                opacity: activeIndex === index ? 1 : 0,
+              }}
+            />
+            
+            {/* Image */}
+            <img
+              src={image.src}
+              alt={image.alt}
+              className="relative w-[88vw] max-h-[60vh] object-cover rounded-2xl"
+              style={{
+                boxShadow: activeIndex === index 
+                  ? `0 0 0 1px hsl(168 70% 45% / 0.3),
+                     0 8px 32px hsl(0 0% 0% / 0.4),
+                     0 0 60px hsl(35 80% 55% / 0.3),
+                     0 0 100px hsl(35 70% 50% / 0.2)`
+                  : '0 8px 32px hsl(0 0% 0% / 0.3)',
+              }}
+            />
+
+            {/* Caption */}
+            <p 
+              className="mt-6 text-center text-lg font-light tracking-wide transition-all duration-500"
+              style={{
+                color: 'hsl(35 70% 75%)',
+                textShadow: '0 0 20px hsl(35 80% 50% / 0.5)',
+                opacity: activeIndex === index ? 1 : 0,
+                transform: activeIndex === index ? 'translateY(0)' : 'translateY(10px)',
+              }}
+            >
+              {image.caption}
+            </p>
+          </div>
+        </div>
+      ))}
+
+      {/* Final CTA slide */}
+      <div 
+        data-index={images.length}
+        ref={(el) => (slidesRef.current[images.length] = el)}
+        className="h-screen w-full flex flex-col items-center justify-center px-6"
+        style={{ scrollSnapAlign: 'center' }}
+      >
+        <h2 
+          className="text-3xl font-light text-center mb-6 tracking-wide"
+          style={{ 
+            color: 'hsl(168 70% 55%)',
+            textShadow: '0 0 30px hsl(168 70% 50% / 0.5)'
+          }}
+        >
+          Ready for your new roof?
+        </h2>
+        <button
+          className="px-8 py-4 rounded-lg font-medium text-lg transition-all duration-300 hover:scale-105"
+          style={{
+            background: 'linear-gradient(135deg, hsl(168 70% 40%) 0%, hsl(30 85% 50%) 100%)',
+            color: 'hsl(0 0% 100%)',
+            boxShadow: '0 0 30px hsl(168 70% 45% / 0.4), 0 0 60px hsl(30 80% 50% / 0.3)',
+          }}
+        >
+          Free Assessment
+        </button>
+      </div>
+
+      {/* Progress dots */}
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-[120]">
+        {images.map((_, i) => (
+          <div
+            key={i}
+            className="w-2.5 h-2.5 rounded-full transition-all duration-300"
+            style={{
+              background: i === activeIndex 
                 ? 'hsl(35 80% 60%)' 
-                : index < activeIndex 
-                  ? 'hsl(168 50% 40%)' 
-                  : 'hsl(0 0% 30%)',
-              boxShadow: index === activeIndex 
-                ? '0 0 15px hsl(35 90% 55% / 0.9), 0 0 30px hsl(35 80% 50% / 0.5)' 
+                : 'hsl(0 0% 40%)',
+              boxShadow: i === activeIndex 
+                ? '0 0 12px hsl(35 80% 55% / 0.8), 0 0 24px hsl(35 70% 50% / 0.5)' 
                 : 'none',
-              transform: index === activeIndex ? 'scale(1.4)' : 'scale(1)',
+              transform: i === activeIndex ? 'scale(1.3)' : 'scale(1)',
             }}
           />
         ))}
+        {/* Extra dot for CTA */}
+        <div
+          className="w-2.5 h-2.5 rounded-full transition-all duration-300"
+          style={{
+            background: activeIndex >= images.length 
+              ? 'hsl(168 70% 55%)' 
+              : 'hsl(0 0% 40%)',
+            boxShadow: activeIndex >= images.length 
+              ? '0 0 12px hsl(168 70% 50% / 0.8)' 
+              : 'none',
+          }}
+        />
       </div>
-      
-      {/* Image container - centered emergence */}
-      <div className="relative w-full h-[65vh] flex items-center justify-center">
-        {images.map((image, index) => {
-          const imageProgress = getImageProgress(index);
-          const isActive = index === activeIndex;
-          const isPast = index < activeIndex;
-          const isFuture = index > activeIndex;
-          
-          // EMERGE animation: scale up from center, no Y movement
-          // Entry: 0-40% of segment, Hold: 40-70%, Exit: 70-100%
-          
-          // Scale: starts small (emerging from light), grows full, shrinks on exit
-          let scale = 0.3;
-          if (imageProgress <= 0.4) {
-            // Entry: 0.3 → 1.0 with overshoot
-            const t = imageProgress / 0.4;
-            const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
-            scale = 0.3 + eased * 0.75; // peaks at 1.05
-          } else if (imageProgress <= 0.7) {
-            // Hold: settle to 1.0
-            scale = 1.05 - (imageProgress - 0.4) * 0.167; // 1.05 → 1.0
-          } else {
-            // Exit: 1.0 → 0.85
-            const t = (imageProgress - 0.7) / 0.3;
-            scale = 1.0 - t * 0.15;
-          }
-          
-          // Blur: starts blurry (from light), sharpens, slight blur on exit
-          let blur = 15;
-          if (imageProgress <= 0.3) {
-            blur = 15 - (imageProgress / 0.3) * 15; // 15 → 0
-          } else if (imageProgress <= 0.75) {
-            blur = 0;
-          } else {
-            blur = ((imageProgress - 0.75) / 0.25) * 8; // 0 → 8
-          }
-          
-          // Opacity: fade in, hold, fade out
-          let opacity = 0;
-          if (imageProgress <= 0.2) {
-            opacity = imageProgress / 0.2; // 0 → 1
-          } else if (imageProgress <= 0.8) {
-            opacity = 1;
-          } else {
-            opacity = 1 - ((imageProgress - 0.8) / 0.2); // 1 → 0
-          }
-          
-          // Keep last image visible
-          if (index === 3 && galleryProgress >= 0.75) {
-            opacity = Math.max(opacity, 0.9);
-            scale = Math.max(scale, 0.95);
-            blur = Math.min(blur, 2);
-          }
-          
-          // Golden glow intensity (strongest during entry)
-          const glowIntensity = imageProgress <= 0.4 
-            ? 1 - (imageProgress / 0.4) 
-            : 0;
-          
-          if (isFuture || (isPast && imageProgress >= 1)) return null;
-          
-          return (
-            <div
-              key={index}
-              className="absolute flex flex-col items-center justify-center"
-              style={{
-                opacity,
-                transform: `scale(${scale})`,
-                filter: `blur(${blur}px)`,
-                willChange: 'transform, opacity, filter',
-              }}
-            >
-              {/* Golden emergence glow behind image */}
-              <div
-                className="absolute inset-0 -m-8 rounded-3xl"
-                style={{
-                  background: `radial-gradient(circle, 
-                    hsl(35 90% 65% / ${0.6 * glowIntensity}) 0%,
-                    hsl(30 80% 50% / ${0.3 * glowIntensity}) 50%,
-                    transparent 80%)`,
-                  transform: 'scale(1.5)',
-                  filter: 'blur(30px)',
-                }}
-              />
-              
-              {/* Image card */}
-              <div
-                className="relative overflow-hidden"
-                style={{
-                  borderRadius: '16px',
-                  boxShadow: `
-                    0 0 ${40 + glowIntensity * 40}px hsl(35 80% 55% / ${0.2 + glowIntensity * 0.4}),
-                    0 10px 40px hsl(0 0% 0% / 0.6),
-                    0 20px 60px hsl(0 0% 0% / 0.4),
-                    inset 0 0 0 1px hsl(35 60% 60% / ${0.1 + glowIntensity * 0.2})
-                  `,
-                }}
-              >
-                <img
-                  src={image.src}
-                  alt={image.alt}
-                  className="block"
-                  style={{
-                    width: '88vw',
-                    maxWidth: '420px',
-                    height: 'auto',
-                    maxHeight: '55vh',
-                    objectFit: 'cover',
-                  }}
-                />
-              </div>
-              
-              {/* Caption */}
-              <div 
-                className="mt-5 text-center"
-                style={{
-                  opacity: isActive && imageProgress > 0.3 && imageProgress < 0.85 ? 1 : 0,
-                  transform: `translateY(${isActive && imageProgress > 0.3 ? 0 : 15}px)`,
-                  transition: 'opacity 0.4s ease, transform 0.4s ease',
-                }}
-              >
-                <span 
-                  className="text-sm font-medium tracking-widest uppercase"
-                  style={{
-                    color: 'hsl(35 75% 65%)',
-                    textShadow: '0 0 25px hsl(35 90% 55% / 0.7), 0 2px 10px hsl(0 0% 0% / 0.5)',
-                    letterSpacing: '0.2em',
-                  }}
-                >
-                  {image.caption}
-                </span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      
-      {/* Testimonial at bottom */}
-      <TestimonialReveal progress={progress} />
     </div>
   );
 };
