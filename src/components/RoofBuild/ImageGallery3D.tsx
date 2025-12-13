@@ -23,32 +23,32 @@ interface ImageGallery3DProps {
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   const isMobile = useIsMobile();
   
-  // MOBILE: Sequential NON-OVERLAPPING timing (one image at a time)
+  // MOBILE: "Deep Scroll" tactile timing - each image gets ~7% scroll = ~63vh at 900vh total = ~530px thumb travel
   // DESKTOP: Original overlapping billboard drive-by effect
   
-  // Image 1 timing
-  const anim1Start = 0.88;
-  const anim1Duration = isMobile ? 0.03 : 0.05;
+  // Gallery background fade-in - Mobile starts earlier
+  const galleryBgStart = isMobile ? 0.72 : 0.85;
+  
+  // Image 1 timing - MOBILE: 75% → 82% (7% duration)
+  const anim1Start = isMobile ? 0.75 : 0.88;
+  const anim1Duration = isMobile ? 0.07 : 0.05;
   const anim1Progress = progress >= anim1Start 
     ? Math.min(1, (progress - anim1Start) / anim1Duration) 
     : 0;
   
-  // Image 2 timing - MOBILE: starts AFTER Image 1 fully exits
-  const anim2Start = isMobile ? 0.91 : 0.91;
-  const anim2Duration = isMobile ? 0.03 : 0.04;
+  // Image 2 timing - MOBILE: 82% → 89% (7% duration)
+  const anim2Start = isMobile ? 0.82 : 0.91;
+  const anim2Duration = isMobile ? 0.07 : 0.04;
   const anim2Progress = progress >= anim2Start 
     ? Math.min(1, (progress - anim2Start) / anim2Duration)
     : 0;
   
-  // Image 3 timing - MOBILE: starts AFTER Image 2 fully exits
-  const anim3Start = isMobile ? 0.94 : 0.935;
-  const anim3Duration = isMobile ? 0.03 : 0.03;
+  // Image 3 timing - MOBILE: 89% → 95% (6% duration)
+  const anim3Start = isMobile ? 0.89 : 0.935;
+  const anim3Duration = isMobile ? 0.06 : 0.03;
   const anim3Progress = progress >= anim3Start 
     ? Math.min(1, (progress - anim3Start) / anim3Duration)
     : 0;
-  
-  // Gallery background fade-in - UNIFIED
-  const galleryBgStart = 0.85;
   const galleryBgOpacity = progress >= galleryBgStart 
     ? Math.min(1, (progress - galleryBgStart) / 0.05)
     : 0;
@@ -129,9 +129,9 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
           ? 1 - ((anim3Progress - fadeOutStart) / (1 - fadeOutStart))
           : 1);
 
-  // Image 4 timing - MOBILE: starts AFTER Image 3 fully exits
-  const anim4Start = isMobile ? 0.97 : 0.965;
-  const anim4Duration = isMobile ? 0.03 : 0.035;
+  // Image 4 timing - MOBILE: 95% → 100% (5% duration)
+  const anim4Start = isMobile ? 0.95 : 0.965;
+  const anim4Duration = isMobile ? 0.05 : 0.035;
   const anim4Progress = progress >= anim4Start 
     ? Math.min(1, (progress - anim4Start) / anim4Duration)
     : 0;
