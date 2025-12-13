@@ -17,59 +17,71 @@ const easeOutQuart = (x: number): number => {
 };
 
 const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
-  // === BREATHABLE TIMING - starts at 85% (after door zoom begins) ===
+  // === EXPANDED TIMING - 0.78 to 1.00 (22% scroll window) ===
   
-  // Group 1: Image 1 + Stars + Name (0.85 - 0.89)
-  const img1Start = 0.85;
-  const img1End = 0.89;
+  // Container fade: 0.78 - 0.82
+  const containerStart = 0.78;
+  const containerFadeEnd = 0.82;
+  const containerOpacity = progress < containerStart 
+    ? 0 
+    : progress < containerFadeEnd 
+      ? (progress - containerStart) / (containerFadeEnd - containerStart)
+      : 1;
+  
+  // Group 1: Image 1 + Stars + Name (0.80 - 0.86)
+  const img1Start = 0.80;
+  const img1End = 0.86;
   const img1Progress = Math.max(0, Math.min(1, (progress - img1Start) / (img1End - img1Start)));
   
   // Stars/Name staggered within Group 1 window
-  const starsStart = 0.85;
-  const starsEnd = 0.87;
+  const starsStart = 0.80;
+  const starsEnd = 0.83;
   const starsProgress = Math.max(0, Math.min(1, (progress - starsStart) / (starsEnd - starsStart)));
   
-  const nameStart = 0.855;
-  const nameEnd = 0.88;
+  const nameStart = 0.81;
+  const nameEnd = 0.84;
   const nameProgress = Math.max(0, Math.min(1, (progress - nameStart) / (nameEnd - nameStart)));
   
-  // Quote 1: 0.87 - 0.91
-  const quote1Start = 0.87;
-  const quote1End = 0.91;
+  // Quote 1: 0.84 - 0.88
+  const quote1Start = 0.84;
+  const quote1End = 0.88;
   const quote1Progress = Math.max(0, Math.min(1, (progress - quote1Start) / (quote1End - quote1Start)));
   
-  // Breath moment: 0.91 - 0.92
-  
-  // Group 2: Image 2 Flip Down (0.92 - 0.95)
-  const flipStart = 0.92;
-  const flipEnd = 0.95;
+  // Group 2: Image 2 Flip Down (0.88 - 0.92)
+  const flipStart = 0.88;
+  const flipEnd = 0.92;
   const flipProgress = Math.max(0, Math.min(1, (progress - flipStart) / (flipEnd - flipStart)));
 
-  // Quote 2: 0.94 - 0.97
-  const quote2Start = 0.94;
-  const quote2End = 0.97;
+  // Quote 2: 0.90 - 0.94
+  const quote2Start = 0.90;
+  const quote2End = 0.94;
   const quote2Progress = Math.max(0, Math.min(1, (progress - quote2Start) / (quote2End - quote2Start)));
 
-  // Group 3: Image 3 Slide-In (0.96 - 0.99)
-  const img3Start = 0.96;
-  const img3End = 0.99;
+  // Group 3: Image 3 Slide-In (0.94 - 0.97)
+  const img3Start = 0.94;
+  const img3End = 0.97;
   const img3Progress = Math.max(0, Math.min(1, (progress - img3Start) / (img3End - img3Start)));
 
-  // Quote 3: 0.98 - 1.00
-  const quote3Start = 0.98;
+  // Quote 3: 0.97 - 1.00
+  const quote3Start = 0.97;
   const quote3End = 1.00;
   const quote3Progress = Math.max(0, Math.min(1, (progress - quote3Start) / (quote3End - quote3Start)));
 
-  // Container visibility
-  const isVisible = progress >= img1Start;
+  // Container visibility - bidirectional
+  const isVisible = progress >= containerStart;
   
-  // === EXIT FADES - Previous groups fade when next enters ===
-  // Group 1 fades when Group 2 starts (0.92+)
-  const group1Fade = flipProgress > 0 ? Math.max(0.3, 1 - flipProgress * 0.7) : 1;
-  // Group 2 fades when Group 3 starts (0.96+)
-  const group2Fade = img3Progress > 0 ? Math.max(0.3, 1 - img3Progress * 0.7) : 1;
+  // === BIDIRECTIONAL EXIT FADES ===
+  // Group 1 fades when Group 2 starts, but recovers when scrolling back
+  const group1Fade = progress >= flipStart 
+    ? Math.max(0.3, 1 - ((progress - flipStart) / (flipEnd - flipStart)) * 0.7)
+    : 1;
   
-  // === IMAGE 1 "EMERGENCE" ===
+  // Group 2 fades when Group 3 starts, but recovers when scrolling back
+  const group2Fade = progress >= img3Start 
+    ? Math.max(0.3, 1 - ((progress - img3Start) / (img3End - img3Start)) * 0.7)
+    : 1;
+  
+  // === IMAGE 1 "EMERGENCE" - Bidirectional ===
   const img1Eased = easeOutExpo(img1Progress);
   const img1Scale = 0.3 + (img1Eased * 0.7);
   const img1Blur = (1 - img1Eased) * 20;
@@ -77,13 +89,13 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
   const img1TranslateY = (1 - img1Eased) * 30;
   const img1Opacity = Math.min(1, img1Eased * 3) * group1Fade;
 
-  // === IMAGE 2 "FLIP DOWN" ===
+  // === IMAGE 2 "FLIP DOWN" - Bidirectional ===
   const flipEased = easeOutQuart(flipProgress);
-  const img2RotateX = -90 + (flipEased * 90);
+  const img2RotateX = -90 + (flipEased * 90); // -90° to 0°
   const img2Opacity = Math.min(1, flipProgress * 3) * group2Fade;
   const img2Scale = 0.85 + (flipEased * 0.15);
   
-  // === IMAGE 3 "SLIDE-IN ZOOM" ===
+  // === IMAGE 3 "SLIDE-IN ZOOM" - Bidirectional ===
   const img3Eased = easeOutExpo(img3Progress);
   const img3TranslateX = (1 - img3Eased) * 100;
   const img3Scale = 0.6 + (img3Eased * 0.4);
@@ -92,9 +104,9 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
   const img3Brightness = 1.4 - (img3Eased * 0.4);
   const img3Opacity = Math.min(1, img3Progress * 3);
 
-  // Individual shifts with exit fades - elements shift up as next group enters
-  const img1ShiftY = flipProgress > 0 ? easeOutQuart(flipProgress) * -8 : 0;
-  const img2ShiftY = img3Progress > 0 ? easeOutExpo(img3Progress) * -6 : 0;
+  // Individual shifts - elements shift up as next group enters
+  const img1ShiftY = progress >= flipStart ? easeOutQuart(flipProgress) * -8 : 0;
+  const img2ShiftY = progress >= img3Start ? easeOutExpo(img3Progress) * -6 : 0;
 
   // === TESTIMONIAL DATA ===
   const name = "Bruce Gombar";
@@ -121,10 +133,10 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
     <div 
       className="fixed inset-0 z-[110] flex flex-col items-center justify-start pt-8 px-4 overflow-y-auto"
       style={{
-        background: `radial-gradient(ellipse at center, hsl(35 40% 15% / ${isVisible ? 0.95 : 0}) 0%, hsl(25 30% 8% / ${isVisible ? 0.98 : 0}) 100%)`,
-        opacity: isVisible ? 1 : 0,
+        background: `radial-gradient(ellipse at center, hsl(35 40% 15% / ${containerOpacity * 0.95}) 0%, hsl(25 30% 8% / ${containerOpacity * 0.98}) 100%)`,
+        opacity: containerOpacity,
         pointerEvents: isVisible ? 'auto' : 'none',
-        transition: 'opacity 0.3s ease-out',
+        transition: 'opacity 0.2s ease-out',
       }}
     >
       {/* Main Content Stack */}
@@ -136,7 +148,6 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
           style={{
             opacity: (starsProgress > 0 ? starsEased : 0) * group1Fade,
             transform: `translateY(${(1 - starsEased) * 20 + img1ShiftY}px)`,
-            transition: 'opacity 0.15s ease-out',
           }}
         >
           {[0, 1, 2, 3, 4].map((i) => {
@@ -169,7 +180,6 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
             textShadow: '0 0 20px hsl(35 70% 55% / 0.6), 0 0 40px hsl(35 60% 45% / 0.3)',
             opacity: (nameProgress > 0 ? 1 : 0) * group1Fade,
             transform: `translateY(${img1ShiftY}px)`,
-            transition: 'opacity 0.15s ease-out',
           }}
         >
           {nameChars.map((char, i) => {
@@ -224,7 +234,6 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
             opacity: (quote1Progress > 0 ? 1 : 0) * group1Fade,
             textShadow: '0 0 15px hsl(35 50% 50% / 0.3)',
             transform: `translateY(${img1ShiftY}px)`,
-            transition: 'opacity 0.15s ease-out',
           }}
         >
           <span className="italic">"</span>
@@ -242,7 +251,7 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
           {visibleQuote1Chars >= quote1.length && <span className="italic">"</span>}
         </div>
 
-        {/* Image 2 - Flip Down (always rendered, opacity controlled) */}
+        {/* Image 2 - Flip Down */}
         <div
           className="relative w-[85vw] max-w-[500px] mt-2"
           style={{
@@ -282,7 +291,6 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
             opacity: (quote2Progress > 0 ? 1 : 0) * group2Fade,
             textShadow: '0 0 15px hsl(25 60% 50% / 0.4)',
             transform: `translateY(${img2ShiftY}px)`,
-            transition: 'opacity 0.15s ease-out',
             pointerEvents: quote2Progress > 0 ? 'auto' : 'none',
           }}
         >
@@ -301,7 +309,7 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
           {visibleQuote2Chars >= quote2.length && <span className="italic">"</span>}
         </div>
 
-        {/* Image 3 - Slide-In Zoom (always rendered, opacity controlled) */}
+        {/* Image 3 - Slide-In Zoom */}
         <div
           className="relative w-[85vw] max-w-[500px] mt-2"
           style={{
@@ -334,7 +342,6 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
             color: 'hsl(35 45% 70%)',
             opacity: quote3Progress > 0 ? 1 : 0,
             textShadow: `0 0 15px hsl(35 60% 55% / 0.4), 0 0 ${visibleQuote3Chars >= quote3.length ? 30 : 0}px hsl(35 70% 60% / 0.5)`,
-            transition: 'opacity 0.15s ease-out, text-shadow 0.3s ease-out',
             pointerEvents: quote3Progress > 0 ? 'auto' : 'none',
           }}
         >
