@@ -23,35 +23,32 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
     ? Math.min(1, (progress - image1EnterStart) / (image1EnterEnd - image1EnterStart)) 
     : 0;
 
-  // 3D Flip timing (0.94 - 0.98)
+  // Image 2 flip timing (0.94 - 0.98) - REVERSIBLE
   const flipStart = 0.94;
   const flipEnd = 0.98;
-  const flipProgress = progress >= flipStart 
-    ? Math.min(1, (progress - flipStart) / (flipEnd - flipStart)) 
-    : 0;
+  const flipProgress = Math.max(0, Math.min(1, (progress - flipStart) / (flipEnd - flipStart)));
 
   if (image1EnterProgress <= 0) return null;
 
-  // Image 1 entrance animation (unchanged)
+  // Image 1: Entrance animation only - STAYS IN PLACE after entering
   const enterEased = easeOutBack(image1EnterProgress);
+  const image1Scale = enterEased; // Just entrance scale, no flip-out
+  const image1Opacity = 1; // Always visible once entered
   
-  // Image 1: 3D flip out (rotates away from viewer)
-  const flipOutEased = easeInQuad(flipProgress);
-  const image1RotateY = flipOutEased * 90; // 0° → 90°
-  const image1Scale = enterEased * (1 - flipOutEased * 0.1); // entrance scale, then 1 → 0.9
-  const image1Opacity = flipProgress > 0.5 ? 1 - (flipProgress - 0.5) * 2 : 1; // fade after 50%
+  // Subtle shadow on Image 1 when Image 2 is flipping in (being covered effect)
+  const image1CoverShadow = flipProgress * 0.3; // Darkens slightly as Image 2 covers it
   
-  // Image 2: 3D flip in (rotates toward viewer)
+  // Image 2: 3D flip in/out (REVERSIBLE based on scroll direction)
   const flipInEased = easeOutQuad(flipProgress);
-  const image2RotateY = -90 + (flipInEased * 90); // -90° → 0°
-  const image2Scale = 0.9 + (flipInEased * 0.1); // 0.9 → 1
-  const image2Opacity = flipProgress > 0 ? flipInEased : 0;
+  const image2RotateY = -90 + (flipInEased * 90); // -90° → 0° (scroll down) or 0° → -90° (scroll up)
+  const image2Scale = 0.95 + (flipInEased * 0.05); // 0.95 → 1
+  const image2Opacity = flipInEased; // Smooth opacity tied to rotation
+  const image2OffsetY = (1 - flipInEased) * 10; // Slight vertical offset when landing
 
   // Dynamic shadow based on rotation
-  const image1ShadowX = flipOutEased * 30; // shadow shifts right as it rotates
-  const image2ShadowX = (1 - flipInEased) * -30; // shadow shifts left then centers
+  const image2ShadowX = (1 - flipInEased) * -25; // shadow shifts as it rotates
 
-  const containerOpacity = Math.max(image1Opacity, image2Opacity);
+  const containerOpacity = image1EnterProgress > 0 ? 1 : 0;
 
   return (
     <div 
@@ -62,45 +59,42 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
         perspective: '1200px',
       }}
     >
-      {/* Image 2 - flips in from behind */}
-      {flipProgress > 0 && (
-        <div
-          className="absolute"
-          style={{
-            transform: `rotateY(${image2RotateY}deg) scale(${image2Scale})`,
-            opacity: image2Opacity,
-            transformStyle: 'preserve-3d',
-            backfaceVisibility: 'hidden',
-            willChange: 'transform, opacity',
-            zIndex: 1,
-          }}
-        >
-          <img
-            src={coastalRoofInProgress}
-            alt="Coastal roof in progress"
-            className="w-[85vw] max-h-[50vh] object-cover rounded-lg"
-            style={{
-              boxShadow: `
-                ${image2ShadowX}px 0 30px hsl(35 60% 50% / 0.4),
-                0 0 60px hsl(35 50% 40% / 0.3),
-                0 0 100px hsl(168 70% 45% / 0.15),
-                0 25px 50px hsl(0 0% 0% / 0.5)
-              `,
-            }}
-          />
-        </div>
-      )}
-
-      {/* Image 1 - flips out toward viewer */}
+      {/* Image 2 - flips in ON TOP (reversible) */}
       <div
         className="absolute"
         style={{
-          transform: `rotateY(${image1RotateY}deg) scale(${image1Scale})`,
-          opacity: image1Opacity,
+          transform: `rotateY(${image2RotateY}deg) scale(${image2Scale}) translateY(${-image2OffsetY}px)`,
+          opacity: image2Opacity,
           transformStyle: 'preserve-3d',
           backfaceVisibility: 'hidden',
           willChange: 'transform, opacity',
-          zIndex: 2,
+          zIndex: 2, // Above Image 1
+        }}
+      >
+        <img
+          src={coastalRoofInProgress}
+          alt="Coastal roof in progress"
+          className="w-[85vw] max-h-[50vh] object-cover rounded-lg"
+          style={{
+            boxShadow: `
+              ${image2ShadowX}px 0 30px hsl(35 60% 50% / 0.4),
+              0 0 60px hsl(35 50% 40% / 0.3),
+              0 0 100px hsl(168 70% 45% / 0.15),
+              0 25px 50px hsl(0 0% 0% / 0.5)
+            `,
+          }}
+        />
+      </div>
+
+      {/* Image 1 - base card, stays in place */}
+      <div
+        className="absolute"
+        style={{
+          transform: `scale(${image1Scale})`,
+          opacity: image1Opacity,
+          willChange: 'transform, opacity',
+          zIndex: 1, // Below Image 2
+          filter: `brightness(${1 - image1CoverShadow})`, // Darkens as Image 2 covers it
         }}
       >
         <img
@@ -109,7 +103,7 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
           className="w-[85vw] max-h-[50vh] object-cover rounded-lg"
           style={{
             boxShadow: `
-              ${image1ShadowX}px 0 30px hsl(35 60% 50% / 0.4),
+              0 0 30px hsl(35 60% 50% / 0.4),
               0 0 60px hsl(35 50% 40% / 0.3),
               0 0 100px hsl(168 70% 45% / 0.15),
               0 25px 50px hsl(0 0% 0% / 0.5)
