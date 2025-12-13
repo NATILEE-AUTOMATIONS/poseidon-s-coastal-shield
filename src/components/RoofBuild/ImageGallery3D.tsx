@@ -3,52 +3,43 @@ import coastalRoofImage from '@/assets/coastal-roof-project.png';
 import coastalRoofInProgress from '@/assets/coastal-roof-inprogress.png';
 import aerialEstatePool from '@/assets/aerial-estate-pool.png';
 import multilevelRoofTeam from '@/assets/multilevel-roof-team.png';
-import { useIsMobile } from '@/hooks/use-mobile';
 import TestimonialReveal from './TestimonialReveal';
 
-// Exponential ease-out for dramatic zoom effect (desktop)
+// Exponential ease-out for dramatic zoom effect
 const easeOutExpo = (t: number): number => {
   return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-};
-
-// Gentler cubic ease-out for smoother mobile animations
-const easeOutCubic = (t: number): number => {
-  return 1 - Math.pow(1 - t, 3);
 };
 
 interface ImageGallery3DProps {
   progress: number;
 }
 
+// DESKTOP ONLY - This component handles the billboard drive-by effect
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
-  const isMobile = useIsMobile();
+  // Gallery background fade-in
+  const galleryBgStart = 0.85;
   
-  // MOBILE: "Deep Scroll" tactile timing - each image gets ~7% scroll = ~63vh at 900vh total = ~530px thumb travel
-  // DESKTOP: Original overlapping billboard drive-by effect
-  
-  // Gallery background fade-in - Mobile starts earlier
-  const galleryBgStart = isMobile ? 0.72 : 0.85;
-  
-  // Image 1 timing - MOBILE: 75% → 82% (7% duration)
-  const anim1Start = isMobile ? 0.75 : 0.88;
-  const anim1Duration = isMobile ? 0.07 : 0.05;
+  // Image 1 timing
+  const anim1Start = 0.88;
+  const anim1Duration = 0.05;
   const anim1Progress = progress >= anim1Start 
     ? Math.min(1, (progress - anim1Start) / anim1Duration) 
     : 0;
   
-  // Image 2 timing - MOBILE: 82% → 89% (7% duration)
-  const anim2Start = isMobile ? 0.82 : 0.91;
-  const anim2Duration = isMobile ? 0.07 : 0.04;
+  // Image 2 timing
+  const anim2Start = 0.91;
+  const anim2Duration = 0.04;
   const anim2Progress = progress >= anim2Start 
     ? Math.min(1, (progress - anim2Start) / anim2Duration)
     : 0;
   
-  // Image 3 timing - MOBILE: 89% → 95% (6% duration)
-  const anim3Start = isMobile ? 0.89 : 0.935;
-  const anim3Duration = isMobile ? 0.06 : 0.03;
+  // Image 3 timing
+  const anim3Start = 0.935;
+  const anim3Duration = 0.03;
   const anim3Progress = progress >= anim3Start 
     ? Math.min(1, (progress - anim3Start) / anim3Duration)
     : 0;
+    
   const galleryBgOpacity = progress >= galleryBgStart 
     ? Math.min(1, (progress - galleryBgStart) / 0.05)
     : 0;
@@ -56,107 +47,62 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   // Don't render anything until background starts fading in
   if (progress < galleryBgStart) return null;
 
-  // Apply smooth easing to all mobile animations for unified flowing feel
-  const easedAnim1 = isMobile ? easeOutCubic(anim1Progress) : anim1Progress;
-  const easedAnim2 = isMobile ? easeOutCubic(anim2Progress) : anim2Progress;
-  const easedAnim3 = isMobile ? easeOutCubic(anim3Progress) : anim3Progress;
-
-  // MOBILE: Early aggressive fade-out so images don't overlap
-  // DESKTOP: Original fade timing
-  const mobileFadeOutStart = 0.6;  // Start fading at 60% of animation
-  const desktopFadeOutStart = 0.75;
-  const fadeOutStart = isMobile ? mobileFadeOutStart : desktopFadeOutStart;
-  const fadeInSpeed = isMobile ? 0.25 : 0.15;
+  // Fade timing
+  const fadeOutStart = 0.75;
+  const fadeInSpeed = 0.15;
 
   // Image 1: drifts LEFT
-  const left1Percent = isMobile 
-    ? 55 - (easedAnim1 * 55)
-    : 55 - (anim1Progress * 85);
-  const scale1 = isMobile 
-    ? 0.4 + (easedAnim1 * 1.2)
-    : 0.25 + (anim1Progress * 1.3);
-  const top1Percent = 50 - (Math.sin(easedAnim1 * Math.PI) * (isMobile ? 10 : 15));
-  // MOBILE: Fully hidden by end of animation (before Image 2 starts)
-  const opacity1 = isMobile
-    ? (anim1Progress < fadeInSpeed 
-        ? anim1Progress / fadeInSpeed
-        : anim1Progress > fadeOutStart 
-          ? Math.max(0, 1 - ((anim1Progress - fadeOutStart) / (1 - fadeOutStart)))
-          : 1)
-    : (anim1Progress < fadeInSpeed 
-        ? anim1Progress / fadeInSpeed
-        : anim1Progress > fadeOutStart 
-          ? 1 - ((anim1Progress - fadeOutStart) / (1 - fadeOutStart))
-          : 1);
+  const left1Percent = 55 - (anim1Progress * 85);
+  const scale1 = 0.25 + (anim1Progress * 1.3);
+  const top1Percent = 50 - (Math.sin(anim1Progress * Math.PI) * 15);
+  const opacity1 = anim1Progress < fadeInSpeed 
+    ? anim1Progress / fadeInSpeed
+    : anim1Progress > fadeOutStart 
+      ? 1 - ((anim1Progress - fadeOutStart) / (1 - fadeOutStart))
+      : 1;
 
   // Image 2: drifts RIGHT
-  const left2Percent = isMobile 
-    ? 45 + (easedAnim2 * 55)
-    : 45 + (anim2Progress * 85);
-  const scale2 = isMobile 
-    ? 0.4 + (easedAnim2 * 1.2)
-    : 0.25 + (anim2Progress * 1.3);
-  const top2Percent = 50 - (Math.sin(easedAnim2 * Math.PI) * (isMobile ? 10 : 15));
-  const opacity2 = isMobile
-    ? (anim2Progress < fadeInSpeed 
-        ? anim2Progress / fadeInSpeed
-        : anim2Progress > fadeOutStart 
-          ? Math.max(0, 1 - ((anim2Progress - fadeOutStart) / (1 - fadeOutStart)))
-          : 1)
-    : (anim2Progress < fadeInSpeed 
-        ? anim2Progress / fadeInSpeed
-        : anim2Progress > fadeOutStart 
-          ? 1 - ((anim2Progress - fadeOutStart) / (1 - fadeOutStart))
-          : 1);
+  const left2Percent = 45 + (anim2Progress * 85);
+  const scale2 = 0.25 + (anim2Progress * 1.3);
+  const top2Percent = 50 - (Math.sin(anim2Progress * Math.PI) * 15);
+  const opacity2 = anim2Progress < fadeInSpeed 
+    ? anim2Progress / fadeInSpeed
+    : anim2Progress > fadeOutStart 
+      ? 1 - ((anim2Progress - fadeOutStart) / (1 - fadeOutStart))
+      : 1;
 
   // Image 3: drifts LEFT
-  const left3Percent = isMobile 
-    ? 55 - (easedAnim3 * 55)
-    : 55 - (anim3Progress * 85);
-  const scale3 = isMobile 
-    ? 0.4 + (easedAnim3 * 1.2)
-    : 0.25 + (anim3Progress * 1.3);
-  const top3Percent = 50 - (Math.sin(easedAnim3 * Math.PI) * (isMobile ? 10 : 15));
-  const opacity3 = isMobile
-    ? (anim3Progress < fadeInSpeed 
-        ? anim3Progress / fadeInSpeed
-        : anim3Progress > fadeOutStart 
-          ? Math.max(0, 1 - ((anim3Progress - fadeOutStart) / (1 - fadeOutStart)))
-          : 1)
-    : (anim3Progress < fadeInSpeed 
-        ? anim3Progress / fadeInSpeed
-        : anim3Progress > fadeOutStart 
-          ? 1 - ((anim3Progress - fadeOutStart) / (1 - fadeOutStart))
-          : 1);
+  const left3Percent = 55 - (anim3Progress * 85);
+  const scale3 = 0.25 + (anim3Progress * 1.3);
+  const top3Percent = 50 - (Math.sin(anim3Progress * Math.PI) * 15);
+  const opacity3 = anim3Progress < fadeInSpeed 
+    ? anim3Progress / fadeInSpeed
+    : anim3Progress > fadeOutStart 
+      ? 1 - ((anim3Progress - fadeOutStart) / (1 - fadeOutStart))
+      : 1;
 
-  // Image 4 timing - MOBILE: 95% → 100% (5% duration)
-  const anim4Start = isMobile ? 0.95 : 0.965;
-  const anim4Duration = isMobile ? 0.05 : 0.035;
+  // Image 4 timing
+  const anim4Start = 0.965;
+  const anim4Duration = 0.035;
   const anim4Progress = progress >= anim4Start 
     ? Math.min(1, (progress - anim4Start) / anim4Duration)
     : 0;
   
-  // Apply even gentler easing on mobile - linear blend for maximum smoothness
-  const easeOutQuad = (t: number): number => 1 - (1 - t) * (1 - t);
-  const easedProgress4 = isMobile ? easeOutQuad(anim4Progress) : easeOutExpo(anim4Progress);
+  const easedProgress4 = easeOutExpo(anim4Progress);
   
-  // Scale: mobile uses simple smooth scale without overshoot, smaller range
-  const baseScale4 = isMobile ? 0.4 : 0.05;  // Mobile: start bigger (less scale change)
-  const maxScale4 = isMobile ? 1.1 : 1.15;   // Mobile: end slightly smaller
-  const scale4 = isMobile
-    ? baseScale4 + (easedProgress4 * (maxScale4 - baseScale4))  // Simple smooth scale
-    : (() => {
-        const scaleOvershoot = anim4Progress > 0.8 
-          ? maxScale4 - ((anim4Progress - 0.8) / 0.2) * 0.15 
-          : baseScale4 + (easedProgress4 * (maxScale4 - baseScale4 + 0.1));
-        return Math.max(baseScale4, scaleOvershoot);
-      })();
+  // Scale with overshoot effect
+  const baseScale4 = 0.05;
+  const maxScale4 = 1.15;
+  const scale4 = (() => {
+    const scaleOvershoot = anim4Progress > 0.8 
+      ? maxScale4 - ((anim4Progress - 0.8) / 0.2) * 0.15 
+      : baseScale4 + (easedProgress4 * (maxScale4 - baseScale4 + 0.1));
+    return Math.max(baseScale4, scaleOvershoot);
+  })();
   
-  // 3D rotation: minimal on mobile for smoothest effect
+  // 3D rotation
   const rotateY4 = 0;
-  const rotateX4 = isMobile 
-    ? -10 + (easedProgress4 * 10)   // Mobile: -10° → 0° (very gentle tilt)
-    : -45 + (easedProgress4 * 45);
+  const rotateX4 = -45 + (easedProgress4 * 45);
   
   // Vertical descent: starts above viewport, drops to center
   const top4Percent = -30 + (easedProgress4 * 65); // -30% → 35%
@@ -169,8 +115,8 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   // Light burst intensity: peaks at 40-60% of animation
   const lightBurstIntensity = Math.sin(anim4Progress * Math.PI) * 0.8;
 
-  // Combined opacity for background - mobile stays constant to prevent flash
-  const bgOpacity = isMobile ? 1 : Math.max(opacity1, opacity2, opacity3, opacity4);
+  // Combined opacity for background
+  const bgOpacity = Math.max(opacity1, opacity2, opacity3, opacity4);
 
   return (
     <div 
@@ -200,7 +146,7 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
           <div
             className="relative overflow-hidden"
             style={{
-              borderRadius: isMobile ? '16px' : '12px',
+              borderRadius: '12px',
               boxShadow: `
                 0 4px 20px hsl(0 0% 0% / 0.4),
                 0 8px 40px hsl(0 0% 0% / 0.5),
@@ -212,10 +158,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
               src={coastalRoofImage}
               alt="Completed coastal roof project"
               style={{
-                width: isMobile ? '90vw' : '60vw',
-                maxWidth: isMobile ? 'none' : '800px',
+                width: '60vw',
+                maxWidth: '800px',
                 height: 'auto',
-                maxHeight: isMobile ? '55vh' : '55vh',
+                maxHeight: '55vh',
                 objectFit: 'cover',
                 display: 'block',
               }}
@@ -239,7 +185,7 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
           <div
             className="relative overflow-hidden"
             style={{
-              borderRadius: isMobile ? '16px' : '12px',
+              borderRadius: '12px',
               boxShadow: `
                 0 4px 20px hsl(0 0% 0% / 0.4),
                 0 8px 40px hsl(0 0% 0% / 0.5),
@@ -251,10 +197,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
               src={coastalRoofInProgress}
               alt="Coastal roof in progress"
               style={{
-                width: isMobile ? '90vw' : '60vw',
-                maxWidth: isMobile ? 'none' : '800px',
+                width: '60vw',
+                maxWidth: '800px',
                 height: 'auto',
-                maxHeight: isMobile ? '55vh' : '55vh',
+                maxHeight: '55vh',
                 objectFit: 'cover',
                 display: 'block',
               }}
@@ -278,7 +224,7 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
           <div
             className="relative overflow-hidden"
             style={{
-              borderRadius: isMobile ? '16px' : '12px',
+              borderRadius: '12px',
               boxShadow: `
                 0 4px 20px hsl(0 0% 0% / 0.4),
                 0 8px 40px hsl(0 0% 0% / 0.5),
@@ -290,10 +236,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
               src={aerialEstatePool}
               alt="Aerial view of estate with pool"
               style={{
-                width: isMobile ? '90vw' : '60vw',
-                maxWidth: isMobile ? 'none' : '800px',
+                width: '60vw',
+                maxWidth: '800px',
                 height: 'auto',
-                maxHeight: isMobile ? '55vh' : '55vh',
+                maxHeight: '55vh',
                 objectFit: 'cover',
                 display: 'block',
               }}
@@ -342,7 +288,7 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
             <div
               className="relative overflow-hidden"
               style={{
-                borderRadius: isMobile ? '20px' : '16px',
+                borderRadius: '16px',
                 boxShadow: `
                   0 0 ${30 + lightBurstIntensity * 40}px hsl(35 80% 50% / ${0.3 + lightBurstIntensity * 0.4}),
                   0 0 ${60 + lightBurstIntensity * 60}px hsl(168 70% 45% / ${0.2 + lightBurstIntensity * 0.3}),
@@ -356,10 +302,10 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
                 src={multilevelRoofTeam}
                 alt="Multilevel coastal home with roofing crew"
                 style={{
-                  width: isMobile ? '85vw' : '65vw',
-                  maxWidth: isMobile ? 'none' : '900px',
+                  width: '65vw',
+                  maxWidth: '900px',
                   height: 'auto',
-                  maxHeight: isMobile ? '60vh' : '65vh',
+                  maxHeight: '65vh',
                   objectFit: 'cover',
                   display: 'block',
                 }}

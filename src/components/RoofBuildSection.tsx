@@ -19,11 +19,14 @@ import MobileStepCard from './RoofBuild/MobileStepCard';
 import YardSign from './RoofBuild/YardSign';
 import { useScrollContext } from '@/context/ScrollContext';
 import ImageGallery3D from './RoofBuild/ImageGallery3D';
+import MobileImageGallery from './RoofBuild/MobileImageGallery';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const RoofBuildSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const progress = useScrollProgress(sectionRef);
   const { setZoomProgress } = useScrollContext();
+  const isMobile = useIsMobile();
 
   // Layer timing - delayed start at 8% for "settle in" period
   // Roof layers use 0-75% of scroll, door animation uses 75-100%
@@ -76,11 +79,8 @@ const RoofBuildSection: React.FC = () => {
   const gridFadeOut = Math.max(0, 1 - (zoomProgress * 3)); // Grid gone by 33% of zoom
   const houseFadeOut = Math.max(0, 1 - (easedZoom * 2)); // House gone by 50% of zoom
 
-  // Check if mobile for extended scroll canvas
-  const isMobileSection = typeof window !== 'undefined' && window.innerWidth < 768;
-  
   // 3D Gallery visibility - Mobile starts earlier for tactile scroll feel
-  const galleryStart = isMobileSection ? 0.72 : 0.85;
+  const galleryStart = isMobile ? 0.73 : 0.85;
   const galleryProgress = progress > galleryStart 
     ? Math.min(1, (progress - galleryStart) / 0.08)
     : 0;
@@ -115,7 +115,7 @@ const RoofBuildSection: React.FC = () => {
     <section
       ref={sectionRef}
       className="relative"
-      style={{ height: isMobileSection ? '900vh' : '600vh' }}
+      style={{ height: isMobile ? '800vh' : '600vh' }}
     >
 
       {/* Solid backup overlay - catches ANYTHING that escapes */}
@@ -143,8 +143,12 @@ const RoofBuildSection: React.FC = () => {
         }}
       />
 
-      {/* 3D Parallax Image Gallery */}
-      <ImageGallery3D progress={progress} />
+      {/* Image Gallery - Different experience for mobile vs desktop */}
+      {isMobile ? (
+        <MobileImageGallery progress={progress} />
+      ) : (
+        <ImageGallery3D progress={progress} />
+      )}
 
 
       {/* Sticky container - offset for navbar height */}
