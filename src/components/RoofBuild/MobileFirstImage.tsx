@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react';
+import { ArrowRight } from 'lucide-react';
 import coastalRoofImage from '@/assets/coastal-roof-project.png';
 import coastalRoofInProgress from '@/assets/coastal-roof-inprogress.png';
 import coastalHomeCrew from '@/assets/coastal-home-crew.png';
+import aerialEstatePool from '@/assets/aerial-estate-pool.png';
 
 interface MobileFirstImageProps {
   progress: number;
@@ -12,12 +14,8 @@ const easeOutExpo = (x: number): number => {
   return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
 };
 
-const easeOutQuart = (x: number): number => {
-  return 1 - Math.pow(1 - x, 4);
-};
-
 const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
-  // === GALLERY WINDOW: 0.88 to 1.00 (starts right as user enters doorway) ===
+  // === GALLERY WINDOW: 0.88 to 1.00 ===
   const galleryStart = 0.88;
   const galleryEnd = 1.00;
   const galleryRange = galleryEnd - galleryStart;
@@ -29,38 +27,48 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
       ? 1 
       : (progress - galleryStart) / galleryRange;
   
-  // Container visibility - slower fade in
-  const containerOpacity = Math.min(1, localProgress / 0.12);
+  // Container visibility
+  const containerOpacity = Math.min(1, localProgress / 0.10);
   const isVisible = progress >= galleryStart - 0.02;
   
-  // === TIMING: LUXURIOUS SPREAD across 0-1 local progress ===
-  // Image 1 entrance: 0.0 - 0.35 (slower, more dramatic)
+  // === COMPRESSED TIMING for Image 4 + CTA ===
+  // Stars/Name: 0.0 - 0.16
+  const starsProgress = Math.max(0, Math.min(1, localProgress / 0.12));
+  const nameProgress = Math.max(0, Math.min(1, (localProgress - 0.02) / 0.14));
+  
+  // Image 1: 0.0 - 0.22
   const img1Start = 0.0;
-  const img1End = 0.35;
+  const img1End = 0.22;
   const img1Progress = Math.max(0, Math.min(1, (localProgress - img1Start) / (img1End - img1Start)));
   
-  // Stars/Name: 0.0 - 0.25 (more time to cascade)
-  const starsProgress = Math.max(0, Math.min(1, localProgress / 0.20));
-  const nameProgress = Math.max(0, Math.min(1, (localProgress - 0.03) / 0.22));
+  // Quote 1: 0.14 - 0.32
+  const quote1Progress = Math.max(0, Math.min(1, (localProgress - 0.14) / 0.18));
   
-  // Quote 1: 0.25 - 0.50 (longer typewriter duration)
-  const quote1Progress = Math.max(0, Math.min(1, (localProgress - 0.25) / 0.25));
-  
-  // Image 2: 0.55 - 0.72 (PUSHED BACK - more scroll before appearing)
-  const flipStart = 0.55;
-  const flipEnd = 0.72;
+  // Image 2: 0.34 - 0.46
+  const flipStart = 0.34;
+  const flipEnd = 0.46;
   const flipProgress = Math.max(0, Math.min(1, (localProgress - flipStart) / (flipEnd - flipStart)));
 
-  // Quote 2: 0.68 - 0.82 (starts after Image 2 settles)
-  const quote2Progress = Math.max(0, Math.min(1, (localProgress - 0.68) / 0.14));
+  // Quote 2: 0.42 - 0.52
+  const quote2Progress = Math.max(0, Math.min(1, (localProgress - 0.42) / 0.10));
 
-  // Image 3: 0.82 - 0.94 (PUSHED BACK - dramatic delayed entrance)
-  const img3Start = 0.82;
-  const img3End = 0.94;
+  // Image 3: 0.54 - 0.66
+  const img3Start = 0.54;
+  const img3End = 0.66;
   const img3Progress = Math.max(0, Math.min(1, (localProgress - img3Start) / (img3End - img3Start)));
 
-  // Quote 3: 0.92 - 1.00 (final reveal after Image 3)
-  const quote3Progress = Math.max(0, Math.min(1, (localProgress - 0.92) / 0.08));
+  // Quote 3: 0.62 - 0.72
+  const quote3Progress = Math.max(0, Math.min(1, (localProgress - 0.62) / 0.10));
+
+  // Image 4 (Hero Finale): 0.74 - 0.86
+  const img4Start = 0.74;
+  const img4End = 0.86;
+  const img4Progress = Math.max(0, Math.min(1, (localProgress - img4Start) / (img4End - img4Start)));
+
+  // CTA Button (Neon Rise): 0.88 - 1.00
+  const ctaStart = 0.88;
+  const ctaEnd = 1.00;
+  const ctaProgress = Math.max(0, Math.min(1, (localProgress - ctaStart) / (ctaEnd - ctaStart)));
 
   // === IMAGE ANIMATIONS ===
   const img1Eased = easeOutExpo(img1Progress);
@@ -84,6 +92,22 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
   const img3Blur = (1 - img3Eased) * 12;
   const img3Brightness = 1.3 - (img3Eased * 0.3);
   const img3Opacity = Math.min(1, img3Progress * 2.5);
+
+  // Image 4 - Gravity drop from above with glow burst
+  const img4Eased = easeOutExpo(img4Progress);
+  const img4TranslateY = (1 - img4Eased) * -80; // Falls DOWN from above
+  const img4Scale = 0.7 + (img4Eased * 0.3);
+  const img4Blur = (1 - img4Eased) * 15;
+  const img4Brightness = 1.5 - (img4Eased * 0.5);
+  const img4Opacity = Math.min(1, img4Progress * 2);
+
+  // CTA - Rise from below with neon ignition
+  const ctaEased = easeOutExpo(ctaProgress);
+  const ctaTranslateY = (1 - ctaEased) * 60;
+  const ctaScale = 0.85 + (ctaEased * 0.15);
+  const ctaBlur = (1 - ctaEased) * 8;
+  const ctaOpacity = Math.min(1, ctaProgress * 2.5);
+  const glowIntensity = ctaEased;
 
   // === TESTIMONIAL DATA ===
   const name = "Bruce Gombar";
@@ -320,6 +344,82 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
           )}
           {visibleQuote3Chars >= quote3.length && <span className="italic">"</span>}
         </div>
+
+        {/* Image 4 - Hero Finale (Gravity Drop) */}
+        <div
+          className="relative w-[92vw] max-w-[550px]"
+          style={{
+            transform: `translateY(${img4TranslateY}px) scale(${img4Scale})`,
+            opacity: img4Opacity,
+            filter: `blur(${img4Blur}px) brightness(${img4Brightness})`,
+          }}
+        >
+          <img
+            src={aerialEstatePool}
+            alt="Stunning aerial view of completed estate with pool"
+            className="w-full max-h-[45vh] object-cover rounded-xl"
+            style={{
+              boxShadow: `
+                0 25px 50px hsl(0 0% 0% / 0.5),
+                0 0 40px hsl(35 80% 55% / ${0.5 * img4Opacity}),
+                0 0 80px hsl(35 70% 50% / ${0.3 * img4Opacity}),
+                0 0 120px hsl(168 70% 45% / ${0.2 * img4Opacity}),
+                inset 0 0 30px hsl(35 60% 50% / ${0.1 * img4Opacity})
+              `,
+              border: `1px solid hsl(168 70% 45% / ${0.3 * img4Opacity})`,
+            }}
+          />
+        </div>
+
+        {/* Free Assessment CTA - Neon Rise */}
+        <button
+          className="relative mt-6 px-8 py-4 rounded-lg font-semibold text-lg tracking-wide uppercase overflow-hidden group"
+          style={{
+            transform: `translateY(${ctaTranslateY}px) scale(${ctaScale})`,
+            opacity: ctaOpacity,
+            filter: `blur(${ctaBlur}px)`,
+            background: 'hsl(180 30% 8% / 0.9)',
+            border: `2px solid hsl(168 80% 50% / ${0.6 + glowIntensity * 0.4})`,
+            boxShadow: `
+              0 0 20px hsl(168 80% 50% / ${0.3 * glowIntensity}),
+              0 0 40px hsl(168 70% 45% / ${0.2 * glowIntensity}),
+              0 0 60px hsl(168 60% 40% / ${0.1 * glowIntensity}),
+              inset 0 0 20px hsl(168 80% 50% / ${0.05 * glowIntensity})
+            `,
+          }}
+          onClick={() => {
+            // Scroll to contact or open modal
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        >
+          <span
+            className="relative z-10 flex items-center gap-3"
+            style={{
+              color: `hsl(35 ${60 + glowIntensity * 20}% ${70 + glowIntensity * 10}%)`,
+              textShadow: `
+                0 0 ${10 + glowIntensity * 15}px hsl(35 80% 55% / ${0.4 + glowIntensity * 0.4}),
+                0 0 ${20 + glowIntensity * 25}px hsl(35 70% 50% / ${0.2 + glowIntensity * 0.3})
+              `,
+            }}
+          >
+            Free Assessment
+            <ArrowRight 
+              className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" 
+              style={{
+                filter: `drop-shadow(0 0 ${8 * glowIntensity}px hsl(35 80% 55%))`,
+              }}
+            />
+          </span>
+          
+          {/* Subtle shimmer effect on hover */}
+          <div 
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            style={{
+              background: 'linear-gradient(105deg, transparent 40%, hsl(168 80% 50% / 0.1) 50%, transparent 60%)',
+              animation: 'shimmer 2s infinite',
+            }}
+          />
+        </button>
       </div>
     </div>
   );
