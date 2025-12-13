@@ -18,16 +18,18 @@ const images = [
 const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const [hasLaunched, setHasLaunched] = useState(false);
   const [firstImageReady, setFirstImageReady] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const slidesRef = useRef<(HTMLDivElement | null)[]>([]);
 
-  // Show gallery when door opens (progress > 0.80)
+  // Show gallery once when door opens (progress > 0.80)
   useEffect(() => {
-    if (progress >= 0.80 && !isVisible) {
+    if (progress >= 0.80 && !hasLaunched) {
       setIsVisible(true);
+      setHasLaunched(true);
     }
-  }, [progress, isVisible]);
+  }, [progress, hasLaunched]);
 
   // First image expansion animation (visual only, does NOT lock scroll)
   useEffect(() => {
@@ -82,22 +84,30 @@ const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => 
           hsl(168 50% 8%) 100%)`,
       }}
     >
-      {/* Swipe hint - only after first image is ready */}
-      <div 
-        className="fixed top-6 left-1/2 -translate-x-1/2 z-[120] text-center transition-opacity duration-1000"
-        style={{ 
-          opacity: activeIndex === 0 && firstImageReady ? 0.8 : 0,
-          pointerEvents: 'none'
-        }}
-      >
-        <p className="text-sm font-light tracking-widest uppercase" style={{ color: 'hsl(35 70% 85%)' }}>
-          Swipe to explore
-        </p>
-        <div className="mt-2 animate-bounce">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="mx-auto opacity-60">
-            <path d="M12 5v14M5 12l7 7 7-7" stroke="hsl(35 70% 75%)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+      {/* Top controls */}
+      <div className="fixed top-4 left-0 right-0 z-[120] flex items-center justify-between px-4">
+        {/* Swipe hint - only after first image is ready */}
+        <div
+          className="flex-1 text-center transition-opacity duration-1000"
+          style={{
+            opacity: activeIndex === 0 && firstImageReady ? 0.8 : 0,
+            pointerEvents: 'none',
+          }}
+       >
+          <p className="text-sm font-light tracking-widest uppercase" style={{ color: 'hsl(35 70% 85%)' }}>
+            Swipe to explore
+          </p>
         </div>
+
+        {/* Close button to exit gallery */}
+        <button
+          type="button"
+          onClick={() => setIsVisible(false)}
+          className="ml-3 rounded-full px-3 py-1 text-xs font-medium bg-black/40 backdrop-blur-sm border border-white/20"
+          style={{ color: 'hsl(35 70% 90%)' }}
+        >
+          Close
+        </button>
       </div>
 
       {/* Image slides */}
