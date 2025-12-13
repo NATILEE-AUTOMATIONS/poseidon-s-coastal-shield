@@ -44,13 +44,14 @@ const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => 
     }
   }, [progress, isVisible]);
 
-  // First image expansion animation (visual only, does NOT lock scroll)
+  // First image expansion animation - delay so user sees warm backdrop first
   useEffect(() => {
     if (!isVisible) return;
 
+    // Short pause to let the warm backdrop appear, then expand image
     const timer = setTimeout(() => {
       setFirstImageReady(true);
-    }, 100);
+    }, 400);
 
     return () => clearTimeout(timer);
   }, [isVisible]);
