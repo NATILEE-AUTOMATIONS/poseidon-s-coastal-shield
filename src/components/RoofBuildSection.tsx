@@ -79,8 +79,8 @@ const RoofBuildSection: React.FC = () => {
   const gridFadeOut = Math.max(0, 1 - (zoomProgress * 3)); // Grid gone by 33% of zoom
   const houseFadeOut = Math.max(0, 1 - (easedZoom * 2)); // House gone by 50% of zoom
 
-  // 3D Gallery visibility - Mobile starts earlier for tactile scroll feel
-  const galleryStart = isMobile ? 0.73 : 0.85;
+  // 3D Gallery visibility - Mobile syncs with door zoom at 80%
+  const galleryStart = isMobile ? 0.80 : 0.85;
   const galleryProgress = progress > galleryStart 
     ? Math.min(1, (progress - galleryStart) / 0.08)
     : 0;
