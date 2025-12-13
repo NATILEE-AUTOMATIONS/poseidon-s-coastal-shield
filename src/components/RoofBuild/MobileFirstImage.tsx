@@ -17,48 +17,48 @@ const easeOutQuart = (x: number): number => {
 };
 
 const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
-  // === EXPANDED TIMING - 0.82 to 1.00 (18% scroll window) ===
+  // === TIMING SYNCED WITH DOORWAY ENTRY - 0.86 to 1.00 ===
   
-  // Container fade: 0.82 - 0.84 (fade in AS overlay peaks)
-  const containerStart = 0.82;
-  const containerFadeEnd = 0.84;
+  // Container fade: 0.86 - 0.88 (wait for zoom to peak)
+  const containerStart = 0.86;
+  const containerFadeEnd = 0.88;
   const containerOpacity = progress < containerStart 
     ? 0 
     : progress < containerFadeEnd 
       ? (progress - containerStart) / (containerFadeEnd - containerStart)
       : 1;
   
-  // Group 1: Image 1 + Stars + Name (0.84 - 0.90) - 6% window for hero moment
-  const img1Start = 0.84;
-  const img1End = 0.90;
+  // Group 1: Image 1 + Stars + Name (0.88 - 0.92) - First reveal AFTER doorway
+  const img1Start = 0.88;
+  const img1End = 0.92;
   const img1Progress = Math.max(0, Math.min(1, (progress - img1Start) / (img1End - img1Start)));
   
   // Stars/Name staggered within Group 1 window
-  const starsStart = 0.85;
-  const starsEnd = 0.88;
+  const starsStart = 0.88;
+  const starsEnd = 0.90;
   const starsProgress = Math.max(0, Math.min(1, (progress - starsStart) / (starsEnd - starsStart)));
   
-  const nameStart = 0.86;
-  const nameEnd = 0.89;
+  const nameStart = 0.88;
+  const nameEnd = 0.91;
   const nameProgress = Math.max(0, Math.min(1, (progress - nameStart) / (nameEnd - nameStart)));
   
-  // Quote 1: 0.88 - 0.92 (4% for typewriter)
-  const quote1Start = 0.88;
-  const quote1End = 0.92;
+  // Quote 1: 0.91 - 0.94
+  const quote1Start = 0.91;
+  const quote1End = 0.94;
   const quote1Progress = Math.max(0, Math.min(1, (progress - quote1Start) / (quote1End - quote1Start)));
   
-  // Group 2: Image 2 Flip Down (0.92 - 0.96) - starts when Quote 1 ends
-  const flipStart = 0.92;
+  // Group 2: Image 2 Flip Down (0.94 - 0.96)
+  const flipStart = 0.94;
   const flipEnd = 0.96;
   const flipProgress = Math.max(0, Math.min(1, (progress - flipStart) / (flipEnd - flipStart)));
 
-  // Quote 2: 0.94 - 0.97
-  const quote2Start = 0.94;
+  // Quote 2: 0.95 - 0.97
+  const quote2Start = 0.95;
   const quote2End = 0.97;
   const quote2Progress = Math.max(0, Math.min(1, (progress - quote2Start) / (quote2End - quote2Start)));
 
-  // Group 3: Image 3 Slide-In (0.96 - 0.99)
-  const img3Start = 0.96;
+  // Group 3: Image 3 Slide-In (0.97 - 0.99)
+  const img3Start = 0.97;
   const img3End = 0.99;
   const img3Progress = Math.max(0, Math.min(1, (progress - img3Start) / (img3End - img3Start)));
 
