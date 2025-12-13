@@ -76,9 +76,10 @@ const RoofBuildSection: React.FC = () => {
   const gridFadeOut = Math.max(0, 1 - (zoomProgress * 3)); // Grid gone by 33% of zoom
   const houseFadeOut = Math.max(0, 1 - (easedZoom * 2)); // House gone by 50% of zoom
 
-  // 3D Gallery visibility - starts at 84%, overlay fades OUT completely
-  const galleryProgress = progress > 0.84 
-    ? Math.min(1, (progress - 0.84) / 0.10)
+  // 3D Gallery visibility - sync with gallery fade-in (mobile: 82%, desktop: 85%)
+  const galleryStart = 0.82;  // Match ImageGallery3D's galleryBgStart
+  const galleryProgress = progress > galleryStart 
+    ? Math.min(1, (progress - galleryStart) / 0.08)  // 8% fade window
     : 0;
   const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
   // Fade overlay completely OUT as gallery takes over with its own background

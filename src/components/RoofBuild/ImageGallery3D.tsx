@@ -47,8 +47,14 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
     ? Math.min(1, (progress - anim3Start) / anim3Duration)
     : 0;
   
-  // Don't render anything until first animation starts
-  if (progress < anim1Start) return null;
+  // Gallery background fade-in: starts 3% before first image for smooth transition
+  const galleryBgStart = isMobile ? 0.82 : 0.85;
+  const galleryBgOpacity = progress >= galleryBgStart 
+    ? Math.min(1, (progress - galleryBgStart) / 0.05)  // 5% fade-in window
+    : 0;
+  
+  // Don't render anything until background starts fading in
+  if (progress < galleryBgStart) return null;
 
   // Apply smooth easing to all mobile animations for unified flowing feel
   const easedAnim1 = isMobile ? easeOutCubic(anim1Progress) : anim1Progress;
@@ -152,6 +158,7 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
       style={{
         zIndex: 105,
         perspective: '1200px',
+        opacity: galleryBgOpacity,  // Smooth fade-in for entire gallery
         background: `radial-gradient(ellipse 80% 60% at 70% 30%, 
           hsl(25 40% 15% / ${Math.min(bgOpacity, 0.95)}) 0%, 
           hsl(20 30% 8% / ${Math.min(bgOpacity, 1)}) 50%,
