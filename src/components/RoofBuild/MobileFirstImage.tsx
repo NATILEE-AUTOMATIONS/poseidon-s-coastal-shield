@@ -6,100 +6,111 @@ interface MobileFirstImageProps {
   progress: number;
 }
 
-// Physics-inspired easing functions
-const easeOutBack = (x: number): number => {
-  const c1 = 1.70158;
-  const c3 = c1 + 1;
-  return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+// Cinematic easing functions
+const easeOutExpo = (x: number): number => {
+  return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
 };
 
-const easeInOutCubic = (x: number): number => {
-  return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
-};
-
-const easeOutQuart = (x: number): number => {
-  return 1 - Math.pow(1 - x, 4);
+const easeInOutQuad = (x: number): number => {
+  return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
 };
 
 const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
   // === TIMING ===
-  // Image 1 Drop: 0.90 - 0.94 (preserved as requested)
-  const img1DropStart = 0.90;
-  const img1DropEnd = 0.94;
-  const img1DropProgress = Math.max(0, Math.min(1, (progress - img1DropStart) / (img1DropEnd - img1DropStart)));
-
-  // Image 1 Lift + Image 2 Drop: 0.94 - 0.98
-  const phase2Start = 0.94;
-  const phase2End = 0.98;
-  const phase2Progress = Math.max(0, Math.min(1, (progress - phase2Start) / (phase2End - phase2Start)));
+  // Image 1 Emergence: 0.90 - 0.94 (preserved as requested)
+  const img1Start = 0.90;
+  const img1End = 0.94;
+  const img1Progress = Math.max(0, Math.min(1, (progress - img1Start) / (img1End - img1Start)));
+  
+  // Breath moment: 0.94 - 0.96 (Image 1 holds)
+  
+  // Morph transition: 0.96 - 1.00
+  const morphStart = 0.96;
+  const morphEnd = 1.00;
+  const morphProgress = Math.max(0, Math.min(1, (progress - morphStart) / (morphEnd - morphStart)));
 
   // Don't render until animation starts
-  if (img1DropProgress <= 0) return null;
+  if (img1Progress <= 0) return null;
 
-  // === IMAGE 1 CALCULATIONS ===
-  const img1DropEased = easeOutBack(img1DropProgress);
-  const img1LiftEased = easeInOutCubic(phase2Progress);
+  // === IMAGE 1 "EMERGENCE" ===
+  const img1Eased = easeOutExpo(img1Progress);
+  
+  // Emergence: zoom from small, blur to sharp, bright flash
+  const img1Scale = 0.3 + (img1Eased * 0.7); // 0.3 → 1.0
+  const img1Blur = (1 - img1Eased) * 20; // 20px → 0
+  const img1Brightness = 1.5 - (img1Eased * 0.5); // 1.5 → 1.0
+  const img1TranslateY = (1 - img1Eased) * 30; // 30px → 0 (float up)
+  const img1Opacity = Math.min(1, img1Eased * 4); // Quick fade-in in first 25%
 
-  // Drop: falls from -120px to 0, with 5° rotation settling to 0°
-  const img1DropY = (1 - img1DropEased) * -120;
-  const img1DropRotate = (1 - img1DropEased) * 5;
-  const img1DropScale = 0.85 + (img1DropEased * 0.15); // 0.85 → 1.0
-  const img1DropOpacity = img1DropEased;
+  // === MORPH TRANSITION ===
+  const morphEased = easeInOutQuad(morphProgress);
+  
+  // Image 1 zooms away during morph
+  const img1MorphScale = 1 + (morphEased * 0.15); // 1.0 → 1.15
+  const img1MorphOpacity = 1 - morphEased; // 1 → 0
+  
+  // Image 2 emerges during morph
+  const img2Scale = 0.7 + (morphEased * 0.3); // 0.7 → 1.0
+  const img2Opacity = morphEased; // 0 → 1
+  const img2Rotate = (1 - morphEased) * 3; // 3° → 0°
 
-  // Lift: moves up to make room for Image 2
-  const img1LiftY = img1LiftEased * -22; // 0 → -22vh
+  // Combined values
+  const finalImg1Scale = morphProgress > 0 ? img1MorphScale : img1Scale;
+  const finalImg1Opacity = morphProgress > 0 ? img1MorphOpacity : img1Opacity;
+  const finalImg1Blur = morphProgress > 0 ? 0 : img1Blur;
+  const finalImg1Brightness = morphProgress > 0 ? 1 : img1Brightness;
+  const finalImg1TranslateY = morphProgress > 0 ? 0 : img1TranslateY;
 
-  // Combined transforms
-  const img1TranslateY = img1DropY + (img1LiftY * (img1DropProgress >= 1 ? 1 : 0) * window.innerHeight / 100);
-  const img1FinalY = img1DropProgress < 1 ? img1DropY : img1LiftY * window.innerHeight / 100;
-  const img1Rotate = img1DropProgress < 1 ? img1DropRotate : 0;
-  const img1Scale = img1DropProgress < 1 ? img1DropScale : 1;
+  // === SACRED FRAME GLOW ===
+  // Breathing pulse effect
+  const breathPhase = Math.sin(progress * Math.PI * 8) * 0.15 + 1;
+  const glowIntensity = img1Progress * breathPhase;
 
-  // === IMAGE 2 CALCULATIONS ===
-  const img2DropEased = easeOutQuart(phase2Progress);
-
-  // Drop: rises from +80px to 0, with -4° rotation settling to 0°
-  const img2TranslateY = (1 - img2DropEased) * 80;
-  const img2Rotate = (1 - img2DropEased) * -4;
-  const img2Scale = 0.9 + (img2DropEased * 0.1); // 0.9 → 1.0
-  const img2Opacity = img2DropEased;
-
-  // === SHADOWS ===
-  // Dynamic shadows that react to position (light from above)
-  const img1ShadowY = 25 + (img1LiftEased * 10); // Shadow grows as it lifts
-  const img2ShadowY = 15 + (img2DropEased * 10); // Shadow settles as it lands
-
-  const containerOpacity = img1DropProgress > 0 ? 1 : 0;
+  const containerOpacity = img1Progress > 0 ? 1 : 0;
 
   return (
     <div 
       className="fixed inset-0 z-[110] flex items-center justify-center"
       style={{
         background: `radial-gradient(ellipse at center, hsl(35 40% 15% / ${containerOpacity * 0.95}) 0%, hsl(25 30% 8% / ${containerOpacity * 0.98}) 100%)`,
-        pointerEvents: img1DropProgress > 0 ? 'auto' : 'none',
+        pointerEvents: img1Progress > 0 ? 'auto' : 'none',
       }}
     >
-      {/* Image Stack Container - relative for absolute children */}
+      {/* Sacred Frame Glow - provides visual continuity */}
+      <div
+        className="absolute rounded-2xl"
+        style={{
+          width: '88vw',
+          maxWidth: '520px',
+          height: '50vh',
+          opacity: glowIntensity * 0.6,
+          background: 'transparent',
+          boxShadow: `
+            0 0 60px hsl(168 70% 45% / 0.3),
+            0 0 120px hsl(35 60% 50% / 0.2),
+            inset 0 0 60px hsl(168 70% 45% / 0.1)
+          `,
+          transform: `scale(${breathPhase})`,
+          transition: 'opacity 0.3s ease-out',
+        }}
+      />
+
+      {/* Image Container - single focused display */}
       <div 
-        className="relative w-full h-full flex flex-col items-center justify-center"
-        style={{ perspective: '1200px' }}
+        className="relative w-[85vw] max-w-[500px]"
+        style={{ perspective: '1000px' }}
       >
-        {/* Image 1 - The First Drop */}
+        {/* Image 1 - The Emergence */}
         <div
-          className="absolute w-[85vw] max-w-[500px]"
+          className="absolute inset-0 flex items-center justify-center"
           style={{
-            top: '50%',
-            left: '50%',
             transform: `
-              translate(-50%, -50%)
-              translateY(${img1DropProgress < 1 ? img1DropY : img1LiftEased * -22 * window.innerHeight / 100}px)
-              translateY(${img1LiftEased * -8}vh)
-              rotate(${img1Rotate}deg)
-              scale(${img1Scale})
+              translateY(${finalImg1TranslateY}px)
+              scale(${finalImg1Scale})
             `,
-            opacity: img1DropOpacity,
-            zIndex: 2,
-            willChange: 'transform, opacity',
+            opacity: finalImg1Opacity,
+            filter: `blur(${finalImg1Blur}px) brightness(${finalImg1Brightness})`,
+            willChange: 'transform, opacity, filter',
           }}
         >
           <img
@@ -108,30 +119,24 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
             className="w-full max-h-[45vh] object-cover rounded-xl"
             style={{
               boxShadow: `
-                0 ${img1ShadowY}px ${img1ShadowY * 2}px hsl(0 0% 0% / 0.4),
-                0 0 40px hsl(35 60% 50% / 0.3),
-                0 0 80px hsl(35 50% 40% / 0.2),
-                0 0 120px hsl(168 70% 45% / 0.1)
+                0 25px 50px hsl(0 0% 0% / 0.4),
+                0 0 40px hsl(35 60% 50% / ${0.3 * finalImg1Opacity}),
+                0 0 80px hsl(168 70% 45% / ${0.15 * finalImg1Opacity})
               `,
             }}
           />
         </div>
 
-        {/* Image 2 - The Second Drop */}
-        {phase2Progress > 0 && (
+        {/* Image 2 - The Morph */}
+        {morphProgress > 0 && (
           <div
-            className="absolute w-[85vw] max-w-[500px]"
+            className="absolute inset-0 flex items-center justify-center"
             style={{
-              top: '50%',
-              left: '50%',
               transform: `
-                translate(-50%, -50%)
-                translateY(${img2TranslateY + 18 * window.innerHeight / 100}px)
-                rotate(${img2Rotate}deg)
                 scale(${img2Scale})
+                rotate(${img2Rotate}deg)
               `,
               opacity: img2Opacity,
-              zIndex: 1,
               willChange: 'transform, opacity',
             }}
           >
@@ -141,10 +146,9 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
               className="w-full max-h-[45vh] object-cover rounded-xl"
               style={{
                 boxShadow: `
-                  0 ${img2ShadowY}px ${img2ShadowY * 2}px hsl(0 0% 0% / 0.35),
-                  0 0 30px hsl(35 60% 50% / 0.25),
-                  0 0 60px hsl(35 50% 40% / 0.15),
-                  0 0 100px hsl(168 70% 45% / 0.08)
+                  0 25px 50px hsl(0 0% 0% / 0.4),
+                  0 0 40px hsl(35 60% 50% / ${0.3 * img2Opacity}),
+                  0 0 80px hsl(168 70% 45% / ${0.15 * img2Opacity})
                 `,
               }}
             />
