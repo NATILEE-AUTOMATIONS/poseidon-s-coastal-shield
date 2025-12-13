@@ -30,40 +30,42 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
 
   if (image1EnterProgress <= 0) return null;
 
-  // Image 1: Entrance animation only - STAYS IN PLACE after entering
+  // Image 1: Entrance animation + slide up to make room for Image 2
   const enterEased = easeOutBack(image1EnterProgress);
-  const image1Scale = enterEased; // Just entrance scale, no flip-out
-  const image1Opacity = 1; // Always visible once entered
+  const image1Scale = enterEased;
+  const image1Opacity = 1;
   
-  // Subtle shadow on Image 1 when Image 2 is flipping in (being covered effect)
-  const image1CoverShadow = flipProgress * 0.3; // Darkens slightly as Image 2 covers it
+  // Image 1 slides UP as Image 2 enters (from center to top)
+  const image1TranslateY = flipProgress * -25; // 0 → -25vh as flipProgress goes 0→1
   
   // Image 2: 3D flip in/out (REVERSIBLE based on scroll direction)
   const flipInEased = easeOutQuad(flipProgress);
-  const image2RotateY = -90 + (flipInEased * 90); // -90° → 0° (scroll down) or 0° → -90° (scroll up)
-  const image2Scale = 0.95 + (flipInEased * 0.05); // 0.95 → 1
-  const image2Opacity = flipInEased; // Smooth opacity tied to rotation
-  const image2OffsetY = (1 - flipInEased) * 10; // Slight vertical offset when landing
+  const image2RotateY = -90 + (flipInEased * 90); // -90° → 0°
+  const image2Scale = 0.95 + (flipInEased * 0.05);
+  const image2Opacity = flipInEased;
 
   // Dynamic shadow based on rotation
-  const image2ShadowX = (1 - flipInEased) * -25; // shadow shifts as it rotates
+  const image2ShadowX = (1 - flipInEased) * -25;
 
   const containerOpacity = image1EnterProgress > 0 ? 1 : 0;
+  
+  // Container starts centered, transitions to top-aligned as Image 2 enters
+  const justifyCenter = flipProgress < 0.5;
 
   return (
     <div 
-      className="fixed inset-0 z-[110] flex flex-col items-center overflow-y-auto py-8 gap-8"
+      className={`fixed inset-0 z-[110] flex flex-col items-center overflow-y-auto py-8 gap-8 ${justifyCenter ? 'justify-center' : 'justify-start pt-[15vh]'}`}
       style={{
         background: `radial-gradient(ellipse at center, hsl(35 40% 15% / ${containerOpacity * 0.95}) 0%, hsl(25 30% 8% / ${containerOpacity * 0.98}) 100%)`,
         pointerEvents: image1EnterProgress > 0 ? 'auto' : 'none',
         scrollSnapType: 'y mandatory',
       }}
     >
-      {/* Image 1 - first card in vertical stack */}
+      {/* Image 1 - enters centered, then slides up */}
       <div
         className="flex-shrink-0"
         style={{
-          transform: `scale(${image1Scale})`,
+          transform: `scale(${image1Scale}) translateY(${image1TranslateY}vh)`,
           opacity: image1Opacity,
           willChange: 'transform, opacity',
           perspective: '1200px',
