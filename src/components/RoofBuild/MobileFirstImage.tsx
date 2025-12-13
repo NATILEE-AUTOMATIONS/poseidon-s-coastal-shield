@@ -17,49 +17,59 @@ const easeOutQuart = (x: number): number => {
 };
 
 const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
-  // === EXPANDED TIMING - More breathing room ===
+  // === BREATHABLE TIMING - 30% scroll window (0.70 - 1.00) ===
   
-  // Image 1 + Stars + Name: 0.82 - 0.88
-  const img1Start = 0.82;
-  const img1End = 0.88;
+  // Group 1: Image 1 + Stars + Name (0.70 - 0.76)
+  const img1Start = 0.70;
+  const img1End = 0.76;
   const img1Progress = Math.max(0, Math.min(1, (progress - img1Start) / (img1End - img1Start)));
   
-  // Stars/Name staggered within Image 1 window
-  const starsStart = 0.82;
-  const starsEnd = 0.85;
+  // Stars/Name staggered within Group 1 window
+  const starsStart = 0.70;
+  const starsEnd = 0.73;
   const starsProgress = Math.max(0, Math.min(1, (progress - starsStart) / (starsEnd - starsStart)));
   
-  const nameStart = 0.83;
-  const nameEnd = 0.87;
+  const nameStart = 0.71;
+  const nameEnd = 0.75;
   const nameProgress = Math.max(0, Math.min(1, (progress - nameStart) / (nameEnd - nameStart)));
   
-  // Quote 1: 0.84 - 0.90
-  const quote1Start = 0.84;
-  const quote1End = 0.90;
+  // Quote 1: 0.74 - 0.80
+  const quote1Start = 0.74;
+  const quote1End = 0.80;
   const quote1Progress = Math.max(0, Math.min(1, (progress - quote1Start) / (quote1End - quote1Start)));
   
-  // Image 2 Flip Down: 0.91 - 0.95
-  const flipStart = 0.91;
-  const flipEnd = 0.95;
+  // Breath moment: 0.80 - 0.82
+  
+  // Group 2: Image 2 Flip Down (0.82 - 0.87)
+  const flipStart = 0.82;
+  const flipEnd = 0.87;
   const flipProgress = Math.max(0, Math.min(1, (progress - flipStart) / (flipEnd - flipStart)));
 
-  // Quote 2 ("We had some minor issues"): 0.94 - 0.97
-  const quote2Start = 0.94;
-  const quote2End = 0.97;
+  // Quote 2: 0.86 - 0.90
+  const quote2Start = 0.86;
+  const quote2End = 0.90;
   const quote2Progress = Math.max(0, Math.min(1, (progress - quote2Start) / (quote2End - quote2Start)));
 
-  // Image 3 "Slide-In Zoom": 0.96 - 0.99
-  const img3Start = 0.96;
-  const img3End = 0.99;
+  // Breath moment: 0.90 - 0.91
+
+  // Group 3: Image 3 Slide-In (0.91 - 0.96)
+  const img3Start = 0.91;
+  const img3End = 0.96;
   const img3Progress = Math.max(0, Math.min(1, (progress - img3Start) / (img3End - img3Start)));
 
-  // Quote 3 ("But they were quickly corrected..."): 0.98 - 1.00
-  const quote3Start = 0.98;
+  // Quote 3: 0.95 - 1.00
+  const quote3Start = 0.95;
   const quote3End = 1.00;
   const quote3Progress = Math.max(0, Math.min(1, (progress - quote3Start) / (quote3End - quote3Start)));
 
   // Container visibility
   const isVisible = progress >= img1Start;
+  
+  // === EXIT FADES - Previous groups fade when next enters ===
+  // Group 1 fades when Group 2 starts (0.82+)
+  const group1Fade = flipProgress > 0 ? Math.max(0.3, 1 - flipProgress * 0.7) : 1;
+  // Group 2 fades when Group 3 starts (0.91+)
+  const group2Fade = img3Progress > 0 ? Math.max(0.3, 1 - img3Progress * 0.7) : 1;
   
   // === IMAGE 1 "EMERGENCE" ===
   const img1Eased = easeOutExpo(img1Progress);
@@ -67,12 +77,12 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
   const img1Blur = (1 - img1Eased) * 20;
   const img1Brightness = 1.5 - (img1Eased * 0.5);
   const img1TranslateY = (1 - img1Eased) * 30;
-  const img1Opacity = Math.min(1, img1Eased * 3);
+  const img1Opacity = Math.min(1, img1Eased * 3) * group1Fade;
 
   // === IMAGE 2 "FLIP DOWN" ===
   const flipEased = easeOutQuart(flipProgress);
   const img2RotateX = -90 + (flipEased * 90);
-  const img2Opacity = Math.min(1, flipProgress * 3);
+  const img2Opacity = Math.min(1, flipProgress * 3) * group2Fade;
   const img2Scale = 0.85 + (flipEased * 0.15);
   
   // === IMAGE 3 "SLIDE-IN ZOOM" ===
@@ -84,9 +94,9 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
   const img3Brightness = 1.4 - (img3Eased * 0.4);
   const img3Opacity = Math.min(1, img3Progress * 3);
 
-  // Individual shifts - applied per element, not container
-  const img1ShiftY = flipProgress > 0 ? easeOutQuart(flipProgress) * -4 : 0;
-  const img2ShiftY = img3Progress > 0 ? easeOutExpo(img3Progress) * -3 : 0;
+  // Individual shifts with exit fades - elements shift up as next group enters
+  const img1ShiftY = flipProgress > 0 ? easeOutQuart(flipProgress) * -8 : 0;
+  const img2ShiftY = img3Progress > 0 ? easeOutExpo(img3Progress) * -6 : 0;
 
   // === TESTIMONIAL DATA ===
   const name = "Bruce Gombar";
@@ -122,12 +132,12 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
       {/* Main Content Stack */}
       <div className="flex flex-col items-center gap-4 w-full max-w-[500px] pb-12">
         
-        {/* Stars - ABOVE IMAGE 1 */}
+        {/* Stars - ABOVE IMAGE 1 (with group1 fade) */}
         <div 
           className="flex gap-3"
           style={{
-            opacity: starsProgress > 0 ? starsEased : 0,
-            transform: `translateY(${(1 - starsEased) * 20}px)`,
+            opacity: (starsProgress > 0 ? starsEased : 0) * group1Fade,
+            transform: `translateY(${(1 - starsEased) * 20 + img1ShiftY}px)`,
             transition: 'opacity 0.15s ease-out',
           }}
         >
@@ -153,13 +163,14 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
           })}
         </div>
 
-        {/* Name - ABOVE IMAGE 1 */}
+        {/* Name - ABOVE IMAGE 1 (with group1 fade) */}
         <div 
           className="text-4xl font-bold tracking-widest uppercase"
           style={{ 
             color: 'hsl(35 60% 70%)',
             textShadow: '0 0 20px hsl(35 70% 55% / 0.6), 0 0 40px hsl(35 60% 45% / 0.3)',
-            opacity: nameProgress > 0 ? 1 : 0,
+            opacity: (nameProgress > 0 ? 1 : 0) * group1Fade,
+            transform: `translateY(${img1ShiftY}px)`,
             transition: 'opacity 0.15s ease-out',
           }}
         >
@@ -196,7 +207,7 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
           <img
             src={coastalRoofImage}
             alt="Beautiful coastal roof project"
-            className="w-full max-h-[30vh] object-cover rounded-xl"
+            className="w-full max-h-[35vh] object-cover rounded-xl"
             style={{
               boxShadow: `
                 0 25px 50px hsl(0 0% 0% / 0.4),
@@ -207,13 +218,14 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
           />
         </div>
 
-        {/* Quote 1 - BELOW IMAGE 1 */}
+        {/* Quote 1 - BELOW IMAGE 1 (with group1 fade + shift) */}
         <div 
           className="text-xl max-w-[320px] leading-relaxed text-center"
           style={{ 
             color: 'hsl(35 30% 65%)',
-            opacity: quote1Progress > 0 ? 1 : 0,
+            opacity: (quote1Progress > 0 ? 1 : 0) * group1Fade,
             textShadow: '0 0 15px hsl(35 50% 50% / 0.3)',
+            transform: `translateY(${img1ShiftY}px)`,
             transition: 'opacity 0.15s ease-out',
           }}
         >
@@ -252,7 +264,7 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
             <img
               src={coastalRoofInProgress}
               alt="Coastal roof in progress"
-              className="w-full max-h-[30vh] object-cover rounded-xl"
+              className="w-full max-h-[35vh] object-cover rounded-xl"
               style={{
                 boxShadow: `
                   0 25px 50px hsl(0 0% 0% / 0.4),
@@ -264,13 +276,14 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
           </div>
         </div>
 
-        {/* Quote 2 - "We had some minor issues" */}
+        {/* Quote 2 - "We had some minor issues" (with group2 fade) */}
         <div 
           className="text-lg max-w-[320px] leading-relaxed text-center mt-2"
           style={{ 
             color: 'hsl(25 50% 65%)',
-            opacity: quote2Progress > 0 ? 1 : 0,
+            opacity: (quote2Progress > 0 ? 1 : 0) * group2Fade,
             textShadow: '0 0 15px hsl(25 60% 50% / 0.4)',
+            transform: `translateY(${img2ShiftY}px)`,
             transition: 'opacity 0.15s ease-out',
             pointerEvents: quote2Progress > 0 ? 'auto' : 'none',
           }}
@@ -304,7 +317,7 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
           <img
             src={coastalHomeCrew}
             alt="Poseidon roofing team"
-            className="w-full max-h-[30vh] object-cover rounded-xl"
+            className="w-full max-h-[35vh] object-cover rounded-xl"
             style={{
               boxShadow: `
                 0 25px 50px hsl(0 0% 0% / 0.5),
@@ -340,8 +353,16 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
             />
           )}
           {visibleQuote3Chars >= quote3.length && <span className="italic">"</span>}
-        </div>
       </div>
+      
+      {/* Debug Scroll Indicator - remove after testing */}
+      <div 
+        className="fixed bottom-4 right-4 z-[120] bg-black/80 text-white px-3 py-2 rounded-lg font-mono text-sm"
+        style={{ opacity: isVisible ? 1 : 0 }}
+      >
+        {Math.round(progress * 100)}%
+      </div>
+    </div>
     </div>
   );
 };
