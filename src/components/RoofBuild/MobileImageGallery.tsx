@@ -19,11 +19,8 @@ const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [firstImageReady, setFirstImageReady] = useState(false);
-  const [isScrollEnabled, setIsScrollEnabled] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const slidesRef = useRef<(HTMLDivElement | null)[]>([]);
-  const firstImageRef = useRef<HTMLDivElement>(null);
-  const hasAnimatedRef = useRef(false);
 
   // Show gallery when door opens (progress > 0.80)
   useEffect(() => {
@@ -32,41 +29,15 @@ const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => 
     }
   }, [progress, isVisible]);
 
-  // First image expansion animation - uses transitionend for reliability
+  // First image expansion animation (visual only, does NOT lock scroll)
   useEffect(() => {
-    if (!isVisible || hasAnimatedRef.current) return;
-    
-    hasAnimatedRef.current = true;
-    
-    // Start first image expansion after a brief delay
-    const expandTimer = setTimeout(() => {
+    if (!isVisible) return;
+
+    const timer = setTimeout(() => {
       setFirstImageReady(true);
     }, 100);
-    
-    // Listen for transition end on first image
-    const firstImage = firstImageRef.current;
-    const handleTransitionEnd = (e: TransitionEvent) => {
-      if (e.propertyName === 'transform') {
-        setIsScrollEnabled(true);
-      }
-    };
-    
-    if (firstImage) {
-      firstImage.addEventListener('transitionend', handleTransitionEnd);
-    }
-    
-    // Fallback timeout in case transitionend doesn't fire
-    const fallbackTimer = setTimeout(() => {
-      setIsScrollEnabled(true);
-    }, 1200);
-    
-    return () => {
-      clearTimeout(expandTimer);
-      clearTimeout(fallbackTimer);
-      if (firstImage) {
-        firstImage.removeEventListener('transitionend', handleTransitionEnd);
-      }
-    };
+
+    return () => clearTimeout(timer);
   }, [isVisible]);
 
   // Intersection Observer for active slide detection
@@ -99,8 +70,8 @@ const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => 
       ref={containerRef}
       className="fixed inset-0 z-[110]"
       style={{
-        overflowY: isScrollEnabled ? 'scroll' : 'hidden',
-        scrollSnapType: isScrollEnabled ? 'y mandatory' : 'none',
+        overflowY: 'scroll',
+        scrollSnapType: 'y mandatory',
         WebkitOverflowScrolling: 'touch',
         background: `radial-gradient(ellipse 120% 100% at 50% 0%, 
           hsl(35 98% 75% / 0.95) 0%, 
@@ -115,7 +86,7 @@ const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => 
       <div 
         className="fixed top-6 left-1/2 -translate-x-1/2 z-[120] text-center transition-opacity duration-1000"
         style={{ 
-          opacity: activeIndex === 0 && isScrollEnabled ? 0.8 : 0,
+          opacity: activeIndex === 0 && firstImageReady ? 0.8 : 0,
           pointerEvents: 'none'
         }}
       >
@@ -139,7 +110,6 @@ const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => 
           style={{ scrollSnapAlign: 'center' }}
         >
           <div 
-            ref={index === 0 ? firstImageRef : null}
             className="relative"
             style={{
               // First image: expand from zero. Others: normal scale behavior
