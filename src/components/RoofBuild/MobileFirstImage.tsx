@@ -52,49 +52,22 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
 
   return (
     <div 
-      className="fixed inset-0 z-[110] flex items-center justify-center"
+      className="fixed inset-0 z-[110] flex flex-col items-center overflow-y-auto py-8 gap-8"
       style={{
         background: `radial-gradient(ellipse at center, hsl(35 40% 15% / ${containerOpacity * 0.95}) 0%, hsl(25 30% 8% / ${containerOpacity * 0.98}) 100%)`,
         pointerEvents: image1EnterProgress > 0 ? 'auto' : 'none',
-        perspective: '1200px',
+        scrollSnapType: 'y mandatory',
       }}
     >
-      {/* Image 2 - flips in ON TOP (reversible) */}
+      {/* Image 1 - first card in vertical stack */}
       <div
-        className="absolute"
-        style={{
-          transform: `rotateY(${image2RotateY}deg) scale(${image2Scale}) translateY(${-image2OffsetY}px)`,
-          opacity: image2Opacity,
-          transformStyle: 'preserve-3d',
-          backfaceVisibility: 'hidden',
-          willChange: 'transform, opacity',
-          zIndex: 2, // Above Image 1
-        }}
-      >
-        <img
-          src={coastalRoofInProgress}
-          alt="Coastal roof in progress"
-          className="w-[85vw] max-h-[50vh] object-cover rounded-lg"
-          style={{
-            boxShadow: `
-              ${image2ShadowX}px 0 30px hsl(35 60% 50% / 0.4),
-              0 0 60px hsl(35 50% 40% / 0.3),
-              0 0 100px hsl(168 70% 45% / 0.15),
-              0 25px 50px hsl(0 0% 0% / 0.5)
-            `,
-          }}
-        />
-      </div>
-
-      {/* Image 1 - base card, stays in place */}
-      <div
-        className="absolute"
+        className="flex-shrink-0"
         style={{
           transform: `scale(${image1Scale})`,
           opacity: image1Opacity,
           willChange: 'transform, opacity',
-          zIndex: 1, // Below Image 2
-          filter: `brightness(${1 - image1CoverShadow})`, // Darkens as Image 2 covers it
+          perspective: '1200px',
+          scrollSnapAlign: 'center',
         }}
       >
         <img
@@ -104,6 +77,34 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
           style={{
             boxShadow: `
               0 0 30px hsl(35 60% 50% / 0.4),
+              0 0 60px hsl(35 50% 40% / 0.3),
+              0 0 100px hsl(168 70% 45% / 0.15),
+              0 25px 50px hsl(0 0% 0% / 0.5)
+            `,
+          }}
+        />
+      </div>
+
+      {/* Image 2 - spins in below Image 1 */}
+      <div
+        className="flex-shrink-0"
+        style={{
+          transform: `rotateY(${image2RotateY}deg) scale(${image2Scale})`,
+          opacity: image2Opacity,
+          transformStyle: 'preserve-3d',
+          backfaceVisibility: 'hidden',
+          willChange: 'transform, opacity',
+          perspective: '1200px',
+          scrollSnapAlign: 'center',
+        }}
+      >
+        <img
+          src={coastalRoofInProgress}
+          alt="Coastal roof in progress"
+          className="w-[85vw] max-h-[50vh] object-cover rounded-lg"
+          style={{
+            boxShadow: `
+              ${image2ShadowX}px 0 30px hsl(35 60% 50% / 0.4),
               0 0 60px hsl(35 50% 40% / 0.3),
               0 0 100px hsl(168 70% 45% / 0.15),
               0 25px 50px hsl(0 0% 0% / 0.5)
