@@ -80,8 +80,8 @@ const RoofBuildSection: React.FC = () => {
   const gridFadeOut = Math.max(0, 1 - (zoomProgress * 3)); // Grid gone by 33% of zoom
   const houseFadeOut = Math.max(0, 1 - (easedZoom * 2)); // House gone by 50% of zoom
 
-  // 3D Gallery visibility - Mobile starts at 86% (after doorway), desktop at 85%
-  const galleryStart = isMobile ? 0.86 : 0.85;
+  // 3D Gallery visibility - Mobile starts at 90% (more doorway experience), desktop at 85%
+  const galleryStart = isMobile ? 0.90 : 0.85;
   const galleryProgress = progress > galleryStart 
     ? Math.min(1, (progress - galleryStart) / 0.08)
     : 0;
@@ -89,9 +89,9 @@ const RoofBuildSection: React.FC = () => {
   // Fade overlay completely OUT as gallery takes over with its own background
   const overlayFade = galleryProgress > 0 ? 1 - easeOutCubic(galleryProgress) : 1;
   
-  // Mobile: force overlays to fade out FASTER - completely gone by 0.90
+  // Mobile: force overlays to fade out FASTER - completely gone by 0.92
   const mobileOverlayMultiplier = isMobile 
-    ? (progress < 0.86 ? 1 : Math.max(0, 1 - ((progress - 0.86) / 0.04)))
+    ? (progress < 0.88 ? 1 : Math.max(0, 1 - ((progress - 0.88) / 0.04)))
     : 1;
 
   // Calculate staggered exit progress for label pairs (desktop only)
