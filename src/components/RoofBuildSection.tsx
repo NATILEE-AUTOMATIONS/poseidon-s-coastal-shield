@@ -76,8 +76,11 @@ const RoofBuildSection: React.FC = () => {
   const gridFadeOut = Math.max(0, 1 - (zoomProgress * 3)); // Grid gone by 33% of zoom
   const houseFadeOut = Math.max(0, 1 - (easedZoom * 2)); // House gone by 50% of zoom
 
-  // 3D Gallery visibility - UNIFIED timing (85% start for all devices)
-  const galleryStart = 0.85;
+  // Check if mobile for extended scroll canvas
+  const isMobileSection = typeof window !== 'undefined' && window.innerWidth < 768;
+  
+  // 3D Gallery visibility - Mobile starts earlier for tactile scroll feel
+  const galleryStart = isMobileSection ? 0.72 : 0.85;
   const galleryProgress = progress > galleryStart 
     ? Math.min(1, (progress - galleryStart) / 0.08)
     : 0;
@@ -112,7 +115,7 @@ const RoofBuildSection: React.FC = () => {
     <section
       ref={sectionRef}
       className="relative"
-      style={{ height: '600vh' }}
+      style={{ height: isMobileSection ? '900vh' : '600vh' }}
     >
 
       {/* Solid backup overlay - catches ANYTHING that escapes */}
