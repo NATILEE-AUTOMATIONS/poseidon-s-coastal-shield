@@ -70,10 +70,12 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
   const img1TranslateY = (1 - img1Eased) * 40;
   const img1Opacity = Math.min(1, img1Eased * 2.5);
 
-  const flipEased = easeOutQuart(flipProgress);
-  const img2RotateX = -90 + (flipEased * 90);
+  const flipEased = easeOutExpo(flipProgress);
+  const img2TranslateY = (1 - flipEased) * 60;
+  const img2Scale = 0.8 + (flipEased * 0.2);
+  const img2Blur = (1 - flipEased) * 10;
+  const img2Brightness = 1.3 - (flipEased * 0.3);
   const img2Opacity = Math.min(1, flipProgress * 2.5);
-  const img2Scale = 0.85 + (flipEased * 0.15);
   
   const img3Eased = easeOutExpo(img3Progress);
   const img3TranslateX = (1 - img3Eased) * 80;
@@ -227,29 +229,23 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
         <div
           className="relative w-[88vw] max-w-[500px]"
           style={{
-            perspective: '1000px',
+            transform: `translateY(${img2TranslateY}px) scale(${img2Scale})`,
             opacity: img2Opacity,
+            filter: `blur(${img2Blur}px) brightness(${img2Brightness})`,
           }}
         >
-          <div
+          <img
+            src={coastalRoofInProgress}
+            alt="Coastal roof in progress"
+            className="w-full max-h-[40vh] object-cover rounded-xl"
             style={{
-              transform: `rotateX(${img2RotateX}deg) scale(${img2Scale})`,
-              transformOrigin: 'center top',
+              boxShadow: `
+                0 20px 40px hsl(0 0% 0% / 0.4),
+                0 0 30px hsl(35 60% 50% / ${0.3 * img2Opacity}),
+                0 0 60px hsl(168 70% 45% / ${0.15 * img2Opacity})
+              `,
             }}
-          >
-            <img
-              src={coastalRoofInProgress}
-              alt="Coastal roof in progress"
-              className="w-full max-h-[40vh] object-cover rounded-xl"
-              style={{
-                boxShadow: `
-                  0 20px 40px hsl(0 0% 0% / 0.4),
-                  0 0 30px hsl(35 60% 50% / ${0.3 * img2Opacity}),
-                  0 0 60px hsl(168 70% 45% / ${0.15 * img2Opacity})
-                `,
-              }}
-            />
-          </div>
+          />
         </div>
 
         {/* Quote 2 */}
