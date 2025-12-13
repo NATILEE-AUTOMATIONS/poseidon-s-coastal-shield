@@ -19,6 +19,7 @@ import MobileStepCard from './RoofBuild/MobileStepCard';
 import YardSign from './RoofBuild/YardSign';
 import { useScrollContext } from '@/context/ScrollContext';
 import ImageGallery3D from './RoofBuild/ImageGallery3D';
+import MobileFirstImage from './RoofBuild/MobileFirstImage';
 
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -143,7 +144,8 @@ const RoofBuildSection: React.FC = () => {
         }}
       />
 
-      {/* Image Gallery - Desktop only */}
+      {/* Image Gallery - Different experience for mobile vs desktop */}
+      {isMobile && <MobileFirstImage progress={progress} />}
       {!isMobile && <ImageGallery3D progress={progress} />}
 
 
