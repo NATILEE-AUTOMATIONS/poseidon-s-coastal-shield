@@ -16,25 +16,18 @@ const images = [
   { src: multilevelRoofTeam, alt: 'Multilevel coastal home with roofing crew', caption: 'Our Team at Work' },
 ];
 
-// Smooth spring-like easing
-const easeOutBack = (t: number): number => {
-  const c1 = 1.70158;
-  const c3 = c1 + 1;
-  return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
-};
-
 const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => {
-  // Gallery starts at 75% scroll, ends at 100%
-  const galleryStart = 0.75;
+  // Gallery starts at 80% (when door zoom completes), ends at 100%
+  const galleryStart = 0.80;
   const galleryEnd = 1.0;
   
-  // Don't render until gallery starts
+  // Don't render until we're close to gallery start
   if (progress < galleryStart - 0.02) return null;
   
   // Normalize progress within gallery range (0 to 1)
   const galleryProgress = Math.max(0, Math.min(1, (progress - galleryStart) / (galleryEnd - galleryStart)));
   
-  // Each image gets 25% of the gallery progress (4 images)
+  // Each image gets 25% of the gallery (4 images)
   const getActiveImage = (): number => {
     if (galleryProgress < 0.25) return 0;
     if (galleryProgress < 0.50) return 1;
@@ -44,7 +37,7 @@ const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => 
   
   const activeIndex = getActiveImage();
   
-  // Calculate transition progress for current image (0 to 1 within its segment)
+  // Calculate animation progress for each image (0 to 1 within its segment)
   const getImageProgress = (index: number): number => {
     const segmentSize = 0.25;
     const segmentStart = index * segmentSize;
@@ -55,8 +48,9 @@ const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => 
     return (galleryProgress - segmentStart) / segmentSize;
   };
   
-  // Background fade in
-  const bgOpacity = Math.min(1, galleryProgress * 4); // Fully visible by 25%
+  // Warm doorway background that fades as gallery progresses
+  const bgWarmth = Math.max(0, 1 - galleryProgress * 0.5);
+  const bgOpacity = Math.min(1, galleryProgress * 5); // Quick fade in
   
   return (
     <div 
@@ -64,10 +58,11 @@ const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => 
       style={{
         zIndex: 105,
         opacity: bgOpacity,
-        background: `radial-gradient(ellipse 100% 80% at 50% 40%, 
-          hsl(25 40% 12%) 0%, 
-          hsl(20 30% 6%) 60%,
-          hsl(15 25% 4%) 100%)`,
+        background: `radial-gradient(ellipse 120% 100% at 50% 30%, 
+          hsl(35 ${85 * bgWarmth}% ${70 * bgWarmth + 10}% / ${0.6 * bgWarmth}) 0%,
+          hsl(30 ${75 * bgWarmth}% ${50 * bgWarmth + 8}% / ${0.4 * bgWarmth}) 30%,
+          hsl(25 40% 12%) 60%,
+          hsl(20 30% 6%) 100%)`,
       }}
     >
       {/* Progress dots */}
@@ -75,105 +70,117 @@ const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => 
         {images.map((_, index) => (
           <div
             key={index}
-            className="w-2 h-2 rounded-full transition-all duration-300"
+            className="w-2.5 h-2.5 rounded-full transition-all duration-500"
             style={{
               backgroundColor: index === activeIndex 
-                ? 'hsl(168 80% 55%)' 
-                : 'hsl(168 30% 25%)',
+                ? 'hsl(35 80% 60%)' 
+                : index < activeIndex 
+                  ? 'hsl(168 50% 40%)' 
+                  : 'hsl(0 0% 30%)',
               boxShadow: index === activeIndex 
-                ? '0 0 12px hsl(168 80% 55% / 0.8), 0 0 24px hsl(168 80% 55% / 0.4)' 
+                ? '0 0 15px hsl(35 90% 55% / 0.9), 0 0 30px hsl(35 80% 50% / 0.5)' 
                 : 'none',
-              transform: index === activeIndex ? 'scale(1.3)' : 'scale(1)',
+              transform: index === activeIndex ? 'scale(1.4)' : 'scale(1)',
             }}
           />
         ))}
       </div>
       
-      {/* Image container */}
-      <div className="relative w-full h-[60vh] flex items-center justify-center px-6">
+      {/* Image container - centered emergence */}
+      <div className="relative w-full h-[65vh] flex items-center justify-center">
         {images.map((image, index) => {
           const imageProgress = getImageProgress(index);
           const isActive = index === activeIndex;
           const isPast = index < activeIndex;
           const isFuture = index > activeIndex;
           
-          // Entry animation (0 to 0.3 of segment)
-          const entryProgress = Math.min(1, imageProgress / 0.3);
-          const easedEntry = easeOutBack(entryProgress);
+          // EMERGE animation: scale up from center, no Y movement
+          // Entry: 0-40% of segment, Hold: 40-70%, Exit: 70-100%
           
-          // Exit animation (0.7 to 1.0 of segment)
-          const exitProgress = imageProgress > 0.7 
-            ? (imageProgress - 0.7) / 0.3 
-            : 0;
-          
-          // Scale: starts small, grows to full, shrinks slightly on exit
-          let scale = 0.6;
-          if (isActive || isPast) {
-            if (imageProgress <= 0.3) {
-              scale = 0.6 + (easedEntry * 0.4); // 0.6 → 1.0
-            } else if (imageProgress > 0.7) {
-              scale = 1.0 - (exitProgress * 0.15); // 1.0 → 0.85
-            } else {
-              scale = 1.0;
-            }
+          // Scale: starts small (emerging from light), grows full, shrinks on exit
+          let scale = 0.3;
+          if (imageProgress <= 0.4) {
+            // Entry: 0.3 → 1.0 with overshoot
+            const t = imageProgress / 0.4;
+            const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
+            scale = 0.3 + eased * 0.75; // peaks at 1.05
+          } else if (imageProgress <= 0.7) {
+            // Hold: settle to 1.0
+            scale = 1.05 - (imageProgress - 0.4) * 0.167; // 1.05 → 1.0
+          } else {
+            // Exit: 1.0 → 0.85
+            const t = (imageProgress - 0.7) / 0.3;
+            scale = 1.0 - t * 0.15;
           }
           
-          // Y position: slides up from below, then slides up and out
-          let translateY = 100;
-          if (isActive || isPast) {
-            if (imageProgress <= 0.3) {
-              translateY = 100 - (easedEntry * 100); // 100 → 0
-            } else if (imageProgress > 0.7) {
-              translateY = -(exitProgress * 60); // 0 → -60
-            } else {
-              translateY = 0;
-            }
+          // Blur: starts blurry (from light), sharpens, slight blur on exit
+          let blur = 15;
+          if (imageProgress <= 0.3) {
+            blur = 15 - (imageProgress / 0.3) * 15; // 15 → 0
+          } else if (imageProgress <= 0.75) {
+            blur = 0;
+          } else {
+            blur = ((imageProgress - 0.75) / 0.25) * 8; // 0 → 8
           }
           
-          // Opacity
+          // Opacity: fade in, hold, fade out
           let opacity = 0;
-          if (isPast && imageProgress >= 1) {
-            opacity = 0;
-          } else if (isActive || isPast) {
-            if (imageProgress <= 0.15) {
-              opacity = imageProgress / 0.15;
-            } else if (imageProgress > 0.75) {
-              opacity = 1 - ((imageProgress - 0.75) / 0.25);
-            } else {
-              opacity = 1;
-            }
+          if (imageProgress <= 0.2) {
+            opacity = imageProgress / 0.2; // 0 → 1
+          } else if (imageProgress <= 0.8) {
+            opacity = 1;
+          } else {
+            opacity = 1 - ((imageProgress - 0.8) / 0.2); // 1 → 0
           }
           
           // Keep last image visible
           if (index === 3 && galleryProgress >= 0.75) {
-            opacity = 1;
-            scale = 1.0;
-            translateY = 0;
+            opacity = Math.max(opacity, 0.9);
+            scale = Math.max(scale, 0.95);
+            blur = Math.min(blur, 2);
           }
           
-          if (isFuture || opacity <= 0) return null;
+          // Golden glow intensity (strongest during entry)
+          const glowIntensity = imageProgress <= 0.4 
+            ? 1 - (imageProgress / 0.4) 
+            : 0;
+          
+          if (isFuture || (isPast && imageProgress >= 1)) return null;
           
           return (
             <div
               key={index}
-              className="absolute w-full flex flex-col items-center"
+              className="absolute flex flex-col items-center justify-center"
               style={{
                 opacity,
-                transform: `translateY(${translateY}px) scale(${scale})`,
-                transition: 'none', // Scroll-driven, no CSS transition
-                willChange: 'transform, opacity',
+                transform: `scale(${scale})`,
+                filter: `blur(${blur}px)`,
+                willChange: 'transform, opacity, filter',
               }}
             >
+              {/* Golden emergence glow behind image */}
+              <div
+                className="absolute inset-0 -m-8 rounded-3xl"
+                style={{
+                  background: `radial-gradient(circle, 
+                    hsl(35 90% 65% / ${0.6 * glowIntensity}) 0%,
+                    hsl(30 80% 50% / ${0.3 * glowIntensity}) 50%,
+                    transparent 80%)`,
+                  transform: 'scale(1.5)',
+                  filter: 'blur(30px)',
+                }}
+              />
+              
               {/* Image card */}
               <div
                 className="relative overflow-hidden"
                 style={{
-                  borderRadius: '20px',
+                  borderRadius: '16px',
                   boxShadow: `
-                    0 0 30px hsl(168 60% 40% / 0.2),
-                    0 8px 32px hsl(0 0% 0% / 0.5),
-                    0 16px 64px hsl(0 0% 0% / 0.4),
-                    inset 0 0 0 1px hsl(168 50% 50% / 0.15)
+                    0 0 ${40 + glowIntensity * 40}px hsl(35 80% 55% / ${0.2 + glowIntensity * 0.4}),
+                    0 10px 40px hsl(0 0% 0% / 0.6),
+                    0 20px 60px hsl(0 0% 0% / 0.4),
+                    inset 0 0 0 1px hsl(35 60% 60% / ${0.1 + glowIntensity * 0.2})
                   `,
                 }}
               >
@@ -182,10 +189,10 @@ const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => 
                   alt={image.alt}
                   className="block"
                   style={{
-                    width: '85vw',
-                    maxWidth: '400px',
+                    width: '88vw',
+                    maxWidth: '420px',
                     height: 'auto',
-                    maxHeight: '50vh',
+                    maxHeight: '55vh',
                     objectFit: 'cover',
                   }}
                 />
@@ -193,18 +200,19 @@ const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => 
               
               {/* Caption */}
               <div 
-                className="mt-4 text-center"
+                className="mt-5 text-center"
                 style={{
-                  opacity: isActive ? 1 : 0,
-                  transform: `translateY(${isActive ? 0 : 10}px)`,
-                  transition: 'all 0.3s ease-out',
+                  opacity: isActive && imageProgress > 0.3 && imageProgress < 0.85 ? 1 : 0,
+                  transform: `translateY(${isActive && imageProgress > 0.3 ? 0 : 15}px)`,
+                  transition: 'opacity 0.4s ease, transform 0.4s ease',
                 }}
               >
                 <span 
-                  className="text-sm font-medium tracking-wider uppercase"
+                  className="text-sm font-medium tracking-widest uppercase"
                   style={{
-                    color: 'hsl(35 70% 65%)',
-                    textShadow: '0 0 20px hsl(35 80% 50% / 0.5)',
+                    color: 'hsl(35 75% 65%)',
+                    textShadow: '0 0 25px hsl(35 90% 55% / 0.7), 0 2px 10px hsl(0 0% 0% / 0.5)',
+                    letterSpacing: '0.2em',
                   }}
                 >
                   {image.caption}
@@ -215,7 +223,7 @@ const MobileImageGallery: React.FC<MobileImageGalleryProps> = ({ progress }) => 
         })}
       </div>
       
-      {/* Testimonial */}
+      {/* Testimonial at bottom */}
       <TestimonialReveal progress={progress} />
     </div>
   );
