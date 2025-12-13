@@ -88,12 +88,71 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
     >
       {/* Main Content Stack */}
       <div 
-        className="flex flex-col items-center gap-4 w-full max-w-[500px]"
+        className="flex flex-col items-center gap-6 w-full max-w-[500px]"
         style={{
           transform: `translateY(${img1ShiftY}vh)`,
           transition: 'transform 0.1s ease-out',
         }}
       >
+        {/* Stars - ABOVE IMAGE 1, SUPERSIZED */}
+        <div 
+          className="flex gap-3"
+          style={{
+            opacity: starsProgress > 0 ? 1 : 0,
+            transform: `translateY(${(1 - starsEased) * 20}px)`,
+          }}
+        >
+          {[0, 1, 2, 3, 4].map((i) => {
+            const starDelay = i * 0.15;
+            const starProgress = Math.max(0, Math.min(1, (starsProgress - starDelay) / (1 - starDelay)));
+            const starEased = easeOutExpo(starProgress);
+            
+            return (
+              <span
+                key={i}
+                className="text-5xl"
+                style={{
+                  opacity: starEased,
+                  transform: `scale(${0.5 + starEased * 0.5}) translateY(${(1 - starEased) * 15}px)`,
+                  filter: `drop-shadow(0 0 ${12 * starEased}px hsl(35 80% 55%)) drop-shadow(0 0 ${24 * starEased}px hsl(35 70% 45%))`,
+                  color: 'hsl(35 80% 55%)',
+                }}
+              >
+                ★
+              </span>
+            );
+          })}
+        </div>
+
+        {/* Name - ABOVE IMAGE 1, SUPERSIZED */}
+        <div 
+          className="text-4xl font-bold tracking-widest uppercase"
+          style={{ 
+            color: 'hsl(35 60% 70%)',
+            textShadow: '0 0 20px hsl(35 70% 55% / 0.6), 0 0 40px hsl(35 60% 45% / 0.3)',
+            opacity: nameProgress > 0 ? 1 : 0,
+          }}
+        >
+          {nameChars.map((char, i) => {
+            const isVisible = i < visibleNameChars;
+            const charProgress = isVisible ? 1 : 0;
+            
+            return (
+              <span
+                key={i}
+                style={{
+                  opacity: charProgress,
+                  filter: `blur(${(1 - charProgress) * 4}px)`,
+                  display: 'inline-block',
+                  transform: `translateY(${(1 - charProgress) * 8}px)`,
+                }}
+              >
+                {char === ' ' ? '\u00A0' : char}
+              </span>
+            );
+          })}
+        </div>
+
         {/* Image 1 - The Emergence */}
         <div
           className="relative w-[85vw] max-w-[500px]"
@@ -121,82 +180,28 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
           />
         </div>
 
-        {/* Testimonial Section */}
+        {/* Quote - BELOW IMAGE 1, LARGER */}
         <div 
-          className="flex flex-col items-center gap-2 text-center"
-          style={{
-            opacity: starsProgress > 0 ? 1 : 0,
-            transform: `translateY(${(1 - starsEased) * 20}px)`,
+          className="text-xl max-w-[320px] leading-relaxed text-center"
+          style={{ 
+            color: 'hsl(35 30% 65%)',
+            opacity: quoteProgress > 0 ? 1 : 0,
+            textShadow: '0 0 15px hsl(35 50% 50% / 0.3)',
           }}
         >
-          {/* Stars */}
-          <div className="flex gap-1">
-            {[0, 1, 2, 3, 4].map((i) => {
-              const starDelay = i * 0.15;
-              const starProgress = Math.max(0, Math.min(1, (starsProgress - starDelay) / (1 - starDelay)));
-              const starEased = easeOutExpo(starProgress);
-              
-              return (
-                <span
-                  key={i}
-                  className="text-2xl"
-                  style={{
-                    opacity: starEased,
-                    transform: `scale(${0.5 + starEased * 0.5}) translateY(${(1 - starEased) * 15}px)`,
-                    filter: `drop-shadow(0 0 ${8 * starEased}px hsl(35 80% 55%))`,
-                    color: 'hsl(35 80% 55%)',
-                  }}
-                >
-                  ★
-                </span>
-              );
-            })}
-          </div>
-
-          {/* Name with character reveal */}
-          <div 
-            className="text-lg font-semibold tracking-wide"
-            style={{ color: 'hsl(35 60% 70%)' }}
-          >
-            {nameChars.map((char, i) => {
-              const isVisible = i < visibleNameChars;
-              const charProgress = isVisible ? 1 : 0;
-              
-              return (
-                <span
-                  key={i}
-                  style={{
-                    opacity: charProgress,
-                    filter: `blur(${(1 - charProgress) * 4}px)`,
-                    display: 'inline-block',
-                    transform: `translateY(${(1 - charProgress) * 8}px)`,
-                  }}
-                >
-                  {char === ' ' ? '\u00A0' : char}
-                </span>
-              );
-            })}
-          </div>
-
-          {/* Quote with typewriter effect */}
-          <div 
-            className="text-sm max-w-[280px] leading-relaxed"
-            style={{ color: 'hsl(35 30% 60%)' }}
-          >
-            <span className="italic">"</span>
-            <span>{quote.slice(0, visibleQuoteChars)}</span>
-            {showCursor && (
-              <span 
-                className="inline-block w-[2px] h-[14px] ml-[2px] align-middle"
-                style={{
-                  backgroundColor: 'hsl(35 70% 60%)',
-                  boxShadow: '0 0 8px hsl(35 70% 60%)',
-                  animation: 'pulse 0.8s ease-in-out infinite',
-                }}
-              />
-            )}
-            {visibleQuoteChars >= quote.length && <span className="italic">"</span>}
-          </div>
+          <span className="italic">"</span>
+          <span>{quote.slice(0, visibleQuoteChars)}</span>
+          {showCursor && (
+            <span 
+              className="inline-block w-[2px] h-[18px] ml-[2px] align-middle"
+              style={{
+                backgroundColor: 'hsl(35 70% 60%)',
+                boxShadow: '0 0 8px hsl(35 70% 60%)',
+                animation: 'pulse 0.8s ease-in-out infinite',
+              }}
+            />
+          )}
+          {visibleQuoteChars >= quote.length && <span className="italic">"</span>}
         </div>
 
         {/* Image 2 - Flip Down */}
