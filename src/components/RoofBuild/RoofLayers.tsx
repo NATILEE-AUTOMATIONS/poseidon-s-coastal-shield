@@ -138,9 +138,9 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
       {/* "Replace Decking" - fades in/out at end of animation */}
       {(() => {
         let labelOpacity = 0;
-        if (layerProgress >= 0.8 && layerProgress < 0.9) {
-          labelOpacity = (layerProgress - 0.8) / 0.1; // fade in
-        } else if (layerProgress >= 0.9 && layerProgress < 0.95) {
+        if (layerProgress >= 0.6 && layerProgress < 0.7) {
+          labelOpacity = (layerProgress - 0.6) / 0.1; // fade in
+        } else if (layerProgress >= 0.7 && layerProgress < 0.95) {
           labelOpacity = 1; // fully visible
         } else if (layerProgress >= 0.95) {
           labelOpacity = 1 - ((layerProgress - 0.95) / 0.05); // fade out
