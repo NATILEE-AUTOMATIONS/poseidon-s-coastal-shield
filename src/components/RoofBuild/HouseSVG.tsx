@@ -1,3 +1,4 @@
+// Cache bust: 2025-01-14T12:00:00Z - Pipe boots and vents removed
 import React from 'react';
 import DoorwayGrid from './DoorwayGrid';
 
