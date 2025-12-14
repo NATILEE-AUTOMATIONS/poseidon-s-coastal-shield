@@ -127,28 +127,15 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
       <ellipse cx="310" cy="140" rx="3" ry="2.5" fill="url(#woodKnot)" opacity="0.5" />
       <ellipse cx="280" cy="150" rx="3.5" ry="2" fill="url(#woodKnot)" opacity="0.45" />
       
-      {/* Panel seam lines - darker gaps between 4x8 sheets */}
-      <line x1="95" y1="158" x2="148" y2="105" stroke="hsl(22 35% 25%)" strokeWidth="1.5" opacity="0.6" />
-      <line x1="148" y1="158" x2="184" y2="122" stroke="hsl(22 35% 25%)" strokeWidth="1.5" opacity="0.6" />
-      <line x1="252" y1="105" x2="305" y2="158" stroke="hsl(22 35% 25%)" strokeWidth="1.5" opacity="0.6" />
-      <line x1="216" y1="122" x2="252" y2="158" stroke="hsl(22 35% 25%)" strokeWidth="1.5" opacity="0.6" />
+      {/* Panel seam lines - darker gaps between 4x8 plywood sheets */}
+      <line x1="95" y1="158" x2="148" y2="105" stroke="hsl(20 30% 20%)" strokeWidth="2" opacity="0.7" />
+      <line x1="148" y1="158" x2="184" y2="122" stroke="hsl(20 30% 20%)" strokeWidth="2" opacity="0.7" />
+      <line x1="252" y1="105" x2="305" y2="158" stroke="hsl(20 30% 20%)" strokeWidth="2" opacity="0.7" />
+      <line x1="216" y1="122" x2="252" y2="158" stroke="hsl(20 30% 20%)" strokeWidth="2" opacity="0.7" />
       
-      {/* BOLD blue chalk snap lines - construction grid */}
-      {/* Left slope chalk lines */}
-      <line x1="60" y1="152" x2="190" y2="68" stroke="hsl(220 85% 50%)" strokeWidth="2.5" opacity="0.85" />
-      <line x1="75" y1="158" x2="200" y2="95" stroke="hsl(220 85% 50%)" strokeWidth="2.5" opacity="0.85" />
-      <line x1="130" y1="158" x2="200" y2="123" stroke="hsl(220 85% 50%)" strokeWidth="2.5" opacity="0.85" />
-      
-      {/* Right slope chalk lines */}
-      <line x1="210" y1="68" x2="340" y2="152" stroke="hsl(220 85% 50%)" strokeWidth="2.5" opacity="0.85" />
-      <line x1="200" y1="95" x2="325" y2="158" stroke="hsl(220 85% 50%)" strokeWidth="2.5" opacity="0.85" />
-      <line x1="200" y1="123" x2="270" y2="158" stroke="hsl(220 85% 50%)" strokeWidth="2.5" opacity="0.85" />
-      
-      {/* Perpendicular chalk lines for shingle layout */}
-      <line x1="100" y1="108" x2="100" y2="158" stroke="hsl(220 85% 50%)" strokeWidth="2" opacity="0.7" />
-      <line x1="150" y1="83" x2="150" y2="158" stroke="hsl(220 85% 50%)" strokeWidth="2" opacity="0.7" />
-      <line x1="250" y1="83" x2="250" y2="158" stroke="hsl(220 85% 50%)" strokeWidth="2" opacity="0.7" />
-      <line x1="300" y1="108" x2="300" y2="158" stroke="hsl(220 85% 50%)" strokeWidth="2" opacity="0.7" />
+      {/* Additional horizontal seam lines for realistic 4x8 sheet layout */}
+      <line x1="60" y1="140" x2="200" y2="140" stroke="hsl(20 30% 20%)" strokeWidth="1.5" opacity="0.5" />
+      <line x1="200" y1="140" x2="340" y2="140" stroke="hsl(20 30% 20%)" strokeWidth="1.5" opacity="0.5" />
       
       {/* Teal edge glow - brand accent on roof edges */}
       <path 
@@ -160,14 +147,6 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
         style={{
           filter: `drop-shadow(0 0 ${6 + easedProgress * 8}px hsl(168 70% 50% / 0.6))`,
         }}
-      />
-      
-      {/* Subtle highlight on peak */}
-      <line 
-        x1="195" y1="60" x2="205" y2="60" 
-        stroke="hsl(45 80% 75%)" 
-        strokeWidth="2"
-        opacity={0.3 + easedProgress * 0.4}
       />
     </g>
   );
