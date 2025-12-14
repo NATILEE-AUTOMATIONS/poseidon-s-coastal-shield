@@ -86,6 +86,15 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
       <path d="M200 58 L352 158 L200 158 Z" fill="url(#plywoodRight)" />
       <path d="M200 58 L352 158 L200 158 Z" fill="url(#grain)" style={{ transform: 'rotate(33deg)', transformOrigin: '276px 108px' }} />
       
+      {/* Plywood sheet gaps - subtle dark lines */}
+      {/* Left slope gaps */}
+      <line x1="100" y1="158" x2="150" y2="108" stroke="hsl(25 30% 22%)" strokeWidth="1.5" opacity="0.6" />
+      <line x1="155" y1="158" x2="188" y2="125" stroke="hsl(25 30% 22%)" strokeWidth="1.5" opacity="0.6" />
+      
+      {/* Right slope gaps */}
+      <line x1="250" y1="108" x2="300" y2="158" stroke="hsl(25 30% 22%)" strokeWidth="1.5" opacity="0.6" />
+      <line x1="212" y1="125" x2="245" y2="158" stroke="hsl(25 30% 22%)" strokeWidth="1.5" opacity="0.6" />
+      
       {/* Teal edge glow */}
       <path 
         d="M50 157 L200 59 L350 157" 
