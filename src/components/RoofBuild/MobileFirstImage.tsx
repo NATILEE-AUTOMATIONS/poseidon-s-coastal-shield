@@ -8,147 +8,148 @@ interface MobileFirstImageProps {
   progress: number;
 }
 
-// Smooth easing functions
-const easeOutExpo = (x: number): number => x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
-const easeInQuad = (x: number): number => x * x;
-
-// Phase calculator: returns 0-1 for enter, 1 for hold, 1-0 for exit
-const getPhaseProgress = (
-  localProgress: number,
-  enterStart: number,
-  enterEnd: number,
-  exitStart: number,
-  exitEnd: number
-): { phase: 'hidden' | 'entering' | 'visible' | 'exiting'; value: number } => {
-  if (localProgress < enterStart) {
-    return { phase: 'hidden', value: 0 };
-  }
-  if (localProgress < enterEnd) {
-    const raw = (localProgress - enterStart) / (enterEnd - enterStart);
-    return { phase: 'entering', value: easeOutExpo(raw) };
-  }
-  if (localProgress < exitStart) {
-    return { phase: 'visible', value: 1 };
-  }
-  if (localProgress < exitEnd) {
-    const raw = (localProgress - exitStart) / (exitEnd - exitStart);
-    return { phase: 'exiting', value: 1 - easeInQuad(raw) };
-  }
-  return { phase: 'hidden', value: 0 };
+// Cinematic easing functions
+const easeOutExpo = (x: number): number => {
+  return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
 };
 
-// For hero image (no exit)
-const getEnterOnlyProgress = (
-  localProgress: number,
-  enterStart: number,
-  enterEnd: number
-): { phase: 'hidden' | 'entering' | 'visible'; value: number } => {
-  if (localProgress < enterStart) {
-    return { phase: 'hidden', value: 0 };
-  }
-  if (localProgress < enterEnd) {
-    const raw = (localProgress - enterStart) / (enterEnd - enterStart);
-    return { phase: 'entering', value: easeOutExpo(raw) };
-  }
-  return { phase: 'visible', value: 1 };
-};
-
-export const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
-  // Gallery starts at 88% of section scroll
+const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
+  // === GALLERY WINDOW: 0.88 to 1.00 ===
   const galleryStart = 0.88;
-  const galleryEnd = 1.0;
+  const galleryEnd = 1.00;
+  const galleryRange = galleryEnd - galleryStart;
   
-  // Don't render until gallery zone
-  if (progress < galleryStart - 0.02) return null;
+  // Local progress within gallery (0-1)
+  const localProgress = progress < galleryStart 
+    ? 0 
+    : progress > galleryEnd 
+      ? 1 
+      : (progress - galleryStart) / galleryRange;
   
-  // Local progress 0-1 within gallery zone
-  const localProgress = Math.max(0, Math.min(1, (progress - galleryStart) / (galleryEnd - galleryStart)));
+  // Container visibility
+  const containerOpacity = Math.min(1, localProgress / 0.10);
+  const isVisible = progress >= galleryStart - 0.02;
+  
+  // === COMPRESSED TIMING for Image 4 + CTA ===
+  // Stars/Name: 0.0 - 0.16
+  const starsProgress = Math.max(0, Math.min(1, localProgress / 0.12));
+  const nameProgress = Math.max(0, Math.min(1, (localProgress - 0.02) / 0.14));
+  
+  // Image 1: 0.0 - 0.22
+  const img1Start = 0.0;
+  const img1End = 0.22;
+  const img1Progress = Math.max(0, Math.min(1, (localProgress - img1Start) / (img1End - img1Start)));
+  
+  // Quote 1: 0.14 - 0.32
+  const quote1Progress = Math.max(0, Math.min(1, (localProgress - 0.14) / 0.18));
+  
+  // Image 2: 0.34 - 0.46
+  const flipStart = 0.34;
+  const flipEnd = 0.46;
+  const flipProgress = Math.max(0, Math.min(1, (localProgress - flipStart) / (flipEnd - flipStart)));
 
-  // === TIMING WINDOWS (all overlap for continuous motion) ===
-  // Each element: [enterStart, enterEnd, exitStart, exitEnd]
-  
-  // Stars: 0.00 - 0.08 enter, 0.08 - 0.16 hold, 0.16 - 0.24 exit
-  const stars = getPhaseProgress(localProgress, 0.00, 0.08, 0.16, 0.24);
-  
-  // Name: 0.04 - 0.12 enter, 0.12 - 0.20 hold, 0.20 - 0.28 exit
-  const name = getPhaseProgress(localProgress, 0.04, 0.12, 0.20, 0.28);
-  
-  // Image 1: 0.08 - 0.18 enter, 0.18 - 0.26 hold, 0.26 - 0.36 exit
-  const img1 = getPhaseProgress(localProgress, 0.08, 0.18, 0.26, 0.36);
-  
-  // Quote 1: 0.14 - 0.24 enter, 0.24 - 0.32 hold, 0.32 - 0.42 exit
-  const quote1 = getPhaseProgress(localProgress, 0.14, 0.24, 0.32, 0.42);
-  
-  // Image 2: 0.28 - 0.38 enter, 0.38 - 0.46 hold, 0.46 - 0.56 exit
-  const img2 = getPhaseProgress(localProgress, 0.28, 0.38, 0.46, 0.56);
-  
-  // Quote 2: 0.34 - 0.44 enter, 0.44 - 0.52 hold, 0.52 - 0.62 exit
-  const quote2 = getPhaseProgress(localProgress, 0.34, 0.44, 0.52, 0.62);
-  
-  // Image 3: 0.48 - 0.58 enter, 0.58 - 0.66 hold, 0.66 - 0.76 exit
-  const img3 = getPhaseProgress(localProgress, 0.48, 0.58, 0.66, 0.76);
-  
-  // Quote 3: 0.54 - 0.64 enter, 0.64 - 0.72 hold, 0.72 - 0.82 exit
-  const quote3 = getPhaseProgress(localProgress, 0.54, 0.64, 0.72, 0.82);
-  
-  // Image 4 (Hero): 0.70 - 1.00 enter, stays visible (no exit)
-  const img4 = getEnterOnlyProgress(localProgress, 0.70, 1.00);
+  // Quote 2: 0.42 - 0.52
+  const quote2Progress = Math.max(0, Math.min(1, (localProgress - 0.42) / 0.10));
 
-  // Name character splitting for letter animation
-  const customerName = "Bruce Gombar";
-  const nameChars = useMemo(() => customerName.split(''), []);
+  // Image 3: 0.54 - 0.66
+  const img3Start = 0.54;
+  const img3End = 0.66;
+  const img3Progress = Math.max(0, Math.min(1, (localProgress - img3Start) / (img3End - img3Start)));
 
-  // Quote texts
-  const quote1Text = "We were very pleased with the final results of our roof replacement.";
-  const quote2Text = "We had some minor issues along the way...";
-  const quote3Text = "But they were quickly corrected once we contacted the team.";
+  // Quote 3: 0.62 - 0.72
+  const quote3Progress = Math.max(0, Math.min(1, (localProgress - 0.62) / 0.10));
 
-  // Typewriter effect helper
-  const getTypewriterText = (text: string, progressValue: number): string => {
-    const charCount = Math.floor(progressValue * text.length);
-    return text.slice(0, charCount);
-  };
+  // Image 4 (Hero Finale): 0.74 - 0.86
+  const img4Start = 0.74;
+  const img4End = 0.86;
+  const img4Progress = Math.max(0, Math.min(1, (localProgress - img4Start) / (img4End - img4Start)));
 
-  // Container opacity based on any element being visible
-  const containerOpacity = Math.max(
-    stars.value, name.value, img1.value, quote1.value,
-    img2.value, quote2.value, img3.value, quote3.value, img4.value
-  );
+  // === IMAGE ANIMATIONS ===
+  const img1Eased = easeOutExpo(img1Progress);
+  const img1Scale = 0.4 + (img1Eased * 0.6);
+  const img1Blur = (1 - img1Eased) * 15;
+  const img1Brightness = 1.4 - (img1Eased * 0.4);
+  const img1TranslateY = (1 - img1Eased) * 40;
+  const img1Opacity = Math.min(1, img1Eased * 2.5);
+
+  const flipEased = easeOutExpo(flipProgress);
+  const img2TranslateY = (1 - flipEased) * 60;
+  const img2Scale = 0.8 + (flipEased * 0.2);
+  const img2Blur = (1 - flipEased) * 10;
+  const img2Brightness = 1.3 - (flipEased * 0.3);
+  const img2Opacity = Math.min(1, flipProgress * 2.5);
+  
+  const img3Eased = easeOutExpo(img3Progress);
+  const img3TranslateX = (1 - img3Eased) * 80;
+  const img3Scale = 0.6 + (img3Eased * 0.4);
+  const img3Rotate = (1 - img3Eased) * 6;
+  const img3Blur = (1 - img3Eased) * 12;
+  const img3Brightness = 1.3 - (img3Eased * 0.3);
+  const img3Opacity = Math.min(1, img3Progress * 2.5);
+
+  // Image 4 - Gravity drop from above with glow burst
+  const img4Eased = easeOutExpo(img4Progress);
+  const img4TranslateY = (1 - img4Eased) * -80; // Falls DOWN from above
+  const img4Scale = 0.7 + (img4Eased * 0.3);
+  const img4Blur = (1 - img4Eased) * 15;
+  const img4Brightness = 1.5 - (img4Eased * 0.5);
+  const img4Opacity = Math.min(1, img4Progress * 2);
+
+  // === TESTIMONIAL DATA ===
+  const name = "Bruce Gombar";
+  const quote1 = "We were very pleased with the final results of our roof replacement";
+  const quote2 = "We had some minor issues";
+  const quote3 = "But they were quickly corrected once we contacted the team";
+  
+  const nameChars = useMemo(() => name.split(''), []);
+  const visibleNameChars = Math.floor(nameProgress * nameChars.length);
+  
+  const visibleQuote1Chars = Math.floor(quote1Progress * quote1.length);
+  const showCursor1 = quote1Progress > 0 && quote1Progress < 1;
+
+  const visibleQuote2Chars = Math.floor(quote2Progress * quote2.length);
+  const showCursor2 = quote2Progress > 0 && quote2Progress < 1;
+
+  const visibleQuote3Chars = Math.floor(quote3Progress * quote3.length);
+  const showCursor3 = quote3Progress > 0 && quote3Progress < 1;
+
+  const starsEased = easeOutExpo(starsProgress);
+
+  if (!isVisible) return null;
 
   return (
     <div 
-      className="fixed inset-0 flex items-center justify-center z-[110] pointer-events-none"
-      style={{ opacity: containerOpacity }}
+      className="sticky top-0 min-h-screen w-full flex flex-col items-center justify-start pt-16 px-4 pb-8"
+      style={{
+        background: `radial-gradient(ellipse at center, hsl(35 40% 15% / ${containerOpacity * 0.95}) 0%, hsl(25 30% 8% / ${containerOpacity * 0.98}) 100%)`,
+        opacity: containerOpacity,
+      }}
     >
-      {/* Warm ambient background */}
-      <div 
-        className="absolute inset-0"
-        style={{
-          background: `radial-gradient(ellipse at center, hsl(25 40% 12% / ${containerOpacity * 0.95}) 0%, hsl(20 30% 6% / ${containerOpacity * 0.98}) 70%)`,
-        }}
-      />
-
-      {/* === STARS === */}
-      {stars.value > 0 && (
+      {/* Main Content Stack - flows naturally */}
+      <div className="flex flex-col items-center gap-5 w-full max-w-[500px]">
+        
+        {/* Stars */}
         <div 
-          className="absolute top-[15%] left-1/2 -translate-x-1/2 flex gap-2"
+          className="flex gap-3"
           style={{
-            opacity: stars.value,
-            transform: `translateX(-50%) translateY(${(1 - stars.value) * 40}px)`,
+            opacity: starsProgress > 0 ? starsEased : 0,
+            transform: `translateY(${(1 - starsEased) * 20}px)`,
           }}
         >
           {[0, 1, 2, 3, 4].map((i) => {
             const starDelay = i * 0.15;
-            const starProgress = Math.max(0, Math.min(1, (stars.value - starDelay) / (1 - starDelay)));
+            const starProgress = Math.max(0, Math.min(1, (starsProgress - starDelay) / (1 - starDelay)));
+            const starEased = easeOutExpo(starProgress);
+            
             return (
-              <span 
+              <span
                 key={i}
-                className="text-4xl"
+                className="text-5xl"
                 style={{
-                  opacity: starProgress,
-                  transform: `scale(${0.5 + starProgress * 0.5})`,
-                  textShadow: `0 0 ${20 * starProgress}px hsl(var(--accent))`,
-                  color: 'hsl(var(--accent))',
+                  opacity: starEased,
+                  transform: `scale(${0.5 + starEased * 0.5}) translateY(${(1 - starEased) * 15}px)`,
+                  filter: `drop-shadow(0 0 ${12 * starEased}px hsl(35 80% 55%)) drop-shadow(0 0 ${24 * starEased}px hsl(35 70% 45%))`,
+                  color: 'hsl(35 80% 55%)',
                 }}
               >
                 ★
@@ -156,244 +157,207 @@ export const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) 
             );
           })}
         </div>
-      )}
 
-      {/* === NAME === */}
-      {name.value > 0 && (
+        {/* Name */}
         <div 
-          className="absolute top-[22%] left-1/2 -translate-x-1/2 font-serif text-3xl tracking-wider"
-          style={{ opacity: name.value }}
+          className="text-4xl md:text-5xl font-bold tracking-widest uppercase"
+          style={{ 
+            color: 'hsl(35 60% 70%)',
+            textShadow: '0 0 20px hsl(35 70% 55% / 0.6), 0 0 40px hsl(35 60% 45% / 0.3)',
+            opacity: nameProgress > 0 ? 1 : 0,
+          }}
         >
           {nameChars.map((char, i) => {
-            const charDelay = i * 0.06;
-            const charProgress = Math.max(0, Math.min(1, (name.value - charDelay) / (1 - charDelay * nameChars.length)));
+            const isCharVisible = i < visibleNameChars;
+            const charProgress = isCharVisible ? 1 : 0;
+            
             return (
               <span
                 key={i}
                 style={{
                   opacity: charProgress,
                   filter: `blur(${(1 - charProgress) * 4}px)`,
-                  color: 'hsl(var(--accent))',
-                  textShadow: `0 0 ${15 * charProgress}px hsl(var(--accent) / 0.6)`,
+                  display: 'inline-block',
+                  transform: `translateY(${(1 - charProgress) * 8}px)`,
                 }}
               >
-                {char}
+                {char === ' ' ? '\u00A0' : char}
               </span>
             );
           })}
         </div>
-      )}
 
-      {/* === IMAGE 1 === */}
-      {img1.value > 0 && (
-        <div 
-          className="absolute top-[30%] left-1/2 w-[85vw] max-w-[400px]"
+        {/* Image 1 */}
+        <div
+          className="relative w-[88vw] max-w-[500px]"
           style={{
-            opacity: img1.value,
-            transform: `translateX(-50%) translateY(${(1 - img1.value) * 60}px) scale(${0.85 + img1.value * 0.15})`,
-            filter: `blur(${(1 - img1.value) * 12}px)`,
+            transform: `translateY(${img1TranslateY}px) scale(${img1Scale})`,
+            opacity: img1Opacity,
+            filter: `blur(${img1Blur}px) brightness(${img1Brightness})`,
           }}
         >
-          <img 
-            src={coastalRoofImage} 
-            alt="Coastal roof project"
-            className="w-full rounded-lg"
+          <img
+            src={coastalRoofImage}
+            alt="Beautiful coastal roof project"
+            className="w-full max-h-[40vh] object-cover rounded-xl"
             style={{
               boxShadow: `
-                0 0 30px hsl(var(--accent) / ${0.3 * img1.value}),
-                0 0 60px hsl(var(--primary) / ${0.2 * img1.value}),
-                0 20px 40px hsl(0 0% 0% / 0.5)
+                0 20px 40px hsl(0 0% 0% / 0.4),
+                0 0 30px hsl(35 60% 50% / ${0.3 * img1Opacity}),
+                0 0 60px hsl(168 70% 45% / ${0.15 * img1Opacity})
               `,
             }}
           />
         </div>
-      )}
 
-      {/* === QUOTE 1 === */}
-      {quote1.value > 0 && (
+        {/* Quote 1 */}
         <div 
-          className="absolute top-[58%] left-1/2 w-[85vw] max-w-[400px] text-center"
-          style={{
-            opacity: quote1.value,
-            transform: `translateX(-50%) translateY(${(1 - quote1.value) * 30}px)`,
+          className="text-xl md:text-2xl max-w-[360px] leading-relaxed text-center"
+          style={{ 
+            color: 'hsl(35 30% 65%)',
+            opacity: quote1Progress > 0 ? 1 : 0,
+            textShadow: '0 0 15px hsl(35 50% 50% / 0.3)',
+            minHeight: '80px',
           }}
         >
-          <p 
-            className="text-lg font-light italic"
-            style={{
-              color: 'hsl(var(--foreground) / 0.9)',
-              textShadow: '0 0 20px hsl(var(--accent) / 0.3)',
-            }}
-          >
-            "{getTypewriterText(quote1Text, quote1.value)}"
-            {quote1.value < 1 && <span className="animate-pulse">|</span>}
-          </p>
+          <span className="italic">"</span>
+          <span>{quote1.slice(0, visibleQuote1Chars)}</span>
+          {showCursor1 && (
+            <span 
+              className="inline-block w-[2px] h-[18px] ml-[2px] align-middle"
+              style={{
+                backgroundColor: 'hsl(35 70% 60%)',
+                boxShadow: '0 0 8px hsl(35 70% 60%)',
+                animation: 'pulse 0.8s ease-in-out infinite',
+              }}
+            />
+          )}
+          {visibleQuote1Chars >= quote1.length && <span className="italic">"</span>}
         </div>
-      )}
 
-      {/* === IMAGE 2 === */}
-      {img2.value > 0 && (
-        <div 
-          className="absolute top-[28%] left-1/2 w-[85vw] max-w-[400px]"
+        {/* Image 2 */}
+        <div
+          className="relative w-[88vw] max-w-[500px]"
           style={{
-            opacity: img2.value,
-            transform: `translateX(-50%) translateY(${(1 - img2.value) * 80}px) scale(${0.8 + img2.value * 0.2})`,
-            filter: `blur(${(1 - img2.value) * 15}px)`,
+            transform: `translateY(${img2TranslateY}px) scale(${img2Scale})`,
+            opacity: img2Opacity,
+            filter: `blur(${img2Blur}px) brightness(${img2Brightness})`,
           }}
         >
-          <img 
-            src={coastalRoofInProgress} 
-            alt="Roof in progress"
-            className="w-full rounded-lg"
+          <img
+            src={coastalRoofInProgress}
+            alt="Coastal roof in progress"
+            className="w-full max-h-[40vh] object-cover rounded-xl"
             style={{
               boxShadow: `
-                0 0 30px hsl(var(--accent) / ${0.3 * img2.value}),
-                0 0 60px hsl(var(--primary) / ${0.2 * img2.value}),
-                0 20px 40px hsl(0 0% 0% / 0.5)
+                0 20px 40px hsl(0 0% 0% / 0.4),
+                0 0 30px hsl(35 60% 50% / ${0.3 * img2Opacity}),
+                0 0 60px hsl(168 70% 45% / ${0.15 * img2Opacity})
               `,
             }}
           />
         </div>
-      )}
 
-      {/* === QUOTE 2 === */}
-      {quote2.value > 0 && (
+        {/* Quote 2 */}
         <div 
-          className="absolute top-[56%] left-1/2 w-[85vw] max-w-[400px] text-center"
-          style={{
-            opacity: quote2.value,
-            transform: `translateX(-50%) translateY(${(1 - quote2.value) * 30}px)`,
+          className="text-lg max-w-[320px] leading-relaxed text-center"
+          style={{ 
+            color: 'hsl(25 50% 65%)',
+            opacity: quote2Progress > 0 ? 1 : 0,
+            textShadow: '0 0 15px hsl(25 60% 50% / 0.4)',
+            minHeight: '40px',
           }}
         >
-          <p 
-            className="text-lg font-light italic"
-            style={{
-              color: 'hsl(var(--foreground) / 0.85)',
-              textShadow: '0 0 20px hsl(var(--accent) / 0.3)',
-            }}
-          >
-            "{getTypewriterText(quote2Text, quote2.value)}"
-            {quote2.value < 1 && <span className="animate-pulse">|</span>}
-          </p>
+          <span className="italic">"</span>
+          <span>{quote2.slice(0, visibleQuote2Chars)}</span>
+          {showCursor2 && (
+            <span 
+              className="inline-block w-[2px] h-[16px] ml-[2px] align-middle"
+              style={{
+                backgroundColor: 'hsl(25 70% 60%)',
+                boxShadow: '0 0 8px hsl(25 70% 60%)',
+                animation: 'pulse 0.8s ease-in-out infinite',
+              }}
+            />
+          )}
+          {visibleQuote2Chars >= quote2.length && <span className="italic">"</span>}
         </div>
-      )}
 
-      {/* === IMAGE 3 === */}
-      {img3.value > 0 && (
-        <div 
-          className="absolute top-[26%] left-1/2 w-[85vw] max-w-[400px]"
+        {/* Image 3 */}
+        <div
+          className="relative w-[88vw] max-w-[500px]"
           style={{
-            opacity: img3.value,
-            transform: `translateX(${-50 + (1 - img3.value) * 60}%) translateY(${(1 - img3.value) * 40}px) scale(${0.75 + img3.value * 0.25}) rotate(${(1 - img3.value) * 8}deg)`,
-            filter: `blur(${(1 - img3.value) * 18}px)`,
+            transform: `translateX(${img3TranslateX}%) scale(${img3Scale}) rotate(${img3Rotate}deg)`,
+            opacity: img3Opacity,
+            filter: `blur(${img3Blur}px) brightness(${img3Brightness})`,
           }}
         >
-          <img 
-            src={coastalHomeCrew} 
-            alt="Roofing crew"
-            className="w-full rounded-lg"
+          <img
+            src={coastalHomeCrew}
+            alt="Poseidon roofing team"
+            className="w-full max-h-[40vh] object-cover rounded-xl"
             style={{
               boxShadow: `
-                0 0 30px hsl(var(--accent) / ${0.3 * img3.value}),
-                0 0 60px hsl(var(--primary) / ${0.2 * img3.value}),
-                0 20px 40px hsl(0 0% 0% / 0.5)
+                0 20px 40px hsl(0 0% 0% / 0.5),
+                0 0 40px hsl(35 70% 55% / ${0.4 * img3Opacity}),
+                0 0 80px hsl(168 70% 45% / ${0.2 * img3Opacity})
               `,
             }}
           />
         </div>
-      )}
 
-      {/* === QUOTE 3 === */}
-      {quote3.value > 0 && (
+        {/* Quote 3 */}
         <div 
-          className="absolute top-[54%] left-1/2 w-[85vw] max-w-[400px] text-center"
-          style={{
-            opacity: quote3.value,
-            transform: `translateX(-50%) translateY(${(1 - quote3.value) * 30}px)`,
+          className="text-lg max-w-[340px] leading-relaxed text-center"
+          style={{ 
+            color: 'hsl(35 45% 70%)',
+            opacity: quote3Progress > 0 ? 1 : 0,
+            textShadow: `0 0 15px hsl(35 60% 55% / 0.4), 0 0 ${visibleQuote3Chars >= quote3.length ? 25 : 0}px hsl(35 70% 60% / 0.5)`,
+            minHeight: '50px',
           }}
         >
-          <p 
-            className="text-lg font-light italic"
-            style={{
-              color: 'hsl(var(--foreground) / 0.9)',
-              textShadow: '0 0 25px hsl(var(--accent) / 0.4)',
-            }}
-          >
-            "{getTypewriterText(quote3Text, quote3.value)}"
-            {quote3.value < 1 && <span className="animate-pulse">|</span>}
-          </p>
+          <span className="italic">"</span>
+          <span>{quote3.slice(0, visibleQuote3Chars)}</span>
+          {showCursor3 && (
+            <span 
+              className="inline-block w-[2px] h-[16px] ml-[2px] align-middle"
+              style={{
+                backgroundColor: 'hsl(35 70% 60%)',
+                boxShadow: '0 0 10px hsl(35 70% 60%)',
+                animation: 'pulse 0.8s ease-in-out infinite',
+              }}
+            />
+          )}
+          {visibleQuote3Chars >= quote3.length && <span className="italic">"</span>}
         </div>
-      )}
 
-      {/* === IMAGE 4 (HERO FINALE) === */}
-      {img4.value > 0 && (
-        <div 
-          className="absolute top-[20%] left-1/2 w-[90vw] max-w-[450px]"
+        {/* Image 4 - Hero Finale (Gravity Drop) */}
+        <div
+          className="relative w-[92vw] max-w-[550px]"
           style={{
-            opacity: img4.value,
-            transform: `translateX(-50%) translateY(${(1 - img4.value) * -120}px) scale(${0.6 + img4.value * 0.5})`,
-            filter: `blur(${(1 - img4.value) * 25}px)`,
+            transform: `translateY(${img4TranslateY}px) scale(${img4Scale})`,
+            opacity: img4Opacity,
+            filter: `blur(${img4Blur}px) brightness(${img4Brightness})`,
           }}
         >
-          {/* Radial glow behind hero image */}
-          <div 
-            className="absolute inset-0 -z-10"
-            style={{
-              background: `radial-gradient(ellipse at center, hsl(var(--accent) / ${0.4 * img4.value}) 0%, transparent 70%)`,
-              transform: 'scale(1.5)',
-              filter: 'blur(40px)',
-            }}
-          />
-          <img 
-            src={aerialEstatePool} 
-            alt="Completed estate project"
-            className="w-full rounded-xl"
+          <img
+            src={aerialEstatePool}
+            alt="Stunning aerial view of completed estate with pool"
+            className="w-full max-h-[45vh] object-cover rounded-xl"
             style={{
               boxShadow: `
-                0 0 50px hsl(var(--accent) / ${0.5 * img4.value}),
-                0 0 100px hsl(var(--primary) / ${0.3 * img4.value}),
-                0 0 150px hsl(var(--accent) / ${0.2 * img4.value}),
-                0 30px 60px hsl(0 0% 0% / 0.6)
+                0 25px 50px hsl(0 0% 0% / 0.5),
+                0 0 40px hsl(35 80% 55% / ${0.5 * img4Opacity}),
+                0 0 80px hsl(35 70% 50% / ${0.3 * img4Opacity}),
+                0 0 120px hsl(168 70% 45% / ${0.2 * img4Opacity}),
+                inset 0 0 30px hsl(35 60% 50% / ${0.1 * img4Opacity})
               `,
+              border: `1px solid hsl(168 70% 45% / ${0.3 * img4Opacity})`,
             }}
           />
         </div>
-      )}
 
-      {/* === PERSISTENT TESTIMONIAL WITH HERO === */}
-      {img4.value > 0.5 && (
-        <div 
-          className="absolute bottom-[12%] left-1/2 w-[85vw] max-w-[400px] text-center"
-          style={{
-            opacity: Math.min(1, (img4.value - 0.5) * 2),
-            transform: `translateX(-50%) translateY(${(1 - Math.min(1, (img4.value - 0.5) * 2)) * 20}px)`,
-          }}
-        >
-          <div className="flex justify-center gap-1 mb-2">
-            {[0, 1, 2, 3, 4].map((i) => (
-              <span 
-                key={i}
-                className="text-2xl"
-                style={{
-                  color: 'hsl(var(--accent))',
-                  textShadow: '0 0 10px hsl(var(--accent) / 0.6)',
-                }}
-              >
-                ★
-              </span>
-            ))}
-          </div>
-          <p 
-            className="text-xl font-serif tracking-wide"
-            style={{
-              color: 'hsl(var(--accent))',
-              textShadow: '0 0 15px hsl(var(--accent) / 0.5)',
-            }}
-          >
-            Bruce Gombar
-          </p>
-        </div>
-      )}
+      </div>
     </div>
   );
 };
