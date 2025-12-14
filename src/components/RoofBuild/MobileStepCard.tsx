@@ -63,12 +63,10 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({
     opacity = 0.3 + (0.7 * eased);
     glowIntensity = 0.4 + (0.6 * eased);
   } else if (cardProgress < centerEnd) {
-    // Center: stable with subtle pulse
-    const centerProgress = (cardProgress - entryEnd) / (centerEnd - entryEnd);
-    const pulse = Math.sin(centerProgress * Math.PI) * 0.02;
+    // Center: perfectly still
     rotateY = 0;
     translateX = 0;
-    scale = 1 + pulse;
+    scale = 1;
     opacity = 1;
     glowIntensity = 1;
   } else {
