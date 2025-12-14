@@ -73,27 +73,40 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
         </linearGradient>
         
         {/* Subtle wood grain */}
-        <pattern id="grain" patternUnits="userSpaceOnUse" width="80" height="3">
-          <line x1="0" y1="1.5" x2="80" y2="1.5" stroke="hsl(30 40% 38%)" strokeWidth="0.5" opacity="0.1" />
+        <pattern id="grainL" patternUnits="userSpaceOnUse" width="60" height="4" patternTransform="rotate(-33)">
+          <line x1="0" y1="2" x2="60" y2="2" stroke="hsl(28 35% 35%)" strokeWidth="0.6" opacity="0.15" />
+        </pattern>
+        <pattern id="grainR" patternUnits="userSpaceOnUse" width="60" height="4" patternTransform="rotate(33)">
+          <line x1="0" y1="2" x2="60" y2="2" stroke="hsl(28 35% 35%)" strokeWidth="0.6" opacity="0.15" />
         </pattern>
       </defs>
       
-      {/* Left slope - clean triangle */}
+      {/* Left slope */}
       <path d="M48 158 L200 58 L200 158 Z" fill="url(#plywoodLeft)" />
-      <path d="M48 158 L200 58 L200 158 Z" fill="url(#grain)" style={{ transform: 'rotate(-33deg)', transformOrigin: '124px 108px' }} />
+      <path d="M48 158 L200 58 L200 158 Z" fill="url(#grainL)" />
       
-      {/* Right slope - clean triangle */}
+      {/* Right slope */}
       <path d="M200 58 L352 158 L200 158 Z" fill="url(#plywoodRight)" />
-      <path d="M200 58 L352 158 L200 158 Z" fill="url(#grain)" style={{ transform: 'rotate(33deg)', transformOrigin: '276px 108px' }} />
+      <path d="M200 58 L352 158 L200 158 Z" fill="url(#grainR)" />
       
-      {/* Plywood sheet gaps - subtle dark lines */}
-      {/* Left slope gaps */}
-      <line x1="100" y1="158" x2="150" y2="108" stroke="hsl(25 30% 22%)" strokeWidth="1.5" opacity="0.6" />
-      <line x1="155" y1="158" x2="188" y2="125" stroke="hsl(25 30% 22%)" strokeWidth="1.5" opacity="0.6" />
+      {/* Plywood sheet gaps - staggered pattern like real installation */}
+      {/* Left slope - vertical seams */}
+      <line x1="90" y1="158" x2="145" y2="103" stroke="hsl(20 25% 18%)" strokeWidth="2" opacity="0.7" />
+      <line x1="145" y1="158" x2="182" y2="121" stroke="hsl(20 25% 18%)" strokeWidth="2" opacity="0.7" />
+      {/* Left slope - horizontal seam */}
+      <line x1="55" y1="150" x2="195" y2="78" stroke="hsl(20 25% 18%)" strokeWidth="1.5" opacity="0.5" />
       
-      {/* Right slope gaps */}
-      <line x1="250" y1="108" x2="300" y2="158" stroke="hsl(25 30% 22%)" strokeWidth="1.5" opacity="0.6" />
-      <line x1="212" y1="125" x2="245" y2="158" stroke="hsl(25 30% 22%)" strokeWidth="1.5" opacity="0.6" />
+      {/* Right slope - vertical seams */}
+      <line x1="255" y1="103" x2="310" y2="158" stroke="hsl(20 25% 18%)" strokeWidth="2" opacity="0.7" />
+      <line x1="218" y1="121" x2="255" y2="158" stroke="hsl(20 25% 18%)" strokeWidth="2" opacity="0.7" />
+      {/* Right slope - horizontal seam */}
+      <line x1="205" y1="78" x2="345" y2="150" stroke="hsl(20 25% 18%)" strokeWidth="1.5" opacity="0.5" />
+      
+      {/* Subtle highlight lines next to gaps for depth */}
+      <line x1="91" y1="158" x2="146" y2="103" stroke="hsl(45 40% 65%)" strokeWidth="0.5" opacity="0.3" />
+      <line x1="146" y1="158" x2="183" y2="121" stroke="hsl(45 40% 65%)" strokeWidth="0.5" opacity="0.3" />
+      <line x1="254" y1="103" x2="309" y2="158" stroke="hsl(45 40% 65%)" strokeWidth="0.5" opacity="0.3" />
+      <line x1="217" y1="121" x2="254" y2="158" stroke="hsl(45 40% 65%)" strokeWidth="0.5" opacity="0.3" />
       
       {/* Teal edge glow */}
       <path 
