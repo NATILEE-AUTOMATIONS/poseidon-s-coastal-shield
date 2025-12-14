@@ -29,34 +29,34 @@ const RoofBuildSection: React.FC = () => {
   const { setZoomProgress } = useScrollContext();
   const isMobile = useIsMobile();
 
-  // Layer timing - delayed start at 8% for "settle in" period
-  // Roof layers use 0-75% of scroll, door animation uses 75-100%
-  const roofProgress = Math.min(1, progress / 0.75); // Normalize roof progress to 0-1
+  // Layer timing - compressed to finish by 35% so gallery gets 50%+ scroll
+  // Roof layers: 0-35%, Door: 35-50%, Gallery: 50-100%
+  const roofProgress = Math.min(1, progress / 0.35);
   
   const layers = [
-    { start: 0.08, end: 0.15 },   // 1. Decking
-    { start: 0.15, end: 0.22 },   // 2. Drip Edge Eaves
-    { start: 0.22, end: 0.29 },   // 3. Ice & Water
-    { start: 0.29, end: 0.36 },   // 4. Underlayment
-    { start: 0.36, end: 0.43 },   // 5. Drip Edge Rakes
-    { start: 0.43, end: 0.50 },   // 6. Starter Strip
-    { start: 0.50, end: 0.57 },   // 7. Shingles
-    { start: 0.57, end: 0.64 },   // 8. Vents
-    { start: 0.64, end: 0.71 },   // 9. Flashing
-    { start: 0.71, end: 0.75 },   // 10. Ridge Cap
+    { start: 0.05, end: 0.08 },   // 1. Decking
+    { start: 0.08, end: 0.11 },   // 2. Drip Edge Eaves
+    { start: 0.11, end: 0.14 },   // 3. Ice & Water
+    { start: 0.14, end: 0.17 },   // 4. Underlayment
+    { start: 0.17, end: 0.20 },   // 5. Drip Edge Rakes
+    { start: 0.20, end: 0.23 },   // 6. Starter Strip
+    { start: 0.23, end: 0.26 },   // 7. Shingles
+    { start: 0.26, end: 0.29 },   // 8. Vents
+    { start: 0.29, end: 0.32 },   // 9. Flashing
+    { start: 0.32, end: 0.35 },   // 10. Ridge Cap
   ];
 
-  // Show hint during buffer period (0-8%)
-  const showScrollHint = progress < 0.08;
+  // Show hint during buffer period (0-5%)
+  const showScrollHint = progress < 0.05;
   
-  // Door animation: starts at 70%, fully open at 78% (with 2% buffer before zoom)
-  const doorAngle = progress > 0.70 
-    ? Math.min(75, ((progress - 0.70) / 0.08) * 75) 
+  // Door animation: starts at 35%, fully open at 42%
+  const doorAngle = progress > 0.35 
+    ? Math.min(75, ((progress - 0.35) / 0.07) * 75) 
     : 0;
 
-  // Door zoom: starts at 80%, completes at 100% (20% scroll window)
-  const zoomProgress = progress > 0.80 
-    ? Math.min(1, (progress - 0.80) / 0.20)
+  // Door zoom: starts at 42%, completes at 50% (gallery starts at 50%)
+  const zoomProgress = progress > 0.42 
+    ? Math.min(1, (progress - 0.42) / 0.08)
     : 0;
   
   // Update scroll context so navbar can fade
@@ -80,34 +80,34 @@ const RoofBuildSection: React.FC = () => {
   const gridFadeOut = Math.max(0, 1 - (zoomProgress * 3)); // Grid gone by 33% of zoom
   const houseFadeOut = Math.max(0, 1 - (easedZoom * 2)); // House gone by 50% of zoom
 
-  // 3D Gallery visibility - Mobile starts at 90% (more doorway experience), desktop at 85%
-  const galleryStart = isMobile ? 0.90 : 0.85;
-  const galleryProgress = progress > galleryStart 
-    ? Math.min(1, (progress - galleryStart) / 0.08)
+  // 3D Gallery visibility - Mobile starts at 50%, desktop at 48%
+  const galleryStartPoint = isMobile ? 0.50 : 0.48;
+  const galleryProgress = progress > galleryStartPoint 
+    ? Math.min(1, (progress - galleryStartPoint) / 0.05)
     : 0;
   const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
   // Fade overlay completely OUT as gallery takes over with its own background
   const overlayFade = galleryProgress > 0 ? 1 - easeOutCubic(galleryProgress) : 1;
   
-  // Mobile: force overlays to fade out FASTER - completely gone by 0.92
+  // Mobile: force overlays to fade out FASTER - completely gone by 0.52
   const mobileOverlayMultiplier = isMobile 
-    ? (progress < 0.88 ? 1 : Math.max(0, 1 - ((progress - 0.88) / 0.04)))
+    ? (progress < 0.48 ? 1 : Math.max(0, 1 - ((progress - 0.48) / 0.04)))
     : 1;
 
   // Calculate staggered exit progress for label pairs (desktop only)
-  // Labels exit from 0.70 to 0.78 (as door opens, before zoom starts at 0.80)
+  // Labels exit from 0.35 to 0.42 (as door opens, before zoom completes)
   const getLabelExitProgress = (pairIndex: number): number => {
-    const doorStart = 0.70;
-    const doorEnd = 0.78;
-    const doorRange = doorEnd - doorStart; // 0.08
-    const pairWindow = doorRange / 5; // ~0.016 per pair
+    const doorStart = 0.35;
+    const doorEnd = 0.42;
+    const doorRange = doorEnd - doorStart;
+    const pairWindow = doorRange / 5;
     
     const pairStart = doorStart + (pairIndex * pairWindow);
     const pairEnd = pairStart + pairWindow;
     
-    if (progress < pairStart) return 0; // Not started
-    if (progress >= pairEnd) return 1; // Fully exited
-    return (progress - pairStart) / pairWindow; // Mid-animation 0-1
+    if (progress < pairStart) return 0;
+    if (progress >= pairEnd) return 1;
+    return (progress - pairStart) / pairWindow;
   };
 
   // Calculate which materials are "locked in"
@@ -121,7 +121,7 @@ const RoofBuildSection: React.FC = () => {
     <section
       ref={sectionRef}
       className="relative"
-      style={{ height: isMobile ? '2500vh' : '600vh' }}
+      style={{ height: isMobile ? '1600vh' : '600vh' }}
     >
 
       {/* Solid backup overlay - catches ANYTHING that escapes */}
@@ -252,8 +252,8 @@ const RoofBuildSection: React.FC = () => {
 
             {/* Mobile Step Card - positioned below house */}
             <MobileStepCard 
-              currentStep={Math.max(0, Math.min(9, Math.floor((progress - 0.08) / 0.067)))} 
-              isVisible={progress >= 0.10 && progress <= 0.75}
+              currentStep={Math.max(0, Math.min(9, Math.floor((progress - 0.05) / 0.03)))} 
+              isVisible={progress >= 0.06 && progress <= 0.35}
             />
 
             {/* Material labels - left side (positioned as overlay) */}
@@ -263,7 +263,7 @@ const RoofBuildSection: React.FC = () => {
               <div className="space-y-5">
                 {materialInfo.slice(0, 5).map((material, index) => {
                   const exitProgress = getLabelExitProgress(index);
-                  const isExiting = progress >= 0.70;
+                  const isExiting = progress >= 0.35;
                   
                   // During exit: slide left and fade out
                   // Before exit: normal lock-in animation
@@ -317,7 +317,7 @@ const RoofBuildSection: React.FC = () => {
               <div className="space-y-5">
                 {materialInfo.slice(5).map((material, index) => {
                   const exitProgress = getLabelExitProgress(index); // Same pair index as left side
-                  const isExiting = progress >= 0.70;
+                  const isExiting = progress >= 0.35;
                   
                   // During exit: slide right and fade out (positive X)
                   // Before exit: normal lock-in animation
@@ -370,18 +370,18 @@ const RoofBuildSection: React.FC = () => {
         </div>
 
 
-        {/* Progress bar - HARD HIDE at 70% before door opens */}
-        {progress < 0.70 && (
+        {/* Progress bar - HARD HIDE at 35% before door opens */}
+        {progress < 0.35 && (
           <div 
             className="absolute bottom-6 left-1/2 -translate-x-1/2 w-32 h-0.5 bg-muted/30 rounded-full overflow-hidden z-20"
             style={{
-              opacity: progress > 0.65 ? Math.max(0, 1 - ((progress - 0.65) / 0.05)) : 1,
+              opacity: progress > 0.30 ? Math.max(0, 1 - ((progress - 0.30) / 0.05)) : 1,
             }}
           >
             <div 
               className="h-full rounded-full"
               style={{
-                width: `${Math.min(progress / 0.75, 1) * 100}%`,
+                width: `${Math.min(progress / 0.35, 1) * 100}%`,
                 background: 'linear-gradient(90deg, hsl(168 80% 50%), hsl(32 80% 55%))',
                 boxShadow: '0 0 12px hsl(168 80% 50% / 0.6)',
               }}
