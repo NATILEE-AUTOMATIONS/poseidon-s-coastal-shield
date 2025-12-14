@@ -35,7 +35,7 @@ const colors = {
   vents: { fill: 'hsl(0 0% 18%)', stroke: 'hsl(168 70% 50%)', glow: 'hsl(168 80% 55%)' },
 };
 
-// Layer 1: Decking - Clean Rectangular Plywood Sheets
+// Layer 1: Decking - World-Class Plywood with Parallelogram Paths
 export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress }) => {
   const { layerProgress, isLocked } = calculateLayerState(progress, startProgress, endProgress);
   const yOffset = (1 - layerProgress) * -200;
@@ -53,6 +53,106 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
     'hsl(33 45% 44%)',   // Weathered
   ];
 
+  // Roof geometry: Left side goes from (40, 160) to (200, 55), right from (200, 55) to (360, 160)
+  // Slope ratio: rise 105 / run 160 = 0.656
+  const slope = 105 / 160; // 0.656
+  const sheetWidth = 48; // Width of each plywood sheet
+  const sheetHeight = 16; // Vertical height on screen per row
+
+  // Generate parallelogram paths for left side (sheets go from right to left)
+  const generateLeftSheets = () => {
+    const sheets: { d: string; color: string }[] = [];
+    const rows = 7;
+    
+    for (let row = 0; row < rows; row++) {
+      // Starting Y position for this row (from ridge going down)
+      const rowTopY = 55 + row * sheetHeight;
+      const rowBottomY = rowTopY + sheetHeight;
+      
+      // X positions at ridge line (x=200) going left
+      // At any Y, the left edge of roof is at: x = 40 + (160 - y) / slope... wait
+      // Left roof edge: from (40, 160) to (200, 55)
+      // At y, x_left = 40 + (160 - y) * (160/105) = 40 + (160 - y) * 1.524
+      const getLeftEdgeX = (y: number) => 40 + (160 - y) * (160 / 105);
+      
+      const leftEdgeTop = getLeftEdgeX(rowTopY);
+      const leftEdgeBottom = getLeftEdgeX(rowBottomY);
+      
+      // Stagger pattern: odd rows offset by half sheet width
+      const staggerOffset = row % 2 === 1 ? sheetWidth / 2 : 0;
+      
+      // Start from ridge (x=200) and place sheets going left
+      let currentX = 200 - staggerOffset;
+      let sheetIndex = 0;
+      
+      while (currentX > leftEdgeBottom - sheetWidth) {
+        const topLeft = Math.max(leftEdgeTop, currentX - sheetWidth);
+        const topRight = Math.min(200, currentX);
+        const bottomLeft = Math.max(leftEdgeBottom, currentX - sheetWidth);
+        const bottomRight = Math.min(200, currentX);
+        
+        // Create parallelogram: the sheet follows the roof slope
+        // Top edge is at rowTopY, shifted based on slope
+        // Bottom edge is at rowBottomY
+        const shiftX = sheetHeight / slope; // How much X shifts per row height
+        
+        const tl = { x: topRight - sheetWidth + shiftX, y: rowTopY };
+        const tr = { x: topRight, y: rowTopY };
+        const br = { x: topRight - shiftX, y: rowBottomY };
+        const bl = { x: topRight - sheetWidth, y: rowBottomY };
+        
+        const path = `M${tl.x} ${tl.y} L${tr.x} ${tr.y} L${br.x} ${br.y} L${bl.x} ${bl.y} Z`;
+        sheets.push({ d: path, color: plyColors[(row + sheetIndex) % plyColors.length] });
+        
+        currentX -= sheetWidth;
+        sheetIndex++;
+      }
+    }
+    return sheets;
+  };
+
+  // Generate parallelogram paths for right side (sheets go from left to right)
+  const generateRightSheets = () => {
+    const sheets: { d: string; color: string }[] = [];
+    const rows = 7;
+    
+    for (let row = 0; row < rows; row++) {
+      const rowTopY = 55 + row * sheetHeight;
+      const rowBottomY = rowTopY + sheetHeight;
+      
+      // Right roof edge: from (200, 55) to (360, 160)
+      // At y, x_right = 200 + (y - 55) * (160/105)
+      const getRightEdgeX = (y: number) => 200 + (y - 55) * (160 / 105);
+      
+      const rightEdgeTop = getRightEdgeX(rowTopY);
+      const rightEdgeBottom = getRightEdgeX(rowBottomY);
+      
+      // Stagger pattern
+      const staggerOffset = row % 2 === 1 ? sheetWidth / 2 : 0;
+      
+      let currentX = 200 + staggerOffset;
+      let sheetIndex = 0;
+      const shiftX = sheetHeight / slope;
+      
+      while (currentX < rightEdgeBottom + sheetWidth) {
+        const tl = { x: currentX, y: rowTopY };
+        const tr = { x: currentX + sheetWidth - shiftX, y: rowTopY };
+        const br = { x: currentX + sheetWidth, y: rowBottomY };
+        const bl = { x: currentX + shiftX, y: rowBottomY };
+        
+        const path = `M${tl.x} ${tl.y} L${tr.x} ${tr.y} L${br.x} ${br.y} L${bl.x} ${bl.y} Z`;
+        sheets.push({ d: path, color: plyColors[(row + sheetIndex + 3) % plyColors.length] });
+        
+        currentX += sheetWidth;
+        sheetIndex++;
+      }
+    }
+    return sheets;
+  };
+
+  const leftSheets = generateLeftSheets();
+  const rightSheets = generateRightSheets();
+
   return (
     <g
       style={{
@@ -62,182 +162,80 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
         transition: isLocked ? 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
       }}
     >
-      {/* Clip paths to constrain sheets to roof shape */}
+      {/* Clip paths matching exact roof geometry */}
       <defs>
         <clipPath id="leftRoofClip">
-          <path d="M52 158 L200 58 L200 160 L50 160 Z" />
+          <path d="M40 160 L200 55 L200 160 Z" />
         </clipPath>
         <clipPath id="rightRoofClip">
-          <path d="M200 58 L348 158 L350 160 L200 160 Z" />
+          <path d="M200 55 L360 160 L200 160 Z" />
         </clipPath>
       </defs>
 
-      {/* ===== LEFT ROOF SIDE ===== */}
+      {/* ===== LEFT ROOF SIDE - Parallelogram Plywood Sheets ===== */}
       <g clipPath="url(#leftRoofClip)">
-        {/* Row 1 - At ridge */}
-        <g transform="skewY(-34)">
-          <rect x="175" y="86" width="25" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="130" y="86" width="45" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="85" y="86" width="45" height="18" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="40" y="86" width="45" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="-5" y="86" width="45" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-        </g>
-        
-        {/* Row 2 */}
-        <g transform="skewY(-34)">
-          <rect x="155" y="104" width="45" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="110" y="104" width="45" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="65" y="104" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="20" y="104" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="-25" y="104" width="45" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-        </g>
-        
-        {/* Row 3 */}
-        <g transform="skewY(-34)">
-          <rect x="175" y="122" width="25" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="130" y="122" width="45" height="18" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="85" y="122" width="45" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="40" y="122" width="45" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="-5" y="122" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-        </g>
-        
-        {/* Row 4 */}
-        <g transform="skewY(-34)">
-          <rect x="155" y="140" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="110" y="140" width="45" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="65" y="140" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="20" y="140" width="45" height="18" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="-25" y="140" width="45" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-        </g>
-        
-        {/* Row 5 */}
-        <g transform="skewY(-34)">
-          <rect x="175" y="158" width="25" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="130" y="158" width="45" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="85" y="158" width="45" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="40" y="158" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="-5" y="158" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-        </g>
-        
-        {/* Row 6 - Near eaves */}
-        <g transform="skewY(-34)">
-          <rect x="155" y="176" width="45" height="18" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="110" y="176" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="65" y="176" width="45" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="20" y="176" width="45" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="-25" y="176" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-        </g>
-        
-        {/* Row 7 - At eaves */}
-        <g transform="skewY(-34)">
-          <rect x="175" y="194" width="25" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="130" y="194" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="85" y="194" width="45" height="18" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="40" y="194" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="-5" y="194" width="45" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-        </g>
+        {leftSheets.map((sheet, i) => (
+          <path
+            key={`left-${i}`}
+            d={sheet.d}
+            fill={sheet.color}
+            stroke="hsl(28 40% 32%)"
+            strokeWidth="0.8"
+          />
+        ))}
       </g>
 
-      {/* ===== RIGHT ROOF SIDE ===== */}
+      {/* ===== RIGHT ROOF SIDE - Parallelogram Plywood Sheets ===== */}
       <g clipPath="url(#rightRoofClip)">
-        {/* Row 1 - At ridge */}
-        <g transform="skewY(34)">
-          <rect x="200" y="-7" width="25" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="225" y="-7" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="270" y="-7" width="45" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="315" y="-7" width="45" height="18" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="360" y="-7" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-        </g>
-        
-        {/* Row 2 */}
-        <g transform="skewY(34)">
-          <rect x="200" y="11" width="45" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="245" y="11" width="45" height="18" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="290" y="11" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="335" y="11" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="380" y="11" width="45" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-        </g>
-        
-        {/* Row 3 */}
-        <g transform="skewY(34)">
-          <rect x="200" y="29" width="25" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="225" y="29" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="270" y="29" width="45" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="315" y="29" width="45" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="360" y="29" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-        </g>
-        
-        {/* Row 4 */}
-        <g transform="skewY(34)">
-          <rect x="200" y="47" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="245" y="47" width="45" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="290" y="47" width="45" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="335" y="47" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="380" y="47" width="45" height="18" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-        </g>
-        
-        {/* Row 5 */}
-        <g transform="skewY(34)">
-          <rect x="200" y="65" width="25" height="18" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="225" y="65" width="45" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="270" y="65" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="315" y="65" width="45" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="360" y="65" width="45" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-        </g>
-        
-        {/* Row 6 - Near eaves */}
-        <g transform="skewY(34)">
-          <rect x="200" y="83" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="245" y="83" width="45" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="290" y="83" width="45" height="18" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="335" y="83" width="45" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="380" y="83" width="45" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-        </g>
-        
-        {/* Row 7 - At eaves */}
-        <g transform="skewY(34)">
-          <rect x="200" y="101" width="25" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="225" y="101" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="270" y="101" width="45" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="315" y="101" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-          <rect x="360" y="101" width="45" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
-        </g>
+        {rightSheets.map((sheet, i) => (
+          <path
+            key={`right-${i}`}
+            d={sheet.d}
+            fill={sheet.color}
+            stroke="hsl(28 40% 32%)"
+            strokeWidth="0.8"
+          />
+        ))}
       </g>
 
       {/* ===== Subtle Wood Grain Overlay ===== */}
-      <g opacity="0.15" clipPath="url(#leftRoofClip)">
-        <line x1="80" y1="155" x2="170" y2="95" stroke="hsl(25 40% 35%)" strokeWidth="0.5" />
-        <line x1="100" y1="155" x2="185" y2="100" stroke="hsl(25 40% 35%)" strokeWidth="0.4" />
-        <line x1="130" y1="155" x2="195" y2="115" stroke="hsl(25 40% 35%)" strokeWidth="0.5" />
+      <g opacity="0.12" clipPath="url(#leftRoofClip)">
+        <line x1="60" y1="160" x2="180" y2="80" stroke="hsl(25 40% 35%)" strokeWidth="0.5" />
+        <line x1="80" y1="160" x2="192" y2="90" stroke="hsl(25 40% 35%)" strokeWidth="0.4" />
+        <line x1="100" y1="160" x2="198" y2="108" stroke="hsl(25 40% 35%)" strokeWidth="0.5" />
+        <line x1="140" y1="160" x2="200" y2="130" stroke="hsl(25 40% 35%)" strokeWidth="0.4" />
       </g>
-      <g opacity="0.15" clipPath="url(#rightRoofClip)">
-        <line x1="230" y1="95" x2="320" y2="155" stroke="hsl(25 40% 35%)" strokeWidth="0.5" />
-        <line x1="215" y1="100" x2="300" y2="155" stroke="hsl(25 40% 35%)" strokeWidth="0.4" />
-        <line x1="205" y1="115" x2="270" y2="155" stroke="hsl(25 40% 35%)" strokeWidth="0.5" />
+      <g opacity="0.12" clipPath="url(#rightRoofClip)">
+        <line x1="220" y1="80" x2="340" y2="160" stroke="hsl(25 40% 35%)" strokeWidth="0.5" />
+        <line x1="208" y1="90" x2="320" y2="160" stroke="hsl(25 40% 35%)" strokeWidth="0.4" />
+        <line x1="202" y1="108" x2="300" y2="160" stroke="hsl(25 40% 35%)" strokeWidth="0.5" />
+        <line x1="200" y1="130" x2="260" y2="160" stroke="hsl(25 40% 35%)" strokeWidth="0.4" />
       </g>
 
       {/* ===== Small Knots ===== */}
-      <g opacity="0.4">
-        <circle cx="130" cy="115" r="1.5" fill="hsl(25 50% 30%)" />
-        <circle cx="160" cy="140" r="2" fill="hsl(25 50% 30%)" />
-        <circle cx="95" cy="135" r="1.5" fill="hsl(25 50% 30%)" />
-        <circle cx="240" cy="115" r="1.5" fill="hsl(25 50% 30%)" />
-        <circle cx="270" cy="140" r="2" fill="hsl(25 50% 30%)" />
-        <circle cx="305" cy="135" r="1.5" fill="hsl(25 50% 30%)" />
+      <g opacity="0.35">
+        <circle cx="120" cy="100" r="1.5" fill="hsl(25 50% 30%)" />
+        <circle cx="155" cy="130" r="2" fill="hsl(25 50% 30%)" />
+        <circle cx="85" cy="145" r="1.5" fill="hsl(25 50% 30%)" />
+        <circle cx="175" cy="115" r="1.2" fill="hsl(25 50% 30%)" />
+        <circle cx="250" cy="100" r="1.5" fill="hsl(25 50% 30%)" />
+        <circle cx="285" cy="130" r="2" fill="hsl(25 50% 30%)" />
+        <circle cx="320" cy="145" r="1.5" fill="hsl(25 50% 30%)" />
+        <circle cx="230" cy="120" r="1.2" fill="hsl(25 50% 30%)" />
       </g>
 
-      {/* ===== Ridge Line ===== */}
+      {/* ===== Ridge Line - Center seam ===== */}
       <line 
-        x1="200" y1="58" x2="200" y2="158" 
+        x1="200" y1="55" x2="200" y2="160" 
         stroke="hsl(25 35% 25%)" 
-        strokeWidth="2"
+        strokeWidth="2.5"
       />
 
-      {/* Glow when locked */}
+      {/* Glow effect when locked */}
       {isLocked && (
-        <g style={{ filter: 'drop-shadow(0 0 10px hsl(35 70% 55%)) drop-shadow(0 0 20px hsl(35 60% 50%))' }}>
+        <g style={{ filter: 'drop-shadow(0 0 12px hsl(35 70% 55%)) drop-shadow(0 0 25px hsl(35 60% 50%))' }}>
           <path
-            d="M52 158 L200 58 L348 158"
+            d="M40 160 L200 55 L360 160"
             fill="none"
             stroke="hsl(38 65% 55%)"
             strokeWidth="2"
