@@ -17,7 +17,6 @@ import {
 } from './RoofBuild/RoofLayers';
 
 import YardSign from './RoofBuild/YardSign';
-import MobileFlipCard from './RoofBuild/MobileFlipCard';
 import { useScrollContext } from '@/context/ScrollContext';
 import ImageGallery3D from './RoofBuild/ImageGallery3D';
 import MobileFirstImage from './RoofBuild/MobileFirstImage';
@@ -253,11 +252,6 @@ const RoofBuildSection: React.FC = () => {
               </div>
             )}
 
-
-            {/* Mobile Flip Card - 3D animated material display below house */}
-            {isMobile && progress >= 0.08 && progress < 0.92 && (
-              <MobileFlipCard scrollProgress={progress} />
-            )}
 
             {/* Material labels - left side (positioned as overlay) */}
             <div
