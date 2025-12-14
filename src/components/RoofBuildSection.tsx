@@ -269,32 +269,33 @@ const RoofBuildSection: React.FC = () => {
                     `,
                   }}
                 >
-                  {/* Orange glowing snake border - ULTRA NEON */}
-                  <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
-                    <div 
-                      className="absolute w-28 h-28 animate-border-snake"
-                      style={{
-                        background: 'radial-gradient(circle, hsl(35 100% 70%) 0%, hsl(30 100% 60% / 0.95) 20%, hsl(25 100% 55% / 0.9) 40%, hsl(30 100% 50% / 0.4) 65%, transparent 85%)',
-                        filter: 'blur(10px)',
-                        boxShadow: [
-                          '0 0 40px hsl(30 100% 65%)',
-                          '0 0 80px hsl(30 100% 60% / 0.9)',
-                          '0 0 120px hsl(25 100% 55% / 0.8)',
-                          '0 0 180px hsl(30 100% 55% / 0.7)'
-                        ].join(', '),
-                      }}
-                    />
-                  </div>
-                  
-                  {/* Card border overlay for snake to travel on */}
+                  {/* Card border overlay and neon snake path */}
                   <div 
                     className="absolute inset-0 rounded-2xl pointer-events-none"
                     style={{
                       border: '2px solid transparent',
-                      background: 'linear-gradient(hsl(160 25% 6%), hsl(160 25% 6%)) padding-box, linear-gradient(90deg, hsl(168 50% 35% / 0.2), hsl(30 80% 50% / 0.1), hsl(168 50% 35% / 0.2)) border-box',
+                      background: 'linear-gradient(hsl(160 25% 6%), hsl(160 25% 6%)) padding-box, linear-gradient(90deg, hsl(168 50% 35% / 0.25), hsl(30 95% 55% / 0.15), hsl(168 50% 35% / 0.25)) border-box',
                       borderRadius: '1rem',
                     }}
                   />
+
+                  {/* Ultra neon orange snake ABOVE border but BELOW content */}
+                  <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none" style={{ zIndex: 5, mixBlendMode: 'screen' }}>
+                    <div 
+                      className="absolute w-32 h-32 animate-border-snake"
+                      style={{
+                        background: 'radial-gradient(circle, hsl(35 100% 75%) 0%, hsl(30 100% 65% / 0.98) 18%, hsl(25 100% 60% / 0.95) 38%, hsl(30 100% 55% / 0.55) 60%, transparent 82%)',
+                        filter: 'blur(8px)',
+                        opacity: 0.95,
+                        boxShadow: [
+                          '0 0 45px hsl(30 100% 68%)',
+                          '0 0 90px hsl(30 100% 62% / 0.95)',
+                          '0 0 140px hsl(25 100% 58% / 0.9)',
+                          '0 0 210px hsl(30 100% 58% / 0.85)'
+                        ].join(', '),
+                      }}
+                    />
+                  </div>
                   
                   <div className="relative z-10 flex items-start gap-5">
                     {/* Step Number */}
