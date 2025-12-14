@@ -252,6 +252,46 @@ const RoofBuildSection: React.FC = () => {
               </div>
             )}
 
+            {/* Mobile Step Card - static display below house */}
+            {isMobile && progress >= 0.08 && progress < 0.92 && (() => {
+              const animStart = 0.08;
+              const animEnd = 0.90;
+              const normalizedProg = (progress - animStart) / (animEnd - animStart);
+              const currentStep = Math.max(0, Math.min(9, Math.floor(normalizedProg * 10)));
+              const material = materialInfo[currentStep];
+              
+              return (
+                <div className="absolute -bottom-8 left-0 right-0 flex justify-center z-10 px-4">
+                  <div 
+                    className="px-5 py-4 rounded-xl max-w-xs w-full"
+                    style={{
+                      background: 'hsl(160 25% 6% / 0.95)',
+                      border: '1px solid hsl(168 50% 30% / 0.4)',
+                      boxShadow: '0 4px 24px hsl(0 0% 0% / 0.5)',
+                    }}
+                  >
+                    <div className="flex items-start gap-3">
+                      <span 
+                        className="text-lg font-semibold"
+                        style={{ 
+                          color: 'hsl(168 70% 55%)',
+                          textShadow: '0 0 10px hsl(168 70% 50% / 0.5)' 
+                        }}
+                      >
+                        {currentStep + 1}.
+                      </span>
+                      <div>
+                        <div className="text-white font-semibold text-sm">{material?.name}</div>
+                        <div className="text-xs mt-1" style={{ color: 'hsl(168 30% 60%)' }}>
+                          {material?.description}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
 
             {/* Material labels - left side (positioned as overlay) */}
             <div
