@@ -303,26 +303,6 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
           <line x1="105" y1="96" x2="105" y2="108" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
         </g>
 
-        {/* Step flashing - where chimney meets roof */}
-        <path
-          d="M85 132 L88 130 L88 117 L122 117 L125 114 L125 120 L88 133 Z"
-          fill="url(#flashingGradient)"
-          stroke="hsl(168 80% 50%)"
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-          style={{ filter: 'drop-shadow(0 0 8px hsl(168 80% 45% / 0.5))' }}
-        />
-        
-        {/* Counter flashing detail */}
-        <line
-          x1="88"
-          y1="120"
-          x2="122"
-          y2="113"
-          stroke="hsl(168 70% 55%)"
-          strokeWidth="1"
-          opacity="0.6"
-        />
         
         {/* Chimney crown (top cap) */}
         <rect
@@ -391,21 +371,6 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
         </g>
       </g>
 
-      {/* Label for roof deck */}
-      <g className="roof-deck-label" opacity="0.5">
-        <text
-          x="200"
-          y="120"
-          textAnchor="middle"
-          fill="hsl(168 70% 55%)"
-          fontSize="11"
-          fontFamily="system-ui, sans-serif"
-          fontWeight="500"
-          letterSpacing="0.1em"
-        >
-          ROOF DECK
-        </text>
-      </g>
       
       {/* Light rays from doorway */}
       {lightIntensity > 0 && (
