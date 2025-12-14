@@ -239,149 +239,69 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
             <stop offset="0%" stopColor="hsl(168 20% 10%)" />
             <stop offset="100%" stopColor="hsl(168 30% 18%)" />
           </linearGradient>
-          <filter id="pipeGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="2" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
         </defs>
 
-        {/* Left slope pipe boot - positioned at x=155, on roof slope */}
-        <g className="pipe-boot-left" style={{ filter: 'drop-shadow(0 0 6px hsl(168 70% 45% / 0.4))' }}>
-          {/* Rubber boot base (ellipse on roof) */}
+        {/* Single pipe boot on left slope - sits on roof at x=165 */}
+        <g className="pipe-boot" style={{ filter: 'drop-shadow(0 0 5px hsl(168 70% 45% / 0.3))' }}>
+          {/* Rubber boot base flush with roof */}
           <ellipse
-            cx="155"
-            cy="118"
-            rx="10"
-            ry="4"
+            cx="165"
+            cy="113"
+            rx="8"
+            ry="3"
             fill="url(#bootGradient)"
-            stroke="hsl(168 60% 45%)"
+            stroke="hsl(168 55% 42%)"
             strokeWidth="1"
           />
-          {/* Boot collar */}
-          <ellipse
-            cx="155"
-            cy="112"
-            rx="7"
-            ry="3"
-            fill="hsl(168 25% 15%)"
-            stroke="hsl(168 55% 40%)"
-            strokeWidth="0.75"
-          />
-          {/* Pipe shaft */}
+          {/* Pipe shaft - shorter, cleaner */}
           <rect
-            x="151"
-            y="95"
+            x="161"
+            y="100"
             width="8"
-            height="18"
+            height="14"
             fill="url(#pipeGradient)"
-            stroke="hsl(168 65% 50%)"
+            stroke="hsl(168 60% 48%)"
             strokeWidth="1"
             rx="1"
           />
           {/* Pipe cap */}
           <ellipse
-            cx="155"
-            cy="95"
+            cx="165"
+            cy="100"
             rx="5"
             ry="2"
-            fill="hsl(168 35% 25%)"
-            stroke="hsl(168 70% 55%)"
-            strokeWidth="1"
-          />
-          {/* Highlight on pipe */}
-          <line x1="152" y1="97" x2="152" y2="110" stroke="hsl(168 80% 60%)" strokeWidth="0.5" opacity="0.4" />
-        </g>
-
-        {/* Right slope pipe boot - positioned at x=275, on roof slope */}
-        <g className="pipe-boot-right" style={{ filter: 'drop-shadow(0 0 6px hsl(168 70% 45% / 0.4))' }}>
-          {/* Rubber boot base */}
-          <ellipse
-            cx="275"
-            cy="105"
-            rx="9"
-            ry="3.5"
-            fill="url(#bootGradient)"
-            stroke="hsl(168 60% 45%)"
-            strokeWidth="1"
-          />
-          {/* Boot collar */}
-          <ellipse
-            cx="275"
-            cy="100"
-            rx="6"
-            ry="2.5"
-            fill="hsl(168 25% 15%)"
-            stroke="hsl(168 55% 40%)"
-            strokeWidth="0.75"
-          />
-          {/* Pipe shaft */}
-          <rect
-            x="271.5"
-            y="85"
-            width="7"
-            height="16"
-            fill="url(#pipeGradient)"
+            fill="hsl(168 30% 22%)"
             stroke="hsl(168 65% 50%)"
             strokeWidth="1"
-            rx="1"
           />
-          {/* Pipe cap */}
-          <ellipse
-            cx="275"
-            cy="85"
-            rx="4.5"
-            ry="1.8"
-            fill="hsl(168 35% 25%)"
-            stroke="hsl(168 70% 55%)"
-            strokeWidth="1"
-          />
-          {/* Highlight */}
-          <line x1="272.5" y1="87" x2="272.5" y2="98" stroke="hsl(168 80% 60%)" strokeWidth="0.5" opacity="0.4" />
         </g>
 
-        {/* Box vent on right slope - positioned at x=310 */}
-        <g className="box-vent" style={{ filter: 'drop-shadow(0 0 8px hsl(168 70% 45% / 0.35))' }}>
-          {/* Vent base flange */}
+        {/* Box vent on right slope - sits lower on roof at x=290 */}
+        <g className="box-vent" style={{ filter: 'drop-shadow(0 0 5px hsl(168 70% 45% / 0.3))' }}>
+          {/* Vent base flange - flush with roof */}
           <path
-            d="M298 128 L322 128 L320 135 L300 135 Z"
-            fill="hsl(168 25% 12%)"
-            stroke="hsl(168 60% 45%)"
+            d="M280 138 L300 138 L298 143 L282 143 Z"
+            fill="hsl(168 22% 12%)"
+            stroke="hsl(168 55% 42%)"
             strokeWidth="1"
           />
           {/* Vent hood */}
           <path
-            d="M300 128 L320 128 L318 118 L302 118 Z"
+            d="M282 138 L298 138 L296 130 L284 130 Z"
             fill="url(#pipeGradient)"
-            stroke="hsl(168 65% 50%)"
-            strokeWidth="1.5"
+            stroke="hsl(168 60% 48%)"
+            strokeWidth="1"
             strokeLinejoin="round"
           />
-          {/* Vent opening (dark slot) */}
+          {/* Vent opening slot */}
           <rect
-            x="304"
-            y="123"
-            width="12"
-            height="4"
+            x="286"
+            y="133"
+            width="8"
+            height="3"
             fill="hsl(0 0% 5%)"
             rx="0.5"
           />
-          {/* Opening rim glow */}
-          <rect
-            x="304"
-            y="123"
-            width="12"
-            height="4"
-            fill="none"
-            stroke="hsl(168 50% 35%)"
-            strokeWidth="0.5"
-            rx="0.5"
-            opacity="0.6"
-          />
-          {/* Top highlight edge */}
-          <line x1="302" y1="118" x2="318" y2="118" stroke="hsl(168 80% 60%)" strokeWidth="0.75" opacity="0.5" />
         </g>
       </g>
 
