@@ -256,63 +256,68 @@ const RoofBuildSection: React.FC = () => {
 
             {/* Mobile Step Card - single static card below house */}
             {isMobile && (
-              <div className="mt-8 w-full flex justify-center px-4">
+              <div className="mt-10 w-full flex justify-center px-3">
                 <div
-                  className="relative px-6 py-5 rounded-2xl w-full max-w-sm overflow-hidden"
+                  className="relative px-7 py-6 rounded-2xl w-full max-w-md overflow-hidden mobile-step-card"
                   style={{
                     background: 'linear-gradient(145deg, hsl(160 30% 8% / 0.98) 0%, hsl(160 25% 4% / 0.99) 100%)',
-                    border: '1px solid hsl(168 60% 35% / 0.5)',
+                    border: '1px solid hsl(168 50% 30% / 0.3)',
                     boxShadow: `
-                      0 0 40px hsl(168 70% 45% / 0.15),
-                      0 8px 32px hsl(0 0% 0% / 0.6),
-                      inset 0 1px 0 hsl(168 50% 50% / 0.1)
+                      0 0 50px hsl(168 70% 45% / 0.12),
+                      0 12px 40px hsl(0 0% 0% / 0.7),
+                      inset 0 1px 0 hsl(168 50% 50% / 0.08)
                     `,
                   }}
                 >
-                  {/* Top accent glow line */}
+                  {/* Orange glowing snake border */}
+                  <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+                    <div 
+                      className="absolute w-20 h-20 animate-border-snake"
+                      style={{
+                        background: 'radial-gradient(circle, hsl(30 100% 55% / 0.9) 0%, hsl(35 100% 50% / 0.5) 40%, transparent 70%)',
+                        filter: 'blur(8px)',
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Card border overlay for snake to travel on */}
                   <div 
-                    className="absolute top-0 left-4 right-4 h-px"
+                    className="absolute inset-0 rounded-2xl pointer-events-none"
                     style={{
-                      background: 'linear-gradient(90deg, transparent, hsl(168 80% 55% / 0.8), transparent)',
+                      border: '2px solid transparent',
+                      background: 'linear-gradient(hsl(160 25% 6%), hsl(160 25% 6%)) padding-box, linear-gradient(90deg, hsl(168 50% 35% / 0.2), hsl(30 80% 50% / 0.1), hsl(168 50% 35% / 0.2)) border-box',
+                      borderRadius: '1rem',
                     }}
                   />
                   
-                  <div className="flex items-start gap-4">
+                  <div className="relative z-10 flex items-start gap-5">
                     {/* Step Number */}
                     <span
-                      className="text-3xl font-light font-mono"
+                      className="text-5xl font-light font-mono"
                       style={{
                         color: 'hsl(168 80% 55%)',
-                        textShadow: '0 0 20px hsl(168 80% 50% / 0.8), 0 0 40px hsl(168 70% 45% / 0.4)',
+                        textShadow: '0 0 25px hsl(168 80% 50% / 0.9), 0 0 50px hsl(168 70% 45% / 0.5)',
                       }}
                     >
                       1.
                     </span>
                     
                     {/* Content */}
-                    <div className="flex-1">
+                    <div className="flex-1 pt-1">
                       <div 
-                        className="text-xl font-semibold tracking-wide"
+                        className="text-2xl font-semibold tracking-wide"
                         style={{ color: 'hsl(0 0% 98%)' }}
                       >
                         Replace Decking
                       </div>
                       <div 
-                        className="text-sm mt-2 leading-relaxed"
+                        className="text-base mt-3 leading-relaxed"
                         style={{ color: 'hsl(168 25% 65%)' }}
                       >
                         Replace any damaged plywood/decking so your new roof starts on a solid base.
                       </div>
                     </div>
                   </div>
-                  
-                  {/* Bottom accent */}
-                  <div 
-                    className="absolute bottom-0 left-6 right-6 h-px"
-                    style={{
-                      background: 'linear-gradient(90deg, transparent, hsl(168 50% 40% / 0.3), transparent)',
-                    }}
-                  />
                 </div>
               </div>
             )}
