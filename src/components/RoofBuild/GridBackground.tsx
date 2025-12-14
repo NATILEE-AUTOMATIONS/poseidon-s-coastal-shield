@@ -11,7 +11,7 @@ const GridBackground: React.FC = () => {
         className="absolute inset-0"
         style={{
           perspective: '600px',
-          perspectiveOrigin: '50% 35%',
+          perspectiveOrigin: '50% 50%',
         }}
       >
         {/* Horizontal grid (ground plane) */}
@@ -62,9 +62,9 @@ const GridBackground: React.FC = () => {
         />
       </div>
       
-      {/* Horizon glow line - more dramatic */}
+      {/* Horizon glow line - more dramatic, consistent position */}
       <div 
-        className="absolute left-0 right-0 top-[15%] md:top-[25%]"
+        className="absolute left-0 right-0 top-[35%] md:top-[25%]"
         style={{
           height: '2px',
           background: 'linear-gradient(90deg, transparent 5%, hsl(168 80% 55% / 0.8) 25%, hsl(168 80% 60% / 1) 50%, hsl(168 80% 55% / 0.8) 75%, transparent 95%)',
