@@ -21,9 +21,9 @@ const renderCard = (
   const material = materialInfo[cardIndex];
   if (!material) return null;
 
-  // 3D cube rotation phases - exit starts when next card begins entering
-  const entryEnd = 0.35;
-  const exitStart = 0.55;
+  // 3D cube rotation phases - NO dead zone, always in motion
+  const entryEnd = 0.35;    // Entry: 0% → 35%
+  const exitStart = 0.35;   // Exit: 35% → 100% (starts immediately after entry)
 
   let rotateY = 0;
   let translateX = 0;
@@ -35,15 +35,15 @@ const renderCard = (
     const t = cardProgress / entryEnd;
     const eased = easeOutQuint(Math.min(1, t));
     rotateY = 90 * (1 - eased);
-    translateX = 80 * (1 - eased);
+    translateX = 100 * (1 - eased);
     scale = 0.85 + 0.15 * eased;
     glowIntensity = 0.5 + 0.5 * eased;
-  } else if (cardProgress >= exitStart) {
-    // Rotate out to left face of cube
+  } else {
+    // Rotate out to left face of cube (starts immediately at 35%)
     const t = (cardProgress - exitStart) / (1 - exitStart);
     const eased = easeInQuint(Math.min(1, t));
     rotateY = -90 * eased;
-    translateX = -80 * eased;
+    translateX = -100 * eased;
     scale = 1 - 0.15 * eased;
     glowIntensity = 1 - 0.5 * eased;
   }
@@ -148,31 +148,30 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({
   const rawCardProgress = (progress - cardStart) / layerStep;
   const cardProgress = Math.max(0, Math.min(1, rawCardProgress));
 
-  // Overlap configuration - earlier start, longer entry for smoother handoff
-  const overlapStart = 0.55;
-  const entryEnd = 0.35;
+  // Overlap configuration - next card appears when current is 60% through
+  const overlapStart = 0.60;
   
   // Determine which cards to render
   const cardsToRender: Array<{ index: number; progress: number; isEntering: boolean; zIndex: number }> = [];
 
-  // Always render the current card (exiting card stays on top)
+  // Current card (exiting) - behind
   cardsToRender.push({
     index: activeCardIndex,
     progress: cardProgress,
     isEntering: false,
-    zIndex: 2
+    zIndex: 1
   });
 
-  // If we're in the overlap zone and there's a next card, render it too
+  // If we're in the overlap zone and there's a next card, render it on top
   if (cardProgress >= overlapStart && activeCardIndex < totalCards - 1) {
-    // Map current card's 0.60-1.0 to next card's 0.0-0.30 (entry phase)
-    const nextCardProgress = ((cardProgress - overlapStart) / (1 - overlapStart)) * entryEnd;
+    // Map current card's 60-100% to next card's 0-35% (full entry phase)
+    const nextCardProgress = ((cardProgress - overlapStart) / (1 - overlapStart)) * 0.35;
     
     cardsToRender.push({
       index: activeCardIndex + 1,
       progress: nextCardProgress,
       isEntering: true,
-      zIndex: 1
+      zIndex: 2
     });
   }
 
