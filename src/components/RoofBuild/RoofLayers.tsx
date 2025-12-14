@@ -4,6 +4,7 @@ interface LayerProps {
   progress: number;
   startProgress: number;
   endProgress: number;
+  isMobile?: boolean;
 }
 
 // Material info for step cards
@@ -24,7 +25,7 @@ export const materialInfo = [
 const easeOutQuint = (x: number): number => 1 - Math.pow(1 - x, 5);
 
 // Realistic plywood decking - fits exactly on roof shape (40,160 -> 200,55 -> 360,160)
-export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress }) => {
+export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
@@ -135,8 +136,8 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
       <line x1="200" y1="56" x2="200" y2="159" stroke="hsl(30 35% 55%)" strokeWidth="0.6" opacity="0.4" />
       <line x1="200" y1="56" x2="200" y2="159" stroke="hsl(25 30% 18%)" strokeWidth="2.2" />
       
-      {/* "Replace Decking" - fades in/out at end of animation */}
-      {(() => {
+      {/* "Replace Decking" label - desktop only */}
+      {!isMobile && (() => {
         let labelOpacity = 0;
         if (layerProgress >= 0.6 && layerProgress < 0.7) {
           labelOpacity = (layerProgress - 0.6) / 0.1; // fade in
