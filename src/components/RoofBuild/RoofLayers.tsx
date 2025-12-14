@@ -29,22 +29,26 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
-  // Not visible yet
-  if (progress < startProgress) return null;
+  // Not visible yet - delay visibility until 20% into the animation window
+  if (layerProgress < 0.2) return null;
   
-  // Smooth easing for gentle settling
-  const easedProgress = easeOutQuint(layerProgress);
+  // Remap progress: 0.2-1.0 becomes 0-1 for the actual animation
+  const remappedProgress = (layerProgress - 0.2) / 0.8;
   
-  // Animation values
-  const translateY = -80 * (1 - easedProgress); // Drop from 80px above
-  const opacity = 0.3 + (0.7 * easedProgress); // Fade in from 0.3 to 1
+  // Ultra-smooth easing for gentle, deliberate settling
+  const easeOutSine = (x: number): number => Math.sin((x * Math.PI) / 2);
+  const easedProgress = easeOutSine(remappedProgress);
   
-  // Subtle scale pulse when settling (last 15% of animation)
-  const settlePhase = layerProgress > 0.85 ? (layerProgress - 0.85) / 0.15 : 0;
-  const scale = 1 + (0.015 * Math.sin(settlePhase * Math.PI)); // Gentle pulse
+  // Animation values - slower, more dramatic drop
+  const translateY = -120 * (1 - easedProgress); // Drop from further above
+  const opacity = 0.2 + (0.8 * easedProgress); // Fade in from 0.2 to 1
+  
+  // Subtle scale pulse when settling (last 10% of animation)
+  const settlePhase = remappedProgress > 0.9 ? (remappedProgress - 0.9) / 0.1 : 0;
+  const scale = 1 + (0.012 * Math.sin(settlePhase * Math.PI)); // Gentle pulse
   
   // Glow intensifies as it locks in
-  const glowIntensity = 0.2 + (easedProgress * 0.5);
+  const glowIntensity = 0.15 + (easedProgress * 0.45);
   
   return (
     <g 
