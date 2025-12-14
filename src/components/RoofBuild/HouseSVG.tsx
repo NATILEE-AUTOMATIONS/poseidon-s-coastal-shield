@@ -199,6 +199,101 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
         </g>
       </g>
 
+      {/* ===== CHIMNEY (Left side of roof) ===== */}
+      <g className="chimney">
+        {/* Chimney gradient */}
+        <defs>
+          <linearGradient id="chimneyGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="hsl(168 25% 18%)" />
+            <stop offset="50%" stopColor="hsl(168 30% 22%)" />
+            <stop offset="100%" stopColor="hsl(168 20% 14%)" />
+          </linearGradient>
+          <linearGradient id="chimneyCapGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="hsl(168 35% 28%)" />
+            <stop offset="100%" stopColor="hsl(168 25% 18%)" />
+          </linearGradient>
+        </defs>
+        
+        {/* Chimney body */}
+        <rect
+          x="85"
+          y="70"
+          width="28"
+          height="55"
+          fill="url(#chimneyGradient)"
+          stroke="hsl(168 60% 40%)"
+          strokeWidth="1.5"
+          style={{ filter: 'drop-shadow(0 0 8px hsl(168 80% 40% / 0.25))' }}
+        />
+        
+        {/* Brick texture lines */}
+        <g opacity="0.3">
+          <line x1="85" y1="80" x2="113" y2="80" stroke="hsl(168 50% 35%)" strokeWidth="0.75" />
+          <line x1="85" y1="90" x2="113" y2="90" stroke="hsl(168 50% 35%)" strokeWidth="0.75" />
+          <line x1="85" y1="100" x2="113" y2="100" stroke="hsl(168 50% 35%)" strokeWidth="0.75" />
+          <line x1="85" y1="110" x2="113" y2="110" stroke="hsl(168 50% 35%)" strokeWidth="0.75" />
+          <line x1="99" y1="70" x2="99" y2="80" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
+          <line x1="92" y1="80" x2="92" y2="90" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
+          <line x1="106" y1="80" x2="106" y2="90" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
+          <line x1="99" y1="90" x2="99" y2="100" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
+          <line x1="92" y1="100" x2="92" y2="110" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
+          <line x1="106" y1="100" x2="106" y2="110" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
+        </g>
+        
+        {/* Chimney cap */}
+        <rect
+          x="82"
+          y="66"
+          width="34"
+          height="6"
+          fill="url(#chimneyCapGradient)"
+          stroke="hsl(168 70% 50%)"
+          strokeWidth="1"
+          rx="1"
+          style={{ filter: 'drop-shadow(0 0 6px hsl(168 80% 45% / 0.4))' }}
+        />
+        
+        {/* Chimney crown detail */}
+        <rect
+          x="84"
+          y="63"
+          width="30"
+          height="4"
+          fill="hsl(168 30% 25%)"
+          stroke="hsl(168 60% 45%)"
+          strokeWidth="0.75"
+          rx="0.5"
+        />
+        
+        {/* Inner chimney opening */}
+        <rect
+          x="90"
+          y="63"
+          width="18"
+          height="3"
+          fill="hsl(0 0% 5%)"
+          rx="0.5"
+        />
+        
+        {/* Subtle smoke wisps */}
+        <g opacity="0.15">
+          <path
+            d="M96 60 Q94 52 98 45 Q96 38 99 30"
+            fill="none"
+            stroke="hsl(0 0% 70%)"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+          <path
+            d="M102 58 Q105 50 101 42 Q104 35 100 28"
+            fill="none"
+            stroke="hsl(0 0% 70%)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+        </g>
+      </g>
+
       {/* Roof deck (the bare structure) */}
       <g className="roof-deck">
         {/* Roof deck surface */}
