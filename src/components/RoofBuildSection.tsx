@@ -29,21 +29,28 @@ const RoofBuildSection: React.FC = () => {
   const { setZoomProgress } = useScrollContext();
   const isMobile = useIsMobile();
 
-  // Layer timing - SPREAD OUT for slower animation on mobile
-  // Roof layers: 8-60%, Door: 60-72%, Zoom: 72-88%, Gallery: 88%+
-  const roofProgress = Math.min(1, progress / 0.60);
+  // Layer timing - MUCH SLOWER on mobile (8-90%), desktop unchanged (8-60%)
+  // Mobile: spread across 82% of scroll for leisurely viewing
+  // Desktop: Roof layers: 8-60%, Door: 60-72%, Zoom: 72-88%, Gallery: 88%+
+  const roofProgress = Math.min(1, progress / (isMobile ? 0.90 : 0.60));
+  
+  // Mobile layers spread from 8% to 90%, desktop from 8% to 60%
+  const mobileLayerStep = 0.082; // Each layer gets 8.2% of scroll
+  const desktopLayerStep = 0.052; // Each layer gets 5.2% of scroll
+  const layerStep = isMobile ? mobileLayerStep : desktopLayerStep;
+  const layerStart = 0.08;
   
   const layers = [
-    { start: 0.08, end: 0.132 },   // 1. Decking
-    { start: 0.132, end: 0.184 },  // 2. Drip Edge Eaves
-    { start: 0.184, end: 0.236 },  // 3. Ice & Water
-    { start: 0.236, end: 0.288 },  // 4. Underlayment
-    { start: 0.288, end: 0.340 },  // 5. Drip Edge Rakes
-    { start: 0.340, end: 0.392 },  // 6. Starter Strip
-    { start: 0.392, end: 0.444 },  // 7. Shingles
-    { start: 0.444, end: 0.496 },  // 8. Vents
-    { start: 0.496, end: 0.548 },  // 9. Flashing
-    { start: 0.548, end: 0.600 },  // 10. Ridge Cap
+    { start: layerStart, end: layerStart + layerStep },                           // 1. Decking
+    { start: layerStart + layerStep, end: layerStart + layerStep * 2 },           // 2. Drip Edge Eaves
+    { start: layerStart + layerStep * 2, end: layerStart + layerStep * 3 },       // 3. Ice & Water
+    { start: layerStart + layerStep * 3, end: layerStart + layerStep * 4 },       // 4. Underlayment
+    { start: layerStart + layerStep * 4, end: layerStart + layerStep * 5 },       // 5. Drip Edge Rakes
+    { start: layerStart + layerStep * 5, end: layerStart + layerStep * 6 },       // 6. Starter Strip
+    { start: layerStart + layerStep * 6, end: layerStart + layerStep * 7 },       // 7. Shingles
+    { start: layerStart + layerStep * 7, end: layerStart + layerStep * 8 },       // 8. Vents
+    { start: layerStart + layerStep * 8, end: layerStart + layerStep * 9 },       // 9. Flashing
+    { start: layerStart + layerStep * 9, end: layerStart + layerStep * 10 },      // 10. Ridge Cap
   ];
 
   // Show hint during buffer period (0-8%)
@@ -118,7 +125,7 @@ const RoofBuildSection: React.FC = () => {
     <section
       ref={sectionRef}
       className="relative"
-      style={{ height: isMobile ? '200vh' : '600vh' }}
+      style={{ height: isMobile ? '350vh' : '600vh' }}
     >
 
       {/* Solid backup overlay - catches ANYTHING that escapes */}
@@ -247,8 +254,8 @@ const RoofBuildSection: React.FC = () => {
 
             {/* Mobile Step Card - positioned below house */}
             <MobileStepCard 
-              currentStep={Math.max(0, Math.min(9, Math.floor((progress - 0.08) / 0.052)))} 
-              isVisible={progress >= 0.08 && progress <= 0.60}
+              currentStep={Math.max(0, Math.min(9, Math.floor((progress - 0.08) / layerStep)))} 
+              isVisible={progress >= 0.08 && progress <= (isMobile ? 0.90 : 0.60)}
             />
 
             {/* Material labels - left side (positioned as overlay) */}
