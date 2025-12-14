@@ -199,7 +199,7 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
         </g>
       </g>
 
-      {/* Roof structure - clean minimal framing */}
+      {/* Roof structure - stick-framed style */}
       <g className="roof-deck">
         {/* Roof deck surface */}
         <path
@@ -213,20 +213,51 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
           }}
         />
         
-        {/* Simple rafters - just a few subtle lines */}
-        <g className="rafters" opacity="0.3">
-          <line x1="200" y1="60" x2="80" y2="155" stroke="hsl(168 50% 40%)" strokeWidth="1.5" />
-          <line x1="200" y1="60" x2="140" y2="155" stroke="hsl(168 50% 40%)" strokeWidth="1.5" />
-          <line x1="200" y1="60" x2="260" y2="155" stroke="hsl(168 50% 40%)" strokeWidth="1.5" />
-          <line x1="200" y1="60" x2="320" y2="155" stroke="hsl(168 50% 40%)" strokeWidth="1.5" />
+        {/* ===== STICK-FRAMED RAFTERS ===== */}
+        {/* Rafters run parallel from ridge board down to wall plate */}
+        <g className="rafters" opacity="0.5">
+          {/* Left side rafters - evenly spaced parallel lines */}
+          <line x1="70" y1="140" x2="185" y2="65" stroke="hsl(168 50% 45%)" strokeWidth="2" />
+          <line x1="100" y1="140" x2="190" y2="75" stroke="hsl(168 50% 45%)" strokeWidth="2" />
+          <line x1="130" y1="140" x2="193" y2="85" stroke="hsl(168 50% 45%)" strokeWidth="2" />
+          <line x1="160" y1="140" x2="196" y2="95" stroke="hsl(168 50% 45%)" strokeWidth="2" />
+          
+          {/* Right side rafters - mirror */}
+          <line x1="330" y1="140" x2="215" y2="65" stroke="hsl(168 50% 45%)" strokeWidth="2" />
+          <line x1="300" y1="140" x2="210" y2="75" stroke="hsl(168 50% 45%)" strokeWidth="2" />
+          <line x1="270" y1="140" x2="207" y2="85" stroke="hsl(168 50% 45%)" strokeWidth="2" />
+          <line x1="240" y1="140" x2="204" y2="95" stroke="hsl(168 50% 45%)" strokeWidth="2" />
         </g>
         
-        {/* Ridge beam */}
+        {/* Ridge board - horizontal along the peak */}
+        <line
+          x1="185"
+          y1="64"
+          x2="215"
+          y2="64"
+          stroke="hsl(168 70% 50%)"
+          strokeWidth="3"
+          strokeLinecap="round"
+          style={{ filter: 'drop-shadow(0 0 6px hsl(168 80% 50% / 0.6))' }}
+        />
+        
+        {/* Collar tie - horizontal brace */}
+        <line
+          x1="115"
+          y1="115"
+          x2="285"
+          y2="115"
+          stroke="hsl(168 50% 42%)"
+          strokeWidth="2"
+          opacity="0.4"
+        />
+        
+        {/* Ridge beam cap */}
         <line
           x1="200"
           y1="55"
           x2="200"
-          y2="62"
+          y2="64"
           stroke="hsl(168 80% 55%)"
           strokeWidth="4"
           strokeLinecap="round"
