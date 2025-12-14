@@ -135,6 +135,24 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
       <line x1="200" y1="56" x2="200" y2="159" stroke="hsl(30 35% 55%)" strokeWidth="0.6" opacity="0.4" />
       <line x1="200" y1="56" x2="200" y2="159" stroke="hsl(25 30% 18%)" strokeWidth="2.2" />
       
+      {/* "Replace Decking" text centered on roof */}
+      <text
+        x="200"
+        y="115"
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fill="hsl(35 90% 95%)"
+        fontSize="14"
+        fontWeight="600"
+        fontFamily="system-ui, sans-serif"
+        letterSpacing="0.5"
+        style={{
+          filter: 'drop-shadow(0 1px 2px hsl(25 30% 10% / 0.8)) drop-shadow(0 0 8px hsl(30 50% 25% / 0.5))',
+        }}
+      >
+        Replace Decking
+      </text>
+      
       {/* Teal edge accent glow */}
       <path 
         d="M42 159 L200 56 L358 159" 
