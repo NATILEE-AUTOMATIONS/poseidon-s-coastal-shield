@@ -2,7 +2,7 @@ import React from 'react';
 
 const GridBackground: React.FC = () => {
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div className="absolute inset-0 overflow-hidden hidden md:block">
       {/* Deep background */}
       <div className="absolute inset-0 bg-deep-bg" />
       
