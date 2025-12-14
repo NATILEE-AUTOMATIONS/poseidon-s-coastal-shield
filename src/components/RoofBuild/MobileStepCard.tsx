@@ -7,18 +7,9 @@ interface MobileStepCardProps {
   layerStep: number;
 }
 
-// Easing functions for smooth physics-like animations
-const easeOutBack = (x: number): number => {
-  const c1 = 1.70158;
-  const c3 = c1 + 1;
-  return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
-};
-
-const easeInBack = (x: number): number => {
-  const c1 = 1.70158;
-  const c3 = c1 + 1;
-  return c3 * x * x * x - c1 * x * x;
-};
+// Smooth cubic easing functions (no overshoot)
+const easeOutCubic = (x: number): number => 1 - Math.pow(1 - x, 3);
+const easeInCubic = (x: number): number => x * x * x;
 
 const MobileStepCard: React.FC<MobileStepCardProps> = ({ 
   progress, 
@@ -43,9 +34,9 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({
   const cardProgress = Math.max(0, Math.min(1, (progress - cardStart) / layerStep));
   
   // Animation phases within each card's scroll window
-  const entryEnd = 0.2;      // 0-20% = entry spin
-  const centerEnd = 0.8;     // 20-80% = centered/stable
-  // 80-100% = exit spin
+  const entryEnd = 0.12;     // 0-12% = quick elegant entry
+  const centerEnd = 0.88;    // 12-88% = long comfortable viewing
+  // 88-100% = clean exit
   
   let rotateY = 0;
   let translateX = 0;
@@ -54,14 +45,14 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({
   let glowIntensity = 1;
   
   if (cardProgress < entryEnd) {
-    // Entry: spin in from right
+    // Entry: elegant spin in from right
     const t = cardProgress / entryEnd;
-    const eased = easeOutBack(Math.min(1, t));
-    rotateY = 75 * (1 - eased);
-    translateX = 100 * (1 - eased);
-    scale = 0.85 + (0.15 * eased);
-    opacity = 0.3 + (0.7 * eased);
-    glowIntensity = 0.4 + (0.6 * eased);
+    const eased = easeOutCubic(Math.min(1, t));
+    rotateY = 55 * (1 - eased);
+    translateX = 70 * (1 - eased);
+    scale = 0.9 + (0.1 * eased);
+    opacity = 0.4 + (0.6 * eased);
+    glowIntensity = 0.5 + (0.5 * eased);
   } else if (cardProgress < centerEnd) {
     // Center: perfectly still
     rotateY = 0;
@@ -70,14 +61,14 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({
     opacity = 1;
     glowIntensity = 1;
   } else {
-    // Exit: spin out to left
+    // Exit: clean spin out to left
     const t = (cardProgress - centerEnd) / (1 - centerEnd);
-    const eased = easeInBack(Math.min(1, t));
-    rotateY = -75 * eased;
-    translateX = -100 * eased;
-    scale = 1 - (0.15 * eased);
-    opacity = 1 - (0.7 * eased);
-    glowIntensity = 1 - (0.6 * eased);
+    const eased = easeInCubic(Math.min(1, t));
+    rotateY = -55 * eased;
+    translateX = -70 * eased;
+    scale = 1 - (0.1 * eased);
+    opacity = 1 - (0.6 * eased);
+    glowIntensity = 1 - (0.5 * eased);
   }
   
   const material = materialInfo[activeCardIndex];
