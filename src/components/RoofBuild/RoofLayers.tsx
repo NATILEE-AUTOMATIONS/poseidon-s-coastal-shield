@@ -44,7 +44,7 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
     <g 
       className="decking-layer"
       style={{
-        transform: `translateY(${translateY}px)`,
+        transform: `translateY(${translateY}px)` ,
         transformOrigin: '200px 107px',
         opacity,
         filter: `drop-shadow(0 ${3 + easedProgress * 5}px ${6 + easedProgress * 10}px hsl(30 25% 12% / ${0.3 + easedProgress * 0.2}))`,
@@ -135,55 +135,6 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
       {/* Ridge line at peak - emphasized with warm glow */}
       <line x1="200" y1="56" x2="200" y2="159" stroke="hsl(30 35% 55%)" strokeWidth="0.6" opacity="0.4" />
       <line x1="200" y1="56" x2="200" y2="159" stroke="hsl(25 30% 18%)" strokeWidth="2.2" />
-      
-      {/* "Replace Decking" label - desktop only */}
-      {(() => {
-        if (isMobile) return null;
-        
-        let labelOpacity = 0;
-        if (layerProgress >= 0.6 && layerProgress < 0.7) {
-          labelOpacity = (layerProgress - 0.6) / 0.1; // fade in
-        } else if (layerProgress >= 0.7 && layerProgress < 0.95) {
-          labelOpacity = 1; // fully visible
-        } else if (layerProgress >= 0.95) {
-          labelOpacity = 1 - ((layerProgress - 0.95) / 0.05); // fade out
-        }
-        return (
-          <g opacity={labelOpacity}>
-            {/* Clean pill-shaped background with subtle border */}
-            <rect
-              x="145"
-              y="95"
-              width="110"
-              height="30"
-              rx="15"
-              fill="hsl(180 20% 8% / 0.85)"
-              stroke="hsl(168 70% 45%)"
-              strokeWidth="1"
-              style={{ 
-                filter: 'drop-shadow(0 0 12px hsl(168 70% 45% / 0.4))',
-              }}
-            />
-            {/* Single line text with teal glow */}
-            <text
-              x="200"
-              y="111"
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fill="hsl(168 80% 65%)"
-              fontSize="10"
-              fontWeight="700"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              letterSpacing="2.5"
-              style={{
-                filter: 'drop-shadow(0 0 8px hsl(168 80% 50% / 0.8))',
-              }}
-            >
-              REPLACE DECKING
-            </text>
-          </g>
-        );
-      })()}
       
       {/* Teal edge accent glow */}
       <path 
