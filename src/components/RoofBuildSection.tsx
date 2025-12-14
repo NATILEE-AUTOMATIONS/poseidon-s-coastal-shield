@@ -29,34 +29,34 @@ const RoofBuildSection: React.FC = () => {
   const { setZoomProgress } = useScrollContext();
   const isMobile = useIsMobile();
 
-  // Layer timing - compressed to finish by 35% so gallery gets 50%+ scroll
-  // Roof layers: 0-35%, Door: 35-50%, Gallery: 50-100%
-  const roofProgress = Math.min(1, progress / 0.35);
+  // Layer timing - SPREAD OUT for slower animation on mobile
+  // Roof layers: 8-60%, Door: 60-72%, Zoom: 72-88%, Gallery: 88%+
+  const roofProgress = Math.min(1, progress / 0.60);
   
   const layers = [
-    { start: 0.05, end: 0.08 },   // 1. Decking
-    { start: 0.08, end: 0.11 },   // 2. Drip Edge Eaves
-    { start: 0.11, end: 0.14 },   // 3. Ice & Water
-    { start: 0.14, end: 0.17 },   // 4. Underlayment
-    { start: 0.17, end: 0.20 },   // 5. Drip Edge Rakes
-    { start: 0.20, end: 0.23 },   // 6. Starter Strip
-    { start: 0.23, end: 0.26 },   // 7. Shingles
-    { start: 0.26, end: 0.29 },   // 8. Vents
-    { start: 0.29, end: 0.32 },   // 9. Flashing
-    { start: 0.32, end: 0.35 },   // 10. Ridge Cap
+    { start: 0.08, end: 0.132 },   // 1. Decking
+    { start: 0.132, end: 0.184 },  // 2. Drip Edge Eaves
+    { start: 0.184, end: 0.236 },  // 3. Ice & Water
+    { start: 0.236, end: 0.288 },  // 4. Underlayment
+    { start: 0.288, end: 0.340 },  // 5. Drip Edge Rakes
+    { start: 0.340, end: 0.392 },  // 6. Starter Strip
+    { start: 0.392, end: 0.444 },  // 7. Shingles
+    { start: 0.444, end: 0.496 },  // 8. Vents
+    { start: 0.496, end: 0.548 },  // 9. Flashing
+    { start: 0.548, end: 0.600 },  // 10. Ridge Cap
   ];
 
-  // Show hint during buffer period (0-5%)
-  const showScrollHint = progress < 0.05;
+  // Show hint during buffer period (0-8%)
+  const showScrollHint = progress < 0.08;
   
-  // Door animation: starts at 35%, fully open at 42%
-  const doorAngle = progress > 0.35 
-    ? Math.min(75, ((progress - 0.35) / 0.07) * 75) 
+  // Door animation: starts at 60%, fully open at 72%
+  const doorAngle = progress > 0.60 
+    ? Math.min(75, ((progress - 0.60) / 0.12) * 75) 
     : 0;
 
-  // Door zoom: starts at 42%, completes at 50% (gallery starts at 50%)
-  const zoomProgress = progress > 0.42 
-    ? Math.min(1, (progress - 0.42) / 0.08)
+  // Door zoom: starts at 72%, completes at 88% (gallery starts at 88%)
+  const zoomProgress = progress > 0.72 
+    ? Math.min(1, (progress - 0.72) / 0.16)
     : 0;
   
   // Update scroll context so navbar can fade
@@ -80,8 +80,8 @@ const RoofBuildSection: React.FC = () => {
   const gridFadeOut = Math.max(0, 1 - (zoomProgress * 3)); // Grid gone by 33% of zoom
   const houseFadeOut = Math.max(0, 1 - (easedZoom * 2)); // House gone by 50% of zoom
 
-  // 3D Gallery visibility - Mobile starts at 50%, desktop at 48%
-  const galleryStartPoint = isMobile ? 0.50 : 0.48;
+  // 3D Gallery visibility - Mobile starts at 88%, desktop at 86%
+  const galleryStartPoint = isMobile ? 0.88 : 0.86;
   const galleryProgress = progress > galleryStartPoint 
     ? Math.min(1, (progress - galleryStartPoint) / 0.05)
     : 0;
@@ -89,16 +89,16 @@ const RoofBuildSection: React.FC = () => {
   // Fade overlay completely OUT as gallery takes over with its own background
   const overlayFade = galleryProgress > 0 ? 1 - easeOutCubic(galleryProgress) : 1;
   
-  // Mobile: force overlays to fade out FASTER - completely gone by 0.52
+  // Mobile: force overlays to fade out FASTER - completely gone by 0.90
   const mobileOverlayMultiplier = isMobile 
-    ? (progress < 0.48 ? 1 : Math.max(0, 1 - ((progress - 0.48) / 0.04)))
+    ? (progress < 0.86 ? 1 : Math.max(0, 1 - ((progress - 0.86) / 0.04)))
     : 1;
 
   // Calculate staggered exit progress for label pairs (desktop only)
-  // Labels exit from 0.35 to 0.42 (as door opens, before zoom completes)
+  // Labels exit from 0.60 to 0.72 (as door opens, before zoom completes)
   const getLabelExitProgress = (pairIndex: number): number => {
-    const doorStart = 0.35;
-    const doorEnd = 0.42;
+    const doorStart = 0.60;
+    const doorEnd = 0.72;
     const doorRange = doorEnd - doorStart;
     const pairWindow = doorRange / 5;
     
@@ -252,8 +252,8 @@ const RoofBuildSection: React.FC = () => {
 
             {/* Mobile Step Card - positioned below house */}
             <MobileStepCard 
-              currentStep={Math.max(0, Math.min(9, Math.floor((progress - 0.05) / 0.03)))} 
-              isVisible={progress >= 0.06 && progress <= 0.35}
+              currentStep={Math.max(0, Math.min(9, Math.floor((progress - 0.08) / 0.052)))} 
+              isVisible={progress >= 0.08 && progress <= 0.60}
             />
 
             {/* Material labels - left side (positioned as overlay) */}
@@ -263,7 +263,7 @@ const RoofBuildSection: React.FC = () => {
               <div className="space-y-5">
                 {materialInfo.slice(0, 5).map((material, index) => {
                   const exitProgress = getLabelExitProgress(index);
-                  const isExiting = progress >= 0.35;
+                  const isExiting = progress >= 0.60;
                   
                   // During exit: slide left and fade out
                   // Before exit: normal lock-in animation
@@ -317,7 +317,7 @@ const RoofBuildSection: React.FC = () => {
               <div className="space-y-5">
                 {materialInfo.slice(5).map((material, index) => {
                   const exitProgress = getLabelExitProgress(index); // Same pair index as left side
-                  const isExiting = progress >= 0.35;
+                  const isExiting = progress >= 0.60;
                   
                   // During exit: slide right and fade out (positive X)
                   // Before exit: normal lock-in animation
@@ -370,18 +370,18 @@ const RoofBuildSection: React.FC = () => {
         </div>
 
 
-        {/* Progress bar - HARD HIDE at 35% before door opens */}
-        {progress < 0.35 && (
+        {/* Progress bar - HARD HIDE at 60% before door opens */}
+        {progress < 0.60 && (
           <div 
             className="absolute bottom-6 left-1/2 -translate-x-1/2 w-32 h-0.5 bg-muted/30 rounded-full overflow-hidden z-20"
             style={{
-              opacity: progress > 0.30 ? Math.max(0, 1 - ((progress - 0.30) / 0.05)) : 1,
+              opacity: progress > 0.55 ? Math.max(0, 1 - ((progress - 0.55) / 0.05)) : 1,
             }}
           >
             <div 
               className="h-full rounded-full"
               style={{
-                width: `${Math.min(progress / 0.35, 1) * 100}%`,
+                width: `${Math.min(progress / 0.60, 1) * 100}%`,
                 background: 'linear-gradient(90deg, hsl(168 80% 50%), hsl(32 80% 55%))',
                 boxShadow: '0 0 12px hsl(168 80% 50% / 0.6)',
               }}
