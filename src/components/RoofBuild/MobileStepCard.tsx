@@ -30,47 +30,45 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({
   const activeCardIndex = Math.floor(Math.max(0, Math.min(totalCards - 1, rawCardIndex)));
   
   // Calculate progress within the current card's window (0 to 1)
-  const cardStart = layerStart + (activeCardIndex * layerStep);
-  const cardProgress = Math.max(0, Math.min(1, (progress - cardStart) / layerStep));
-  
-  // Animation phases within each card's scroll window
-  const entryEnd = 0.20;     // 0-20% = deliberate entry
-  const centerEnd = 0.80;    // 20-80% = comfortable viewing
-  // 80-100% = graceful exit
-  
+  const cardStart = layerStart + activeCardIndex * layerStep;
+  const rawCardProgress = (progress - cardStart) / layerStep;
+  const cardProgress = Math.max(0, Math.min(1, rawCardProgress));
+
+  // Deliberate single-phase animation per card: slow fade/slide in, linger, then fade/slide out
+  // 0-25%: fade/slide in, 25-75%: fully visible, 75-100%: fade/slide out
+  const entryEnd = 0.25;
+  const exitStart = 0.75;
+
   let rotateY = 0;
   let translateX = 0;
   let scale = 1;
   let opacity = 1;
   let glowIntensity = 1;
-  
-  if (cardProgress < entryEnd) {
-    // Entry: deliberate glide in from right
+
+  if (cardProgress <= entryEnd) {
+    // Ease in
     const t = cardProgress / entryEnd;
     const eased = easeOutQuint(Math.min(1, t));
-    rotateY = 45 * (1 - eased);
-    translateX = 50 * (1 - eased);
-    scale = 0.92 + (0.08 * eased);
-    opacity = 0.5 + (0.5 * eased);
-    glowIntensity = 0.6 + (0.4 * eased);
-  } else if (cardProgress < centerEnd) {
-    // Center: perfectly still
-    rotateY = 0;
+    translateX = 12 * (1 - eased); // gentle slide from right
+    scale = 0.96 + 0.04 * eased;
+    opacity = 0.15 + 0.85 * eased;
+    glowIntensity = 0.4 + 0.6 * eased;
+  } else if (cardProgress >= exitStart) {
+    // Ease out
+    const t = (cardProgress - exitStart) / (1 - exitStart);
+    const eased = easeInQuint(Math.min(1, t));
+    translateX = -12 * eased; // gentle slide to left
+    scale = 1 - 0.04 * eased;
+    opacity = 1 - 0.85 * eased;
+    glowIntensity = 1 - 0.6 * eased;
+  } else {
+    // Comfortable center window
     translateX = 0;
     scale = 1;
     opacity = 1;
     glowIntensity = 1;
-  } else {
-    // Exit: graceful glide out to left
-    const t = (cardProgress - centerEnd) / (1 - centerEnd);
-    const eased = easeInQuint(Math.min(1, t));
-    rotateY = -45 * eased;
-    translateX = -50 * eased;
-    scale = 1 - (0.08 * eased);
-    opacity = 1 - (0.5 * eased);
-    glowIntensity = 1 - (0.4 * eased);
   }
-  
+
   const material = materialInfo[activeCardIndex];
   
   return (
