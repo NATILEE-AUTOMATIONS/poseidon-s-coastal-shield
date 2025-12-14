@@ -43,25 +43,25 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
   // Quote 1: 0.14 - 0.32
   const quote1Progress = Math.max(0, Math.min(1, (localProgress - 0.14) / 0.18));
   
-  // Image 2: 0.34 - 0.46
-  const flipStart = 0.34;
-  const flipEnd = 0.46;
+  // Image 2: 0.24 - 0.40 (overlaps with Quote 1)
+  const flipStart = 0.24;
+  const flipEnd = 0.40;
   const flipProgress = Math.max(0, Math.min(1, (localProgress - flipStart) / (flipEnd - flipStart)));
 
-  // Quote 2: 0.42 - 0.52
-  const quote2Progress = Math.max(0, Math.min(1, (localProgress - 0.42) / 0.10));
+  // Quote 2: 0.36 - 0.48 (overlaps with Image 2)
+  const quote2Progress = Math.max(0, Math.min(1, (localProgress - 0.36) / 0.12));
 
-  // Image 3: 0.54 - 0.66
-  const img3Start = 0.54;
-  const img3End = 0.66;
+  // Image 3: 0.44 - 0.60 (overlaps with Quote 2)
+  const img3Start = 0.44;
+  const img3End = 0.60;
   const img3Progress = Math.max(0, Math.min(1, (localProgress - img3Start) / (img3End - img3Start)));
 
-  // Quote 3: 0.62 - 0.72
-  const quote3Progress = Math.max(0, Math.min(1, (localProgress - 0.62) / 0.10));
+  // Quote 3: 0.56 - 0.68 (overlaps with Image 3)
+  const quote3Progress = Math.max(0, Math.min(1, (localProgress - 0.56) / 0.12));
 
-  // Image 4 (Hero Finale): 0.74 - 0.86
-  const img4Start = 0.74;
-  const img4End = 0.86;
+  // Image 4 (Hero Finale): 0.64 - 0.85 (overlaps with Quote 3)
+  const img4Start = 0.64;
+  const img4End = 0.85;
   const img4Progress = Math.max(0, Math.min(1, (localProgress - img4Start) / (img4End - img4Start)));
 
   // === IMAGE ANIMATIONS ===
@@ -72,27 +72,29 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
   const img1TranslateY = (1 - img1Eased) * 40;
   const img1Opacity = Math.min(1, img1Eased * 2.5);
 
+  // Image 2 - Eruption from below (33vh)
   const flipEased = easeOutExpo(flipProgress);
-  const img2TranslateY = (1 - flipEased) * 60;
-  const img2Scale = 0.8 + (flipEased * 0.2);
-  const img2Blur = (1 - flipEased) * 10;
-  const img2Brightness = 1.3 - (flipEased * 0.3);
+  const img2TranslateY = (1 - flipEased) * 33; // 33vh from below
+  const img2Scale = 0.3 + (flipEased * 0.7);   // 0.3 → 1.0 (massive growth)
+  const img2Blur = (1 - flipEased) * 25;       // More dramatic blur
+  const img2Brightness = 1.8 - (flipEased * 0.8); // Glowing entrance
   const img2Opacity = Math.min(1, flipProgress * 2.5);
   
+  // Image 3 - Slide from the abyss (66vw)
   const img3Eased = easeOutExpo(img3Progress);
-  const img3TranslateX = (1 - img3Eased) * 80;
-  const img3Scale = 0.6 + (img3Eased * 0.4);
-  const img3Rotate = (1 - img3Eased) * 6;
-  const img3Blur = (1 - img3Eased) * 12;
-  const img3Brightness = 1.3 - (img3Eased * 0.3);
+  const img3TranslateX = (1 - img3Eased) * 66; // 66vw from right
+  const img3Scale = 0.2 + (img3Eased * 0.8);   // 0.2 → 1.0 (5x growth!)
+  const img3Rotate = (1 - img3Eased) * 15;     // More dramatic tilt
+  const img3Blur = (1 - img3Eased) * 30;       // Very soft to sharp
+  const img3Brightness = 2.0 - (img3Eased * 1.0); // Bright flash entrance
   const img3Opacity = Math.min(1, img3Progress * 2.5);
 
-  // Image 4 - Gravity drop from above with glow burst
+  // Image 4 - Hero drop from heavens (95vh)
   const img4Eased = easeOutExpo(img4Progress);
-  const img4TranslateY = (1 - img4Eased) * -80; // Falls DOWN from above
-  const img4Scale = 0.7 + (img4Eased * 0.3);
-  const img4Blur = (1 - img4Eased) * 15;
-  const img4Brightness = 1.5 - (img4Eased * 0.5);
+  const img4TranslateY = (1 - img4Eased) * -95; // 95vh from above!
+  const img4Scale = 0.15 + (img4Eased * 0.95);  // 0.15 → 1.1 (7x growth + overshoot)
+  const img4Blur = (1 - img4Eased) * 35;        // Maximum blur to crystal clear
+  const img4Brightness = 2.5 - (img4Eased * 1.5); // Glowing orb descending
   const img4Opacity = Math.min(1, img4Progress * 2);
 
   // === TESTIMONIAL DATA ===
@@ -239,7 +241,7 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
         <div
           className="relative w-[88vw] max-w-[500px]"
           style={{
-            transform: `translateY(${img2TranslateY}px) scale(${img2Scale})`,
+            transform: `translateY(${img2TranslateY}vh) scale(${img2Scale})`,
             opacity: img2Opacity,
             filter: `blur(${img2Blur}px) brightness(${img2Brightness})`,
           }}
@@ -287,7 +289,7 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
         <div
           className="relative w-[88vw] max-w-[500px]"
           style={{
-            transform: `translateX(${img3TranslateX}%) scale(${img3Scale}) rotate(${img3Rotate}deg)`,
+            transform: `translateX(${img3TranslateX}vw) scale(${img3Scale}) rotate(${img3Rotate}deg)`,
             opacity: img3Opacity,
             filter: `blur(${img3Blur}px) brightness(${img3Brightness})`,
           }}
@@ -335,7 +337,7 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
         <div
           className="relative w-[92vw] max-w-[550px]"
           style={{
-            transform: `translateY(${img4TranslateY}px) scale(${img4Scale})`,
+            transform: `translateY(${img4TranslateY}vh) scale(${img4Scale})`,
             opacity: img4Opacity,
             filter: `blur(${img4Blur}px) brightness(${img4Brightness})`,
           }}
