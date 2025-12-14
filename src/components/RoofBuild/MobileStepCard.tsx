@@ -7,9 +7,9 @@ interface MobileStepCardProps {
   layerStep: number;
 }
 
-// Smooth cubic easing functions (no overshoot)
-const easeOutCubic = (x: number): number => 1 - Math.pow(1 - x, 3);
-const easeInCubic = (x: number): number => x * x * x;
+// Ultra-smooth quintic easing (no overshoot, gentle settle)
+const easeOutQuint = (x: number): number => 1 - Math.pow(1 - x, 5);
+const easeInQuint = (x: number): number => x * x * x * x * x;
 
 const MobileStepCard: React.FC<MobileStepCardProps> = ({ 
   progress, 
@@ -34,9 +34,9 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({
   const cardProgress = Math.max(0, Math.min(1, (progress - cardStart) / layerStep));
   
   // Animation phases within each card's scroll window
-  const entryEnd = 0.12;     // 0-12% = quick elegant entry
-  const centerEnd = 0.88;    // 12-88% = long comfortable viewing
-  // 88-100% = clean exit
+  const entryEnd = 0.20;     // 0-20% = deliberate entry
+  const centerEnd = 0.80;    // 20-80% = comfortable viewing
+  // 80-100% = graceful exit
   
   let rotateY = 0;
   let translateX = 0;
@@ -45,14 +45,14 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({
   let glowIntensity = 1;
   
   if (cardProgress < entryEnd) {
-    // Entry: elegant spin in from right
+    // Entry: deliberate glide in from right
     const t = cardProgress / entryEnd;
-    const eased = easeOutCubic(Math.min(1, t));
-    rotateY = 55 * (1 - eased);
-    translateX = 70 * (1 - eased);
-    scale = 0.9 + (0.1 * eased);
-    opacity = 0.4 + (0.6 * eased);
-    glowIntensity = 0.5 + (0.5 * eased);
+    const eased = easeOutQuint(Math.min(1, t));
+    rotateY = 45 * (1 - eased);
+    translateX = 50 * (1 - eased);
+    scale = 0.92 + (0.08 * eased);
+    opacity = 0.5 + (0.5 * eased);
+    glowIntensity = 0.6 + (0.4 * eased);
   } else if (cardProgress < centerEnd) {
     // Center: perfectly still
     rotateY = 0;
@@ -61,14 +61,14 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({
     opacity = 1;
     glowIntensity = 1;
   } else {
-    // Exit: clean spin out to left
+    // Exit: graceful glide out to left
     const t = (cardProgress - centerEnd) / (1 - centerEnd);
-    const eased = easeInCubic(Math.min(1, t));
-    rotateY = -55 * eased;
-    translateX = -70 * eased;
-    scale = 1 - (0.1 * eased);
-    opacity = 1 - (0.6 * eased);
-    glowIntensity = 1 - (0.5 * eased);
+    const eased = easeInQuint(Math.min(1, t));
+    rotateY = -45 * eased;
+    translateX = -50 * eased;
+    scale = 1 - (0.08 * eased);
+    opacity = 1 - (0.5 * eased);
+    glowIntensity = 1 - (0.4 * eased);
   }
   
   const material = materialInfo[activeCardIndex];
