@@ -19,7 +19,7 @@ import MobileStepCard from './RoofBuild/MobileStepCard';
 import YardSign from './RoofBuild/YardSign';
 import { useScrollContext } from '@/context/ScrollContext';
 import ImageGallery3D from './RoofBuild/ImageGallery3D';
-// import MobileFirstImage from './RoofBuild/MobileFirstImage';
+import MobileFirstImage from './RoofBuild/MobileFirstImage';
 
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -388,8 +388,10 @@ const RoofBuildSection: React.FC = () => {
         )}
 
       </div>
-    </section>
 
+      {/* Mobile Gallery - AFTER sticky section */}
+      {isMobile && <MobileFirstImage progress={progress} />}
+    </section>
   );
 };
 
