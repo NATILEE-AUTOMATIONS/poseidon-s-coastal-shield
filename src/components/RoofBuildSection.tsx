@@ -252,7 +252,10 @@ const RoofBuildSection: React.FC = () => {
               </div>
             )}
 
-            {/* Mobile Step Card removed - roof animation only */}
+            {/* Mobile Step Card - shows material being placed below the house */}
+            {isMobile && progress >= 0.08 && progress <= 0.92 && (
+              <MobileStepCard scrollProgress={progress} />
+            )}
 
             {/* Material labels - left side (positioned as overlay) */}
             <div 

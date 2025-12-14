@@ -480,27 +480,51 @@
    =========================================== */
 
 .holo-card {
+  position: relative;
+  overflow: hidden;
   width: 85vw;
-  max-width: 320px;
+  max-width: 340px;
   background: linear-gradient(
-    135deg,
-    hsl(168 30% 12% / 0.98) 0%,
-    hsl(168 25% 8% / 0.98) 100%
+    145deg,
+    hsl(168 30% 10% / 0.98) 0%,
+    hsl(168 25% 6% / 0.98) 100%
   );
-  border: 1px solid hsl(168 50% 35% / 0.4);
-  border-radius: 16px;
-  padding: 2rem 1.5rem;
+  border: 1px solid hsl(168 60% 40% / 0.5);
+  border-radius: 20px;
+  padding: 1.75rem 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1rem;
   box-shadow:
-    0 0 20px hsl(168 70% 40% / 0.15),
-    0 0 40px hsl(168 70% 35% / 0.1),
-    0 0 60px hsl(168 70% 30% / 0.05),
+    0 0 15px hsl(168 70% 45% / calc(0.2 * var(--glow-intensity, 1))),
+    0 0 30px hsl(168 70% 40% / calc(0.15 * var(--glow-intensity, 1))),
+    0 0 50px hsl(168 70% 35% / calc(0.1 * var(--glow-intensity, 1))),
+    0 0 80px hsl(168 70% 30% / calc(0.05 * var(--glow-intensity, 1))),
+    inset 0 1px 0 hsl(168 50% 50% / 0.1),
     inset 0 1px 0 hsl(168 50% 50% / 0.1),
     inset 0 -1px 0 hsl(168 50% 20% / 0.2);
   backdrop-filter: blur(12px);
+}
+
+/* Scanning line effect */
+.holo-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, hsl(168 70% 55% / 0.6), transparent);
+  animation: holo-scan 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes holo-scan {
+  0%, 100% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(120px); opacity: 0; }
 }
 
 .holo-card-ring-container {
