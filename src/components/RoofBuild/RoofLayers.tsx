@@ -74,71 +74,133 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
 
       {/* ===== LEFT ROOF SIDE ===== */}
       <g clipPath="url(#leftRoofClip)">
-        {/* Row 1 - Top (near ridge) */}
+        {/* Row 1 - At ridge */}
         <g transform="skewY(-34)">
-          <rect x="155" y="138" width="45" height="22" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="110" y="138" width="45" height="22" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="65" y="138" width="45" height="22" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="20" y="138" width="45" height="22" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="175" y="86" width="25" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="130" y="86" width="45" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="85" y="86" width="45" height="18" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="40" y="86" width="45" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="-5" y="86" width="45" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
         </g>
         
-        {/* Row 2 - Staggered */}
+        {/* Row 2 */}
         <g transform="skewY(-34)">
-          <rect x="175" y="160" width="25" height="22" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="130" y="160" width="45" height="22" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="85" y="160" width="45" height="22" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="40" y="160" width="45" height="22" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="155" y="104" width="45" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="110" y="104" width="45" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="65" y="104" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="20" y="104" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="-25" y="104" width="45" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
         </g>
         
         {/* Row 3 */}
         <g transform="skewY(-34)">
-          <rect x="155" y="182" width="45" height="22" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="110" y="182" width="45" height="22" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="65" y="182" width="45" height="22" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="20" y="182" width="45" height="22" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="175" y="122" width="25" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="130" y="122" width="45" height="18" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="85" y="122" width="45" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="40" y="122" width="45" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="-5" y="122" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
         </g>
         
-        {/* Row 4 - Bottom */}
+        {/* Row 4 */}
         <g transform="skewY(-34)">
-          <rect x="175" y="204" width="25" height="22" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="130" y="204" width="45" height="22" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="85" y="204" width="45" height="22" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="40" y="204" width="45" height="22" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="155" y="140" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="110" y="140" width="45" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="65" y="140" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="20" y="140" width="45" height="18" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="-25" y="140" width="45" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+        </g>
+        
+        {/* Row 5 */}
+        <g transform="skewY(-34)">
+          <rect x="175" y="158" width="25" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="130" y="158" width="45" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="85" y="158" width="45" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="40" y="158" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="-5" y="158" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+        </g>
+        
+        {/* Row 6 - Near eaves */}
+        <g transform="skewY(-34)">
+          <rect x="155" y="176" width="45" height="18" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="110" y="176" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="65" y="176" width="45" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="20" y="176" width="45" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="-25" y="176" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+        </g>
+        
+        {/* Row 7 - At eaves */}
+        <g transform="skewY(-34)">
+          <rect x="175" y="194" width="25" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="130" y="194" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="85" y="194" width="45" height="18" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="40" y="194" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="-5" y="194" width="45" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
         </g>
       </g>
 
       {/* ===== RIGHT ROOF SIDE ===== */}
       <g clipPath="url(#rightRoofClip)">
-        {/* Row 1 - Top (near ridge) */}
+        {/* Row 1 - At ridge */}
         <g transform="skewY(34)">
-          <rect x="200" y="23" width="45" height="22" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="245" y="23" width="45" height="22" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="290" y="23" width="45" height="22" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="335" y="23" width="45" height="22" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="200" y="-7" width="25" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="225" y="-7" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="270" y="-7" width="45" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="315" y="-7" width="45" height="18" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="360" y="-7" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
         </g>
         
-        {/* Row 2 - Staggered */}
+        {/* Row 2 */}
         <g transform="skewY(34)">
-          <rect x="200" y="45" width="25" height="22" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="225" y="45" width="45" height="22" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="270" y="45" width="45" height="22" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="315" y="45" width="45" height="22" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="200" y="11" width="45" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="245" y="11" width="45" height="18" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="290" y="11" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="335" y="11" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="380" y="11" width="45" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
         </g>
         
         {/* Row 3 */}
         <g transform="skewY(34)">
-          <rect x="200" y="67" width="45" height="22" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="245" y="67" width="45" height="22" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="290" y="67" width="45" height="22" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="335" y="67" width="45" height="22" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="200" y="29" width="25" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="225" y="29" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="270" y="29" width="45" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="315" y="29" width="45" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="360" y="29" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
         </g>
         
-        {/* Row 4 - Bottom */}
+        {/* Row 4 */}
         <g transform="skewY(34)">
-          <rect x="200" y="89" width="25" height="22" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="225" y="89" width="45" height="22" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="270" y="89" width="45" height="22" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
-          <rect x="315" y="89" width="45" height="22" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="200" y="47" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="245" y="47" width="45" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="290" y="47" width="45" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="335" y="47" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="380" y="47" width="45" height="18" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+        </g>
+        
+        {/* Row 5 */}
+        <g transform="skewY(34)">
+          <rect x="200" y="65" width="25" height="18" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="225" y="65" width="45" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="270" y="65" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="315" y="65" width="45" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="360" y="65" width="45" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+        </g>
+        
+        {/* Row 6 - Near eaves */}
+        <g transform="skewY(34)">
+          <rect x="200" y="83" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="245" y="83" width="45" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="290" y="83" width="45" height="18" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="335" y="83" width="45" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="380" y="83" width="45" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+        </g>
+        
+        {/* Row 7 - At eaves */}
+        <g transform="skewY(34)">
+          <rect x="200" y="101" width="25" height="18" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="225" y="101" width="45" height="18" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="270" y="101" width="45" height="18" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="315" y="101" width="45" height="18" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
+          <rect x="360" y="101" width="45" height="18" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1" />
         </g>
       </g>
 
