@@ -190,8 +190,101 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
     </g>
   );
 };
+// Neon orange drip edge along the eaves (bottom edge of roof)
+export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress }) => {
+  const rawProgress = (progress - startProgress) / (endProgress - startProgress);
+  const layerProgress = Math.max(0, Math.min(1, rawProgress));
+  
+  if (progress < startProgress) return null;
+  
+  const easedProgress = easeOutQuint(layerProgress);
+  const translateY = -80 * (1 - easedProgress);
+  const opacity = 0.3 + (0.7 * easedProgress);
+  
+  // Label fade in/out
+  let labelOpacity = 0;
+  if (layerProgress >= 0.6 && layerProgress < 0.7) {
+    labelOpacity = (layerProgress - 0.6) / 0.1;
+  } else if (layerProgress >= 0.7 && layerProgress < 0.95) {
+    labelOpacity = 1;
+  } else if (layerProgress >= 0.95) {
+    labelOpacity = 1 - ((layerProgress - 0.95) / 0.05);
+  }
+  
+  return (
+    <g 
+      className="drip-edge-eaves-layer"
+      style={{
+        transform: `translateY(${translateY}px)`,
+        transformOrigin: '200px 159px',
+        opacity,
+      }}
+    >
+      <defs>
+        <linearGradient id="dripEdgeOrange" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(25 95% 60%)" />
+          <stop offset="50%" stopColor="hsl(25 95% 55%)" />
+          <stop offset="100%" stopColor="hsl(20 90% 45%)" />
+        </linearGradient>
+      </defs>
+      
+      {/* Left eaves drip edge */}
+      <line 
+        x1="42" y1="159" 
+        x2="200" y2="159" 
+        stroke="url(#dripEdgeOrange)"
+        strokeWidth="4"
+        strokeLinecap="round"
+        style={{
+          filter: `drop-shadow(0 0 ${8 + easedProgress * 10}px hsl(25 95% 55% / 0.8)) drop-shadow(0 0 ${4 + easedProgress * 6}px hsl(30 100% 60% / 0.6))`,
+        }}
+      />
+      
+      {/* Right eaves drip edge */}
+      <line 
+        x1="200" y1="159" 
+        x2="358" y2="159" 
+        stroke="url(#dripEdgeOrange)"
+        strokeWidth="4"
+        strokeLinecap="round"
+        style={{
+          filter: `drop-shadow(0 0 ${8 + easedProgress * 10}px hsl(25 95% 55% / 0.8)) drop-shadow(0 0 ${4 + easedProgress * 6}px hsl(30 100% 60% / 0.6))`,
+        }}
+      />
+      
+      {/* Label */}
+      <g opacity={labelOpacity}>
+        <rect
+          x="160"
+          y="166"
+          width="80"
+          height="24"
+          rx="4"
+          fill="hsl(25 40% 15% / 0.7)"
+          style={{ filter: 'blur(3px)' }}
+        />
+        <text
+          x="200"
+          y="180"
+          textAnchor="middle"
+          dominantBaseline="middle"
+          fill="hsl(25 95% 70%)"
+          fontSize="10"
+          fontWeight="600"
+          fontFamily="system-ui, -apple-system, sans-serif"
+          letterSpacing="1.5"
+          style={{
+            filter: 'drop-shadow(0 0 4px hsl(25 95% 55% / 0.8))',
+          }}
+        >
+          DRIP EDGE
+        </text>
+      </g>
+    </g>
+  );
+};
+
 // Placeholder exports - to be implemented one at a time
-export const DripEdgeEavesLayer: React.FC<LayerProps> = () => null;
 export const DripEdgeRakesLayer: React.FC<LayerProps> = () => null;
 export const IceWaterShieldLayer: React.FC<LayerProps> = () => null;
 export const UnderlaymentLayer: React.FC<LayerProps> = () => null;
