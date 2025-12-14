@@ -34,36 +34,35 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({
   const rawCardProgress = (progress - cardStart) / layerStep;
   const cardProgress = Math.max(0, Math.min(1, rawCardProgress));
 
-  // Deliberate single-phase animation per card: slow fade/slide in, linger, then fade/slide out
-  // 0-25%: fade/slide in, 25-75%: fully visible, 75-100%: fade/slide out
-  const entryEnd = 0.25;
-  const exitStart = 0.75;
+  // 3D flip animation: card flips in from horizontal, stays, flips out
+  // 0-30%: flip in from 90° to 0°, 30-70%: fully visible, 70-100%: flip out 0° to -90°
+  const entryEnd = 0.30;
+  const exitStart = 0.70;
 
-  let rotateY = 0;
-  let translateX = 0;
+  let rotateX = 0;
   let scale = 1;
   let opacity = 1;
   let glowIntensity = 1;
 
   if (cardProgress <= entryEnd) {
-    // Ease in
+    // Flip in from horizontal (90° = laying flat facing up)
     const t = cardProgress / entryEnd;
     const eased = easeOutQuint(Math.min(1, t));
-    translateX = 12 * (1 - eased); // gentle slide from right
-    scale = 0.96 + 0.04 * eased;
-    opacity = 0.15 + 0.85 * eased;
-    glowIntensity = 0.4 + 0.6 * eased;
+    rotateX = 90 * (1 - eased); // 90° → 0°
+    scale = 0.85 + 0.15 * eased;
+    opacity = 0.3 + 0.7 * eased; // slight fade to help the 3D illusion
+    glowIntensity = 0.5 + 0.5 * eased;
   } else if (cardProgress >= exitStart) {
-    // Ease out
+    // Flip out to horizontal (0° → -90° = laying flat facing down)
     const t = (cardProgress - exitStart) / (1 - exitStart);
     const eased = easeInQuint(Math.min(1, t));
-    translateX = -12 * eased; // gentle slide to left
-    scale = 1 - 0.04 * eased;
-    opacity = 1 - 0.85 * eased;
-    glowIntensity = 1 - 0.6 * eased;
+    rotateX = -90 * eased; // 0° → -90°
+    scale = 1 - 0.15 * eased;
+    opacity = 1 - 0.7 * eased;
+    glowIntensity = 1 - 0.5 * eased;
   } else {
-    // Comfortable center window
-    translateX = 0;
+    // Comfortable center window - card faces user
+    rotateX = 0;
     scale = 1;
     opacity = 1;
     glowIntensity = 1;
@@ -74,19 +73,20 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({
   return (
     <div 
       className="mt-10 w-full flex justify-center px-3"
-      style={{ perspective: '1200px' }}
+      style={{ perspective: '800px' }}
     >
       <div
         className="relative px-8 py-6 rounded-2xl w-full max-w-md overflow-hidden"
         style={{
-          transform: `translateX(${translateX}%) rotateY(${rotateY}deg) scale(${scale})`,
+          transform: `rotateX(${rotateX}deg) scale(${scale})`,
           transformStyle: 'preserve-3d',
+          transformOrigin: 'center center',
           opacity,
           background: 'radial-gradient(circle at 0% 0%, hsl(168 80% 22% / 0.35), transparent 55%), radial-gradient(circle at 100% 100%, hsl(30 80% 35% / 0.4), transparent 60%), hsl(160 25% 6%)',
           borderRadius: '1.25rem',
           boxShadow: [
             `0 0 ${40 * glowIntensity}px hsl(168 70% 40% / ${0.3 * glowIntensity})`,
-            `0 18px 60px hsl(0 0% 0% / 0.8)`
+            `0 ${18 + rotateX * 0.3}px ${60 + Math.abs(rotateX) * 0.5}px hsl(0 0% 0% / 0.8)`
           ].join(', '),
           border: '1px solid hsl(168 50% 30% / 0.6)',
           willChange: 'transform, opacity',
