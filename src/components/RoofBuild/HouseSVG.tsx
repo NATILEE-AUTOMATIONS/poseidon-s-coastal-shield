@@ -199,9 +199,9 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
         </g>
       </g>
 
-      {/* Roof deck (the bare structure) - BEHIND chimney */}
+      {/* Roof structure with rafters - bare framing */}
       <g className="roof-deck">
-        {/* Roof deck surface */}
+        {/* Roof deck surface - dark background */}
         <path
           d="M40 160 L200 55 L360 160 Z"
           fill="url(#roofDeckGradient)"
@@ -213,26 +213,70 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
           }}
         />
         
-        {/* Ridge beam highlight */}
+        {/* ===== ROOF RAFTERS - Left side ===== */}
+        {/* Rafters run from ridge (200, 55) to eave (40-200, 160) */}
+        <g className="rafters-left" style={{ filter: 'drop-shadow(0 0 4px hsl(168 70% 45% / 0.5))' }}>
+          {/* Rafter 1 - far left */}
+          <line x1="200" y1="58" x2="55" y2="155" stroke="hsl(168 60% 38%)" strokeWidth="3" strokeLinecap="round" />
+          {/* Rafter 2 */}
+          <line x1="200" y1="58" x2="85" y2="155" stroke="hsl(168 60% 38%)" strokeWidth="3" strokeLinecap="round" />
+          {/* Rafter 3 */}
+          <line x1="200" y1="58" x2="115" y2="155" stroke="hsl(168 60% 38%)" strokeWidth="3" strokeLinecap="round" />
+          {/* Rafter 4 */}
+          <line x1="200" y1="58" x2="145" y2="155" stroke="hsl(168 60% 38%)" strokeWidth="3" strokeLinecap="round" />
+          {/* Rafter 5 - near ridge */}
+          <line x1="200" y1="58" x2="175" y2="155" stroke="hsl(168 60% 38%)" strokeWidth="3" strokeLinecap="round" />
+        </g>
+        
+        {/* ===== ROOF RAFTERS - Right side ===== */}
+        <g className="rafters-right" style={{ filter: 'drop-shadow(0 0 4px hsl(168 70% 45% / 0.5))' }}>
+          {/* Rafter 1 - near ridge */}
+          <line x1="200" y1="58" x2="225" y2="155" stroke="hsl(168 60% 38%)" strokeWidth="3" strokeLinecap="round" />
+          {/* Rafter 2 */}
+          <line x1="200" y1="58" x2="255" y2="155" stroke="hsl(168 60% 38%)" strokeWidth="3" strokeLinecap="round" />
+          {/* Rafter 3 */}
+          <line x1="200" y1="58" x2="285" y2="155" stroke="hsl(168 60% 38%)" strokeWidth="3" strokeLinecap="round" />
+          {/* Rafter 4 */}
+          <line x1="200" y1="58" x2="315" y2="155" stroke="hsl(168 60% 38%)" strokeWidth="3" strokeLinecap="round" />
+          {/* Rafter 5 - far right */}
+          <line x1="200" y1="58" x2="345" y2="155" stroke="hsl(168 60% 38%)" strokeWidth="3" strokeLinecap="round" />
+        </g>
+        
+        {/* ===== COLLAR TIES - horizontal bracing ===== */}
+        <g className="collar-ties" opacity="0.7">
+          {/* Upper collar tie */}
+          <line x1="130" y1="100" x2="270" y2="100" stroke="hsl(168 55% 35%)" strokeWidth="2.5" strokeLinecap="round" />
+          {/* Lower collar tie */}
+          <line x1="95" y1="125" x2="305" y2="125" stroke="hsl(168 55% 35%)" strokeWidth="2.5" strokeLinecap="round" />
+        </g>
+        
+        {/* ===== RIDGE BEAM - Main structural element ===== */}
         <line
           x1="200"
           y1="55"
           x2="200"
-          y2="62"
+          y2="65"
           stroke="hsl(168 80% 55%)"
-          strokeWidth="4"
+          strokeWidth="5"
           strokeLinecap="round"
-          style={{ filter: 'drop-shadow(0 0 8px hsl(168 80% 50% / 0.8))' }}
+          style={{ filter: 'drop-shadow(0 0 10px hsl(168 80% 50% / 0.8))' }}
         />
         
-        {/* Subtle deck texture lines */}
-        <g opacity="0.15">
-          <line x1="80" y1="145" x2="200" y2="75" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
-          <line x1="120" y1="140" x2="200" y2="80" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
-          <line x1="160" y1="132" x2="200" y2="85" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
-          <line x1="200" y1="75" x2="320" y2="145" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
-          <line x1="200" y1="80" x2="280" y2="140" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
-          <line x1="200" y1="85" x2="240" y2="132" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
+        {/* Ridge beam glow accent */}
+        <circle
+          cx="200"
+          cy="55"
+          r="4"
+          fill="hsl(168 80% 55%)"
+          style={{ filter: 'drop-shadow(0 0 12px hsl(168 80% 50%))' }}
+        />
+        
+        {/* ===== FASCIA BOARDS - along eaves ===== */}
+        <g className="fascia" style={{ filter: 'drop-shadow(0 0 6px hsl(168 70% 45% / 0.4))' }}>
+          {/* Left fascia */}
+          <line x1="42" y1="158" x2="198" y2="158" stroke="hsl(168 60% 42%)" strokeWidth="4" strokeLinecap="round" />
+          {/* Right fascia */}
+          <line x1="202" y1="158" x2="358" y2="158" stroke="hsl(168 60% 42%)" strokeWidth="4" strokeLinecap="round" />
         </g>
       </g>
 
