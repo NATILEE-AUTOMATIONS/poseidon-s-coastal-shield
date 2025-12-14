@@ -217,7 +217,7 @@ const RoofBuildSection: React.FC = () => {
                   
                   {/* Animated roof layers - 10 layers in correct installation order */}
                   {/* 1. Replace Decking */}
-                  <DeckingLayer progress={progress} startProgress={layers[0].start} endProgress={layers[0].end} />
+                  <DeckingLayer progress={progress} startProgress={layers[0].start} endProgress={layers[0].end} isMobile={isMobile} />
                   {/* 2. Drip Edge (Eaves) */}
                   <DripEdgeEavesLayer progress={progress} startProgress={layers[1].start} endProgress={layers[1].end} />
                   {/* 3. Ice & Water Shield */}
