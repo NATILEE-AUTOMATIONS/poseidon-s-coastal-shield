@@ -213,133 +213,85 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
           }}
         />
         
-        {/* ===== RAFTERS - Parallel lines following roof slope ===== */}
+        {/* ===== RAFTERS - Clipped parallel lines inside roof ===== */}
         <defs>
           <linearGradient id="rafterGradient" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="hsl(168 50% 38%)" />
             <stop offset="50%" stopColor="hsl(168 55% 45%)" />
             <stop offset="100%" stopColor="hsl(168 45% 32%)" />
           </linearGradient>
+          {/* Clip path to keep rafters inside roof triangle */}
+          <clipPath id="roofClip">
+            <path d="M40 160 L200 55 L360 160 Z" />
+          </clipPath>
         </defs>
         
-        {/* Left slope rafters - parallel lines from eave to ridge */}
-        <g className="rafters-left">
-          {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
-            // Left slope: A(40, 160) to B(200, 55)
-            // Direction along slope
-            const slopeDx = 200 - 40; // 160
-            const slopeDy = 55 - 160; // -105
-            const slopeLen = Math.sqrt(slopeDx * slopeDx + slopeDy * slopeDy);
-            
-            // Perpendicular direction (for spacing rafters)
-            const perpDx = -slopeDy / slopeLen; // points "down-right"
-            const perpDy = slopeDx / slopeLen;
-            
-            // Space rafters along perpendicular direction
-            const spacing = 12;
-            const offset = (i + 1) * spacing;
-            
-            // Start point: offset from ridge along perpendicular
-            const startX = 200 + perpDx * offset;
-            const startY = 55 + perpDy * offset;
-            
-            // End point: follow slope direction to edge
-            // Calculate where this line intersects the eave or left wall
-            const endX = startX - slopeDx * 0.95;
-            const endY = startY - slopeDy * 0.95;
-            
-            // Lumber thickness
-            const thickness = 3.5;
-            const thickOffsetX = perpDx * thickness;
-            const thickOffsetY = perpDy * thickness;
-            
-            // Clip to roof triangle bounds
-            const clippedStartX = Math.min(Math.max(startX, 40), 200);
-            const clippedStartY = Math.max(startY, 55);
-            
-            return (
-              <g key={`left-${i}`}>
-                {/* Rafter as thick lumber */}
+        {/* Rafters clipped to roof bounds */}
+        <g clipPath="url(#roofClip)">
+          {/* Left slope rafters - parallel lines */}
+          <g className="rafters-left">
+            {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => {
+              // Space rafters evenly along the wall top (y=160, x from 50 to 195)
+              const spacing = 18;
+              const baseX = 50 + i * spacing;
+              const baseY = 160;
+              
+              // Left slope direction: from (40,160) to (200,55)
+              const dx = 200 - 40; // 160
+              const dy = 55 - 160; // -105
+              
+              // Each rafter runs parallel to the slope, starting at wall level
+              const endX = baseX + dx;
+              const endY = baseY + dy;
+              
+              return (
                 <line
-                  x1={startX}
-                  y1={startY}
+                  key={`left-${i}`}
+                  x1={baseX}
+                  y1={baseY}
                   x2={endX}
                   y2={endY}
-                  stroke="hsl(168 55% 40%)"
+                  stroke="hsl(168 55% 42%)"
                   strokeWidth="4"
-                  strokeLinecap="square"
-                  opacity={0.9 - i * 0.04}
+                  strokeLinecap="round"
+                  opacity={0.85}
                   style={{ filter: 'drop-shadow(0 0 3px hsl(168 70% 45% / 0.5))' }}
                 />
-                {/* Highlight edge */}
+              );
+            })}
+          </g>
+          
+          {/* Right slope rafters - parallel lines */}
+          <g className="rafters-right">
+            {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => {
+              // Space rafters from right side
+              const spacing = 18;
+              const baseX = 350 - i * spacing;
+              const baseY = 160;
+              
+              // Right slope direction: from (360,160) to (200,55)
+              const dx = 200 - 360; // -160
+              const dy = 55 - 160; // -105
+              
+              const endX = baseX + dx;
+              const endY = baseY + dy;
+              
+              return (
                 <line
-                  x1={startX + thickOffsetX * 0.3}
-                  y1={startY + thickOffsetY * 0.3}
-                  x2={endX + thickOffsetX * 0.3}
-                  y2={endY + thickOffsetY * 0.3}
-                  stroke="hsl(168 70% 55%)"
-                  strokeWidth="1"
-                  strokeLinecap="square"
-                  opacity={0.5 - i * 0.03}
-                />
-              </g>
-            );
-          })}
-        </g>
-        
-        {/* Right slope rafters - mirror */}
-        <g className="rafters-right">
-          {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
-            // Right slope: B(200, 55) to C(360, 160)
-            const slopeDx = 360 - 200; // 160
-            const slopeDy = 160 - 55; // 105
-            const slopeLen = Math.sqrt(slopeDx * slopeDx + slopeDy * slopeDy);
-            
-            // Perpendicular direction (for spacing rafters)
-            const perpDx = slopeDy / slopeLen; // points "down-left"
-            const perpDy = -slopeDx / slopeLen;
-            
-            const spacing = 12;
-            const offset = (i + 1) * spacing;
-            
-            // Start point: offset from ridge along perpendicular
-            const startX = 200 + perpDx * offset;
-            const startY = 55 - perpDy * offset;
-            
-            // End point: follow slope direction
-            const endX = startX + slopeDx * 0.95;
-            const endY = startY + slopeDy * 0.95;
-            
-            const thickness = 3.5;
-            const thickOffsetX = perpDx * thickness;
-            const thickOffsetY = -perpDy * thickness;
-            
-            return (
-              <g key={`right-${i}`}>
-                <line
-                  x1={startX}
-                  y1={startY}
+                  key={`right-${i}`}
+                  x1={baseX}
+                  y1={baseY}
                   x2={endX}
                   y2={endY}
-                  stroke="hsl(168 55% 40%)"
+                  stroke="hsl(168 55% 42%)"
                   strokeWidth="4"
-                  strokeLinecap="square"
-                  opacity={0.9 - i * 0.04}
+                  strokeLinecap="round"
+                  opacity={0.85}
                   style={{ filter: 'drop-shadow(0 0 3px hsl(168 70% 45% / 0.5))' }}
                 />
-                <line
-                  x1={startX + thickOffsetX * 0.3}
-                  y1={startY + thickOffsetY * 0.3}
-                  x2={endX + thickOffsetX * 0.3}
-                  y2={endY + thickOffsetY * 0.3}
-                  stroke="hsl(168 70% 55%)"
-                  strokeWidth="1"
-                  strokeLinecap="square"
-                  opacity={0.5 - i * 0.03}
-                />
-              </g>
-            );
-          })}
+              );
+            })}
+          </g>
         </g>
         
         {/* Ridge board - horizontal beam at peak */}
