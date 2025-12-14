@@ -213,32 +213,6 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
           }}
         />
         
-        {/* Ridge board - simple horizontal beam at peak */}
-        <rect
-          x="185"
-          y="54"
-          width="30"
-          height="5"
-          fill="hsl(168 45% 28%)"
-          stroke="hsl(168 70% 50%)"
-          strokeWidth="1.5"
-          rx="1"
-          style={{ filter: 'drop-shadow(0 0 8px hsl(168 80% 50% / 0.6))' }}
-        />
-        
-        {/* Collar tie - single horizontal brace */}
-        <rect
-          x="100"
-          y="110"
-          width="200"
-          height="3"
-          fill="hsl(168 40% 25%)"
-          stroke="hsl(168 55% 42%)"
-          strokeWidth="0.75"
-          opacity="0.6"
-          rx="0.5"
-          style={{ filter: 'drop-shadow(0 0 5px hsl(168 60% 40% / 0.4))' }}
-        />
       </g>
 
       {/* ===== PREMIUM CHIMNEY (Left side of roof) ===== */}
