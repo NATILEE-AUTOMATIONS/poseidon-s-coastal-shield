@@ -35,13 +35,23 @@ const colors = {
   vents: { fill: 'hsl(0 0% 18%)', stroke: 'hsl(168 70% 50%)', glow: 'hsl(168 80% 55%)' },
 };
 
-// Layer 1: Decking - Premium Realistic Plywood/OSB Sheets
+// Layer 1: Decking - Clean Rectangular Plywood Sheets
 export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress }) => {
   const { layerProgress, isLocked } = calculateLayerState(progress, startProgress, endProgress);
   const yOffset = (1 - layerProgress) * -200;
   const opacity = 0.5 + layerProgress * 0.5;
   const scale = isLocked ? 1.02 : 0.95 + layerProgress * 0.07;
   const bounceOffset = isLocked ? Math.sin(Date.now() / 200) * 0.5 : 0;
+
+  // Plywood colors - warm natural tones with variation
+  const plyColors = [
+    'hsl(35 55% 52%)',   // Light warm
+    'hsl(32 50% 46%)',   // Medium
+    'hsl(38 58% 55%)',   // Lighter new
+    'hsl(30 48% 42%)',   // Darker aged
+    'hsl(36 52% 50%)',   // Neutral
+    'hsl(33 45% 44%)',   // Weathered
+  ];
 
   return (
     <g
@@ -52,282 +62,122 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
         transition: isLocked ? 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
       }}
     >
-      {/* Premium plywood definitions */}
+      {/* Clip paths to constrain sheets to roof shape */}
       <defs>
-        {/* Base plywood gradients for each sheet */}
-        <linearGradient id="plySheet1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="hsl(35 58% 52%)" />
-          <stop offset="35%" stopColor="hsl(38 62% 56%)" />
-          <stop offset="65%" stopColor="hsl(33 55% 48%)" />
-          <stop offset="100%" stopColor="hsl(30 50% 44%)" />
-        </linearGradient>
-        <linearGradient id="plySheet2" x1="100%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(38 60% 54%)" />
-          <stop offset="40%" stopColor="hsl(35 55% 50%)" />
-          <stop offset="100%" stopColor="hsl(32 52% 46%)" />
-        </linearGradient>
-        <linearGradient id="plySheet3" x1="50%" y1="0%" x2="50%" y2="100%">
-          <stop offset="0%" stopColor="hsl(40 58% 58%)" />
-          <stop offset="50%" stopColor="hsl(36 55% 52%)" />
-          <stop offset="100%" stopColor="hsl(32 50% 45%)" />
-        </linearGradient>
-        <linearGradient id="plySheet4" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="hsl(33 55% 50%)" />
-          <stop offset="50%" stopColor="hsl(37 60% 54%)" />
-          <stop offset="100%" stopColor="hsl(35 52% 48%)" />
-        </linearGradient>
-        <linearGradient id="plySheet5" x1="0%" y1="50%" x2="100%" y2="50%">
-          <stop offset="0%" stopColor="hsl(42 55% 58%)" />
-          <stop offset="50%" stopColor="hsl(38 58% 54%)" />
-          <stop offset="100%" stopColor="hsl(34 52% 48%)" />
-        </linearGradient>
-        <linearGradient id="plySheet6" x1="100%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stopColor="hsl(30 55% 48%)" />
-          <stop offset="60%" stopColor="hsl(35 58% 52%)" />
-          <stop offset="100%" stopColor="hsl(38 55% 50%)" />
-        </linearGradient>
-        
-        {/* Inner shadow filter for depth */}
-        <filter id="innerShadow" x="-50%" y="-50%" width="200%" height="200%">
-          <feComponentTransfer in="SourceAlpha">
-            <feFuncA type="table" tableValues="1 0" />
-          </feComponentTransfer>
-          <feGaussianBlur stdDeviation="2" />
-          <feOffset dx="1" dy="1" result="offsetblur" />
-          <feFlood floodColor="hsl(25 40% 20%)" floodOpacity="0.5" />
-          <feComposite in2="offsetblur" operator="in" />
-          <feMerge>
-            <feMergeNode />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-        
-        {/* Wood strand texture pattern */}
-        <pattern id="woodStrand" patternUnits="userSpaceOnUse" width="12" height="6" patternTransform="rotate(-25)">
-          <rect width="12" height="6" fill="transparent" />
-          <rect x="0" y="0" width="10" height="1.5" rx="0.5" fill="hsl(30 45% 38%)" opacity="0.25" />
-          <rect x="2" y="2.5" width="8" height="1" rx="0.3" fill="hsl(35 50% 42%)" opacity="0.2" />
-          <rect x="1" y="4.5" width="6" height="0.8" rx="0.3" fill="hsl(28 40% 35%)" opacity="0.18" />
-        </pattern>
-        
-        {/* Highlight glow for locked state */}
-        <filter id="plywoodGlow">
-          <feGaussianBlur stdDeviation="4" result="glow" />
-          <feMerge>
-            <feMergeNode in="glow" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
+        <clipPath id="leftRoofClip">
+          <path d="M52 158 L200 58 L200 160 L50 160 Z" />
+        </clipPath>
+        <clipPath id="rightRoofClip">
+          <path d="M200 58 L348 158 L350 160 L200 160 Z" />
+        </clipPath>
       </defs>
 
-      {/* ===== LEFT ROOF - Base Shadow Layer ===== */}
-      <path
-        d="M52 158 L200 58 L200 158 Z"
-        fill="hsl(25 40% 28%)"
-      />
-
-      {/* ===== LEFT ROOF - Plywood Sheets ===== */}
-      {/* Sheet L1 - Ridge corner */}
-      <path
-        d="M145 100 L200 58 L200 85 L165 100 Z"
-        fill="url(#plySheet1)"
-        stroke="hsl(25 35% 25%)"
-        strokeWidth="1.5"
-        style={{ filter: 'url(#innerShadow)' }}
-      />
-      
-      {/* Sheet L2 - Upper middle */}
-      <path
-        d="M90 138 L145 100 L165 100 L200 85 L200 110 L155 128 L100 155 Z"
-        fill="url(#plySheet2)"
-        stroke="hsl(25 35% 25%)"
-        strokeWidth="1.5"
-        style={{ filter: 'url(#innerShadow)' }}
-      />
-      
-      {/* Sheet L3 - Left corner */}
-      <path
-        d="M52 158 L90 138 L100 155 L65 158 Z"
-        fill="url(#plySheet3)"
-        stroke="hsl(25 35% 25%)"
-        strokeWidth="1.5"
-        style={{ filter: 'url(#innerShadow)' }}
-      />
-      
-      {/* Sheet L4 - Lower middle */}
-      <path
-        d="M65 158 L100 155 L155 128 L200 110 L200 138 L170 148 L115 158 Z"
-        fill="url(#plySheet4)"
-        stroke="hsl(25 35% 25%)"
-        strokeWidth="1.5"
-        style={{ filter: 'url(#innerShadow)' }}
-      />
-      
-      {/* Sheet L5 - Bottom strip */}
-      <path
-        d="M115 158 L170 148 L200 138 L200 158 Z"
-        fill="url(#plySheet5)"
-        stroke="hsl(25 35% 25%)"
-        strokeWidth="1.5"
-        style={{ filter: 'url(#innerShadow)' }}
-      />
-
-      {/* ===== RIGHT ROOF - Base Shadow Layer ===== */}
-      <path
-        d="M200 58 L348 158 L200 158 Z"
-        fill="hsl(25 40% 28%)"
-      />
-
-      {/* ===== RIGHT ROOF - Plywood Sheets ===== */}
-      {/* Sheet R1 - Ridge corner */}
-      <path
-        d="M200 58 L255 100 L235 100 L200 85 Z"
-        fill="url(#plySheet2)"
-        stroke="hsl(25 35% 25%)"
-        strokeWidth="1.5"
-        style={{ filter: 'url(#innerShadow)' }}
-      />
-      
-      {/* Sheet R2 - Upper middle */}
-      <path
-        d="M200 85 L235 100 L255 100 L310 138 L300 155 L245 128 L200 110 Z"
-        fill="url(#plySheet1)"
-        stroke="hsl(25 35% 25%)"
-        strokeWidth="1.5"
-        style={{ filter: 'url(#innerShadow)' }}
-      />
-      
-      {/* Sheet R3 - Right corner */}
-      <path
-        d="M310 138 L348 158 L335 158 L300 155 Z"
-        fill="url(#plySheet6)"
-        stroke="hsl(25 35% 25%)"
-        strokeWidth="1.5"
-        style={{ filter: 'url(#innerShadow)' }}
-      />
-      
-      {/* Sheet R4 - Lower middle */}
-      <path
-        d="M200 110 L245 128 L300 155 L335 158 L285 158 L230 148 L200 138 Z"
-        fill="url(#plySheet3)"
-        stroke="hsl(25 35% 25%)"
-        strokeWidth="1.5"
-        style={{ filter: 'url(#innerShadow)' }}
-      />
-      
-      {/* Sheet R5 - Bottom strip */}
-      <path
-        d="M200 138 L230 148 L285 158 L200 158 Z"
-        fill="url(#plySheet4)"
-        stroke="hsl(25 35% 25%)"
-        strokeWidth="1.5"
-        style={{ filter: 'url(#innerShadow)' }}
-      />
-
-      {/* ===== OSB Wood Strand Texture Overlay ===== */}
-      <path
-        d="M52 158 L200 58 L348 158 Z"
-        fill="url(#woodStrand)"
-        opacity="0.6"
-      />
-
-      {/* ===== Wood Grain Lines ===== */}
-      <g opacity="0.3" strokeLinecap="round">
-        {/* Left grain */}
-        <path d="M155 95 Q170 85 190 72" stroke="hsl(28 40% 35%)" strokeWidth="0.6" fill="none" />
-        <path d="M105 145 Q140 125 175 105" stroke="hsl(28 40% 35%)" strokeWidth="0.5" fill="none" />
-        <path d="M75 155 Q95 148 120 135" stroke="hsl(28 40% 35%)" strokeWidth="0.5" fill="none" />
-        <path d="M135 155 Q160 142 185 125" stroke="hsl(28 40% 35%)" strokeWidth="0.6" fill="none" />
-        {/* Right grain */}
-        <path d="M210 72 Q230 85 245 95" stroke="hsl(28 40% 35%)" strokeWidth="0.6" fill="none" />
-        <path d="M225 105 Q260 125 295 145" stroke="hsl(28 40% 35%)" strokeWidth="0.5" fill="none" />
-        <path d="M280 135 Q305 148 325 155" stroke="hsl(28 40% 35%)" strokeWidth="0.5" fill="none" />
-        <path d="M215 125 Q240 142 265 155" stroke="hsl(28 40% 35%)" strokeWidth="0.6" fill="none" />
-      </g>
-
-      {/* ===== Knots with Rings ===== */}
-      <g>
-        {/* Left side knots */}
-        <g opacity="0.55">
-          <ellipse cx="165" cy="95" rx="3" ry="2.5" fill="hsl(22 50% 30%)" />
-          <ellipse cx="165" cy="95" rx="1.8" ry="1.5" fill="hsl(20 45% 25%)" />
-        </g>
-        <g opacity="0.5">
-          <ellipse cx="125" cy="138" rx="2.5" ry="2" fill="hsl(22 48% 32%)" />
-          <ellipse cx="125" cy="138" rx="1.5" ry="1" fill="hsl(20 45% 26%)" />
-        </g>
-        <g opacity="0.6">
-          <ellipse cx="180" cy="125" rx="3.5" ry="2.5" fill="hsl(22 52% 30%)" />
-          <ellipse cx="180" cy="125" rx="2" ry="1.5" fill="hsl(20 48% 24%)" />
-        </g>
-        <g opacity="0.45">
-          <circle cx="85" cy="152" r="2" fill="hsl(22 45% 32%)" />
-          <circle cx="85" cy="152" r="1" fill="hsl(20 42% 26%)" />
-        </g>
-        <g opacity="0.5">
-          <ellipse cx="150" cy="148" rx="2" ry="1.5" fill="hsl(22 48% 30%)" />
+      {/* ===== LEFT ROOF SIDE ===== */}
+      <g clipPath="url(#leftRoofClip)">
+        {/* Row 1 - Top (near ridge) */}
+        <g transform="skewY(-34)">
+          <rect x="155" y="138" width="45" height="22" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="110" y="138" width="45" height="22" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="65" y="138" width="45" height="22" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="20" y="138" width="45" height="22" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
         </g>
         
-        {/* Right side knots */}
-        <g opacity="0.55">
-          <ellipse cx="235" cy="95" rx="3" ry="2.5" fill="hsl(22 50% 30%)" />
-          <ellipse cx="235" cy="95" rx="1.8" ry="1.5" fill="hsl(20 45% 25%)" />
+        {/* Row 2 - Staggered */}
+        <g transform="skewY(-34)">
+          <rect x="175" y="160" width="25" height="22" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="130" y="160" width="45" height="22" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="85" y="160" width="45" height="22" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="40" y="160" width="45" height="22" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
         </g>
-        <g opacity="0.5">
-          <ellipse cx="275" cy="138" rx="2.5" ry="2" fill="hsl(22 48% 32%)" />
-          <ellipse cx="275" cy="138" rx="1.5" ry="1" fill="hsl(20 45% 26%)" />
+        
+        {/* Row 3 */}
+        <g transform="skewY(-34)">
+          <rect x="155" y="182" width="45" height="22" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="110" y="182" width="45" height="22" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="65" y="182" width="45" height="22" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="20" y="182" width="45" height="22" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
         </g>
-        <g opacity="0.6">
-          <ellipse cx="220" cy="125" rx="3.5" ry="2.5" fill="hsl(22 52% 30%)" />
-          <ellipse cx="220" cy="125" rx="2" ry="1.5" fill="hsl(20 48% 24%)" />
-        </g>
-        <g opacity="0.45">
-          <circle cx="315" cy="152" r="2" fill="hsl(22 45% 32%)" />
-          <circle cx="315" cy="152" r="1" fill="hsl(20 42% 26%)" />
-        </g>
-        <g opacity="0.5">
-          <ellipse cx="250" cy="148" rx="2" ry="1.5" fill="hsl(22 48% 30%)" />
+        
+        {/* Row 4 - Bottom */}
+        <g transform="skewY(-34)">
+          <rect x="175" y="204" width="25" height="22" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="130" y="204" width="45" height="22" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="85" y="204" width="45" height="22" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="40" y="204" width="45" height="22" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
         </g>
       </g>
 
-      {/* ===== APA Stamps (like real plywood) ===== */}
-      <g opacity="0.2" fontFamily="monospace" fontSize="4" fill="hsl(200 15% 25%)">
-        <text x="100" y="145" transform="rotate(-35 100 145)">APA</text>
-        <text x="160" y="118" transform="rotate(-35 160 118)">PS-2</text>
-        <text x="240" y="118" transform="rotate(35 240 118)">CDX</text>
-        <text x="300" y="145" transform="rotate(35 300 145)">4x8</text>
+      {/* ===== RIGHT ROOF SIDE ===== */}
+      <g clipPath="url(#rightRoofClip)">
+        {/* Row 1 - Top (near ridge) */}
+        <g transform="skewY(34)">
+          <rect x="200" y="23" width="45" height="22" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="245" y="23" width="45" height="22" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="290" y="23" width="45" height="22" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="335" y="23" width="45" height="22" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+        </g>
+        
+        {/* Row 2 - Staggered */}
+        <g transform="skewY(34)">
+          <rect x="200" y="45" width="25" height="22" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="225" y="45" width="45" height="22" fill={plyColors[2]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="270" y="45" width="45" height="22" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="315" y="45" width="45" height="22" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+        </g>
+        
+        {/* Row 3 */}
+        <g transform="skewY(34)">
+          <rect x="200" y="67" width="45" height="22" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="245" y="67" width="45" height="22" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="290" y="67" width="45" height="22" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="335" y="67" width="45" height="22" fill={plyColors[4]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+        </g>
+        
+        {/* Row 4 - Bottom */}
+        <g transform="skewY(34)">
+          <rect x="200" y="89" width="25" height="22" fill={plyColors[0]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="225" y="89" width="45" height="22" fill={plyColors[1]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="270" y="89" width="45" height="22" fill={plyColors[3]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+          <rect x="315" y="89" width="45" height="22" fill={plyColors[5]} stroke="hsl(28 40% 32%)" strokeWidth="1.2" />
+        </g>
       </g>
 
-      {/* ===== Ridge Seam ===== */}
+      {/* ===== Subtle Wood Grain Overlay ===== */}
+      <g opacity="0.15" clipPath="url(#leftRoofClip)">
+        <line x1="80" y1="155" x2="170" y2="95" stroke="hsl(25 40% 35%)" strokeWidth="0.5" />
+        <line x1="100" y1="155" x2="185" y2="100" stroke="hsl(25 40% 35%)" strokeWidth="0.4" />
+        <line x1="130" y1="155" x2="195" y2="115" stroke="hsl(25 40% 35%)" strokeWidth="0.5" />
+      </g>
+      <g opacity="0.15" clipPath="url(#rightRoofClip)">
+        <line x1="230" y1="95" x2="320" y2="155" stroke="hsl(25 40% 35%)" strokeWidth="0.5" />
+        <line x1="215" y1="100" x2="300" y2="155" stroke="hsl(25 40% 35%)" strokeWidth="0.4" />
+        <line x1="205" y1="115" x2="270" y2="155" stroke="hsl(25 40% 35%)" strokeWidth="0.5" />
+      </g>
+
+      {/* ===== Small Knots ===== */}
+      <g opacity="0.4">
+        <circle cx="130" cy="115" r="1.5" fill="hsl(25 50% 30%)" />
+        <circle cx="160" cy="140" r="2" fill="hsl(25 50% 30%)" />
+        <circle cx="95" cy="135" r="1.5" fill="hsl(25 50% 30%)" />
+        <circle cx="240" cy="115" r="1.5" fill="hsl(25 50% 30%)" />
+        <circle cx="270" cy="140" r="2" fill="hsl(25 50% 30%)" />
+        <circle cx="305" cy="135" r="1.5" fill="hsl(25 50% 30%)" />
+      </g>
+
+      {/* ===== Ridge Line ===== */}
       <line 
         x1="200" y1="58" x2="200" y2="158" 
-        stroke="hsl(22 30% 20%)" 
-        strokeWidth="2.5"
-      />
-      <line 
-        x1="200" y1="58" x2="200" y2="158" 
-        stroke="hsl(35 40% 35%)" 
-        strokeWidth="0.5"
-        strokeDasharray="4 3"
-        opacity="0.4"
+        stroke="hsl(25 35% 25%)" 
+        strokeWidth="2"
       />
 
-      {/* ===== Highlight Edge for Depth ===== */}
-      <path
-        d="M52 158 L200 58 L348 158"
-        fill="none"
-        stroke="hsl(42 55% 65%)"
-        strokeWidth="1"
-        opacity="0.3"
-      />
-
-      {/* Glow overlay when locked */}
+      {/* Glow when locked */}
       {isLocked && (
-        <g style={{ filter: `drop-shadow(0 0 12px hsl(35 70% 55%)) drop-shadow(0 0 25px hsl(35 65% 50%))` }}>
+        <g style={{ filter: 'drop-shadow(0 0 10px hsl(35 70% 55%)) drop-shadow(0 0 20px hsl(35 60% 50%))' }}>
           <path
-            d="M52 158 L200 58 L348 158 Z"
-            fill="transparent"
-            stroke="hsl(38 70% 58%)"
+            d="M52 158 L200 58 L348 158"
+            fill="none"
+            stroke="hsl(38 65% 55%)"
             strokeWidth="2"
           />
         </g>
