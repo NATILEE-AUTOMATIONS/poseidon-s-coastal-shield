@@ -43,8 +43,8 @@ const RoofBuildSection: React.FC = () => {
   const layerStep = isMobile ? mobileLayerStep : desktopLayerStep;
   const layerStart = isMobile ? mobileLayerStart : desktopLayerStart;
   
-  // Decking gets 3x the scroll distance for a dramatic, visible animation
-  const deckingMultiplier = 3;
+  // Decking gets 6x the scroll distance for a dramatic, visible animation
+  const deckingMultiplier = 6;
   const deckingEnd = layerStart + (layerStep * deckingMultiplier);
   
   const layers = [
