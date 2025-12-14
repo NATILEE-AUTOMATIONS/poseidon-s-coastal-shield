@@ -149,10 +149,8 @@ const RoofBuildSection: React.FC = () => {
         }}
       />
 
-      {/* Image Gallery - Different experience for mobile vs desktop */}
-      {isMobile && <MobileFirstImage progress={progress} />}
+      {/* Desktop Gallery - needs to be above sticky container */}
       {!isMobile && <ImageGallery3D progress={progress} />}
-
 
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
@@ -390,6 +388,9 @@ const RoofBuildSection: React.FC = () => {
         )}
 
       </div>
+
+      {/* Mobile Gallery - AFTER sticky section so it appears when scrolling past */}
+      {isMobile && <MobileFirstImage progress={progress} />}
     </section>
   );
 };
