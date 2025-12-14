@@ -199,9 +199,9 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
         </g>
       </g>
 
-      {/* Roof structure - stick-framed style */}
+      {/* Roof structure - world-class stick-framed */}
       <g className="roof-deck">
-        {/* Roof deck surface */}
+        {/* Roof deck surface - dark background */}
         <path
           d="M40 160 L200 55 L360 160 Z"
           fill="url(#roofDeckGradient)"
@@ -213,55 +213,95 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
           }}
         />
         
-        {/* ===== STICK-FRAMED RAFTERS ===== */}
-        {/* Rafters run parallel from ridge board down to wall plate */}
-        <g className="rafters" opacity="0.5">
-          {/* Left side rafters - evenly spaced parallel lines */}
-          <line x1="70" y1="140" x2="185" y2="65" stroke="hsl(168 50% 45%)" strokeWidth="2" />
-          <line x1="100" y1="140" x2="190" y2="75" stroke="hsl(168 50% 45%)" strokeWidth="2" />
-          <line x1="130" y1="140" x2="193" y2="85" stroke="hsl(168 50% 45%)" strokeWidth="2" />
-          <line x1="160" y1="140" x2="196" y2="95" stroke="hsl(168 50% 45%)" strokeWidth="2" />
-          
-          {/* Right side rafters - mirror */}
-          <line x1="330" y1="140" x2="215" y2="65" stroke="hsl(168 50% 45%)" strokeWidth="2" />
-          <line x1="300" y1="140" x2="210" y2="75" stroke="hsl(168 50% 45%)" strokeWidth="2" />
-          <line x1="270" y1="140" x2="207" y2="85" stroke="hsl(168 50% 45%)" strokeWidth="2" />
-          <line x1="240" y1="140" x2="204" y2="95" stroke="hsl(168 50% 45%)" strokeWidth="2" />
+        {/* ===== RAFTERS as 2x lumber with thickness ===== */}
+        <defs>
+          <linearGradient id="rafterGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="hsl(168 40% 28%)" />
+            <stop offset="50%" stopColor="hsl(168 45% 35%)" />
+            <stop offset="100%" stopColor="hsl(168 35% 22%)" />
+          </linearGradient>
+        </defs>
+        
+        {/* Left side rafters - proper lumber paths */}
+        <g className="rafters-left">
+          {[0, 1, 2, 3, 4, 5].map((i) => {
+            const spacing = 22;
+            const startX = 55 + i * spacing;
+            const endX = 197 - i * 2.5;
+            const startY = 157;
+            const endY = 62 + i * 3;
+            return (
+              <path
+                key={`left-${i}`}
+                d={`M${startX} ${startY} L${startX + 3} ${startY} L${endX + 2} ${endY} L${endX} ${endY} Z`}
+                fill="url(#rafterGradient)"
+                stroke="hsl(168 60% 45%)"
+                strokeWidth="0.5"
+                opacity={0.7 - i * 0.05}
+                style={{ filter: 'drop-shadow(0 0 2px hsl(168 70% 40% / 0.3))' }}
+              />
+            );
+          })}
         </g>
         
-        {/* Ridge board - horizontal along the peak */}
-        <line
-          x1="185"
-          y1="64"
-          x2="215"
-          y2="64"
+        {/* Right side rafters - mirror */}
+        <g className="rafters-right">
+          {[0, 1, 2, 3, 4, 5].map((i) => {
+            const spacing = 22;
+            const startX = 345 - i * spacing;
+            const endX = 203 + i * 2.5;
+            const startY = 157;
+            const endY = 62 + i * 3;
+            return (
+              <path
+                key={`right-${i}`}
+                d={`M${startX} ${startY} L${startX - 3} ${startY} L${endX - 2} ${endY} L${endX} ${endY} Z`}
+                fill="url(#rafterGradient)"
+                stroke="hsl(168 60% 45%)"
+                strokeWidth="0.5"
+                opacity={0.7 - i * 0.05}
+                style={{ filter: 'drop-shadow(0 0 2px hsl(168 70% 40% / 0.3))' }}
+              />
+            );
+          })}
+        </g>
+        
+        {/* Ridge board - horizontal structural element */}
+        <rect
+          x="190"
+          y="60"
+          width="20"
+          height="5"
+          fill="hsl(168 45% 30%)"
           stroke="hsl(168 70% 50%)"
-          strokeWidth="3"
-          strokeLinecap="round"
-          style={{ filter: 'drop-shadow(0 0 6px hsl(168 80% 50% / 0.6))' }}
+          strokeWidth="1"
+          rx="0.5"
+          style={{ filter: 'drop-shadow(0 0 6px hsl(168 80% 50% / 0.5))' }}
         />
         
-        {/* Collar tie - horizontal brace */}
-        <line
-          x1="115"
-          y1="115"
-          x2="285"
-          y2="115"
-          stroke="hsl(168 50% 42%)"
-          strokeWidth="2"
-          opacity="0.4"
+        {/* Collar tie - subtle horizontal brace */}
+        <rect
+          x="120"
+          y="112"
+          width="160"
+          height="3"
+          fill="hsl(168 40% 25%)"
+          stroke="hsl(168 55% 40%)"
+          strokeWidth="0.5"
+          opacity="0.5"
+          rx="0.5"
         />
         
-        {/* Ridge beam cap */}
+        {/* Ridge peak accent */}
         <line
           x1="200"
           y1="55"
           x2="200"
-          y2="64"
+          y2="60"
           stroke="hsl(168 80% 55%)"
           strokeWidth="4"
           strokeLinecap="round"
-          style={{ filter: 'drop-shadow(0 0 8px hsl(168 80% 50% / 0.8))' }}
+          style={{ filter: 'drop-shadow(0 0 10px hsl(168 80% 50% / 0.9))' }}
         />
       </g>
 
