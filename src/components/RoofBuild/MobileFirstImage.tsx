@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { ArrowRight } from 'lucide-react';
 import coastalRoofImage from '@/assets/coastal-roof-project.png';
 import coastalRoofInProgress from '@/assets/coastal-roof-inprogress.png';
 import coastalHomeCrew from '@/assets/coastal-home-crew.png';
@@ -65,11 +64,6 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
   const img4End = 0.86;
   const img4Progress = Math.max(0, Math.min(1, (localProgress - img4Start) / (img4End - img4Start)));
 
-  // CTA Button (Neon Rise): 0.88 - 1.00
-  const ctaStart = 0.88;
-  const ctaEnd = 1.00;
-  const ctaProgress = Math.max(0, Math.min(1, (localProgress - ctaStart) / (ctaEnd - ctaStart)));
-
   // === IMAGE ANIMATIONS ===
   const img1Eased = easeOutExpo(img1Progress);
   const img1Scale = 0.4 + (img1Eased * 0.6);
@@ -100,14 +94,6 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
   const img4Blur = (1 - img4Eased) * 15;
   const img4Brightness = 1.5 - (img4Eased * 0.5);
   const img4Opacity = Math.min(1, img4Progress * 2);
-
-  // CTA - Rise from below with neon ignition
-  const ctaEased = easeOutExpo(ctaProgress);
-  const ctaTranslateY = (1 - ctaEased) * 60;
-  const ctaScale = 0.85 + (ctaEased * 0.15);
-  const ctaBlur = (1 - ctaEased) * 8;
-  const ctaOpacity = Math.min(1, ctaProgress * 2.5);
-  const glowIntensity = ctaEased;
 
   // === TESTIMONIAL DATA ===
   const name = "Bruce Gombar";
@@ -371,55 +357,6 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
           />
         </div>
 
-        {/* Free Assessment CTA - Neon Rise */}
-        <button
-          className="relative mt-6 px-8 py-4 rounded-lg font-semibold text-lg tracking-wide uppercase overflow-hidden group"
-          style={{
-            transform: `translateY(${ctaTranslateY}px) scale(${ctaScale})`,
-            opacity: ctaOpacity,
-            filter: `blur(${ctaBlur}px)`,
-            background: 'hsl(180 30% 8% / 0.9)',
-            border: `2px solid hsl(168 80% 50% / ${0.6 + glowIntensity * 0.4})`,
-            boxShadow: `
-              0 0 20px hsl(168 80% 50% / ${0.3 * glowIntensity}),
-              0 0 40px hsl(168 70% 45% / ${0.2 * glowIntensity}),
-              0 0 60px hsl(168 60% 40% / ${0.1 * glowIntensity}),
-              inset 0 0 20px hsl(168 80% 50% / ${0.05 * glowIntensity})
-            `,
-          }}
-          onClick={() => {
-            // Scroll to contact or open modal
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-        >
-          <span
-            className="relative z-10 flex items-center gap-3"
-            style={{
-              color: `hsl(35 ${60 + glowIntensity * 20}% ${70 + glowIntensity * 10}%)`,
-              textShadow: `
-                0 0 ${10 + glowIntensity * 15}px hsl(35 80% 55% / ${0.4 + glowIntensity * 0.4}),
-                0 0 ${20 + glowIntensity * 25}px hsl(35 70% 50% / ${0.2 + glowIntensity * 0.3})
-              `,
-            }}
-          >
-            Free Assessment
-            <ArrowRight 
-              className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" 
-              style={{
-                filter: `drop-shadow(0 0 ${8 * glowIntensity}px hsl(35 80% 55%))`,
-              }}
-            />
-          </span>
-          
-          {/* Subtle shimmer effect on hover */}
-          <div 
-            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-            style={{
-              background: 'linear-gradient(105deg, transparent 40%, hsl(168 80% 50% / 0.1) 50%, transparent 60%)',
-              animation: 'shimmer 2s infinite',
-            }}
-          />
-        </button>
       </div>
     </div>
   );
