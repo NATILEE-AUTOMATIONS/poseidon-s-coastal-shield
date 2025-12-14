@@ -84,17 +84,25 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
         {/* Grain overlay */}
         <polygon points="42,159 200,56 200,159" fill="url(#grainPattern)" />
         
-        {/* Horizontal sheet rows */}
-        <line x1="42" y1="115" x2="200" y2="115" stroke="hsl(25 25% 25%)" strokeWidth="1.2" />
-        <line x1="42" y1="80" x2="200" y2="80" stroke="hsl(25 25% 25%)" strokeWidth="1.2" />
+        {/* Horizontal sheet rows - dark gap then light highlight */}
+        <line x1="42" y1="115" x2="200" y2="115" stroke="hsl(28 30% 20%)" strokeWidth="1.4" />
+        <line x1="42" y1="116.2" x2="200" y2="116.2" stroke="hsl(35 35% 58%)" strokeWidth="0.5" opacity="0.5" />
+        <line x1="42" y1="80" x2="200" y2="80" stroke="hsl(28 30% 20%)" strokeWidth="1.4" />
+        <line x1="42" y1="81.2" x2="200" y2="81.2" stroke="hsl(35 35% 58%)" strokeWidth="0.5" opacity="0.5" />
         
-        {/* Vertical seams - staggered */}
-        <line x1="100" y1="159" x2="100" y2="115" stroke="hsl(25 25% 28%)" strokeWidth="1" opacity="0.7" />
-        <line x1="160" y1="159" x2="160" y2="115" stroke="hsl(25 25% 28%)" strokeWidth="1" opacity="0.7" />
-        <line x1="80" y1="115" x2="80" y2="80" stroke="hsl(25 25% 28%)" strokeWidth="1" opacity="0.7" />
-        <line x1="140" y1="115" x2="140" y2="80" stroke="hsl(25 25% 28%)" strokeWidth="1" opacity="0.7" />
-        <line x1="115" y1="80" x2="115" y2="56" stroke="hsl(25 25% 28%)" strokeWidth="1" opacity="0.7" />
-        <line x1="165" y1="80" x2="165" y2="56" stroke="hsl(25 25% 28%)" strokeWidth="1" opacity="0.7" />
+        {/* Vertical seams - thinner with highlights */}
+        <line x1="100" y1="159" x2="100" y2="115" stroke="hsl(28 28% 22%)" strokeWidth="0.9" opacity="0.75" />
+        <line x1="101" y1="159" x2="101" y2="115" stroke="hsl(35 35% 60%)" strokeWidth="0.4" opacity="0.35" />
+        <line x1="160" y1="159" x2="160" y2="115" stroke="hsl(28 28% 22%)" strokeWidth="0.9" opacity="0.75" />
+        <line x1="161" y1="159" x2="161" y2="115" stroke="hsl(35 35% 60%)" strokeWidth="0.4" opacity="0.35" />
+        <line x1="80" y1="115" x2="80" y2="80" stroke="hsl(28 28% 22%)" strokeWidth="0.9" opacity="0.75" />
+        <line x1="81" y1="115" x2="81" y2="80" stroke="hsl(35 35% 60%)" strokeWidth="0.4" opacity="0.35" />
+        <line x1="140" y1="115" x2="140" y2="80" stroke="hsl(28 28% 22%)" strokeWidth="0.9" opacity="0.75" />
+        <line x1="141" y1="115" x2="141" y2="80" stroke="hsl(35 35% 60%)" strokeWidth="0.4" opacity="0.35" />
+        <line x1="115" y1="80" x2="115" y2="56" stroke="hsl(28 28% 22%)" strokeWidth="0.9" opacity="0.75" />
+        <line x1="116" y1="80" x2="116" y2="56" stroke="hsl(35 35% 60%)" strokeWidth="0.4" opacity="0.35" />
+        <line x1="165" y1="80" x2="165" y2="56" stroke="hsl(28 28% 22%)" strokeWidth="0.9" opacity="0.75" />
+        <line x1="166" y1="80" x2="166" y2="56" stroke="hsl(35 35% 60%)" strokeWidth="0.4" opacity="0.35" />
       </g>
       
       {/* RIGHT SLOPE */}
@@ -102,21 +110,30 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
         <polygon points="200,56 358,159 200,159" fill="url(#plyRight)" />
         <polygon points="200,56 358,159 200,159" fill="url(#grainPattern)" />
         
-        {/* Horizontal sheet rows */}
-        <line x1="200" y1="115" x2="358" y2="115" stroke="hsl(25 25% 25%)" strokeWidth="1.2" />
-        <line x1="200" y1="80" x2="358" y2="80" stroke="hsl(25 25% 25%)" strokeWidth="1.2" />
+        {/* Horizontal sheet rows - dark gap then light highlight */}
+        <line x1="200" y1="115" x2="358" y2="115" stroke="hsl(28 30% 20%)" strokeWidth="1.4" />
+        <line x1="200" y1="116.2" x2="358" y2="116.2" stroke="hsl(35 35% 58%)" strokeWidth="0.5" opacity="0.5" />
+        <line x1="200" y1="80" x2="358" y2="80" stroke="hsl(28 30% 20%)" strokeWidth="1.4" />
+        <line x1="200" y1="81.2" x2="358" y2="81.2" stroke="hsl(35 35% 58%)" strokeWidth="0.5" opacity="0.5" />
         
-        {/* Vertical seams - staggered */}
-        <line x1="240" y1="159" x2="240" y2="115" stroke="hsl(25 25% 28%)" strokeWidth="1" opacity="0.7" />
-        <line x1="300" y1="159" x2="300" y2="115" stroke="hsl(25 25% 28%)" strokeWidth="1" opacity="0.7" />
-        <line x1="260" y1="115" x2="260" y2="80" stroke="hsl(25 25% 28%)" strokeWidth="1" opacity="0.7" />
-        <line x1="320" y1="115" x2="320" y2="80" stroke="hsl(25 25% 28%)" strokeWidth="1" opacity="0.7" />
-        <line x1="235" y1="80" x2="235" y2="56" stroke="hsl(25 25% 28%)" strokeWidth="1" opacity="0.7" />
-        <line x1="285" y1="80" x2="285" y2="56" stroke="hsl(25 25% 28%)" strokeWidth="1" opacity="0.7" />
+        {/* Vertical seams - thinner with highlights */}
+        <line x1="240" y1="159" x2="240" y2="115" stroke="hsl(28 28% 22%)" strokeWidth="0.9" opacity="0.75" />
+        <line x1="241" y1="159" x2="241" y2="115" stroke="hsl(35 35% 60%)" strokeWidth="0.4" opacity="0.35" />
+        <line x1="300" y1="159" x2="300" y2="115" stroke="hsl(28 28% 22%)" strokeWidth="0.9" opacity="0.75" />
+        <line x1="301" y1="159" x2="301" y2="115" stroke="hsl(35 35% 60%)" strokeWidth="0.4" opacity="0.35" />
+        <line x1="260" y1="115" x2="260" y2="80" stroke="hsl(28 28% 22%)" strokeWidth="0.9" opacity="0.75" />
+        <line x1="261" y1="115" x2="261" y2="80" stroke="hsl(35 35% 60%)" strokeWidth="0.4" opacity="0.35" />
+        <line x1="320" y1="115" x2="320" y2="80" stroke="hsl(28 28% 22%)" strokeWidth="0.9" opacity="0.75" />
+        <line x1="321" y1="115" x2="321" y2="80" stroke="hsl(35 35% 60%)" strokeWidth="0.4" opacity="0.35" />
+        <line x1="235" y1="80" x2="235" y2="56" stroke="hsl(28 28% 22%)" strokeWidth="0.9" opacity="0.75" />
+        <line x1="236" y1="80" x2="236" y2="56" stroke="hsl(35 35% 60%)" strokeWidth="0.4" opacity="0.35" />
+        <line x1="285" y1="80" x2="285" y2="56" stroke="hsl(28 28% 22%)" strokeWidth="0.9" opacity="0.75" />
+        <line x1="286" y1="80" x2="286" y2="56" stroke="hsl(35 35% 60%)" strokeWidth="0.4" opacity="0.35" />
       </g>
       
-      {/* Ridge line at peak */}
-      <line x1="200" y1="56" x2="200" y2="159" stroke="hsl(25 22% 22%)" strokeWidth="2.5" />
+      {/* Ridge line at peak - emphasized with warm glow */}
+      <line x1="200" y1="56" x2="200" y2="159" stroke="hsl(30 35% 55%)" strokeWidth="0.6" opacity="0.4" />
+      <line x1="200" y1="56" x2="200" y2="159" stroke="hsl(25 30% 18%)" strokeWidth="2.2" />
       
       {/* Teal edge accent glow */}
       <path 
