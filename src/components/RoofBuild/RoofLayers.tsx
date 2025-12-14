@@ -135,21 +135,28 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
       <line x1="200" y1="56" x2="200" y2="159" stroke="hsl(30 35% 55%)" strokeWidth="0.6" opacity="0.4" />
       <line x1="200" y1="56" x2="200" y2="159" stroke="hsl(25 30% 18%)" strokeWidth="2.2" />
       
-      {/* "Replace Decking" - simple centered text */}
+      {/* "Replace Decking" - centered with blur backdrop */}
+      <rect
+        x="140"
+        y="102"
+        width="120"
+        height="24"
+        rx="4"
+        fill="hsl(25 30% 15% / 0.6)"
+        style={{ filter: 'blur(4px)' }}
+      />
       <text
         x="200"
         y="114"
         textAnchor="middle"
         dominantBaseline="middle"
         fill="hsl(35 30% 95%)"
-        fontSize="13"
+        fontSize="12"
         fontWeight="600"
         fontFamily="system-ui, -apple-system, sans-serif"
-        style={{
-          filter: 'drop-shadow(0 1px 2px hsl(25 40% 10% / 0.6))',
-        }}
+        letterSpacing="1"
       >
-        Replace Decking
+        REPLACE DECKING
       </text>
       
       {/* Teal edge accent glow */}
