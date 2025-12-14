@@ -53,39 +53,50 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
       className="decking-layer"
       style={{
         transform: `translateY(${translateY}px) scale(${scale})`,
-        transformOrigin: '200px 110px', // Center of roof
+        transformOrigin: '200px 110px',
         opacity,
         filter: `drop-shadow(0 ${4 + easedProgress * 8}px ${12 + easedProgress * 16}px hsl(35 55% 40% / ${glowIntensity}))`,
         transition: 'filter 0.1s ease-out',
       }}
     >
-      {/* Gradients and patterns */}
+      {/* Enhanced gradients and patterns for realistic plywood */}
       <defs>
-        {/* Main plywood gradient - warm golden-tan tones */}
-        <linearGradient id="deckingGradientLeft" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="hsl(38 50% 58%)" />
-          <stop offset="35%" stopColor="hsl(35 48% 52%)" />
-          <stop offset="70%" stopColor="hsl(32 45% 46%)" />
-          <stop offset="100%" stopColor="hsl(30 42% 40%)" />
-        </linearGradient>
-        <linearGradient id="deckingGradientRight" x1="100%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(38 50% 56%)" />
-          <stop offset="35%" stopColor="hsl(35 48% 50%)" />
-          <stop offset="70%" stopColor="hsl(32 45% 44%)" />
-          <stop offset="100%" stopColor="hsl(30 42% 38%)" />
+        {/* Left panel - warm natural plywood */}
+        <linearGradient id="deckingGradientLeft" x1="0%" y1="0%" x2="100%" y2="80%">
+          <stop offset="0%" stopColor="hsl(40 55% 65%)" />
+          <stop offset="25%" stopColor="hsl(38 52% 58%)" />
+          <stop offset="50%" stopColor="hsl(35 50% 54%)" />
+          <stop offset="75%" stopColor="hsl(33 48% 50%)" />
+          <stop offset="100%" stopColor="hsl(30 45% 45%)" />
         </linearGradient>
         
-        {/* Subtle wood grain pattern */}
-        <pattern id="woodGrain" patternUnits="userSpaceOnUse" width="40" height="8" patternTransform="rotate(-25)">
-          <line x1="0" y1="0" x2="40" y2="0" stroke="hsl(30 40% 35%)" strokeWidth="0.5" opacity="0.15" />
-          <line x1="0" y1="4" x2="40" y2="4" stroke="hsl(30 35% 32%)" strokeWidth="0.3" opacity="0.1" />
+        {/* Right panel - slightly different tone for realism */}
+        <linearGradient id="deckingGradientRight" x1="100%" y1="0%" x2="0%" y2="80%">
+          <stop offset="0%" stopColor="hsl(42 54% 63%)" />
+          <stop offset="30%" stopColor="hsl(39 51% 56%)" />
+          <stop offset="60%" stopColor="hsl(36 49% 52%)" />
+          <stop offset="100%" stopColor="hsl(32 46% 44%)" />
+        </linearGradient>
+        
+        {/* Wood grain pattern - horizontal lines following roof slope */}
+        <pattern id="woodGrainLeft" patternUnits="userSpaceOnUse" width="200" height="6" patternTransform="rotate(-33)">
+          <line x1="0" y1="1" x2="200" y2="1" stroke="hsl(28 40% 38%)" strokeWidth="0.8" opacity="0.2" />
+          <line x1="0" y1="3" x2="200" y2="3" stroke="hsl(30 35% 42%)" strokeWidth="0.4" opacity="0.12" />
+          <line x1="0" y1="5" x2="200" y2="5" stroke="hsl(32 38% 36%)" strokeWidth="0.6" opacity="0.15" />
         </pattern>
         
-        {/* Teal edge glow for brand consistency */}
-        <linearGradient id="deckingEdgeGlow" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(168 70% 50%)" stopOpacity="0.4" />
-          <stop offset="100%" stopColor="hsl(168 70% 40%)" stopOpacity="0" />
-        </linearGradient>
+        <pattern id="woodGrainRight" patternUnits="userSpaceOnUse" width="200" height="6" patternTransform="rotate(33)">
+          <line x1="0" y1="1" x2="200" y2="1" stroke="hsl(28 40% 38%)" strokeWidth="0.8" opacity="0.2" />
+          <line x1="0" y1="3" x2="200" y2="3" stroke="hsl(30 35% 42%)" strokeWidth="0.4" opacity="0.12" />
+          <line x1="0" y1="5" x2="200" y2="5" stroke="hsl(32 38% 36%)" strokeWidth="0.6" opacity="0.15" />
+        </pattern>
+        
+        {/* Knot pattern for natural wood look */}
+        <radialGradient id="woodKnot" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="hsl(25 50% 30%)" />
+          <stop offset="40%" stopColor="hsl(28 45% 35%)" />
+          <stop offset="100%" stopColor="hsl(32 40% 45%)" stopOpacity="0" />
+        </radialGradient>
       </defs>
       
       {/* Left slope decking panel */}
@@ -93,11 +104,9 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
         d="M48 158 L200 58 L200 158 Z" 
         fill="url(#deckingGradientLeft)"
       />
-      {/* Wood grain overlay - left */}
       <path 
         d="M48 158 L200 58 L200 158 Z" 
-        fill="url(#woodGrain)"
-        opacity="0.6"
+        fill="url(#woodGrainLeft)"
       />
       
       {/* Right slope decking panel */}
@@ -105,63 +114,64 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
         d="M200 58 L352 158 L200 158 Z" 
         fill="url(#deckingGradientRight)"
       />
-      {/* Wood grain overlay - right */}
       <path 
         d="M200 58 L352 158 L200 158 Z" 
-        fill="url(#woodGrain)"
-        opacity="0.6"
+        fill="url(#woodGrainRight)"
       />
       
-      {/* Panel seam lines - 4x8 plywood sheets */}
-      {/* Left slope seams */}
-      <line x1="100" y1="158" x2="150" y2="108" stroke="hsl(25 35% 28%)" strokeWidth="1" opacity="0.5" />
-      <line x1="152" y1="158" x2="185" y2="125" stroke="hsl(25 35% 28%)" strokeWidth="1" opacity="0.5" />
+      {/* Wood knots - natural imperfections */}
+      <ellipse cx="90" cy="140" rx="4" ry="3" fill="url(#woodKnot)" opacity="0.6" />
+      <ellipse cx="150" cy="120" rx="3" ry="2.5" fill="url(#woodKnot)" opacity="0.5" />
+      <ellipse cx="175" cy="145" rx="3.5" ry="2.5" fill="url(#woodKnot)" opacity="0.55" />
+      <ellipse cx="250" cy="125" rx="4" ry="3" fill="url(#woodKnot)" opacity="0.6" />
+      <ellipse cx="310" cy="140" rx="3" ry="2.5" fill="url(#woodKnot)" opacity="0.5" />
+      <ellipse cx="280" cy="150" rx="3.5" ry="2" fill="url(#woodKnot)" opacity="0.45" />
       
-      {/* Right slope seams */}
-      <line x1="250" y1="108" x2="300" y2="158" stroke="hsl(25 35% 28%)" strokeWidth="1" opacity="0.5" />
-      <line x1="215" y1="125" x2="248" y2="158" stroke="hsl(25 35% 28%)" strokeWidth="1" opacity="0.5" />
+      {/* Panel seam lines - darker gaps between 4x8 sheets */}
+      <line x1="95" y1="158" x2="148" y2="105" stroke="hsl(22 35% 25%)" strokeWidth="1.5" opacity="0.6" />
+      <line x1="148" y1="158" x2="184" y2="122" stroke="hsl(22 35% 25%)" strokeWidth="1.5" opacity="0.6" />
+      <line x1="252" y1="105" x2="305" y2="158" stroke="hsl(22 35% 25%)" strokeWidth="1.5" opacity="0.6" />
+      <line x1="216" y1="122" x2="252" y2="158" stroke="hsl(22 35% 25%)" strokeWidth="1.5" opacity="0.6" />
       
-      {/* Blue chalk lines - authentic construction detail */}
-      <line 
-        x1="65" y1="145" x2="180" y2="70" 
-        stroke="hsl(220 70% 55%)" 
-        strokeWidth="1.5" 
-        strokeDasharray="8 4"
-        opacity="0.6"
+      {/* BOLD blue chalk snap lines - construction grid */}
+      {/* Left slope chalk lines */}
+      <line x1="60" y1="152" x2="190" y2="68" stroke="hsl(220 85% 50%)" strokeWidth="2.5" opacity="0.85" />
+      <line x1="75" y1="158" x2="200" y2="95" stroke="hsl(220 85% 50%)" strokeWidth="2.5" opacity="0.85" />
+      <line x1="130" y1="158" x2="200" y2="123" stroke="hsl(220 85% 50%)" strokeWidth="2.5" opacity="0.85" />
+      
+      {/* Right slope chalk lines */}
+      <line x1="210" y1="68" x2="340" y2="152" stroke="hsl(220 85% 50%)" strokeWidth="2.5" opacity="0.85" />
+      <line x1="200" y1="95" x2="325" y2="158" stroke="hsl(220 85% 50%)" strokeWidth="2.5" opacity="0.85" />
+      <line x1="200" y1="123" x2="270" y2="158" stroke="hsl(220 85% 50%)" strokeWidth="2.5" opacity="0.85" />
+      
+      {/* Perpendicular chalk lines for shingle layout */}
+      <line x1="100" y1="108" x2="100" y2="158" stroke="hsl(220 85% 50%)" strokeWidth="2" opacity="0.7" />
+      <line x1="150" y1="83" x2="150" y2="158" stroke="hsl(220 85% 50%)" strokeWidth="2" opacity="0.7" />
+      <line x1="250" y1="83" x2="250" y2="158" stroke="hsl(220 85% 50%)" strokeWidth="2" opacity="0.7" />
+      <line x1="300" y1="108" x2="300" y2="158" stroke="hsl(220 85% 50%)" strokeWidth="2" opacity="0.7" />
+      
+      {/* Teal edge glow - brand accent on roof edges */}
+      <path 
+        d="M50 157 L200 59 L350 157" 
+        fill="none"
+        stroke="hsl(168 70% 50%)" 
+        strokeWidth="2"
+        opacity={0.4 + easedProgress * 0.4}
+        style={{
+          filter: `drop-shadow(0 0 ${6 + easedProgress * 8}px hsl(168 70% 50% / 0.6))`,
+        }}
       />
-      <line 
-        x1="220" y1="70" x2="335" y2="145" 
-        stroke="hsl(220 70% 55%)" 
-        strokeWidth="1.5" 
-        strokeDasharray="8 4"
-        opacity="0.6"
-      />
       
-      {/* Ridge line highlight */}
+      {/* Subtle highlight on peak */}
       <line 
-        x1="52" y1="156" x2="200" y2="60" 
-        stroke="hsl(168 60% 50%)" 
-        strokeWidth="1"
+        x1="195" y1="60" x2="205" y2="60" 
+        stroke="hsl(45 80% 75%)" 
+        strokeWidth="2"
         opacity={0.3 + easedProgress * 0.4}
-      />
-      <line 
-        x1="200" y1="60" x2="348" y2="156" 
-        stroke="hsl(168 60% 50%)" 
-        strokeWidth="1"
-        opacity={0.3 + easedProgress * 0.4}
-      />
-      
-      {/* Bottom edge accent */}
-      <line 
-        x1="48" y1="158" x2="352" y2="158" 
-        stroke="hsl(168 50% 45%)" 
-        strokeWidth="1.5"
-        opacity={0.2 + easedProgress * 0.3}
       />
     </g>
   );
 };
-
 // Placeholder exports - to be implemented one at a time
 export const DripEdgeEavesLayer: React.FC<LayerProps> = () => null;
 export const DripEdgeRakesLayer: React.FC<LayerProps> = () => null;
