@@ -49,17 +49,17 @@ const RoofBuildSection: React.FC = () => {
   // Show hint during buffer period (0-8%)
   const showScrollHint = progress < 0.08;
   
-  // Door animation: starts at 60%, fully open at 72%
-  const doorAngle = progress > 0.60 
+  // Door animation: starts at 60%, fully open at 72% (DESKTOP ONLY)
+  const doorAngle = !isMobile && progress > 0.60 
     ? Math.min(75, ((progress - 0.60) / 0.12) * 75) 
     : 0;
 
-  // Door zoom: starts at 72%, completes at 88% (gallery starts at 88%)
-  const zoomProgress = progress > 0.72 
+  // Door zoom: starts at 72%, completes at 88% (DESKTOP ONLY)
+  const zoomProgress = !isMobile && progress > 0.72 
     ? Math.min(1, (progress - 0.72) / 0.16)
     : 0;
   
-  // Update scroll context so navbar can fade
+  // Update scroll context so navbar can fade (desktop only)
   useEffect(() => {
     setZoomProgress(zoomProgress);
   }, [zoomProgress, setZoomProgress]);
@@ -69,30 +69,27 @@ const RoofBuildSection: React.FC = () => {
     x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
   const easedZoom = easeInOutQuad(zoomProgress);
   
-  // Scale: 1x → 15x (reduced from 20x for smoother finish)
-  const zoomScale = 1 + (easedZoom * 14);
+  // Scale: 1x → 15x (DESKTOP ONLY - mobile stays at 1)
+  const zoomScale = isMobile ? 1 : 1 + (easedZoom * 14);
   
-  // Delayed warm light - starts at 20% zoom progress for gentler fade-in
-  const lightProgress = Math.max(0, (zoomProgress - 0.2) / 0.8);
+  // Delayed warm light - DESKTOP ONLY
+  const lightProgress = isMobile ? 0 : Math.max(0, (zoomProgress - 0.2) / 0.8);
   const easedLight = easeInOutQuad(lightProgress);
   
-  // Fade out elements during zoom - FASTER fades for cleaner transition
-  const gridFadeOut = Math.max(0, 1 - (zoomProgress * 3)); // Grid gone by 33% of zoom
-  const houseFadeOut = Math.max(0, 1 - (easedZoom * 2)); // House gone by 50% of zoom
+  // Fade out elements during zoom - DESKTOP ONLY (mobile always visible)
+  const gridFadeOut = isMobile ? 1 : Math.max(0, 1 - (zoomProgress * 3));
+  const houseFadeOut = isMobile ? 1 : Math.max(0, 1 - (easedZoom * 2));
 
-  // 3D Gallery visibility - Mobile starts at 88%, desktop at 86%
-  const galleryStartPoint = isMobile ? 0.88 : 0.86;
-  const galleryProgress = progress > galleryStartPoint 
+  // 3D Gallery visibility - DESKTOP ONLY
+  const galleryStartPoint = 0.86;
+  const galleryProgress = !isMobile && progress > galleryStartPoint 
     ? Math.min(1, (progress - galleryStartPoint) / 0.05)
     : 0;
   const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
-  // Fade overlay completely OUT as gallery takes over with its own background
   const overlayFade = galleryProgress > 0 ? 1 - easeOutCubic(galleryProgress) : 1;
   
-  // Mobile: force overlays to fade out FASTER - completely gone by 0.90
-  const mobileOverlayMultiplier = isMobile 
-    ? (progress < 0.86 ? 1 : Math.max(0, 1 - ((progress - 0.86) / 0.04)))
-    : 1;
+  // Skip all overlays on mobile
+  const mobileOverlayMultiplier = isMobile ? 0 : 1;
 
   // Calculate staggered exit progress for label pairs (desktop only)
   // Labels exit from 0.60 to 0.72 (as door opens, before zoom completes)
@@ -121,7 +118,7 @@ const RoofBuildSection: React.FC = () => {
     <section
       ref={sectionRef}
       className="relative"
-      style={{ height: isMobile ? '400vh' : '600vh' }}
+      style={{ height: isMobile ? '200vh' : '600vh' }}
     >
 
       {/* Solid backup overlay - catches ANYTHING that escapes */}
@@ -389,8 +386,6 @@ const RoofBuildSection: React.FC = () => {
 
       </div>
 
-      {/* Mobile Gallery - AFTER sticky section */}
-      {isMobile && <MobileFirstImage progress={progress} />}
     </section>
   );
 };
