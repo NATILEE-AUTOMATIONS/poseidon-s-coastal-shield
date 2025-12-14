@@ -254,37 +254,67 @@ const RoofBuildSection: React.FC = () => {
 
             {/* Mobile Step Card - single static card below house */}
             {isMobile && (
-              <div className="mt-6 w-full flex justify-center px-4">
+              <div className="mt-8 w-full flex justify-center px-4">
                 <div
-                  className="px-5 py-4 rounded-xl max-w-xs w-full"
+                  className="relative px-6 py-5 rounded-2xl w-full max-w-sm overflow-hidden"
                   style={{
-                    background: 'hsl(160 25% 6% / 0.95)',
-                    border: '1px solid hsl(168 50% 30% / 0.4)',
-                    boxShadow: '0 4px 24px hsl(0 0% 0% / 0.5)',
+                    background: 'linear-gradient(145deg, hsl(160 30% 8% / 0.98) 0%, hsl(160 25% 4% / 0.99) 100%)',
+                    border: '1px solid hsl(168 60% 35% / 0.5)',
+                    boxShadow: `
+                      0 0 40px hsl(168 70% 45% / 0.15),
+                      0 8px 32px hsl(0 0% 0% / 0.6),
+                      inset 0 1px 0 hsl(168 50% 50% / 0.1)
+                    `,
                   }}
                 >
-                  <div className="flex items-start gap-3">
+                  {/* Top accent glow line */}
+                  <div 
+                    className="absolute top-0 left-4 right-4 h-px"
+                    style={{
+                      background: 'linear-gradient(90deg, transparent, hsl(168 80% 55% / 0.8), transparent)',
+                    }}
+                  />
+                  
+                  <div className="flex items-start gap-4">
+                    {/* Step Number */}
                     <span
-                      className="text-lg font-semibold"
+                      className="text-3xl font-light font-mono"
                       style={{
-                        color: 'hsl(168 70% 55%)',
-                        textShadow: '0 0 10px hsl(168 70% 50% / 0.5)',
+                        color: 'hsl(168 80% 55%)',
+                        textShadow: '0 0 20px hsl(168 80% 50% / 0.8), 0 0 40px hsl(168 70% 45% / 0.4)',
                       }}
                     >
                       1.
                     </span>
-                    <div>
-                      <div className="text-white font-semibold text-sm">
+                    
+                    {/* Content */}
+                    <div className="flex-1">
+                      <div 
+                        className="text-xl font-semibold tracking-wide"
+                        style={{ color: 'hsl(0 0% 98%)' }}
+                      >
                         Replace Decking
                       </div>
-                      <div className="text-xs mt-1" style={{ color: 'hsl(168 30% 60%)' }}>
+                      <div 
+                        className="text-sm mt-2 leading-relaxed"
+                        style={{ color: 'hsl(168 25% 65%)' }}
+                      >
                         Replace any damaged plywood/decking so your new roof starts on a solid base.
                       </div>
                     </div>
                   </div>
+                  
+                  {/* Bottom accent */}
+                  <div 
+                    className="absolute bottom-0 left-6 right-6 h-px"
+                    style={{
+                      background: 'linear-gradient(90deg, transparent, hsl(168 50% 40% / 0.3), transparent)',
+                    }}
+                  />
                 </div>
               </div>
             )}
+
 
 
             {/* Material labels - left side (positioned as overlay) */}
