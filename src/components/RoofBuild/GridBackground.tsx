@@ -16,7 +16,7 @@ const GridBackground: React.FC = () => {
       >
         {/* Horizontal grid (ground plane) */}
         <div
-          className="absolute w-full h-full"
+          className="absolute w-full h-full top-[15%] md:top-[25%]"
           style={{
             background: `
               linear-gradient(90deg, 
@@ -37,13 +37,12 @@ const GridBackground: React.FC = () => {
             transform: 'rotateX(75deg) translateZ(-50px)',
             transformOrigin: '50% 100%',
             height: '250%',
-            top: '25%',
           }}
         />
         
         {/* Vertical lines coming from horizon */}
         <div
-          className="absolute w-full h-full"
+          className="absolute w-full h-full top-[15%] md:top-[25%]"
           style={{
             background: `
               repeating-linear-gradient(
@@ -57,7 +56,6 @@ const GridBackground: React.FC = () => {
             transform: 'rotateX(75deg) translateZ(-50px)',
             transformOrigin: '50% 100%',
             height: '250%',
-            top: '25%',
           }}
         />
       </div>
