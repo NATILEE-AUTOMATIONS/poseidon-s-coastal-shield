@@ -2,7 +2,7 @@ import React from 'react';
 
 const GridBackground: React.FC = () => {
   return (
-    <div className="absolute inset-0 overflow-hidden hidden md:block">
+    <div className="absolute inset-0 overflow-hidden">
       {/* Deep background */}
       <div className="absolute inset-0 bg-deep-bg" />
       
@@ -16,7 +16,7 @@ const GridBackground: React.FC = () => {
       >
         {/* Horizontal grid (ground plane) */}
         <div
-          className="absolute w-full h-full top-[42%] md:top-[25%]"
+          className="absolute w-full h-full"
           style={{
             background: `
               linear-gradient(90deg, 
@@ -37,12 +37,13 @@ const GridBackground: React.FC = () => {
             transform: 'rotateX(75deg) translateZ(-50px)',
             transformOrigin: '50% 100%',
             height: '250%',
+            top: '25%',
           }}
         />
         
         {/* Vertical lines coming from horizon */}
         <div
-          className="absolute w-full h-full top-[42%] md:top-[25%]"
+          className="absolute w-full h-full"
           style={{
             background: `
               repeating-linear-gradient(
@@ -56,6 +57,7 @@ const GridBackground: React.FC = () => {
             transform: 'rotateX(75deg) translateZ(-50px)',
             transformOrigin: '50% 100%',
             height: '250%',
+            top: '25%',
           }}
         />
       </div>
