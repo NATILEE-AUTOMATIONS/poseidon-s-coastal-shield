@@ -14,8 +14,8 @@ const easeOutExpo = (x: number): number => {
 };
 
 const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
-  // === GALLERY WINDOW: 0.88 to 1.00 ===
-  const galleryStart = 0.88;
+  // === GALLERY WINDOW: 0.50 to 1.00 (50% of total scroll!) ===
+  const galleryStart = 0.50;
   const galleryEnd = 1.00;
   const galleryRange = galleryEnd - galleryStart;
   
@@ -27,41 +27,41 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
       : (progress - galleryStart) / galleryRange;
   
   // Container visibility
-  const containerOpacity = Math.min(1, localProgress / 0.10);
+  const containerOpacity = Math.min(1, localProgress / 0.06);
   const isVisible = progress >= galleryStart - 0.02;
   
-  // === COMPRESSED TIMING for Image 4 + CTA ===
-  // Stars/Name: 0.0 - 0.16
-  const starsProgress = Math.max(0, Math.min(1, localProgress / 0.12));
-  const nameProgress = Math.max(0, Math.min(1, (localProgress - 0.02) / 0.14));
+  // === GENEROUS TIMING - each element gets ~12-15% local progress ===
+  // Stars/Name: 0.0 - 0.08
+  const starsProgress = Math.max(0, Math.min(1, localProgress / 0.06));
+  const nameProgress = Math.max(0, Math.min(1, (localProgress - 0.01) / 0.07));
   
-  // Image 1: 0.0 - 0.22
-  const img1Start = 0.0;
-  const img1End = 0.22;
+  // Image 1: 0.04 - 0.18 (14% window = ~112vh scroll)
+  const img1Start = 0.04;
+  const img1End = 0.18;
   const img1Progress = Math.max(0, Math.min(1, (localProgress - img1Start) / (img1End - img1Start)));
   
-  // Quote 1: 0.14 - 0.32
-  const quote1Progress = Math.max(0, Math.min(1, (localProgress - 0.14) / 0.18));
+  // Quote 1: 0.16 - 0.28 (12% window)
+  const quote1Progress = Math.max(0, Math.min(1, (localProgress - 0.16) / 0.12));
   
-  // Image 2: 0.34 - 0.46
-  const flipStart = 0.34;
-  const flipEnd = 0.46;
+  // Image 2: 0.30 - 0.44 (14% window = ~112vh scroll)
+  const flipStart = 0.30;
+  const flipEnd = 0.44;
   const flipProgress = Math.max(0, Math.min(1, (localProgress - flipStart) / (flipEnd - flipStart)));
 
-  // Quote 2: 0.42 - 0.52
-  const quote2Progress = Math.max(0, Math.min(1, (localProgress - 0.42) / 0.10));
+  // Quote 2: 0.42 - 0.54 (12% window)
+  const quote2Progress = Math.max(0, Math.min(1, (localProgress - 0.42) / 0.12));
 
-  // Image 3: 0.54 - 0.66
-  const img3Start = 0.54;
-  const img3End = 0.66;
+  // Image 3: 0.56 - 0.70 (14% window = ~112vh scroll)
+  const img3Start = 0.56;
+  const img3End = 0.70;
   const img3Progress = Math.max(0, Math.min(1, (localProgress - img3Start) / (img3End - img3Start)));
 
-  // Quote 3: 0.62 - 0.72
-  const quote3Progress = Math.max(0, Math.min(1, (localProgress - 0.62) / 0.10));
+  // Quote 3: 0.68 - 0.80 (12% window)
+  const quote3Progress = Math.max(0, Math.min(1, (localProgress - 0.68) / 0.12));
 
-  // Image 4 (Hero Finale): 0.74 - 0.86
-  const img4Start = 0.74;
-  const img4End = 0.86;
+  // Image 4 (Hero Finale): 0.82 - 0.98 (16% window = ~128vh scroll)
+  const img4Start = 0.82;
+  const img4End = 0.98;
   const img4Progress = Math.max(0, Math.min(1, (localProgress - img4Start) / (img4End - img4Start)));
 
   // === IMAGE ANIMATIONS ===
