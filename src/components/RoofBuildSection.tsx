@@ -252,10 +252,7 @@ const RoofBuildSection: React.FC = () => {
               </div>
             )}
 
-            {/* Mobile Step Card - holographic animation */}
-            {isMobile && progress >= 0.08 && progress <= 0.90 && (
-              <MobileStepCard scrollProgress={progress} />
-            )}
+            {/* Mobile Step Card removed - roof animation only */}
 
             {/* Material labels - left side (positioned as overlay) */}
             <div 
