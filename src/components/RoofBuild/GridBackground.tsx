@@ -60,9 +60,9 @@ const GridBackground: React.FC = () => {
         />
       </div>
       
-      {/* Horizon glow line - more dramatic, consistent position */}
+      {/* Horizon glow line - more dramatic */}
       <div 
-        className="absolute left-0 right-0 top-[25%]"
+        className="absolute left-0 right-0 top-[15%] md:top-[25%]"
         style={{
           height: '2px',
           background: 'linear-gradient(90deg, transparent 5%, hsl(168 80% 55% / 0.8) 25%, hsl(168 80% 60% / 1) 50%, hsl(168 80% 55% / 0.8) 75%, transparent 95%)',
