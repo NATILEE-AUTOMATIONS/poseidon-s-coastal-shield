@@ -198,8 +198,8 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
   if (progress < startProgress) return null;
   
   const easedProgress = easeOutQuint(layerProgress);
-  const translateY = -60 * (1 - easedProgress);
-  const opacity = 0.3 + (0.7 * easedProgress);
+  const translateY = -150 * (1 - easedProgress); // Start from higher up for longer fall
+  const opacity = 0.2 + (0.8 * easedProgress);
   
   return (
     <g 

@@ -47,17 +47,21 @@ const RoofBuildSection: React.FC = () => {
   const deckingMultiplier = 6;
   const deckingEnd = layerStart + (layerStep * deckingMultiplier);
   
+  // Drip edge gets 3x scroll distance for slower, more visible drop
+  const dripEdgeMultiplier = 3;
+  const dripEdgeEnd = deckingEnd + (layerStep * dripEdgeMultiplier);
+  
   const layers = [
-    { start: layerStart, end: deckingEnd },                                        // 1. Decking (3x duration)
-    { start: deckingEnd, end: deckingEnd + layerStep },                            // 2. Drip Edge Eaves
-    { start: deckingEnd + layerStep, end: deckingEnd + layerStep * 2 },            // 3. Ice & Water
-    { start: deckingEnd + layerStep * 2, end: deckingEnd + layerStep * 3 },        // 4. Underlayment
-    { start: deckingEnd + layerStep * 3, end: deckingEnd + layerStep * 4 },        // 5. Drip Edge Rakes
-    { start: deckingEnd + layerStep * 4, end: deckingEnd + layerStep * 5 },        // 6. Starter Strip
-    { start: deckingEnd + layerStep * 5, end: deckingEnd + layerStep * 6 },        // 7. Shingles
-    { start: deckingEnd + layerStep * 6, end: deckingEnd + layerStep * 7 },        // 8. Vents
-    { start: deckingEnd + layerStep * 7, end: deckingEnd + layerStep * 8 },        // 9. Flashing
-    { start: deckingEnd + layerStep * 8, end: deckingEnd + layerStep * 9 },        // 10. Ridge Cap
+    { start: layerStart, end: deckingEnd },                                        // 1. Decking (6x duration)
+    { start: deckingEnd, end: dripEdgeEnd },                                       // 2. Drip Edge Eaves (3x duration)
+    { start: dripEdgeEnd, end: dripEdgeEnd + layerStep },                          // 3. Ice & Water
+    { start: dripEdgeEnd + layerStep, end: dripEdgeEnd + layerStep * 2 },          // 4. Underlayment
+    { start: dripEdgeEnd + layerStep * 2, end: dripEdgeEnd + layerStep * 3 },      // 5. Drip Edge Rakes
+    { start: dripEdgeEnd + layerStep * 3, end: dripEdgeEnd + layerStep * 4 },      // 6. Starter Strip
+    { start: dripEdgeEnd + layerStep * 4, end: dripEdgeEnd + layerStep * 5 },      // 7. Shingles
+    { start: dripEdgeEnd + layerStep * 5, end: dripEdgeEnd + layerStep * 6 },      // 8. Vents
+    { start: dripEdgeEnd + layerStep * 6, end: dripEdgeEnd + layerStep * 7 },      // 9. Flashing
+    { start: dripEdgeEnd + layerStep * 7, end: dripEdgeEnd + layerStep * 8 },      // 10. Ridge Cap
   ];
 
   // Show hint during buffer period (before animation starts)
