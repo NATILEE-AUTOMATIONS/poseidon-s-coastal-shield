@@ -35,17 +35,17 @@ const renderCard = (
     const t = cardProgress / entryEnd;
     const eased = easeOutQuint(Math.min(1, t));
     rotateY = 90 * (1 - eased);
-    translateX = 40 * (1 - eased);
-    scale = 0.9 + 0.1 * eased;
-    glowIntensity = 0.6 + 0.4 * eased;
+    translateX = 80 * (1 - eased);
+    scale = 0.85 + 0.15 * eased;
+    glowIntensity = 0.5 + 0.5 * eased;
   } else if (cardProgress >= exitStart) {
     // Rotate out to left face of cube
     const t = (cardProgress - exitStart) / (1 - exitStart);
     const eased = easeInQuint(Math.min(1, t));
     rotateY = -90 * eased;
-    translateX = -40 * eased;
-    scale = 1 - 0.1 * eased;
-    glowIntensity = 1 - 0.4 * eased;
+    translateX = -80 * eased;
+    scale = 1 - 0.15 * eased;
+    glowIntensity = 1 - 0.5 * eased;
   }
 
   return (
@@ -148,19 +148,19 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({
   const rawCardProgress = (progress - cardStart) / layerStep;
   const cardProgress = Math.max(0, Math.min(1, rawCardProgress));
 
-  // Overlap configuration
-  const overlapStart = 0.60; // Next card starts appearing when current is 60% through
-  const entryEnd = 0.30;
+  // Overlap configuration - earlier start, longer entry for smoother handoff
+  const overlapStart = 0.55;
+  const entryEnd = 0.35;
   
   // Determine which cards to render
   const cardsToRender: Array<{ index: number; progress: number; isEntering: boolean; zIndex: number }> = [];
 
-  // Always render the current card
+  // Always render the current card (exiting card stays on top)
   cardsToRender.push({
     index: activeCardIndex,
     progress: cardProgress,
     isEntering: false,
-    zIndex: 1
+    zIndex: 2
   });
 
   // If we're in the overlap zone and there's a next card, render it too
@@ -172,7 +172,7 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({
       index: activeCardIndex + 1,
       progress: nextCardProgress,
       isEntering: true,
-      zIndex: 2
+      zIndex: 1
     });
   }
 
