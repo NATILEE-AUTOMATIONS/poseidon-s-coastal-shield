@@ -147,28 +147,36 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
         }
         return (
           <g opacity={labelOpacity}>
+            {/* Clean pill-shaped background with subtle border */}
             <rect
-              x="160"
-              y="96"
-              width="80"
-              height="36"
-              rx="4"
-              fill="hsl(25 30% 15% / 0.6)"
-              style={{ filter: 'blur(4px)' }}
+              x="145"
+              y="95"
+              width="110"
+              height="30"
+              rx="15"
+              fill="hsl(180 20% 8% / 0.85)"
+              stroke="hsl(168 70% 45%)"
+              strokeWidth="1"
+              style={{ 
+                filter: 'drop-shadow(0 0 12px hsl(168 70% 45% / 0.4))',
+              }}
             />
+            {/* Single line text with teal glow */}
             <text
               x="200"
-              y="106"
+              y="111"
               textAnchor="middle"
               dominantBaseline="middle"
-              fill="hsl(35 30% 95%)"
-              fontSize="11"
-              fontWeight="600"
+              fill="hsl(168 80% 65%)"
+              fontSize="10"
+              fontWeight="700"
               fontFamily="system-ui, -apple-system, sans-serif"
-              letterSpacing="1"
+              letterSpacing="2.5"
+              style={{
+                filter: 'drop-shadow(0 0 8px hsl(168 80% 50% / 0.8))',
+              }}
             >
-              <tspan x="200" dy="0">REPLACE</tspan>
-              <tspan x="200" dy="14">DECKING</tspan>
+              REPLACE DECKING
             </text>
           </g>
         );
