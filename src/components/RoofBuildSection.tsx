@@ -43,17 +43,21 @@ const RoofBuildSection: React.FC = () => {
   const layerStep = isMobile ? mobileLayerStep : desktopLayerStep;
   const layerStart = isMobile ? mobileLayerStart : desktopLayerStart;
   
+  // Decking gets 3x the scroll distance for a dramatic, visible animation
+  const deckingMultiplier = 3;
+  const deckingEnd = layerStart + (layerStep * deckingMultiplier);
+  
   const layers = [
-    { start: layerStart, end: layerStart + layerStep },                           // 1. Decking
-    { start: layerStart + layerStep, end: layerStart + layerStep * 2 },           // 2. Drip Edge Eaves
-    { start: layerStart + layerStep * 2, end: layerStart + layerStep * 3 },       // 3. Ice & Water
-    { start: layerStart + layerStep * 3, end: layerStart + layerStep * 4 },       // 4. Underlayment
-    { start: layerStart + layerStep * 4, end: layerStart + layerStep * 5 },       // 5. Drip Edge Rakes
-    { start: layerStart + layerStep * 5, end: layerStart + layerStep * 6 },       // 6. Starter Strip
-    { start: layerStart + layerStep * 6, end: layerStart + layerStep * 7 },       // 7. Shingles
-    { start: layerStart + layerStep * 7, end: layerStart + layerStep * 8 },       // 8. Vents
-    { start: layerStart + layerStep * 8, end: layerStart + layerStep * 9 },       // 9. Flashing
-    { start: layerStart + layerStep * 9, end: layerStart + layerStep * 10 },      // 10. Ridge Cap
+    { start: layerStart, end: deckingEnd },                                        // 1. Decking (3x duration)
+    { start: deckingEnd, end: deckingEnd + layerStep },                            // 2. Drip Edge Eaves
+    { start: deckingEnd + layerStep, end: deckingEnd + layerStep * 2 },            // 3. Ice & Water
+    { start: deckingEnd + layerStep * 2, end: deckingEnd + layerStep * 3 },        // 4. Underlayment
+    { start: deckingEnd + layerStep * 3, end: deckingEnd + layerStep * 4 },        // 5. Drip Edge Rakes
+    { start: deckingEnd + layerStep * 4, end: deckingEnd + layerStep * 5 },        // 6. Starter Strip
+    { start: deckingEnd + layerStep * 5, end: deckingEnd + layerStep * 6 },        // 7. Shingles
+    { start: deckingEnd + layerStep * 6, end: deckingEnd + layerStep * 7 },        // 8. Vents
+    { start: deckingEnd + layerStep * 7, end: deckingEnd + layerStep * 8 },        // 9. Flashing
+    { start: deckingEnd + layerStep * 8, end: deckingEnd + layerStep * 9 },        // 10. Ridge Cap
   ];
 
   // Show hint during buffer period (before animation starts)
