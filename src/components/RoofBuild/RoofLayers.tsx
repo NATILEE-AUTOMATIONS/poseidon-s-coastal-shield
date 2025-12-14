@@ -73,28 +73,28 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
         fill="url(#plyRight)"
       />
       
-      {/* Sheet gap lines - LEFT slope (follow roof angle) */}
-      {/* Horizontal gaps dividing into rows */}
-      <line x1="70" y1="140" x2="200" y2="56" stroke="hsl(25 30% 28%)" strokeWidth="1.5" opacity="0.6" />
-      <line x1="106" y1="140" x2="200" y2="88" stroke="hsl(25 30% 28%)" strokeWidth="1" opacity="0.5" />
-      <line x1="142" y1="140" x2="200" y2="120" stroke="hsl(25 30% 28%)" strokeWidth="1" opacity="0.5" />
+      {/* Sheet gap lines - clean horizontal rows parallel to eaves */}
+      {/* Left slope - 3 horizontal sheet rows */}
+      <line x1="42" y1="125" x2="148" y2="125" stroke="hsl(25 25% 25%)" strokeWidth="1.2" opacity="0.5" />
+      <line x1="42" y1="91" x2="96" y2="91" stroke="hsl(25 25% 25%)" strokeWidth="1.2" opacity="0.5" />
       
-      {/* Vertical stagger gaps - left */}
-      <line x1="56" y1="159" x2="120" y2="90" stroke="hsl(25 30% 28%)" strokeWidth="1" opacity="0.4" />
-      <line x1="90" y1="159" x2="160" y2="83" stroke="hsl(25 30% 28%)" strokeWidth="1" opacity="0.4" />
-      <line x1="130" y1="159" x2="185" y2="99" stroke="hsl(25 30% 28%)" strokeWidth="1" opacity="0.4" />
-      <line x1="165" y1="159" x2="195" y2="126" stroke="hsl(25 30% 28%)" strokeWidth="1" opacity="0.4" />
+      {/* Left slope - vertical seams (staggered) */}
+      <line x1="80" y1="159" x2="80" y2="125" stroke="hsl(25 25% 25%)" strokeWidth="1" opacity="0.4" />
+      <line x1="120" y1="159" x2="120" y2="125" stroke="hsl(25 25% 25%)" strokeWidth="1" opacity="0.4" />
+      <line x1="160" y1="159" x2="160" y2="125" stroke="hsl(25 25% 25%)" strokeWidth="1" opacity="0.4" />
+      <line x1="100" y1="125" x2="100" y2="91" stroke="hsl(25 25% 25%)" strokeWidth="1" opacity="0.4" />
+      <line x1="60" y1="125" x2="60" y2="91" stroke="hsl(25 25% 25%)" strokeWidth="1" opacity="0.4" />
       
-      {/* Sheet gap lines - RIGHT slope (mirror) */}
-      <line x1="200" y1="56" x2="330" y2="140" stroke="hsl(25 30% 28%)" strokeWidth="1.5" opacity="0.6" />
-      <line x1="200" y1="88" x2="294" y2="140" stroke="hsl(25 30% 28%)" strokeWidth="1" opacity="0.5" />
-      <line x1="200" y1="120" x2="258" y2="140" stroke="hsl(25 30% 28%)" strokeWidth="1" opacity="0.5" />
+      {/* Right slope - 3 horizontal sheet rows */}
+      <line x1="252" y1="125" x2="358" y2="125" stroke="hsl(25 25% 25%)" strokeWidth="1.2" opacity="0.5" />
+      <line x1="304" y1="91" x2="358" y2="91" stroke="hsl(25 25% 25%)" strokeWidth="1.2" opacity="0.5" />
       
-      {/* Vertical stagger gaps - right */}
-      <line x1="280" y1="90" x2="344" y2="159" stroke="hsl(25 30% 28%)" strokeWidth="1" opacity="0.4" />
-      <line x1="240" y1="83" x2="310" y2="159" stroke="hsl(25 30% 28%)" strokeWidth="1" opacity="0.4" />
-      <line x1="215" y1="99" x2="270" y2="159" stroke="hsl(25 30% 28%)" strokeWidth="1" opacity="0.4" />
-      <line x1="205" y1="126" x2="235" y2="159" stroke="hsl(25 30% 28%)" strokeWidth="1" opacity="0.4" />
+      {/* Right slope - vertical seams (staggered) */}
+      <line x1="320" y1="159" x2="320" y2="125" stroke="hsl(25 25% 25%)" strokeWidth="1" opacity="0.4" />
+      <line x1="280" y1="159" x2="280" y2="125" stroke="hsl(25 25% 25%)" strokeWidth="1" opacity="0.4" />
+      <line x1="240" y1="159" x2="240" y2="125" stroke="hsl(25 25% 25%)" strokeWidth="1" opacity="0.4" />
+      <line x1="300" y1="125" x2="300" y2="91" stroke="hsl(25 25% 25%)" strokeWidth="1" opacity="0.4" />
+      <line x1="340" y1="125" x2="340" y2="91" stroke="hsl(25 25% 25%)" strokeWidth="1" opacity="0.4" />
       
       {/* Ridge line at peak */}
       <line x1="200" y1="56" x2="200" y2="159" stroke="hsl(25 25% 22%)" strokeWidth="2" opacity="0.7" />
