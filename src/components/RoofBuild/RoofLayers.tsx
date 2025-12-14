@@ -55,69 +55,71 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
         transform: `translateY(${translateY}px) scale(${scale})`,
         transformOrigin: '200px 110px',
         opacity,
-        filter: `drop-shadow(0 ${4 + easedProgress * 8}px ${12 + easedProgress * 16}px hsl(35 55% 40% / ${glowIntensity}))`,
-        transition: 'filter 0.1s ease-out',
+        filter: `drop-shadow(0 ${6 + easedProgress * 12}px ${16 + easedProgress * 20}px hsl(30 60% 35% / ${glowIntensity}))`,
       }}
     >
       <defs>
-        {/* Clean plywood gradients */}
-        <linearGradient id="plywoodLeft" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="hsl(40 50% 60%)" />
-          <stop offset="50%" stopColor="hsl(36 48% 52%)" />
-          <stop offset="100%" stopColor="hsl(32 45% 44%)" />
+        {/* Premium plywood with warm glow */}
+        <linearGradient id="plyLeft" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="hsl(35 45% 38%)" />
+          <stop offset="40%" stopColor="hsl(38 50% 48%)" />
+          <stop offset="70%" stopColor="hsl(40 52% 55%)" />
+          <stop offset="100%" stopColor="hsl(42 48% 50%)" />
         </linearGradient>
-        <linearGradient id="plywoodRight" x1="100%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(42 52% 58%)" />
-          <stop offset="50%" stopColor="hsl(38 50% 50%)" />
-          <stop offset="100%" stopColor="hsl(34 47% 42%)" />
+        <linearGradient id="plyRight" x1="100%" y1="100%" x2="0%" y2="0%">
+          <stop offset="0%" stopColor="hsl(33 44% 36%)" />
+          <stop offset="40%" stopColor="hsl(36 48% 46%)" />
+          <stop offset="70%" stopColor="hsl(39 50% 52%)" />
+          <stop offset="100%" stopColor="hsl(41 46% 48%)" />
         </linearGradient>
         
-        {/* Subtle wood grain */}
-        <pattern id="grainL" patternUnits="userSpaceOnUse" width="60" height="4" patternTransform="rotate(-33)">
-          <line x1="0" y1="2" x2="60" y2="2" stroke="hsl(28 35% 35%)" strokeWidth="0.6" opacity="0.15" />
-        </pattern>
-        <pattern id="grainR" patternUnits="userSpaceOnUse" width="60" height="4" patternTransform="rotate(33)">
-          <line x1="0" y1="2" x2="60" y2="2" stroke="hsl(28 35% 35%)" strokeWidth="0.6" opacity="0.15" />
-        </pattern>
+        {/* Inner warm glow */}
+        <radialGradient id="warmGlow" cx="50%" cy="60%" r="60%">
+          <stop offset="0%" stopColor="hsl(35 60% 55%)" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="hsl(30 50% 40%)" stopOpacity="0" />
+        </radialGradient>
       </defs>
       
-      {/* Left slope */}
-      <path d="M48 158 L200 58 L200 158 Z" fill="url(#plywoodLeft)" />
-      <path d="M48 158 L200 58 L200 158 Z" fill="url(#grainL)" />
+      {/* Main plywood surfaces */}
+      <path d="M48 158 L200 58 L200 158 Z" fill="url(#plyLeft)" />
+      <path d="M200 58 L352 158 L200 158 Z" fill="url(#plyRight)" />
       
-      {/* Right slope */}
-      <path d="M200 58 L352 158 L200 158 Z" fill="url(#plywoodRight)" />
-      <path d="M200 58 L352 158 L200 158 Z" fill="url(#grainR)" />
+      {/* Warm inner glow overlay */}
+      <path d="M48 158 L200 58 L352 158 Z" fill="url(#warmGlow)" />
       
-      {/* Plywood sheet gaps - staggered pattern like real installation */}
-      {/* Left slope - vertical seams */}
-      <line x1="90" y1="158" x2="145" y2="103" stroke="hsl(20 25% 18%)" strokeWidth="2" opacity="0.7" />
-      <line x1="145" y1="158" x2="182" y2="121" stroke="hsl(20 25% 18%)" strokeWidth="2" opacity="0.7" />
-      {/* Left slope - horizontal seam */}
-      <line x1="55" y1="150" x2="195" y2="78" stroke="hsl(20 25% 18%)" strokeWidth="1.5" opacity="0.5" />
+      {/* Sheet gaps - clean thin lines */}
+      <g stroke="hsl(25 40% 20%)" strokeLinecap="round">
+        {/* Left slope */}
+        <line x1="95" y1="158" x2="147" y2="106" strokeWidth="1.5" />
+        <line x1="150" y1="158" x2="183" y2="125" strokeWidth="1.5" />
+        {/* Right slope */}
+        <line x1="253" y1="106" x2="305" y2="158" strokeWidth="1.5" />
+        <line x1="217" y1="125" x2="250" y2="158" strokeWidth="1.5" />
+        {/* Ridge area small gap */}
+        <line x1="180" y1="70" x2="220" y2="70" strokeWidth="1" opacity="0.6" />
+      </g>
       
-      {/* Right slope - vertical seams */}
-      <line x1="255" y1="103" x2="310" y2="158" stroke="hsl(20 25% 18%)" strokeWidth="2" opacity="0.7" />
-      <line x1="218" y1="121" x2="255" y2="158" stroke="hsl(20 25% 18%)" strokeWidth="2" opacity="0.7" />
-      {/* Right slope - horizontal seam */}
-      <line x1="205" y1="78" x2="345" y2="150" stroke="hsl(20 25% 18%)" strokeWidth="1.5" opacity="0.5" />
-      
-      {/* Subtle highlight lines next to gaps for depth */}
-      <line x1="91" y1="158" x2="146" y2="103" stroke="hsl(45 40% 65%)" strokeWidth="0.5" opacity="0.3" />
-      <line x1="146" y1="158" x2="183" y2="121" stroke="hsl(45 40% 65%)" strokeWidth="0.5" opacity="0.3" />
-      <line x1="254" y1="103" x2="309" y2="158" stroke="hsl(45 40% 65%)" strokeWidth="0.5" opacity="0.3" />
-      <line x1="217" y1="121" x2="254" y2="158" stroke="hsl(45 40% 65%)" strokeWidth="0.5" opacity="0.3" />
-      
-      {/* Teal edge glow */}
+      {/* Teal edge accent - matches house style */}
       <path 
         d="M50 157 L200 59 L350 157" 
         fill="none"
         stroke="hsl(168 70% 50%)" 
-        strokeWidth="2"
-        opacity={0.3 + easedProgress * 0.5}
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity={0.4 + easedProgress * 0.5}
         style={{
-          filter: `drop-shadow(0 0 ${8 + easedProgress * 10}px hsl(168 70% 50% / 0.7))`,
+          filter: `drop-shadow(0 0 ${10 + easedProgress * 12}px hsl(168 70% 50% / 0.8))`,
         }}
+      />
+      
+      {/* Subtle warm edge highlight */}
+      <path 
+        d="M52 156 L200 60 L348 156" 
+        fill="none"
+        stroke="hsl(40 60% 65%)" 
+        strokeWidth="1"
+        opacity={0.2 + easedProgress * 0.2}
       />
     </g>
   );
