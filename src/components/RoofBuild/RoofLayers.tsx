@@ -198,18 +198,8 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
   if (progress < startProgress) return null;
   
   const easedProgress = easeOutQuint(layerProgress);
-  const translateY = -80 * (1 - easedProgress);
+  const translateY = -60 * (1 - easedProgress);
   const opacity = 0.3 + (0.7 * easedProgress);
-  
-  // Label fade in/out
-  let labelOpacity = 0;
-  if (layerProgress >= 0.6 && layerProgress < 0.7) {
-    labelOpacity = (layerProgress - 0.6) / 0.1;
-  } else if (layerProgress >= 0.7 && layerProgress < 0.95) {
-    labelOpacity = 1;
-  } else if (layerProgress >= 0.95) {
-    labelOpacity = 1 - ((layerProgress - 0.95) / 0.05);
-  }
   
   return (
     <g 
@@ -222,64 +212,45 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
     >
       <defs>
         <linearGradient id="dripEdgeOrange" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(25 95% 60%)" />
-          <stop offset="50%" stopColor="hsl(25 95% 55%)" />
-          <stop offset="100%" stopColor="hsl(20 90% 45%)" />
+          <stop offset="0%" stopColor="hsl(25 95% 65%)" />
+          <stop offset="40%" stopColor="hsl(25 95% 55%)" />
+          <stop offset="100%" stopColor="hsl(20 85% 40%)" />
         </linearGradient>
       </defs>
       
-      {/* Left eaves drip edge */}
-      <line 
-        x1="42" y1="159" 
-        x2="200" y2="159" 
-        stroke="url(#dripEdgeOrange)"
-        strokeWidth="4"
-        strokeLinecap="round"
+      {/* Left eaves drip edge - L-shaped profile */}
+      <path 
+        d="M42 157 L200 157 L200 162 L200 165 L42 165 L42 162 L42 157 Z"
+        fill="url(#dripEdgeOrange)"
         style={{
-          filter: `drop-shadow(0 0 ${8 + easedProgress * 10}px hsl(25 95% 55% / 0.8)) drop-shadow(0 0 ${4 + easedProgress * 6}px hsl(30 100% 60% / 0.6))`,
+          filter: `drop-shadow(0 0 ${6 + easedProgress * 8}px hsl(25 95% 55% / 0.7)) drop-shadow(0 2px 4px hsl(25 80% 30% / 0.5))`,
+        }}
+      />
+      {/* Left drip edge lip (the vertical part that hangs down) */}
+      <path 
+        d="M42 162 L200 162 L200 168 L42 168 Z"
+        fill="hsl(20 90% 45%)"
+        style={{
+          filter: `drop-shadow(0 2px ${4 + easedProgress * 6}px hsl(25 95% 50% / 0.6))`,
         }}
       />
       
-      {/* Right eaves drip edge */}
-      <line 
-        x1="200" y1="159" 
-        x2="358" y2="159" 
-        stroke="url(#dripEdgeOrange)"
-        strokeWidth="4"
-        strokeLinecap="round"
+      {/* Right eaves drip edge - L-shaped profile */}
+      <path 
+        d="M200 157 L358 157 L358 162 L358 165 L200 165 L200 162 L200 157 Z"
+        fill="url(#dripEdgeOrange)"
         style={{
-          filter: `drop-shadow(0 0 ${8 + easedProgress * 10}px hsl(25 95% 55% / 0.8)) drop-shadow(0 0 ${4 + easedProgress * 6}px hsl(30 100% 60% / 0.6))`,
+          filter: `drop-shadow(0 0 ${6 + easedProgress * 8}px hsl(25 95% 55% / 0.7)) drop-shadow(0 2px 4px hsl(25 80% 30% / 0.5))`,
         }}
       />
-      
-      {/* Label */}
-      <g opacity={labelOpacity}>
-        <rect
-          x="160"
-          y="166"
-          width="80"
-          height="24"
-          rx="4"
-          fill="hsl(25 40% 15% / 0.7)"
-          style={{ filter: 'blur(3px)' }}
-        />
-        <text
-          x="200"
-          y="180"
-          textAnchor="middle"
-          dominantBaseline="middle"
-          fill="hsl(25 95% 70%)"
-          fontSize="10"
-          fontWeight="600"
-          fontFamily="system-ui, -apple-system, sans-serif"
-          letterSpacing="1.5"
-          style={{
-            filter: 'drop-shadow(0 0 4px hsl(25 95% 55% / 0.8))',
-          }}
-        >
-          DRIP EDGE
-        </text>
-      </g>
+      {/* Right drip edge lip */}
+      <path 
+        d="M200 162 L358 162 L358 168 L200 168 Z"
+        fill="hsl(20 90% 45%)"
+        style={{
+          filter: `drop-shadow(0 2px ${4 + easedProgress * 6}px hsl(25 95% 50% / 0.6))`,
+        }}
+      />
     </g>
   );
 };
