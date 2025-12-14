@@ -29,16 +29,18 @@ const RoofBuildSection: React.FC = () => {
   const { setZoomProgress } = useScrollContext();
   const isMobile = useIsMobile();
 
-  // Layer timing - MUCH SLOWER on mobile (8-90%), desktop unchanged (8-60%)
-  // Mobile: spread across 82% of scroll for leisurely viewing
+  // Layer timing - delayed start on mobile (15-90%) so card is visible first
+  // Mobile: spread across 75% of scroll for leisurely viewing, starts later
   // Desktop: Roof layers: 8-60%, Door: 60-72%, Zoom: 72-88%, Gallery: 88%+
   const roofProgress = Math.min(1, progress / (isMobile ? 0.90 : 0.60));
   
-  // Mobile layers spread from 8% to 90%, desktop from 8% to 60%
-  const mobileLayerStep = 0.082; // Each layer gets 8.2% of scroll
+  // Mobile layers spread from 15% to 90%, desktop from 8% to 60%
+  const mobileLayerStart = 0.15; // Start later so card is visible
+  const desktopLayerStart = 0.08;
+  const mobileLayerStep = 0.075; // Each layer gets 7.5% of scroll (75% total / 10 layers)
   const desktopLayerStep = 0.052; // Each layer gets 5.2% of scroll
   const layerStep = isMobile ? mobileLayerStep : desktopLayerStep;
-  const layerStart = 0.08;
+  const layerStart = isMobile ? mobileLayerStart : desktopLayerStart;
   
   const layers = [
     { start: layerStart, end: layerStart + layerStep },                           // 1. Decking
@@ -53,8 +55,8 @@ const RoofBuildSection: React.FC = () => {
     { start: layerStart + layerStep * 9, end: layerStart + layerStep * 10 },      // 10. Ridge Cap
   ];
 
-  // Show hint during buffer period (0-8%)
-  const showScrollHint = progress < 0.08;
+  // Show hint during buffer period (before animation starts)
+  const showScrollHint = progress < layerStart;
   
   // Door animation: starts at 60%, fully open at 72% (DESKTOP ONLY)
   const doorAngle = !isMobile && progress > 0.60 
