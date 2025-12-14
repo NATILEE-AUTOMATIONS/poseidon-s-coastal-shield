@@ -213,110 +213,29 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
           }}
         />
         
-        {/* ===== RAFTERS - Clipped parallel lines inside roof ===== */}
-        <defs>
-          <linearGradient id="rafterGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="hsl(168 50% 38%)" />
-            <stop offset="50%" stopColor="hsl(168 55% 45%)" />
-            <stop offset="100%" stopColor="hsl(168 45% 32%)" />
-          </linearGradient>
-          {/* Clip path to keep rafters inside roof triangle */}
-          <clipPath id="roofClip">
-            <path d="M40 160 L200 55 L360 160 Z" />
-          </clipPath>
-        </defs>
-        
-        {/* Rafters clipped to roof bounds */}
-        <g clipPath="url(#roofClip)">
-          {/* Left slope rafters - parallel lines */}
-          <g className="rafters-left">
-            {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => {
-              // Space rafters evenly along the wall top (y=160, x from 50 to 195)
-              const spacing = 18;
-              const baseX = 50 + i * spacing;
-              const baseY = 160;
-              
-              // Left slope direction: from (40,160) to (200,55)
-              const dx = 200 - 40; // 160
-              const dy = 55 - 160; // -105
-              
-              // Each rafter runs parallel to the slope, starting at wall level
-              const endX = baseX + dx;
-              const endY = baseY + dy;
-              
-              return (
-                <line
-                  key={`left-${i}`}
-                  x1={baseX}
-                  y1={baseY}
-                  x2={endX}
-                  y2={endY}
-                  stroke="hsl(168 55% 42%)"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                  opacity={0.85}
-                  style={{ filter: 'drop-shadow(0 0 3px hsl(168 70% 45% / 0.5))' }}
-                />
-              );
-            })}
-          </g>
-          
-          {/* Right slope rafters - parallel lines */}
-          <g className="rafters-right">
-            {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => {
-              // Space rafters from right side
-              const spacing = 18;
-              const baseX = 350 - i * spacing;
-              const baseY = 160;
-              
-              // Right slope direction: from (360,160) to (200,55)
-              const dx = 200 - 360; // -160
-              const dy = 55 - 160; // -105
-              
-              const endX = baseX + dx;
-              const endY = baseY + dy;
-              
-              return (
-                <line
-                  key={`right-${i}`}
-                  x1={baseX}
-                  y1={baseY}
-                  x2={endX}
-                  y2={endY}
-                  stroke="hsl(168 55% 42%)"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                  opacity={0.85}
-                  style={{ filter: 'drop-shadow(0 0 3px hsl(168 70% 45% / 0.5))' }}
-                />
-              );
-            })}
-          </g>
-        </g>
-        
-        {/* Ridge board - horizontal beam at peak */}
+        {/* Ridge board - simple horizontal beam at peak */}
         <rect
-          x="180"
-          y="52"
-          width="40"
-          height="7"
-          fill="hsl(168 45% 32%)"
-          stroke="hsl(168 75% 50%)"
+          x="185"
+          y="54"
+          width="30"
+          height="5"
+          fill="hsl(168 45% 28%)"
+          stroke="hsl(168 70% 50%)"
           strokeWidth="1.5"
           rx="1"
-          style={{ filter: 'drop-shadow(0 0 10px hsl(168 80% 50% / 0.7))' }}
+          style={{ filter: 'drop-shadow(0 0 8px hsl(168 80% 50% / 0.6))' }}
         />
         
-        {/* Collar tie - horizontal brace */}
+        {/* Collar tie - single horizontal brace */}
         <rect
-          x="95"
-          y="108"
-          width="210"
-          height="4"
-          fill="hsl(168 45% 30%)"
-          stroke="hsl(168 60% 45%)"
-          strokeWidth="1"
-          opacity="0.7"
+          x="100"
+          y="110"
+          width="200"
+          height="3"
+          fill="hsl(168 40% 25%)"
+          stroke="hsl(168 55% 42%)"
+          strokeWidth="0.75"
+          opacity="0.6"
           rx="0.5"
           style={{ filter: 'drop-shadow(0 0 5px hsl(168 60% 40% / 0.4))' }}
         />
