@@ -27,6 +27,26 @@
   75% { transform: translateY(-15px) translateX(8px); }
 }
 
+@keyframes fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px hsl(var(--teal-glow) / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px hsl(var(--teal-glow) / 0.5);
+  }
+}
+
 @layer base {
   :root {
     /* Poseidon Dark Theme */
