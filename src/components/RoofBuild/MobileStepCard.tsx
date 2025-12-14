@@ -21,9 +21,9 @@ const renderCard = (
   const material = materialInfo[cardIndex];
   if (!material) return null;
 
-  // 3D cube rotation phases
-  const entryEnd = 0.30;
-  const exitStart = 0.70;
+  // 3D cube rotation phases - exit starts when next card begins entering
+  const entryEnd = 0.35;
+  const exitStart = 0.55;
 
   let rotateY = 0;
   let translateX = 0;
