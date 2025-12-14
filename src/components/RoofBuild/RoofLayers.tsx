@@ -135,43 +135,18 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
       <line x1="200" y1="56" x2="200" y2="159" stroke="hsl(30 35% 55%)" strokeWidth="0.6" opacity="0.4" />
       <line x1="200" y1="56" x2="200" y2="159" stroke="hsl(25 30% 18%)" strokeWidth="2.2" />
       
-      {/* "Replace Decking" - clean warm stamp look */}
-      {/* Step number badge */}
-      <circle
-        cx="165"
-        cy="114"
-        r="10"
-        fill="hsl(30 60% 50%)"
-        style={{
-          filter: 'drop-shadow(0 2px 4px hsl(25 50% 15% / 0.5))',
-        }}
-      />
+      {/* "Replace Decking" - simple centered text */}
       <text
-        x="165"
+        x="200"
         y="114"
         textAnchor="middle"
         dominantBaseline="middle"
         fill="hsl(35 30% 95%)"
-        fontSize="11"
-        fontWeight="700"
-        fontFamily="system-ui, -apple-system, sans-serif"
-      >
-        1
-      </text>
-      
-      {/* Main label text */}
-      <text
-        x="210"
-        y="114"
-        textAnchor="start"
-        dominantBaseline="middle"
-        fill="hsl(35 40% 92%)"
-        fontSize="14"
+        fontSize="13"
         fontWeight="600"
         fontFamily="system-ui, -apple-system, sans-serif"
-        letterSpacing="0.5"
         style={{
-          filter: 'drop-shadow(0 1px 3px hsl(25 40% 10% / 0.7))',
+          filter: 'drop-shadow(0 1px 2px hsl(25 40% 10% / 0.6))',
         }}
       >
         Replace Decking
