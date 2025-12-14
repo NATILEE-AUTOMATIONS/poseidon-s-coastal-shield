@@ -201,6 +201,13 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
 
       {/* Roof structure - world-class stick-framed */}
       <g className="roof-deck">
+        {/* Clip path for rafters */}
+        <defs>
+          <clipPath id="roofClip">
+            <path d="M42 160 L200 57 L358 160 Z" />
+          </clipPath>
+        </defs>
+        
         {/* Roof deck surface - dark background */}
         <path
           d="M40 160 L200 55 L360 160 Z"
@@ -213,6 +220,93 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
           }}
         />
         
+        {/* Rafters - evenly spaced lumber */}
+        <g clipPath="url(#roofClip)">
+          {/* Left slope rafters */}
+          {[0, 1, 2, 3, 4, 5, 6].map((i) => {
+            const spacing = 22;
+            const startX = 55 + i * spacing;
+            const endX = startX + 100;
+            const startY = 160;
+            const endY = 160 - (160 - 55) * ((startX - 40) / (200 - 40)) - 65;
+            return (
+              <line
+                key={`left-rafter-${i}`}
+                x1={startX}
+                y1={startY}
+                x2={startX + 70}
+                y2={endY}
+                stroke="hsl(168 55% 35%)"
+                strokeWidth="3"
+                strokeLinecap="round"
+                opacity={0.7}
+                style={{ filter: 'drop-shadow(0 0 4px hsl(168 70% 45% / 0.4))' }}
+              />
+            );
+          })}
+          
+          {/* Right slope rafters */}
+          {[0, 1, 2, 3, 4, 5, 6].map((i) => {
+            const spacing = 22;
+            const startX = 345 - i * spacing;
+            const endX = startX - 100;
+            const startY = 160;
+            const endY = 160 - (160 - 55) * ((360 - startX) / (360 - 200)) - 65;
+            return (
+              <line
+                key={`right-rafter-${i}`}
+                x1={startX}
+                y1={startY}
+                x2={startX - 70}
+                y2={endY}
+                stroke="hsl(168 55% 35%)"
+                strokeWidth="3"
+                strokeLinecap="round"
+                opacity={0.7}
+                style={{ filter: 'drop-shadow(0 0 4px hsl(168 70% 45% / 0.4))' }}
+              />
+            );
+          })}
+          
+          {/* Ridge board at peak */}
+          <rect
+            x="190"
+            y="53"
+            width="20"
+            height="6"
+            fill="hsl(168 45% 28%)"
+            stroke="hsl(168 70% 50%)"
+            strokeWidth="1.5"
+            rx="1"
+            style={{ filter: 'drop-shadow(0 0 6px hsl(168 80% 50% / 0.5))' }}
+          />
+          
+          {/* Collar ties - horizontal braces */}
+          <rect
+            x="110"
+            y="105"
+            width="180"
+            height="3.5"
+            fill="hsl(168 40% 25%)"
+            stroke="hsl(168 55% 42%)"
+            strokeWidth="1"
+            opacity="0.6"
+            rx="0.5"
+            style={{ filter: 'drop-shadow(0 0 4px hsl(168 60% 40% / 0.3))' }}
+          />
+          <rect
+            x="80"
+            y="130"
+            width="240"
+            height="3.5"
+            fill="hsl(168 40% 25%)"
+            stroke="hsl(168 55% 42%)"
+            strokeWidth="1"
+            opacity="0.5"
+            rx="0.5"
+            style={{ filter: 'drop-shadow(0 0 4px hsl(168 60% 40% / 0.3))' }}
+          />
+        </g>
       </g>
 
       {/* ===== PREMIUM CHIMNEY (Left side of roof) ===== */}
