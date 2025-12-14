@@ -137,7 +137,9 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
       <line x1="200" y1="56" x2="200" y2="159" stroke="hsl(25 30% 18%)" strokeWidth="2.2" />
       
       {/* "Replace Decking" label - desktop only */}
-      {!isMobile && (() => {
+      {(() => {
+        if (isMobile) return null;
+        
         let labelOpacity = 0;
         if (layerProgress >= 0.6 && layerProgress < 0.7) {
           labelOpacity = (layerProgress - 0.6) / 0.1; // fade in
