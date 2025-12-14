@@ -214,12 +214,12 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
           </linearGradient>
         </defs>
         
-        {/* Chimney body */}
+        {/* Chimney body - positioned to intersect with roof at ~x=105 */}
         <rect
-          x="85"
-          y="70"
-          width="28"
-          height="55"
+          x="90"
+          y="75"
+          width="30"
+          height="60"
           fill="url(#chimneyGradient)"
           stroke="hsl(168 60% 40%)"
           strokeWidth="1.5"
@@ -228,23 +228,24 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
         
         {/* Brick texture lines */}
         <g opacity="0.3">
-          <line x1="85" y1="80" x2="113" y2="80" stroke="hsl(168 50% 35%)" strokeWidth="0.75" />
-          <line x1="85" y1="90" x2="113" y2="90" stroke="hsl(168 50% 35%)" strokeWidth="0.75" />
-          <line x1="85" y1="100" x2="113" y2="100" stroke="hsl(168 50% 35%)" strokeWidth="0.75" />
-          <line x1="85" y1="110" x2="113" y2="110" stroke="hsl(168 50% 35%)" strokeWidth="0.75" />
-          <line x1="99" y1="70" x2="99" y2="80" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
-          <line x1="92" y1="80" x2="92" y2="90" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
-          <line x1="106" y1="80" x2="106" y2="90" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
-          <line x1="99" y1="90" x2="99" y2="100" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
-          <line x1="92" y1="100" x2="92" y2="110" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
-          <line x1="106" y1="100" x2="106" y2="110" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
+          <line x1="90" y1="85" x2="120" y2="85" stroke="hsl(168 50% 35%)" strokeWidth="0.75" />
+          <line x1="90" y1="95" x2="120" y2="95" stroke="hsl(168 50% 35%)" strokeWidth="0.75" />
+          <line x1="90" y1="105" x2="120" y2="105" stroke="hsl(168 50% 35%)" strokeWidth="0.75" />
+          <line x1="90" y1="115" x2="120" y2="115" stroke="hsl(168 50% 35%)" strokeWidth="0.75" />
+          <line x1="90" y1="125" x2="120" y2="125" stroke="hsl(168 50% 35%)" strokeWidth="0.75" />
+          <line x1="105" y1="75" x2="105" y2="85" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
+          <line x1="97" y1="85" x2="97" y2="95" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
+          <line x1="112" y1="85" x2="112" y2="95" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
+          <line x1="105" y1="95" x2="105" y2="105" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
+          <line x1="97" y1="105" x2="97" y2="115" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
+          <line x1="112" y1="105" x2="112" y2="115" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
         </g>
         
         {/* Chimney cap */}
         <rect
-          x="82"
-          y="66"
-          width="34"
+          x="86"
+          y="71"
+          width="38"
           height="6"
           fill="url(#chimneyCapGradient)"
           stroke="hsl(168 70% 50%)"
@@ -255,9 +256,9 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
         
         {/* Chimney crown detail */}
         <rect
-          x="84"
-          y="63"
-          width="30"
+          x="88"
+          y="68"
+          width="34"
           height="4"
           fill="hsl(168 30% 25%)"
           stroke="hsl(168 60% 45%)"
@@ -267,30 +268,76 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
         
         {/* Inner chimney opening */}
         <rect
-          x="90"
-          y="63"
-          width="18"
+          x="94"
+          y="68"
+          width="22"
           height="3"
           fill="hsl(0 0% 5%)"
           rx="0.5"
         />
         
         {/* Subtle smoke wisps */}
-        <g opacity="0.15">
+        <g opacity="0.12">
           <path
-            d="M96 60 Q94 52 98 45 Q96 38 99 30"
+            d="M100 65 Q97 55 102 45 Q98 35 103 25"
             fill="none"
-            stroke="hsl(0 0% 70%)"
+            stroke="hsl(0 0% 75%)"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M108 63 Q112 52 107 42 Q111 32 105 22"
+            fill="none"
+            stroke="hsl(0 0% 75%)"
             strokeWidth="2"
             strokeLinecap="round"
           />
-          <path
-            d="M102 58 Q105 50 101 42 Q104 35 100 28"
-            fill="none"
-            stroke="hsl(0 0% 70%)"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
+        </g>
+      </g>
+
+      {/* Roof deck (the bare structure) - rendered AFTER chimney so it overlaps */}
+      <g className="roof-deck">
+        {/* Roof deck surface */}
+        <path
+          d="M40 160 L200 55 L360 160 Z"
+          fill="url(#roofDeckGradient)"
+          stroke="hsl(168 80% 50%)"
+          strokeWidth="2.5"
+          strokeLinejoin="round"
+          style={{
+            filter: 'drop-shadow(0 0 15px hsl(168 80% 45% / 0.4))',
+          }}
+        />
+        
+        {/* Chimney base intersection - covers where chimney meets roof */}
+        <polygon
+          points="90,127 120,127 120,108 90,127"
+          fill="url(#roofDeckGradient)"
+          stroke="hsl(168 80% 50%)"
+          strokeWidth="1.5"
+          strokeLinejoin="round"
+        />
+        
+        {/* Ridge beam highlight */}
+        <line
+          x1="200"
+          y1="55"
+          x2="200"
+          y2="62"
+          stroke="hsl(168 80% 55%)"
+          strokeWidth="4"
+          strokeLinecap="round"
+          style={{ filter: 'drop-shadow(0 0 8px hsl(168 80% 50% / 0.8))' }}
+        />
+        
+        {/* Subtle deck texture lines */}
+        <g opacity="0.15">
+          <line x1="80" y1="145" x2="200" y2="75" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
+          <line x1="120" y1="140" x2="200" y2="80" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
+          <line x1="160" y1="132" x2="200" y2="85" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
+          <line x1="200" y1="75" x2="320" y2="145" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
+          <line x1="200" y1="80" x2="280" y2="140" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
+          <line x1="200" y1="85" x2="240" y2="132" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
         </g>
       </g>
 
