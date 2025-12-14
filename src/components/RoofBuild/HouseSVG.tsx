@@ -199,182 +199,195 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
         </g>
       </g>
 
-      {/* ===== CHIMNEY (Left side of roof) ===== */}
+      {/* Roof deck (the bare structure) - BEHIND chimney */}
+      <g className="roof-deck">
+        {/* Roof deck surface */}
+        <path
+          d="M40 160 L200 55 L360 160 Z"
+          fill="url(#roofDeckGradient)"
+          stroke="hsl(168 80% 50%)"
+          strokeWidth="2.5"
+          strokeLinejoin="round"
+          style={{
+            filter: 'drop-shadow(0 0 15px hsl(168 80% 45% / 0.4))',
+          }}
+        />
+        
+        {/* Ridge beam highlight */}
+        <line
+          x1="200"
+          y1="55"
+          x2="200"
+          y2="62"
+          stroke="hsl(168 80% 55%)"
+          strokeWidth="4"
+          strokeLinecap="round"
+          style={{ filter: 'drop-shadow(0 0 8px hsl(168 80% 50% / 0.8))' }}
+        />
+        
+        {/* Subtle deck texture lines */}
+        <g opacity="0.15">
+          <line x1="80" y1="145" x2="200" y2="75" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
+          <line x1="120" y1="140" x2="200" y2="80" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
+          <line x1="160" y1="132" x2="200" y2="85" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
+          <line x1="200" y1="75" x2="320" y2="145" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
+          <line x1="200" y1="80" x2="280" y2="140" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
+          <line x1="200" y1="85" x2="240" y2="132" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
+        </g>
+      </g>
+
+      {/* ===== PREMIUM CHIMNEY (Left side of roof) ===== */}
       <g className="chimney">
-        {/* Chimney gradient */}
+        {/* Chimney gradients */}
         <defs>
           <linearGradient id="chimneyGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="hsl(168 25% 18%)" />
-            <stop offset="50%" stopColor="hsl(168 30% 22%)" />
-            <stop offset="100%" stopColor="hsl(168 20% 14%)" />
+            <stop offset="0%" stopColor="hsl(168 30% 12%)" />
+            <stop offset="35%" stopColor="hsl(168 35% 18%)" />
+            <stop offset="65%" stopColor="hsl(168 35% 18%)" />
+            <stop offset="100%" stopColor="hsl(168 25% 10%)" />
           </linearGradient>
-          <linearGradient id="chimneyCapGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="hsl(168 35% 28%)" />
-            <stop offset="100%" stopColor="hsl(168 25% 18%)" />
+          <linearGradient id="chimneyCapGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stopColor="hsl(168 30% 15%)" />
+            <stop offset="100%" stopColor="hsl(168 40% 25%)" />
           </linearGradient>
+          <linearGradient id="flashingGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="hsl(168 50% 35%)" />
+            <stop offset="100%" stopColor="hsl(168 40% 20%)" />
+          </linearGradient>
+          {/* Chimney glow filter */}
+          <filter id="chimneyGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
         </defs>
         
-        {/* Chimney body - positioned to intersect with roof at ~x=105 */}
-        <rect
-          x="90"
-          y="75"
-          width="30"
-          height="60"
+        {/* Chimney body - angled bottom to match roof slope */}
+        {/* Roof slope: from (40,160) to (200,55), at x=105, y ≈ 117 */}
+        <path
+          d="M88 50 L122 50 L122 117 L88 130 Z"
           fill="url(#chimneyGradient)"
-          stroke="hsl(168 60% 40%)"
-          strokeWidth="1.5"
-          style={{ filter: 'drop-shadow(0 0 8px hsl(168 80% 40% / 0.25))' }}
+          stroke="hsl(168 70% 45%)"
+          strokeWidth="2"
+          strokeLinejoin="round"
+          style={{ filter: 'drop-shadow(0 0 12px hsl(168 80% 40% / 0.35))' }}
         />
         
-        {/* Brick texture lines */}
-        <g opacity="0.3">
-          <line x1="90" y1="85" x2="120" y2="85" stroke="hsl(168 50% 35%)" strokeWidth="0.75" />
-          <line x1="90" y1="95" x2="120" y2="95" stroke="hsl(168 50% 35%)" strokeWidth="0.75" />
-          <line x1="90" y1="105" x2="120" y2="105" stroke="hsl(168 50% 35%)" strokeWidth="0.75" />
-          <line x1="90" y1="115" x2="120" y2="115" stroke="hsl(168 50% 35%)" strokeWidth="0.75" />
-          <line x1="90" y1="125" x2="120" y2="125" stroke="hsl(168 50% 35%)" strokeWidth="0.75" />
-          <line x1="105" y1="75" x2="105" y2="85" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
-          <line x1="97" y1="85" x2="97" y2="95" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
-          <line x1="112" y1="85" x2="112" y2="95" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
-          <line x1="105" y1="95" x2="105" y2="105" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
-          <line x1="97" y1="105" x2="97" y2="115" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
-          <line x1="112" y1="105" x2="112" y2="115" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
-        </g>
+        {/* Left side highlight edge */}
+        <line
+          x1="88"
+          y1="50"
+          x2="88"
+          y2="130"
+          stroke="hsl(168 80% 55%)"
+          strokeWidth="1.5"
+          style={{ filter: 'drop-shadow(0 0 6px hsl(168 80% 50% / 0.6))' }}
+        />
         
-        {/* Chimney cap */}
+        {/* Brick texture - horizontal mortar lines */}
+        <g opacity="0.25">
+          <line x1="88" y1="60" x2="122" y2="60" stroke="hsl(168 50% 40%)" strokeWidth="0.75" />
+          <line x1="88" y1="72" x2="122" y2="72" stroke="hsl(168 50% 40%)" strokeWidth="0.75" />
+          <line x1="88" y1="84" x2="122" y2="84" stroke="hsl(168 50% 40%)" strokeWidth="0.75" />
+          <line x1="88" y1="96" x2="122" y2="96" stroke="hsl(168 50% 40%)" strokeWidth="0.75" />
+          <line x1="88" y1="108" x2="122" y2="108" stroke="hsl(168 50% 40%)" strokeWidth="0.75" />
+          {/* Vertical brick offsets */}
+          <line x1="105" y1="50" x2="105" y2="60" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
+          <line x1="96" y1="60" x2="96" y2="72" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
+          <line x1="114" y1="60" x2="114" y2="72" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
+          <line x1="105" y1="72" x2="105" y2="84" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
+          <line x1="96" y1="84" x2="96" y2="96" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
+          <line x1="114" y1="84" x2="114" y2="96" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
+          <line x1="105" y1="96" x2="105" y2="108" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
+        </g>
+
+        {/* Step flashing - where chimney meets roof */}
+        <path
+          d="M85 132 L88 130 L88 117 L122 117 L125 114 L125 120 L88 133 Z"
+          fill="url(#flashingGradient)"
+          stroke="hsl(168 80% 50%)"
+          strokeWidth="1.5"
+          strokeLinejoin="round"
+          style={{ filter: 'drop-shadow(0 0 8px hsl(168 80% 45% / 0.5))' }}
+        />
+        
+        {/* Counter flashing detail */}
+        <line
+          x1="88"
+          y1="120"
+          x2="122"
+          y2="113"
+          stroke="hsl(168 70% 55%)"
+          strokeWidth="1"
+          opacity="0.6"
+        />
+        
+        {/* Chimney crown (top cap) */}
         <rect
-          x="86"
-          y="71"
-          width="38"
+          x="84"
+          y="46"
+          width="42"
           height="6"
           fill="url(#chimneyCapGradient)"
+          stroke="hsl(168 80% 55%)"
+          strokeWidth="1.5"
+          rx="1"
+          style={{ filter: 'drop-shadow(0 0 10px hsl(168 80% 50% / 0.5))' }}
+        />
+        
+        {/* Crown ledge detail */}
+        <rect
+          x="86"
+          y="44"
+          width="38"
+          height="3"
+          fill="hsl(168 35% 22%)"
           stroke="hsl(168 70% 50%)"
           strokeWidth="1"
-          rx="1"
-          style={{ filter: 'drop-shadow(0 0 6px hsl(168 80% 45% / 0.4))' }}
-        />
-        
-        {/* Chimney crown detail */}
-        <rect
-          x="88"
-          y="68"
-          width="34"
-          height="4"
-          fill="hsl(168 30% 25%)"
-          stroke="hsl(168 60% 45%)"
-          strokeWidth="0.75"
           rx="0.5"
         />
         
-        {/* Inner chimney opening */}
+        {/* Flue opening (dark interior) */}
         <rect
-          x="94"
-          y="68"
-          width="22"
-          height="3"
-          fill="hsl(0 0% 5%)"
+          x="92"
+          y="44"
+          width="26"
+          height="2.5"
+          fill="hsl(0 0% 3%)"
           rx="0.5"
+        />
+        
+        {/* Flue liner rim glow */}
+        <rect
+          x="92"
+          y="44"
+          width="26"
+          height="2.5"
+          fill="none"
+          stroke="hsl(168 60% 40%)"
+          strokeWidth="0.5"
+          rx="0.5"
+          opacity="0.5"
         />
         
         {/* Subtle smoke wisps */}
-        <g opacity="0.12">
+        <g opacity="0.08" filter="url(#chimneyGlow)">
           <path
-            d="M100 65 Q97 55 102 45 Q98 35 103 25"
+            d="M100 40 Q96 28 102 18 Q97 8 104 -5"
             fill="none"
-            stroke="hsl(0 0% 75%)"
+            stroke="hsl(0 0% 80%)"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+          <path
+            d="M110 38 Q115 25 108 15 Q114 5 107 -8"
+            fill="none"
+            stroke="hsl(0 0% 80%)"
             strokeWidth="2.5"
             strokeLinecap="round"
           />
-          <path
-            d="M108 63 Q112 52 107 42 Q111 32 105 22"
-            fill="none"
-            stroke="hsl(0 0% 75%)"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-        </g>
-      </g>
-
-      {/* Roof deck (the bare structure) - rendered AFTER chimney so it overlaps */}
-      <g className="roof-deck">
-        {/* Roof deck surface */}
-        <path
-          d="M40 160 L200 55 L360 160 Z"
-          fill="url(#roofDeckGradient)"
-          stroke="hsl(168 80% 50%)"
-          strokeWidth="2.5"
-          strokeLinejoin="round"
-          style={{
-            filter: 'drop-shadow(0 0 15px hsl(168 80% 45% / 0.4))',
-          }}
-        />
-        
-        {/* Chimney base intersection - covers where chimney meets roof */}
-        <polygon
-          points="90,127 120,127 120,108 90,127"
-          fill="url(#roofDeckGradient)"
-          stroke="hsl(168 80% 50%)"
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-        
-        {/* Ridge beam highlight */}
-        <line
-          x1="200"
-          y1="55"
-          x2="200"
-          y2="62"
-          stroke="hsl(168 80% 55%)"
-          strokeWidth="4"
-          strokeLinecap="round"
-          style={{ filter: 'drop-shadow(0 0 8px hsl(168 80% 50% / 0.8))' }}
-        />
-        
-        {/* Subtle deck texture lines */}
-        <g opacity="0.15">
-          <line x1="80" y1="145" x2="200" y2="75" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
-          <line x1="120" y1="140" x2="200" y2="80" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
-          <line x1="160" y1="132" x2="200" y2="85" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
-          <line x1="200" y1="75" x2="320" y2="145" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
-          <line x1="200" y1="80" x2="280" y2="140" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
-          <line x1="200" y1="85" x2="240" y2="132" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
-        </g>
-      </g>
-
-      {/* Roof deck (the bare structure) */}
-      <g className="roof-deck">
-        {/* Roof deck surface */}
-        <path
-          d="M40 160 L200 55 L360 160 Z"
-          fill="url(#roofDeckGradient)"
-          stroke="hsl(168 80% 50%)"
-          strokeWidth="2.5"
-          strokeLinejoin="round"
-          style={{
-            filter: 'drop-shadow(0 0 15px hsl(168 80% 45% / 0.4))',
-          }}
-        />
-        
-        {/* Ridge beam highlight */}
-        <line
-          x1="200"
-          y1="55"
-          x2="200"
-          y2="62"
-          stroke="hsl(168 80% 55%)"
-          strokeWidth="4"
-          strokeLinecap="round"
-          style={{ filter: 'drop-shadow(0 0 8px hsl(168 80% 50% / 0.8))' }}
-        />
-        
-        {/* Subtle deck texture lines */}
-        <g opacity="0.15">
-          <line x1="80" y1="145" x2="200" y2="75" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
-          <line x1="120" y1="140" x2="200" y2="80" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
-          <line x1="160" y1="132" x2="200" y2="85" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
-          <line x1="200" y1="75" x2="320" y2="145" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
-          <line x1="200" y1="80" x2="280" y2="140" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
-          <line x1="200" y1="85" x2="240" y2="132" stroke="hsl(168 60% 50%)" strokeWidth="0.5" />
         </g>
       </g>
 
