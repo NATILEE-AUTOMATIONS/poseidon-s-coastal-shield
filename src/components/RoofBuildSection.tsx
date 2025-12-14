@@ -244,15 +244,6 @@ const RoofBuildSection: React.FC = () => {
             </div>
 
 
-            {/* Mobile Step Card - 3D spinning carousel */}
-            {isMobile && (
-              <MobileStepCard 
-                progress={progress} 
-                layerStart={layerStart} 
-                layerStep={layerStep} 
-              />
-            )}
-
 
 
             {/* Material labels - left side (positioned as overlay) */}
