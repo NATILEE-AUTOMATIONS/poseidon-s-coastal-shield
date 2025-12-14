@@ -29,26 +29,24 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
-  // Not visible yet - delay visibility until 40% into the animation window
-  if (layerProgress < 0.4) return null;
+  // Not visible before animation starts
+  if (progress < startProgress) return null;
   
-  // Remap progress: 0.4-1.0 becomes 0-1 for the actual animation
-  const remappedProgress = (layerProgress - 0.4) / 0.6;
+  // VERY slow, deliberate animation using full scroll window
+  // Use a slow-starting ease that takes its time
+  const easeOutSext = (x: number): number => 1 - Math.pow(1 - x, 6); // Sextic - very gentle
+  const easedProgress = easeOutSext(layerProgress);
   
-  // Ultra-smooth easing - even gentler curve for very deliberate settling
-  const easeOutQuart = (x: number): number => 1 - Math.pow(1 - x, 4);
-  const easedProgress = easeOutQuart(remappedProgress);
+  // Animation values - slow descent over the entire scroll window
+  const translateY = -180 * (1 - easedProgress); // Start far above
+  const opacity = 0.1 + (0.9 * easedProgress); // Very gradual fade
   
-  // Animation values - very slow, dramatic drop from far above
-  const translateY = -150 * (1 - easedProgress); // Drop from even further above
-  const opacity = 0.15 + (0.85 * easedProgress); // Fade in gradually
+  // Subtle scale pulse only at the very end (last 5%)
+  const settlePhase = layerProgress > 0.95 ? (layerProgress - 0.95) / 0.05 : 0;
+  const scale = 1 + (0.008 * Math.sin(settlePhase * Math.PI));
   
-  // Subtle scale pulse when settling (last 8% of animation)
-  const settlePhase = remappedProgress > 0.92 ? (remappedProgress - 0.92) / 0.08 : 0;
-  const scale = 1 + (0.01 * Math.sin(settlePhase * Math.PI)); // Very gentle pulse
-  
-  // Glow intensifies as it locks in
-  const glowIntensity = 0.1 + (easedProgress * 0.5);
+  // Glow intensifies slowly
+  const glowIntensity = 0.08 + (easedProgress * 0.42);
   
   return (
     <g 
