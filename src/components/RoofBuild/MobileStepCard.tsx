@@ -11,31 +11,17 @@ interface MobileStepCardProps {
 const easeOutQuint = (x: number): number => 1 - Math.pow(1 - x, 5);
 const easeInQuint = (x: number): number => x * x * x * x * x;
 
-const MobileStepCard: React.FC<MobileStepCardProps> = ({ 
-  progress, 
-  layerStart, 
-  layerStep 
-}) => {
-  // Calculate which card should be visible and its animation state
-  const totalCards = 10;
-  const animationEnd = layerStart + (layerStep * totalCards);
-  
-  // Don't show anything outside the animation range
-  if (progress < layerStart - 0.02 || progress > animationEnd + 0.02) {
-    return null;
-  }
+// Renders a single card with 3D cube rotation
+const renderCard = (
+  cardIndex: number,
+  cardProgress: number,
+  isEntering: boolean,
+  zIndex: number
+) => {
+  const material = materialInfo[cardIndex];
+  if (!material) return null;
 
-  // Find which card is currently active
-  const rawCardIndex = (progress - layerStart) / layerStep;
-  const activeCardIndex = Math.floor(Math.max(0, Math.min(totalCards - 1, rawCardIndex)));
-  
-  // Calculate progress within the current card's window (0 to 1)
-  const cardStart = layerStart + activeCardIndex * layerStep;
-  const rawCardProgress = (progress - cardStart) / layerStep;
-  const cardProgress = Math.max(0, Math.min(1, rawCardProgress));
-
-  // 3D cube rotation: card rotates in from right face, sits center, rotates out to left face
-  // 0-30%: rotate in from 90° to 0°, 30-70%: front face visible, 70-100%: rotate out 0° to -90°
+  // 3D cube rotation phases
   const entryEnd = 0.30;
   const exitStart = 0.70;
 
@@ -48,32 +34,25 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({
     // Rotate in from right face of cube (90° = right side facing user)
     const t = cardProgress / entryEnd;
     const eased = easeOutQuint(Math.min(1, t));
-    rotateY = 90 * (1 - eased); // 90° → 0°
-    translateX = 40 * (1 - eased); // slide from right
+    rotateY = 90 * (1 - eased);
+    translateX = 40 * (1 - eased);
     scale = 0.9 + 0.1 * eased;
     glowIntensity = 0.6 + 0.4 * eased;
   } else if (cardProgress >= exitStart) {
-    // Rotate out to left face of cube (0° → -90° = left side facing user)
+    // Rotate out to left face of cube
     const t = (cardProgress - exitStart) / (1 - exitStart);
     const eased = easeInQuint(Math.min(1, t));
-    rotateY = -90 * eased; // 0° → -90°
-    translateX = -40 * eased; // slide to left
+    rotateY = -90 * eased;
+    translateX = -40 * eased;
     scale = 1 - 0.1 * eased;
     glowIntensity = 1 - 0.4 * eased;
-  } else {
-    // Front face - card faces user directly
-    rotateY = 0;
-    translateX = 0;
-    scale = 1;
-    glowIntensity = 1;
   }
 
-  const material = materialInfo[activeCardIndex];
-  
   return (
-    <div 
-      className="mt-10 w-full flex justify-center px-3"
-      style={{ perspective: '1000px' }}
+    <div
+      key={cardIndex}
+      className="absolute inset-0 flex justify-center px-3"
+      style={{ zIndex }}
     >
       <div
         className="relative px-8 py-6 rounded-2xl w-full max-w-md overflow-hidden"
@@ -119,7 +98,7 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({
               ].join(', '),
             }}
           >
-            {activeCardIndex + 1}.
+            {cardIndex + 1}.
           </span>
 
           <div className="flex-1 pt-1">
@@ -143,6 +122,68 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({
           </div>
         </div>
       </div>
+    </div>
+  );
+};
+
+const MobileStepCard: React.FC<MobileStepCardProps> = ({ 
+  progress, 
+  layerStart, 
+  layerStep 
+}) => {
+  const totalCards = 10;
+  const animationEnd = layerStart + (layerStep * totalCards);
+  
+  // Don't show anything outside the animation range
+  if (progress < layerStart - 0.02 || progress > animationEnd + 0.02) {
+    return null;
+  }
+
+  // Find which card is currently active
+  const rawCardIndex = (progress - layerStart) / layerStep;
+  const activeCardIndex = Math.floor(Math.max(0, Math.min(totalCards - 1, rawCardIndex)));
+  
+  // Calculate progress within the current card's window (0 to 1)
+  const cardStart = layerStart + activeCardIndex * layerStep;
+  const rawCardProgress = (progress - cardStart) / layerStep;
+  const cardProgress = Math.max(0, Math.min(1, rawCardProgress));
+
+  // Overlap configuration
+  const overlapStart = 0.60; // Next card starts appearing when current is 60% through
+  const entryEnd = 0.30;
+  
+  // Determine which cards to render
+  const cardsToRender: Array<{ index: number; progress: number; isEntering: boolean; zIndex: number }> = [];
+
+  // Always render the current card
+  cardsToRender.push({
+    index: activeCardIndex,
+    progress: cardProgress,
+    isEntering: false,
+    zIndex: 1
+  });
+
+  // If we're in the overlap zone and there's a next card, render it too
+  if (cardProgress >= overlapStart && activeCardIndex < totalCards - 1) {
+    // Map current card's 0.60-1.0 to next card's 0.0-0.30 (entry phase)
+    const nextCardProgress = ((cardProgress - overlapStart) / (1 - overlapStart)) * entryEnd;
+    
+    cardsToRender.push({
+      index: activeCardIndex + 1,
+      progress: nextCardProgress,
+      isEntering: true,
+      zIndex: 2
+    });
+  }
+
+  return (
+    <div 
+      className="mt-10 w-full flex justify-center px-3 relative"
+      style={{ perspective: '1000px', minHeight: '180px' }}
+    >
+      {cardsToRender.map(card => 
+        renderCard(card.index, card.progress, card.isEntering, card.zIndex)
+      )}
     </div>
   );
 };
