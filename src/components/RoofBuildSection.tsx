@@ -235,25 +235,6 @@ const RoofBuildSection: React.FC = () => {
               </div>
             </div>
 
-            {/* Scroll hint text during buffer */}
-            {showScrollHint && (
-              <div 
-                className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-center animate-pulse"
-                style={{
-                  opacity: 1 - progress * 12.5, // Fades out as we approach 8%
-                }}
-              >
-                <span 
-                  className="text-sm font-medium tracking-wider uppercase"
-                  style={{
-                    color: 'hsl(168 70% 55%)',
-                    textShadow: '0 0 20px hsl(168 80% 50% / 0.6)',
-                  }}
-                >
-                  Scroll to build
-                </span>
-              </div>
-            )}
 
             {/* Mobile Step Card - 3D spinning carousel */}
             {isMobile && (
