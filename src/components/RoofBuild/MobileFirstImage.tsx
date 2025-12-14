@@ -23,7 +23,7 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
 
   return (
     <div 
-      className="relative w-full flex flex-col items-center justify-start pt-16 px-4 pb-8"
+      className="sticky top-0 min-h-screen w-full flex flex-col items-center justify-start pt-16 px-4 pb-8"
       style={{
         background: `radial-gradient(ellipse at center, hsl(35 40% 15% / 0.95) 0%, hsl(25 30% 8% / 0.98) 100%)`,
       }}
