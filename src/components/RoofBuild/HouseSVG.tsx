@@ -213,121 +213,160 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
           }}
         />
         
-        {/* ===== RAFTERS as 2x lumber with thickness ===== */}
+        {/* ===== RAFTERS - Parallel lines following roof slope ===== */}
         <defs>
-          <linearGradient id="rafterGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="hsl(168 40% 28%)" />
-            <stop offset="50%" stopColor="hsl(168 45% 35%)" />
-            <stop offset="100%" stopColor="hsl(168 35% 22%)" />
+          <linearGradient id="rafterGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="hsl(168 50% 38%)" />
+            <stop offset="50%" stopColor="hsl(168 55% 45%)" />
+            <stop offset="100%" stopColor="hsl(168 45% 32%)" />
           </linearGradient>
         </defs>
         
-        {/* Left side rafters - evenly spaced along eave, running to ridge */}
+        {/* Left slope rafters - parallel lines from eave to ridge */}
         <g className="rafters-left">
-          {[0, 1, 2, 3, 4, 5, 6].map((i) => {
-            // Eave line: from (40, 160) to (200, 55)
-            // Calculate evenly spaced points along the left eave
-            const t = i / 7; // 7 rafters, position 0-6
-            const eaveX = 50 + t * 140; // From x=50 to x=190
-            const eaveY = 158 - t * 97; // From y=158 to y=61 (following roof slope)
-            // All rafters converge near ridge
-            const ridgeX = 198;
-            const ridgeY = 58;
-            // Rafter thickness (perpendicular offset)
-            const thickness = 4;
-            // Calculate perpendicular offset for lumber width
-            const dx = ridgeX - eaveX;
-            const dy = ridgeY - eaveY;
-            const len = Math.sqrt(dx * dx + dy * dy);
-            const perpX = (-dy / len) * thickness;
-            const perpY = (dx / len) * thickness;
+          {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
+            // Left slope: A(40, 160) to B(200, 55)
+            // Direction along slope
+            const slopeDx = 200 - 40; // 160
+            const slopeDy = 55 - 160; // -105
+            const slopeLen = Math.sqrt(slopeDx * slopeDx + slopeDy * slopeDy);
+            
+            // Perpendicular direction (for spacing rafters)
+            const perpDx = -slopeDy / slopeLen; // points "down-right"
+            const perpDy = slopeDx / slopeLen;
+            
+            // Space rafters along perpendicular direction
+            const spacing = 12;
+            const offset = (i + 1) * spacing;
+            
+            // Start point: offset from ridge along perpendicular
+            const startX = 200 + perpDx * offset;
+            const startY = 55 + perpDy * offset;
+            
+            // End point: follow slope direction to edge
+            // Calculate where this line intersects the eave or left wall
+            const endX = startX - slopeDx * 0.95;
+            const endY = startY - slopeDy * 0.95;
+            
+            // Lumber thickness
+            const thickness = 3.5;
+            const thickOffsetX = perpDx * thickness;
+            const thickOffsetY = perpDy * thickness;
+            
+            // Clip to roof triangle bounds
+            const clippedStartX = Math.min(Math.max(startX, 40), 200);
+            const clippedStartY = Math.max(startY, 55);
             
             return (
-              <path
-                key={`left-${i}`}
-                d={`M${eaveX} ${eaveY} 
-                    L${ridgeX} ${ridgeY} 
-                    L${ridgeX + perpX} ${ridgeY + perpY} 
-                    L${eaveX + perpX} ${eaveY + perpY} Z`}
-                fill="url(#rafterGradient)"
-                stroke="hsl(168 60% 45%)"
-                strokeWidth="0.5"
-                opacity={0.85 - i * 0.03}
-                style={{ filter: 'drop-shadow(0 0 3px hsl(168 70% 40% / 0.4))' }}
-              />
+              <g key={`left-${i}`}>
+                {/* Rafter as thick lumber */}
+                <line
+                  x1={startX}
+                  y1={startY}
+                  x2={endX}
+                  y2={endY}
+                  stroke="hsl(168 55% 40%)"
+                  strokeWidth="4"
+                  strokeLinecap="square"
+                  opacity={0.9 - i * 0.04}
+                  style={{ filter: 'drop-shadow(0 0 3px hsl(168 70% 45% / 0.5))' }}
+                />
+                {/* Highlight edge */}
+                <line
+                  x1={startX + thickOffsetX * 0.3}
+                  y1={startY + thickOffsetY * 0.3}
+                  x2={endX + thickOffsetX * 0.3}
+                  y2={endY + thickOffsetY * 0.3}
+                  stroke="hsl(168 70% 55%)"
+                  strokeWidth="1"
+                  strokeLinecap="square"
+                  opacity={0.5 - i * 0.03}
+                />
+              </g>
             );
           })}
         </g>
         
-        {/* Right side rafters - mirror of left */}
+        {/* Right slope rafters - mirror */}
         <g className="rafters-right">
-          {[0, 1, 2, 3, 4, 5, 6].map((i) => {
-            // Eave line: from (360, 160) to (200, 55)
-            const t = i / 7;
-            const eaveX = 350 - t * 140; // From x=350 to x=210
-            const eaveY = 158 - t * 97; // Following roof slope
-            const ridgeX = 202;
-            const ridgeY = 58;
-            const thickness = 4;
-            const dx = ridgeX - eaveX;
-            const dy = ridgeY - eaveY;
-            const len = Math.sqrt(dx * dx + dy * dy);
-            const perpX = (dy / len) * thickness;
-            const perpY = (-dx / len) * thickness;
+          {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
+            // Right slope: B(200, 55) to C(360, 160)
+            const slopeDx = 360 - 200; // 160
+            const slopeDy = 160 - 55; // 105
+            const slopeLen = Math.sqrt(slopeDx * slopeDx + slopeDy * slopeDy);
+            
+            // Perpendicular direction (for spacing rafters)
+            const perpDx = slopeDy / slopeLen; // points "down-left"
+            const perpDy = -slopeDx / slopeLen;
+            
+            const spacing = 12;
+            const offset = (i + 1) * spacing;
+            
+            // Start point: offset from ridge along perpendicular
+            const startX = 200 + perpDx * offset;
+            const startY = 55 - perpDy * offset;
+            
+            // End point: follow slope direction
+            const endX = startX + slopeDx * 0.95;
+            const endY = startY + slopeDy * 0.95;
+            
+            const thickness = 3.5;
+            const thickOffsetX = perpDx * thickness;
+            const thickOffsetY = -perpDy * thickness;
             
             return (
-              <path
-                key={`right-${i}`}
-                d={`M${eaveX} ${eaveY} 
-                    L${ridgeX} ${ridgeY} 
-                    L${ridgeX + perpX} ${ridgeY + perpY} 
-                    L${eaveX + perpX} ${eaveY + perpY} Z`}
-                fill="url(#rafterGradient)"
-                stroke="hsl(168 60% 45%)"
-                strokeWidth="0.5"
-                opacity={0.85 - i * 0.03}
-                style={{ filter: 'drop-shadow(0 0 3px hsl(168 70% 40% / 0.4))' }}
-              />
+              <g key={`right-${i}`}>
+                <line
+                  x1={startX}
+                  y1={startY}
+                  x2={endX}
+                  y2={endY}
+                  stroke="hsl(168 55% 40%)"
+                  strokeWidth="4"
+                  strokeLinecap="square"
+                  opacity={0.9 - i * 0.04}
+                  style={{ filter: 'drop-shadow(0 0 3px hsl(168 70% 45% / 0.5))' }}
+                />
+                <line
+                  x1={startX + thickOffsetX * 0.3}
+                  y1={startY + thickOffsetY * 0.3}
+                  x2={endX + thickOffsetX * 0.3}
+                  y2={endY + thickOffsetY * 0.3}
+                  stroke="hsl(168 70% 55%)"
+                  strokeWidth="1"
+                  strokeLinecap="square"
+                  opacity={0.5 - i * 0.03}
+                />
+              </g>
             );
           })}
         </g>
         
-        {/* Ridge board - horizontal structural element at peak */}
+        {/* Ridge board - horizontal beam at peak */}
         <rect
-          x="185"
-          y="54"
-          width="30"
-          height="6"
-          fill="hsl(168 45% 30%)"
-          stroke="hsl(168 70% 50%)"
+          x="180"
+          y="52"
+          width="40"
+          height="7"
+          fill="hsl(168 45% 32%)"
+          stroke="hsl(168 75% 50%)"
           strokeWidth="1.5"
           rx="1"
-          style={{ filter: 'drop-shadow(0 0 8px hsl(168 80% 50% / 0.6))' }}
+          style={{ filter: 'drop-shadow(0 0 10px hsl(168 80% 50% / 0.7))' }}
         />
         
-        {/* Collar ties - horizontal braces connecting opposing rafters */}
+        {/* Collar tie - horizontal brace */}
         <rect
-          x="100"
-          y="105"
-          width="200"
-          height="3.5"
-          fill="hsl(168 40% 25%)"
-          stroke="hsl(168 55% 42%)"
-          strokeWidth="0.75"
-          opacity="0.6"
+          x="95"
+          y="108"
+          width="210"
+          height="4"
+          fill="hsl(168 45% 30%)"
+          stroke="hsl(168 60% 45%)"
+          strokeWidth="1"
+          opacity="0.7"
           rx="0.5"
-          style={{ filter: 'drop-shadow(0 0 4px hsl(168 60% 40% / 0.3))' }}
-        />
-        <rect
-          x="130"
-          y="85"
-          width="140"
-          height="3"
-          fill="hsl(168 40% 25%)"
-          stroke="hsl(168 55% 42%)"
-          strokeWidth="0.5"
-          opacity="0.45"
-          rx="0.5"
+          style={{ filter: 'drop-shadow(0 0 5px hsl(168 60% 40% / 0.4))' }}
         />
       </g>
 
