@@ -11,7 +11,7 @@ const GridBackground: React.FC = () => {
         className="absolute inset-0"
         style={{
           perspective: '600px',
-          perspectiveOrigin: '50% 50%',
+          perspectiveOrigin: '50% 35%',
         }}
       >
         {/* Horizontal grid (ground plane) */}
