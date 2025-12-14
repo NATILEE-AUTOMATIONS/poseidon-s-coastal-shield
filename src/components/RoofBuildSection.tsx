@@ -20,6 +20,7 @@ import YardSign from './RoofBuild/YardSign';
 import { useScrollContext } from '@/context/ScrollContext';
 import ImageGallery3D from './RoofBuild/ImageGallery3D';
 import MobileFirstImage from './RoofBuild/MobileFirstImage';
+import MobileSpinCards from './RoofBuild/MobileSpinCards';
 
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -254,73 +255,9 @@ const RoofBuildSection: React.FC = () => {
               </div>
             )}
 
-            {/* Mobile Step Card - single static card below house */}
-            {isMobile && (
-              <div className="mt-10 w-full flex justify-center px-3">
-                <div
-                  className="relative px-8 py-6 rounded-2xl w-full max-w-md overflow-hidden"
-                  style={{
-                    background: 'radial-gradient(circle at 0% 0%, hsl(168 80% 22% / 0.35), transparent 55%), radial-gradient(circle at 100% 100%, hsl(30 80% 35% / 0.4), transparent 60%), hsl(160 25% 6%)',
-                    borderRadius: '1.25rem',
-                    boxShadow: [
-                      '0 0 40px hsl(168 70% 40% / 0.3)',
-                      '0 18px 60px hsl(0 0% 0% / 0.8)'
-                    ].join(', '),
-                    border: '1px solid hsl(168 50% 30% / 0.6)',
-                  }}
-                >
-                  {/* Static neon frame */}
-                  <div
-                    className="absolute inset-0 rounded-2xl pointer-events-none"
-                    style={{
-                      borderRadius: '1.25rem',
-                      boxShadow: [
-                        '0 0 0 1px hsl(168 70% 35% / 0.7)',
-                        '0 0 25px hsl(168 80% 45% / 0.6)',
-                        '0 0 55px hsl(30 90% 55% / 0.55)'
-                      ].join(', '),
-                    }}
-                  />
-
-                  {/* Content */}
-                  <div className="relative z-10 flex items-start gap-5">
-                    {/* Step Number */}
-                    <span
-                      className="text-5xl font-light font-mono"
-                      style={{
-                        color: 'hsl(168 80% 60%)',
-                        textShadow: [
-                          '0 0 18px hsl(168 90% 55% / 0.9)',
-                          '0 0 36px hsl(168 85% 50% / 0.7)',
-                          '0 0 70px hsl(168 80% 45% / 0.5)'
-                        ].join(', '),
-                      }}
-                    >
-                      1.
-                    </span>
-
-                    <div className="flex-1 pt-1">
-                      <div
-                        className="text-2xl font-semibold tracking-wide"
-                        style={{
-                          color: 'hsl(0 0% 98%)',
-                          textShadow: '0 0 18px hsl(0 0% 100% / 0.45)',
-                        }}
-                      >
-                        Replace Decking
-                      </div>
-                      <div
-                        className="text-base mt-3 leading-relaxed"
-                        style={{
-                          color: 'hsl(168 20% 70%)',
-                        }}
-                      >
-                        Replace any damaged plywood/decking so your new roof starts on a solid base.
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            {/* Mobile Spinning Cards - synced with roof layers */}
+            {isMobile && progress >= 0.10 && progress <= 0.92 && (
+              <MobileSpinCards progress={progress} layers={layers} />
             )}
 
 
