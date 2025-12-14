@@ -210,45 +210,15 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
         opacity,
       }}
     >
-      <defs>
-        <linearGradient id="dripEdgeOrange" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(25 95% 65%)" />
-          <stop offset="40%" stopColor="hsl(25 95% 55%)" />
-          <stop offset="100%" stopColor="hsl(20 85% 40%)" />
-        </linearGradient>
-      </defs>
-      
-      {/* Left eaves drip edge - L-shaped profile */}
-      <path 
-        d="M42 157 L200 157 L200 162 L200 165 L42 165 L42 162 L42 157 Z"
-        fill="url(#dripEdgeOrange)"
+      {/* Single thin drip edge line along entire eaves - extends past house */}
+      <line 
+        x1="35" y1="160" 
+        x2="365" y2="160" 
+        stroke="hsl(25 95% 55%)"
+        strokeWidth="2.5"
+        strokeLinecap="round"
         style={{
-          filter: `drop-shadow(0 0 ${6 + easedProgress * 8}px hsl(25 95% 55% / 0.7)) drop-shadow(0 2px 4px hsl(25 80% 30% / 0.5))`,
-        }}
-      />
-      {/* Left drip edge lip (the vertical part that hangs down) */}
-      <path 
-        d="M42 162 L200 162 L200 168 L42 168 Z"
-        fill="hsl(20 90% 45%)"
-        style={{
-          filter: `drop-shadow(0 2px ${4 + easedProgress * 6}px hsl(25 95% 50% / 0.6))`,
-        }}
-      />
-      
-      {/* Right eaves drip edge - L-shaped profile */}
-      <path 
-        d="M200 157 L358 157 L358 162 L358 165 L200 165 L200 162 L200 157 Z"
-        fill="url(#dripEdgeOrange)"
-        style={{
-          filter: `drop-shadow(0 0 ${6 + easedProgress * 8}px hsl(25 95% 55% / 0.7)) drop-shadow(0 2px 4px hsl(25 80% 30% / 0.5))`,
-        }}
-      />
-      {/* Right drip edge lip */}
-      <path 
-        d="M200 162 L358 162 L358 168 L200 168 Z"
-        fill="hsl(20 90% 45%)"
-        style={{
-          filter: `drop-shadow(0 2px ${4 + easedProgress * 6}px hsl(25 95% 50% / 0.6))`,
+          filter: `drop-shadow(0 0 ${6 + easedProgress * 10}px hsl(25 95% 55% / 0.8)) drop-shadow(0 0 ${3 + easedProgress * 5}px hsl(30 100% 60% / 0.6))`,
         }}
       />
     </g>
