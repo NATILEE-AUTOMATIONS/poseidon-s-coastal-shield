@@ -84,49 +84,27 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
         {/* Grain overlay */}
         <polygon points="42,159 200,56 200,159" fill="url(#grainPattern)" />
         
-        {/* Sheet rows - horizontal lines */}
-        <line x1="42" y1="120" x2="200" y2="120" stroke="hsl(25 30% 28%)" strokeWidth="1.5" />
-        <line x1="42" y1="85" x2="200" y2="85" stroke="hsl(25 30% 28%)" strokeWidth="1.5" />
+        {/* Just 2 horizontal sheet rows */}
+        <line x1="42" y1="115" x2="200" y2="115" stroke="hsl(25 25% 25%)" strokeWidth="1.2" />
         
-        {/* Vertical seams - staggered per row */}
-        {/* Bottom row */}
-        <line x1="80" y1="159" x2="80" y2="120" stroke="hsl(25 28% 30%)" strokeWidth="1" />
-        <line x1="130" y1="159" x2="130" y2="120" stroke="hsl(25 28% 30%)" strokeWidth="1" />
-        <line x1="180" y1="159" x2="180" y2="120" stroke="hsl(25 28% 30%)" strokeWidth="1" />
-        {/* Middle row - offset */}
-        <line x1="60" y1="120" x2="60" y2="85" stroke="hsl(25 28% 30%)" strokeWidth="1" />
-        <line x1="110" y1="120" x2="110" y2="85" stroke="hsl(25 28% 30%)" strokeWidth="1" />
-        <line x1="160" y1="120" x2="160" y2="85" stroke="hsl(25 28% 30%)" strokeWidth="1" />
-        {/* Top row - offset again */}
-        <line x1="90" y1="85" x2="90" y2="56" stroke="hsl(25 28% 30%)" strokeWidth="1" />
-        <line x1="140" y1="85" x2="140" y2="56" stroke="hsl(25 28% 30%)" strokeWidth="1" />
-        <line x1="185" y1="85" x2="185" y2="56" stroke="hsl(25 28% 30%)" strokeWidth="1" />
+        {/* Fewer vertical seams - staggered */}
+        <line x1="100" y1="159" x2="100" y2="115" stroke="hsl(25 25% 28%)" strokeWidth="1" opacity="0.7" />
+        <line x1="160" y1="159" x2="160" y2="115" stroke="hsl(25 25% 28%)" strokeWidth="1" opacity="0.7" />
+        <line x1="130" y1="115" x2="130" y2="56" stroke="hsl(25 25% 28%)" strokeWidth="1" opacity="0.7" />
       </g>
       
       {/* RIGHT SLOPE */}
       <g clipPath="url(#rightSlopeClip)">
-        {/* Base plywood */}
         <polygon points="200,56 358,159 200,159" fill="url(#plyRight)" />
-        {/* Grain overlay */}
         <polygon points="200,56 358,159 200,159" fill="url(#grainPattern)" />
         
-        {/* Sheet rows - horizontal lines */}
-        <line x1="200" y1="120" x2="358" y2="120" stroke="hsl(25 30% 28%)" strokeWidth="1.5" />
-        <line x1="200" y1="85" x2="358" y2="85" stroke="hsl(25 30% 28%)" strokeWidth="1.5" />
+        {/* Just 2 horizontal sheet rows */}
+        <line x1="200" y1="115" x2="358" y2="115" stroke="hsl(25 25% 25%)" strokeWidth="1.2" />
         
-        {/* Vertical seams - staggered per row */}
-        {/* Bottom row */}
-        <line x1="220" y1="159" x2="220" y2="120" stroke="hsl(25 28% 30%)" strokeWidth="1" />
-        <line x1="270" y1="159" x2="270" y2="120" stroke="hsl(25 28% 30%)" strokeWidth="1" />
-        <line x1="320" y1="159" x2="320" y2="120" stroke="hsl(25 28% 30%)" strokeWidth="1" />
-        {/* Middle row - offset */}
-        <line x1="240" y1="120" x2="240" y2="85" stroke="hsl(25 28% 30%)" strokeWidth="1" />
-        <line x1="290" y1="120" x2="290" y2="85" stroke="hsl(25 28% 30%)" strokeWidth="1" />
-        <line x1="340" y1="120" x2="340" y2="85" stroke="hsl(25 28% 30%)" strokeWidth="1" />
-        {/* Top row - offset again */}
-        <line x1="215" y1="85" x2="215" y2="56" stroke="hsl(25 28% 30%)" strokeWidth="1" />
-        <line x1="260" y1="85" x2="260" y2="56" stroke="hsl(25 28% 30%)" strokeWidth="1" />
-        <line x1="310" y1="85" x2="310" y2="56" stroke="hsl(25 28% 30%)" strokeWidth="1" />
+        {/* Fewer vertical seams - staggered */}
+        <line x1="240" y1="159" x2="240" y2="115" stroke="hsl(25 25% 28%)" strokeWidth="1" opacity="0.7" />
+        <line x1="300" y1="159" x2="300" y2="115" stroke="hsl(25 25% 28%)" strokeWidth="1" opacity="0.7" />
+        <line x1="270" y1="115" x2="270" y2="56" stroke="hsl(25 25% 28%)" strokeWidth="1" opacity="0.7" />
       </g>
       
       {/* Ridge line at peak */}
