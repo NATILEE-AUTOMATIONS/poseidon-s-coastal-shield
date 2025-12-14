@@ -269,13 +269,14 @@ const RoofBuildSection: React.FC = () => {
                     `,
                   }}
                 >
-                  {/* Orange glowing snake border */}
+                  {/* Orange glowing snake border - NEON */}
                   <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
                     <div 
-                      className="absolute w-20 h-20 animate-border-snake"
+                      className="absolute w-24 h-24 animate-border-snake"
                       style={{
-                        background: 'radial-gradient(circle, hsl(30 100% 55% / 0.9) 0%, hsl(35 100% 50% / 0.5) 40%, transparent 70%)',
-                        filter: 'blur(8px)',
+                        background: 'radial-gradient(circle, hsl(35 100% 60%) 0%, hsl(30 100% 55% / 0.95) 20%, hsl(25 100% 50% / 0.7) 40%, hsl(30 100% 50% / 0.3) 60%, transparent 80%)',
+                        filter: 'blur(12px)',
+                        boxShadow: '0 0 30px hsl(30 100% 55%), 0 0 60px hsl(35 100% 50% / 0.8), 0 0 100px hsl(30 100% 50% / 0.5)',
                       }}
                     />
                   </div>
