@@ -15,7 +15,7 @@ import {
   RidgeCapLayer,
   materialInfo,
 } from './RoofBuild/RoofLayers';
-import { materialInfo as stepMaterials } from './RoofBuild/RoofLayers';
+
 import YardSign from './RoofBuild/YardSign';
 import { useScrollContext } from '@/context/ScrollContext';
 import ImageGallery3D from './RoofBuild/ImageGallery3D';
@@ -252,67 +252,6 @@ const RoofBuildSection: React.FC = () => {
               </div>
             )}
 
-            {/* Mobile Material Badge - Simple, always below the house */}
-            {isMobile && progress >= 0.08 && progress < 0.92 && (() => {
-              const animStart = 0.08;
-              const animEnd = 0.90;
-              const totalRange = animEnd - animStart;
-              const normalizedProg = (progress - animStart) / totalRange;
-              const currentStep = Math.max(0, Math.min(9, Math.floor(normalizedProg * 10)));
-              const material = stepMaterials[currentStep];
-              
-              return (
-                <div className="absolute -bottom-4 left-0 right-0 flex justify-center z-50">
-                  <div 
-                    className="flex items-center gap-3 px-4 py-2.5 rounded-full border backdrop-blur-sm transition-opacity duration-300"
-                    style={{
-                      background: 'hsl(160 25% 6% / 0.9)',
-                      borderColor: 'hsl(168 60% 40% / 0.4)',
-                      boxShadow: '0 0 20px hsl(168 70% 45% / 0.2), 0 4px 20px hsl(0 0% 0% / 0.4)',
-                    }}
-                  >
-                    {/* Step number */}
-                    <span 
-                      className="text-xl font-mono font-light"
-                      style={{ 
-                        color: 'hsl(168 70% 55%)',
-                        textShadow: '0 0 15px hsl(168 70% 50% / 0.8)' 
-                      }}
-                    >
-                      {String(currentStep + 1).padStart(2, '0')}
-                    </span>
-                    
-                    {/* Divider */}
-                    <div className="w-px h-5 bg-teal-500/30" />
-                    
-                    {/* Material name */}
-                    <span className="text-white font-medium text-sm">
-                      {material?.name || ''}
-                    </span>
-                    
-                    {/* Progress dots */}
-                    <div className="flex gap-1 ml-1">
-                      {[...Array(10)].map((_, i) => (
-                        <div 
-                          key={i} 
-                          className="w-1.5 h-1.5 rounded-full transition-all duration-200"
-                          style={{
-                            background: i < currentStep 
-                              ? 'hsl(168 50% 40%)' 
-                              : i === currentStep 
-                                ? 'hsl(168 70% 50%)' 
-                                : 'hsl(168 20% 25%)',
-                            boxShadow: i === currentStep 
-                              ? '0 0 6px hsl(168 70% 50%)' 
-                              : 'none',
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              );
-            })()}
 
             {/* Material labels - left side (positioned as overlay) */}
             <div 
