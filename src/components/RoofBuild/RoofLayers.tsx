@@ -135,30 +135,44 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
       <line x1="200" y1="56" x2="200" y2="159" stroke="hsl(30 35% 55%)" strokeWidth="0.6" opacity="0.4" />
       <line x1="200" y1="56" x2="200" y2="159" stroke="hsl(25 30% 18%)" strokeWidth="2.2" />
       
-      {/* "Replace Decking" - stacked with blur backdrop */}
-      <rect
-        x="160"
-        y="96"
-        width="80"
-        height="36"
-        rx="4"
-        fill="hsl(25 30% 15% / 0.6)"
-        style={{ filter: 'blur(4px)' }}
-      />
-      <text
-        x="200"
-        y="106"
-        textAnchor="middle"
-        dominantBaseline="middle"
-        fill="hsl(35 30% 95%)"
-        fontSize="11"
-        fontWeight="600"
-        fontFamily="system-ui, -apple-system, sans-serif"
-        letterSpacing="1"
-      >
-        <tspan x="200" dy="0">REPLACE</tspan>
-        <tspan x="200" dy="14">DECKING</tspan>
-      </text>
+      {/* "Replace Decking" - fades in/out at end of animation */}
+      {(() => {
+        let labelOpacity = 0;
+        if (layerProgress >= 0.8 && layerProgress < 0.9) {
+          labelOpacity = (layerProgress - 0.8) / 0.1; // fade in
+        } else if (layerProgress >= 0.9 && layerProgress < 0.95) {
+          labelOpacity = 1; // fully visible
+        } else if (layerProgress >= 0.95) {
+          labelOpacity = 1 - ((layerProgress - 0.95) / 0.05); // fade out
+        }
+        return (
+          <g opacity={labelOpacity}>
+            <rect
+              x="160"
+              y="96"
+              width="80"
+              height="36"
+              rx="4"
+              fill="hsl(25 30% 15% / 0.6)"
+              style={{ filter: 'blur(4px)' }}
+            />
+            <text
+              x="200"
+              y="106"
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fill="hsl(35 30% 95%)"
+              fontSize="11"
+              fontWeight="600"
+              fontFamily="system-ui, -apple-system, sans-serif"
+              letterSpacing="1"
+            >
+              <tspan x="200" dy="0">REPLACE</tspan>
+              <tspan x="200" dy="14">DECKING</tspan>
+            </text>
+          </g>
+        );
+      })()}
       
       {/* Teal edge accent glow */}
       <path 
