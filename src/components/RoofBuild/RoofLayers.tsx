@@ -23,103 +23,160 @@ export const materialInfo = [
 // Easing functions
 const easeOutQuint = (x: number): number => 1 - Math.pow(1 - x, 5);
 
-// World-class decking layer with plywood panels drop-in animation
+// Realistic plywood decking - accurate roof sheathing appearance
 export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress }) => {
-  // Calculate layer-specific progress (0-1 within this layer's window)
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
-  // Not visible before animation starts
   if (progress < startProgress) return null;
   
-  // VERY slow, deliberate animation using full scroll window
-  // Use a slow-starting ease that takes its time
-  const easeOutSext = (x: number): number => 1 - Math.pow(1 - x, 6); // Sextic - very gentle
-  const easedProgress = easeOutSext(layerProgress);
+  // Slow, deliberate drop animation
+  const easeOutQuint = (x: number): number => 1 - Math.pow(1 - x, 5);
+  const easedProgress = easeOutQuint(layerProgress);
   
-  // Animation values - slow descent over the entire scroll window
-  const translateY = -180 * (1 - easedProgress); // Start far above
-  const opacity = 0.1 + (0.9 * easedProgress); // Very gradual fade
+  const translateY = -120 * (1 - easedProgress);
+  const opacity = 0.15 + (0.85 * easedProgress);
   
-  // Subtle scale pulse only at the very end (last 5%)
-  const settlePhase = layerProgress > 0.95 ? (layerProgress - 0.95) / 0.05 : 0;
-  const scale = 1 + (0.008 * Math.sin(settlePhase * Math.PI));
-  
-  // Glow intensifies slowly
-  const glowIntensity = 0.08 + (easedProgress * 0.42);
+  // Plywood color palette - realistic CDX plywood tones
+  const plyBase = "hsl(35 28% 58%)";
+  const plyDark = "hsl(32 25% 48%)";
+  const plyLight = "hsl(38 30% 65%)";
+  const gapColor = "hsl(25 20% 25%)";
   
   return (
     <g 
       className="decking-layer"
       style={{
-        transform: `translateY(${translateY}px) scale(${scale})`,
+        transform: `translateY(${translateY}px)`,
         transformOrigin: '200px 110px',
         opacity,
-        filter: `drop-shadow(0 ${6 + easedProgress * 12}px ${16 + easedProgress * 20}px hsl(30 60% 35% / ${glowIntensity}))`,
+        filter: `drop-shadow(0 ${4 + easedProgress * 8}px ${10 + easedProgress * 15}px hsl(30 40% 20% / ${0.3 + easedProgress * 0.2}))`,
       }}
     >
       <defs>
-        {/* Premium plywood with warm glow */}
-        <linearGradient id="plyLeft" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="hsl(35 45% 38%)" />
-          <stop offset="40%" stopColor="hsl(38 50% 48%)" />
-          <stop offset="70%" stopColor="hsl(40 52% 55%)" />
-          <stop offset="100%" stopColor="hsl(42 48% 50%)" />
-        </linearGradient>
-        <linearGradient id="plyRight" x1="100%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stopColor="hsl(33 44% 36%)" />
-          <stop offset="40%" stopColor="hsl(36 48% 46%)" />
-          <stop offset="70%" stopColor="hsl(39 50% 52%)" />
-          <stop offset="100%" stopColor="hsl(41 46% 48%)" />
+        {/* Left slope gradient - subtle variation */}
+        <linearGradient id="deckLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor={plyLight} />
+          <stop offset="50%" stopColor={plyBase} />
+          <stop offset="100%" stopColor={plyDark} />
         </linearGradient>
         
-        {/* Inner warm glow */}
-        <radialGradient id="warmGlow" cx="50%" cy="60%" r="60%">
-          <stop offset="0%" stopColor="hsl(35 60% 55%)" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="hsl(30 50% 40%)" stopOpacity="0" />
-        </radialGradient>
+        {/* Right slope gradient */}
+        <linearGradient id="deckRight" x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor={plyLight} />
+          <stop offset="40%" stopColor={plyBase} />
+          <stop offset="100%" stopColor={plyDark} />
+        </linearGradient>
       </defs>
       
-      {/* Main plywood surfaces */}
-      <path d="M48 158 L200 58 L200 158 Z" fill="url(#plyLeft)" />
-      <path d="M200 58 L352 158 L200 158 Z" fill="url(#plyRight)" />
+      {/* LEFT ROOF SLOPE - 3 plywood sheets */}
+      {/* Sheet 1 - bottom left */}
+      <polygon 
+        points="48,158 95,158 130,123 82,123" 
+        fill="url(#deckLeft)"
+        stroke={gapColor}
+        strokeWidth="1"
+      />
+      {/* Sheet 2 - middle */}
+      <polygon 
+        points="82,123 130,123 165,88 117,88" 
+        fill={plyBase}
+        stroke={gapColor}
+        strokeWidth="1"
+      />
+      {/* Sheet 3 - top left near ridge */}
+      <polygon 
+        points="117,88 165,88 200,58 152,58" 
+        fill="url(#deckLeft)"
+        stroke={gapColor}
+        strokeWidth="1"
+      />
+      {/* Sheet 4 - bottom center-left */}
+      <polygon 
+        points="95,158 155,158 130,123 130,123" 
+        fill={plyDark}
+        stroke={gapColor}
+        strokeWidth="1"
+      />
+      {/* Sheet 5 - middle fill */}
+      <polygon 
+        points="130,123 165,88 200,88 165,123" 
+        fill={plyLight}
+        stroke={gapColor}
+        strokeWidth="1"
+      />
+      {/* Sheet 6 - center top */}
+      <polygon 
+        points="155,158 200,158 200,123 165,123" 
+        fill={plyBase}
+        stroke={gapColor}
+        strokeWidth="1"
+      />
       
-      {/* Warm inner glow overlay */}
-      <path d="M48 158 L200 58 L352 158 Z" fill="url(#warmGlow)" />
+      {/* RIGHT ROOF SLOPE - 3 plywood sheets mirrored */}
+      {/* Sheet 1 - bottom right */}
+      <polygon 
+        points="305,158 352,158 318,123 270,123" 
+        fill="url(#deckRight)"
+        stroke={gapColor}
+        strokeWidth="1"
+      />
+      {/* Sheet 2 - middle */}
+      <polygon 
+        points="270,123 318,123 283,88 235,88" 
+        fill={plyBase}
+        stroke={gapColor}
+        strokeWidth="1"
+      />
+      {/* Sheet 3 - top right near ridge */}
+      <polygon 
+        points="235,88 283,88 248,58 200,58" 
+        fill="url(#deckRight)"
+        stroke={gapColor}
+        strokeWidth="1"
+      />
+      {/* Sheet 4 - bottom center-right */}
+      <polygon 
+        points="245,158 305,158 270,123 270,123" 
+        fill={plyDark}
+        stroke={gapColor}
+        strokeWidth="1"
+      />
+      {/* Sheet 5 - middle fill */}
+      <polygon 
+        points="200,88 235,88 270,123 200,123" 
+        fill={plyLight}
+        stroke={gapColor}
+        strokeWidth="1"
+      />
+      {/* Sheet 6 - center top */}
+      <polygon 
+        points="200,158 245,158 235,123 200,123" 
+        fill={plyBase}
+        stroke={gapColor}
+        strokeWidth="1"
+      />
       
-      {/* Sheet gaps - clean thin lines */}
-      <g stroke="hsl(25 40% 20%)" strokeLinecap="round">
-        {/* Left slope */}
-        <line x1="95" y1="158" x2="147" y2="106" strokeWidth="1.5" />
-        <line x1="150" y1="158" x2="183" y2="125" strokeWidth="1.5" />
-        {/* Right slope */}
-        <line x1="253" y1="106" x2="305" y2="158" strokeWidth="1.5" />
-        <line x1="217" y1="125" x2="250" y2="158" strokeWidth="1.5" />
-        {/* Ridge area small gap */}
-        <line x1="180" y1="70" x2="220" y2="70" strokeWidth="1" opacity="0.6" />
-      </g>
+      {/* Ridge line - where sheets meet at peak */}
+      <line 
+        x1="152" y1="58" 
+        x2="248" y2="58" 
+        stroke={gapColor}
+        strokeWidth="1.5"
+      />
       
-      {/* Teal edge accent - matches house style */}
+      {/* Subtle teal accent on edges - brand touch */}
       <path 
         d="M50 157 L200 59 L350 157" 
         fill="none"
-        stroke="hsl(168 70% 50%)" 
-        strokeWidth="2.5"
+        stroke="hsl(168 65% 45%)" 
+        strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
-        opacity={0.4 + easedProgress * 0.5}
+        opacity={0.35 + easedProgress * 0.35}
         style={{
-          filter: `drop-shadow(0 0 ${10 + easedProgress * 12}px hsl(168 70% 50% / 0.8))`,
+          filter: `drop-shadow(0 0 ${6 + easedProgress * 8}px hsl(168 65% 50% / 0.6))`,
         }}
-      />
-      
-      {/* Subtle warm edge highlight */}
-      <path 
-        d="M52 156 L200 60 L348 156" 
-        fill="none"
-        stroke="hsl(40 60% 65%)" 
-        strokeWidth="1"
-        opacity={0.2 + easedProgress * 0.2}
       />
     </g>
   );
