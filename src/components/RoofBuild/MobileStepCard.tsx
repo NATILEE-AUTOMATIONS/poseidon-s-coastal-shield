@@ -47,31 +47,33 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({ scrollProgress }) => {
     phaseProgress = (localProgress - 0.75) / 0.25;
   }
 
-  // Calculate transforms
+  // Calculate transforms - vertical rise/fall animation
   let scale = 1;
   let blur = 0;
-  let rotateX = 0;
+  let translateY = 0;
   let opacity = 1;
   let floatY = 0;
+  let glowIntensity = 1;
 
   if (isMaterializing) {
     const eased = easeOutBack(phaseProgress);
-    scale = 0.6 + 0.4 * eased;
-    blur = 12 * (1 - phaseProgress);
-    rotateX = -5 * (1 - eased);
+    scale = 0.85 + 0.15 * eased;
+    blur = 15 * (1 - phaseProgress);
+    translateY = 40 * (1 - eased); // Rise up from below
     opacity = phaseProgress;
   } else if (isPresenting) {
-    // Subtle floating motion
-    floatY = Math.sin(phaseProgress * Math.PI * 2) * 5;
+    // Subtle floating motion + glow pulse
+    floatY = Math.sin(phaseProgress * Math.PI * 2) * 4;
+    glowIntensity = 1 + 0.15 * Math.sin(phaseProgress * Math.PI * 3);
     scale = 1;
     blur = 0;
-    rotateX = 0;
+    translateY = 0;
     opacity = 1;
   } else if (isDematerializing) {
     const eased = easeInQuad(phaseProgress);
-    scale = 1 - 0.15 * eased;
-    blur = 8 * eased;
-    rotateX = 5 * eased;
+    scale = 1 - 0.1 * eased;
+    blur = 10 * eased;
+    translateY = 25 * eased; // Sink down
     opacity = 1 - eased;
   }
 
@@ -80,14 +82,15 @@ const MobileStepCard: React.FC<MobileStepCardProps> = ({ scrollProgress }) => {
   const progressOffset = circumference - (localProgress * circumference);
 
   const cardStyle: React.CSSProperties = {
-    transform: `perspective(1000px) scale(${scale}) rotateX(${rotateX}deg) translateY(${floatY}px)`,
+    transform: `scale(${scale}) translateY(${translateY + floatY}px)`,
     filter: `blur(${blur}px)`,
     opacity,
     willChange: 'transform, filter, opacity',
-  };
+    '--glow-intensity': glowIntensity,
+  } as React.CSSProperties;
 
   return (
-    <div className="xl:hidden fixed inset-0 flex items-center justify-center pointer-events-none z-50">
+    <div className="md:hidden fixed bottom-[18%] left-0 right-0 flex justify-center pointer-events-none z-50">
       <div className="holo-card" style={cardStyle}>
         {/* Progress ring around step number */}
         <div className="holo-card-ring-container">
