@@ -135,74 +135,46 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
       <line x1="200" y1="56" x2="200" y2="159" stroke="hsl(30 35% 55%)" strokeWidth="0.6" opacity="0.4" />
       <line x1="200" y1="56" x2="200" y2="159" stroke="hsl(25 30% 18%)" strokeWidth="2.2" />
       
-      {/* "Replace Decking" text - world-class neon treatment */}
-      {/* Subtle dark backdrop pill */}
-      <rect
-        x="130"
-        y="100"
-        width="140"
-        height="28"
-        rx="14"
-        fill="hsl(180 20% 8% / 0.75)"
+      {/* "Replace Decking" - clean warm stamp look */}
+      {/* Step number badge */}
+      <circle
+        cx="165"
+        cy="114"
+        r="10"
+        fill="hsl(30 60% 50%)"
         style={{
-          filter: 'blur(1px)',
+          filter: 'drop-shadow(0 2px 4px hsl(25 50% 15% / 0.5))',
         }}
       />
-      
-      {/* Outer glow layer */}
       <text
-        x="200"
+        x="165"
         y="114"
         textAnchor="middle"
         dominantBaseline="middle"
-        fill="hsl(168 80% 55%)"
-        fontSize="15"
+        fill="hsl(35 30% 95%)"
+        fontSize="11"
         fontWeight="700"
         fontFamily="system-ui, -apple-system, sans-serif"
-        letterSpacing="2"
-        style={{
-          filter: 'blur(6px)',
-          opacity: 0.7,
-        }}
       >
-        REPLACE DECKING
+        1
       </text>
       
-      {/* Mid glow layer */}
+      {/* Main label text */}
       <text
-        x="200"
+        x="210"
         y="114"
-        textAnchor="middle"
+        textAnchor="start"
         dominantBaseline="middle"
-        fill="hsl(168 75% 60%)"
-        fontSize="15"
-        fontWeight="700"
+        fill="hsl(35 40% 92%)"
+        fontSize="14"
+        fontWeight="600"
         fontFamily="system-ui, -apple-system, sans-serif"
-        letterSpacing="2"
+        letterSpacing="0.5"
         style={{
-          filter: 'blur(2px)',
-          opacity: 0.9,
+          filter: 'drop-shadow(0 1px 3px hsl(25 40% 10% / 0.7))',
         }}
       >
-        REPLACE DECKING
-      </text>
-      
-      {/* Sharp text layer */}
-      <text
-        x="200"
-        y="114"
-        textAnchor="middle"
-        dominantBaseline="middle"
-        fill="hsl(168 90% 85%)"
-        fontSize="15"
-        fontWeight="700"
-        fontFamily="system-ui, -apple-system, sans-serif"
-        letterSpacing="2"
-        style={{
-          filter: 'drop-shadow(0 0 3px hsl(168 80% 50% / 0.8)) drop-shadow(0 0 8px hsl(168 70% 45% / 0.5))',
-        }}
-      >
-        REPLACE DECKING
+        Replace Decking
       </text>
       
       {/* Teal edge accent glow */}
