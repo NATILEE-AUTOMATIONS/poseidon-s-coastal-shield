@@ -56,12 +56,12 @@ const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
   const img3End = 0.60;
   const img3Progress = Math.max(0, Math.min(1, (localProgress - img3Start) / (img3End - img3Start)));
 
-  // Quote 3: 0.56 - 0.68 (overlaps with Image 3)
-  const quote3Progress = Math.max(0, Math.min(1, (localProgress - 0.56) / 0.12));
+  // Quote 3: 0.56 - 0.72 (extended to fill more space)
+  const quote3Progress = Math.max(0, Math.min(1, (localProgress - 0.56) / 0.16));
 
-  // Image 4 (Hero Finale): 0.64 - 0.85 (overlaps with Quote 3)
+  // Image 4 (Hero Finale): 0.64 - 1.00 (fills to the end - no pause!)
   const img4Start = 0.64;
-  const img4End = 0.85;
+  const img4End = 1.00;
   const img4Progress = Math.max(0, Math.min(1, (localProgress - img4Start) / (img4End - img4Start)));
 
   // === IMAGE ANIMATIONS ===
