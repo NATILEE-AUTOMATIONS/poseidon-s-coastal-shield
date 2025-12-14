@@ -258,68 +258,62 @@ const RoofBuildSection: React.FC = () => {
             {isMobile && (
               <div className="mt-10 w-full flex justify-center px-3">
                 <div
-                  className="relative px-7 py-6 rounded-2xl w-full max-w-md overflow-hidden mobile-step-card"
+                  className="relative px-8 py-6 rounded-2xl w-full max-w-md overflow-hidden"
                   style={{
-                    background: 'linear-gradient(145deg, hsl(160 30% 8% / 0.98) 0%, hsl(160 25% 4% / 0.99) 100%)',
-                    border: '1px solid hsl(168 50% 30% / 0.3)',
-                    boxShadow: `
-                      0 0 50px hsl(168 70% 45% / 0.12),
-                      0 12px 40px hsl(0 0% 0% / 0.7),
-                      inset 0 1px 0 hsl(168 50% 50% / 0.08)
-                    `,
+                    background: 'radial-gradient(circle at 0% 0%, hsl(168 80% 22% / 0.35), transparent 55%), radial-gradient(circle at 100% 100%, hsl(30 80% 35% / 0.4), transparent 60%), hsl(160 25% 6%)',
+                    borderRadius: '1.25rem',
+                    boxShadow: [
+                      '0 0 40px hsl(168 70% 40% / 0.3)',
+                      '0 18px 60px hsl(0 0% 0% / 0.8)'
+                    ].join(', '),
+                    border: '1px solid hsl(168 50% 30% / 0.6)',
                   }}
                 >
-                  {/* Card border overlay and neon snake path */}
-                  <div 
+                  {/* Static neon frame */}
+                  <div
                     className="absolute inset-0 rounded-2xl pointer-events-none"
                     style={{
-                      border: '2px solid transparent',
-                      background: 'linear-gradient(hsl(160 25% 6%), hsl(160 25% 6%)) padding-box, linear-gradient(90deg, hsl(168 50% 35% / 0.25), hsl(30 95% 55% / 0.15), hsl(168 50% 35% / 0.25)) border-box',
-                      borderRadius: '1rem',
+                      borderRadius: '1.25rem',
+                      boxShadow: [
+                        '0 0 0 1px hsl(168 70% 35% / 0.7)',
+                        '0 0 25px hsl(168 80% 45% / 0.6)',
+                        '0 0 55px hsl(30 90% 55% / 0.55)'
+                      ].join(', '),
                     }}
                   />
 
-                  {/* Ultra neon orange snake ABOVE border but BELOW content */}
-                  <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none" style={{ zIndex: 5, mixBlendMode: 'screen' }}>
-                    <div 
-                      className="absolute w-32 h-32 animate-border-snake"
-                      style={{
-                        background: 'radial-gradient(circle, hsl(35 100% 75%) 0%, hsl(30 100% 65% / 0.98) 18%, hsl(25 100% 60% / 0.95) 38%, hsl(30 100% 55% / 0.55) 60%, transparent 82%)',
-                        filter: 'blur(8px)',
-                        opacity: 0.95,
-                        boxShadow: [
-                          '0 0 45px hsl(30 100% 68%)',
-                          '0 0 90px hsl(30 100% 62% / 0.95)',
-                          '0 0 140px hsl(25 100% 58% / 0.9)',
-                          '0 0 210px hsl(30 100% 58% / 0.85)'
-                        ].join(', '),
-                      }}
-                    />
-                  </div>
-                  
+                  {/* Content */}
                   <div className="relative z-10 flex items-start gap-5">
                     {/* Step Number */}
                     <span
                       className="text-5xl font-light font-mono"
                       style={{
-                        color: 'hsl(168 80% 55%)',
-                        textShadow: '0 0 25px hsl(168 80% 50% / 0.9), 0 0 50px hsl(168 70% 45% / 0.5)',
+                        color: 'hsl(168 80% 60%)',
+                        textShadow: [
+                          '0 0 18px hsl(168 90% 55% / 0.9)',
+                          '0 0 36px hsl(168 85% 50% / 0.7)',
+                          '0 0 70px hsl(168 80% 45% / 0.5)'
+                        ].join(', '),
                       }}
                     >
                       1.
                     </span>
-                    
-                    {/* Content */}
+
                     <div className="flex-1 pt-1">
-                      <div 
+                      <div
                         className="text-2xl font-semibold tracking-wide"
-                        style={{ color: 'hsl(0 0% 98%)' }}
+                        style={{
+                          color: 'hsl(0 0% 98%)',
+                          textShadow: '0 0 18px hsl(0 0% 100% / 0.45)',
+                        }}
                       >
                         Replace Decking
                       </div>
-                      <div 
+                      <div
                         className="text-base mt-3 leading-relaxed"
-                        style={{ color: 'hsl(168 25% 65%)' }}
+                        style={{
+                          color: 'hsl(168 20% 70%)',
+                        }}
                       >
                         Replace any damaged plywood/decking so your new roof starts on a solid base.
                       </div>
