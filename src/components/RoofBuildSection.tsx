@@ -252,10 +252,11 @@ const RoofBuildSection: React.FC = () => {
               </div>
             )}
 
-            {/* Mobile Step Card - positioned below house */}
+            {/* Mobile Step Card - swing-through animation */}
             <MobileStepCard 
               currentStep={Math.max(0, Math.min(9, Math.floor((progress - 0.08) / layerStep)))} 
               isVisible={progress >= 0.08 && progress <= (isMobile ? 0.90 : 0.60)}
+              scrollProgress={progress}
             />
 
             {/* Material labels - left side (positioned as overlay) */}
