@@ -4,16 +4,26 @@ import coastalRoofInProgress from '@/assets/coastal-roof-inprogress.png';
 import coastalHomeCrew from '@/assets/coastal-home-crew.png';
 import aerialEstatePool from '@/assets/aerial-estate-pool.png';
 
-const MobileFirstImage: React.FC = () => {
+interface MobileFirstImageProps {
+  progress: number;
+}
+
+const MobileFirstImage: React.FC<MobileFirstImageProps> = ({ progress }) => {
+  // Show gallery after roof section completes
+  const galleryStart = 0.50;
+  const isVisible = progress >= galleryStart - 0.02;
+
   // Testimonial data
   const name = "Bruce Gombar";
   const quote1 = "We were very pleased with the final results of our roof replacement";
   const quote2 = "We had some minor issues";
   const quote3 = "But they were quickly corrected once we contacted the team";
 
+  if (!isVisible) return null;
+
   return (
     <div 
-      className="w-full flex flex-col items-center justify-start pt-16 px-4 pb-8"
+      className="sticky top-0 min-h-screen w-full flex flex-col items-center justify-start pt-16 px-4 pb-8"
       style={{
         background: `radial-gradient(ellipse at center, hsl(35 40% 15% / 0.95) 0%, hsl(25 30% 8% / 0.98) 100%)`,
       }}

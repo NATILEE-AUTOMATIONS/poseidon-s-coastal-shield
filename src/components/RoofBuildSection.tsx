@@ -121,7 +121,7 @@ const RoofBuildSection: React.FC = () => {
     <section
       ref={sectionRef}
       className="relative"
-      style={{ height: isMobile ? '400vh' : '600vh' }}
+      style={{ height: isMobile ? '1600vh' : '600vh' }}
     >
 
       {/* Solid backup overlay - catches ANYTHING that escapes */}
@@ -149,7 +149,8 @@ const RoofBuildSection: React.FC = () => {
         }}
       />
 
-      {/* Image Gallery - Desktop only (mobile gallery is separate section) */}
+      {/* Image Gallery - Different experience for mobile vs desktop */}
+      {isMobile && <MobileFirstImage progress={progress} />}
       {!isMobile && <ImageGallery3D progress={progress} />}
 
 
