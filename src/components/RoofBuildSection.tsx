@@ -22,7 +22,7 @@ import ImageGallery3D from './RoofBuild/ImageGallery3D';
 import MobileFirstImage from './RoofBuild/MobileFirstImage';
 
 import { useIsMobile } from '@/hooks/use-mobile';
-import MobileStepCard from './RoofBuild/MobileStepCard';
+
 
 const RoofBuildSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
