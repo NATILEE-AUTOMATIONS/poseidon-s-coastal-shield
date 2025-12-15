@@ -9,20 +9,14 @@ interface MobileMaterialCardProps {
 const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layers }) => {
   const visibleMaterials = materialInfo.slice(0, 4);
   
-  // Render cards for first 4 materials
   return (
     <div 
       className="w-full flex justify-center px-5 mt-8"
-      style={{ perspective: '1000px' }}
+      style={{ perspective: '1200px' }}
     >
       {visibleMaterials.map((material, index) => {
         const layer = layers[index];
         const layerDuration = layer.end - layer.start;
-        
-        // Card timing - more deliberate pacing
-        // Spin in: 0-30% (slower entry)
-        // Hold: 30-70%
-        // Spin out: 70-100% (slower exit)
         
         let localProgress = 0;
         let isVisible = false;
@@ -34,58 +28,42 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
         
         if (!isVisible) return null;
         
-        // Smoother easing - sextic for ultra-smooth feel
-        const easeOutSextic = (x: number) => 1 - Math.pow(1 - x, 6);
-        const easeInSextic = (x: number) => Math.pow(x, 6);
-        // Smooth in-out for natural weight
-        const easeInOutCubic = (x: number) => 
-          x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+        // Smoother easing
+        const easeOutQuart = (x: number) => 1 - Math.pow(1 - x, 4);
+        const easeInQuart = (x: number) => Math.pow(x, 4);
         
-        // Extended timing phases
-        const spinInEnd = 0.28;
-        const spinOutStart = 0.72;
+        // More deliberate timing - longer spin phases
+        const spinInEnd = 0.25;
+        const spinOutStart = 0.75;
         
         let rotateY = 0;
-        let rotateX = 0;
         let scale = 1;
         let opacity = 1;
-        let translateZ = 0;
         
         if (localProgress < spinInEnd) {
-          // Spin in - slower, more deliberate rotation
+          // Spin in from left
           const t = localProgress / spinInEnd;
-          const eased = easeOutSextic(t);
-          rotateY = -75 * (1 - eased);
-          rotateX = 5 * (1 - eased);
-          scale = 0.85 + (0.15 * eased);
-          opacity = easeInOutCubic(t);
-          translateZ = -60 * (1 - eased);
+          const eased = easeOutQuart(t);
+          rotateY = -90 * (1 - eased);
+          scale = 0.8 + (0.2 * eased);
+          opacity = 0.3 + (0.7 * eased);
         } else if (localProgress > spinOutStart) {
-          // Spin out - smooth, weighted exit
+          // Spin out to right
           const t = (localProgress - spinOutStart) / (1 - spinOutStart);
-          const eased = easeInSextic(t);
-          rotateY = 75 * eased;
-          rotateX = -5 * eased;
-          scale = 1 - (0.15 * eased);
-          opacity = 1 - easeInOutCubic(t);
-          translateZ = -60 * eased;
+          const eased = easeInQuart(t);
+          rotateY = 90 * eased;
+          scale = 1 - (0.2 * eased);
+          opacity = 1 - (0.7 * eased);
         }
         
         return (
           <div
             key={material.id}
-            className="absolute w-full max-w-xs"
+            className="w-full max-w-xs"
             style={{
               opacity,
-              transform: `
-                perspective(1000px)
-                rotateY(${rotateY}deg)
-                rotateX(${rotateX}deg)
-                scale(${scale})
-                translateZ(${translateZ}px)
-              `,
+              transform: `perspective(1200px) rotateY(${rotateY}deg) scale(${scale})`,
               transformStyle: 'preserve-3d',
-              backfaceVisibility: 'hidden',
               willChange: 'transform, opacity',
             }}
           >
