@@ -25,11 +25,52 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
         
         if (!isVisible) return null;
         
+        // Easing
+        const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
+        const easeInCubic = (x: number) => x * x * x;
+        
+        // Animation phases
+        const enterEnd = 0.2;
+        const exitStart = 0.8;
+        
+        // Default state
+        let rotateY = 0;
+        let scale = 1;
+        let translateZ = 0;
+        
+        if (localProgress < enterEnd) {
+          // ENTER: 3D flip from behind
+          const t = localProgress / enterEnd;
+          const eased = easeOutCubic(t);
+          
+          rotateY = -180 * (1 - eased);
+          scale = 0.6 + (0.4 * eased);
+          translateZ = -200 * (1 - eased);
+        } else if (localProgress > exitStart) {
+          // EXIT: 3D flip forward and away
+          const t = (localProgress - exitStart) / (1 - exitStart);
+          const eased = easeInCubic(t);
+          
+          rotateY = 180 * eased;
+          scale = 1 - (0.4 * eased);
+          translateZ = -200 * eased;
+        }
+        
         return (
           <div
             key={material.id}
             className="absolute inset-x-5 top-0 flex justify-center"
+            style={{
+              perspective: '1000px',
+            }}
           >
+            <div
+              style={{
+                transform: `perspective(1000px) rotateY(${rotateY}deg) scale(${scale}) translateZ(${translateZ}px)`,
+                transformStyle: 'preserve-3d',
+                backfaceVisibility: 'hidden',
+              }}
+            >
             <div
               className="w-full max-w-xs px-6 py-5 rounded-2xl relative overflow-hidden"
               style={{
@@ -83,6 +124,7 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
               >
                 {material.description}
               </div>
+            </div>
             </div>
           </div>
         );
