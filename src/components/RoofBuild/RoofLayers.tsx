@@ -546,13 +546,13 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
   const textScale = 0.5 + (Math.min(1, textProgress) * 0.5);
   const textOpacity = textProgress;
   
-  // Course 2 goes right-to-left, so clip text from right side as it passes
+  // Course 2 goes right-to-left, so clip text from left side as it passes
   // Text is centered at x=200, roughly 80px wide (160 to 240)
   const textLeftX = 120;
   const textRightX = 280;
   const textWidth = textRightX - textLeftX;
-  // As course2Progress goes 0->1, clip moves from right to left
-  const textClipRightX = textRightX - (textWidth * course2Progress);
+  // As course2Progress goes 0->1, clip moves from left to right (revealing less text)
+  const textClipLeftX = textLeftX + (textWidth * course2Progress);
   
   return (
     <g className="underlayment-layer">
@@ -661,13 +661,13 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
       </g>
       
       {/* Text label - scale-in animation, clipped by course 2 rolling over */}
-      {!isMobile && textOpacity > 0 && textClipRightX > textLeftX && (
+      {!isMobile && textOpacity > 0 && textClipLeftX < textRightX && (
         <g style={{ 
           filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))',
         }}>
           <defs>
             <clipPath id="underlaymentTextClip">
-              <rect x={textLeftX} y="80" width={textClipRightX - textLeftX} height="50" />
+              <rect x={textClipLeftX} y="80" width={textRightX - textClipLeftX} height="50" />
             </clipPath>
           </defs>
           <g 
