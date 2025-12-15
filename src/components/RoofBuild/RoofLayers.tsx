@@ -672,16 +672,18 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
                   opacity="0.6"
                 />
               )}
-              {/* Simple leading edge line - no glow */}
-              <line
-                x1={leadingEdgeTopX}
-                y1={topY}
-                x2={leadingEdgeBottomX}
-                y2={bottomY}
-                stroke="hsl(168 40% 45%)"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
+              {/* Simple leading edge line - only visible during animation */}
+              {courseProgress < 1 && (
+                <line
+                  x1={leadingEdgeTopX}
+                  y1={topY}
+                  x2={leadingEdgeBottomX}
+                  y2={bottomY}
+                  stroke="hsl(168 40% 45%)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              )}
             </g>
           );
         })}
