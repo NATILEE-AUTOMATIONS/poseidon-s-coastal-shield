@@ -989,35 +989,36 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
             : 0
   );
   
-  // Generate shingle colors with subtle variation
+  // Generate shingle colors with subtle variation - charcoal/slate palette
   const getShingleColor = (courseIndex: number, tabIndex: number) => {
     const seed = (courseIndex * 7 + tabIndex * 13) % 100;
-    const baseL = 20 + (seed % 8); // 20-27% lightness variation
-    const baseS = 12 + (seed % 6); // 12-17% saturation variation
-    return `hsl(220 ${baseS}% ${baseL}%)`;
+    const baseL = 18 + (seed % 10); // 18-27% lightness variation
+    const baseS = 4 + (seed % 5); // 4-8% saturation (desaturated for charcoal)
+    const baseH = 200 + (seed % 20); // 200-219 hue range (cool slate tones)
+    return `hsl(${baseH} ${baseS}% ${baseL}%)`;
   };
   
   return (
     <g className="field-shingles-layer">
       <defs>
-        {/* Architectural shingle gradient with dimensional look */}
+        {/* Architectural shingle gradient with dimensional look - charcoal slate */}
         <linearGradient id="shingleDimensional" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(220 14% 26%)" />
-          <stop offset="25%" stopColor="hsl(220 12% 22%)" />
-          <stop offset="75%" stopColor="hsl(220 10% 18%)" />
-          <stop offset="100%" stopColor="hsl(220 8% 14%)" />
+          <stop offset="0%" stopColor="hsl(210 6% 24%)" />
+          <stop offset="25%" stopColor="hsl(205 5% 20%)" />
+          <stop offset="75%" stopColor="hsl(200 4% 16%)" />
+          <stop offset="100%" stopColor="hsl(195 3% 12%)" />
         </linearGradient>
         
         {/* Highlight gradient for 3D effect */}
         <linearGradient id="shingleHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(220 15% 35%)" stopOpacity="0.4" />
-          <stop offset="30%" stopColor="hsl(220 10% 25%)" stopOpacity="0" />
+          <stop offset="0%" stopColor="hsl(210 8% 32%)" stopOpacity="0.4" />
+          <stop offset="30%" stopColor="hsl(205 6% 22%)" stopOpacity="0" />
         </linearGradient>
         
         {/* Shadow gradient for depth */}
         <linearGradient id="shingleShadow" x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stopColor="hsl(220 20% 8%)" stopOpacity="0.6" />
-          <stop offset="40%" stopColor="hsl(220 15% 12%)" stopOpacity="0" />
+          <stop offset="0%" stopColor="hsl(200 10% 6%)" stopOpacity="0.6" />
+          <stop offset="40%" stopColor="hsl(205 8% 10%)" stopOpacity="0" />
         </linearGradient>
         
         {/* Clip to roof shape */}
