@@ -7,7 +7,7 @@ interface LayerProps {
   isMobile?: boolean;
 }
 
-// Material info for step cards - 9 steps total
+// Material info for step cards - 10 steps total
 export const materialInfo = [
   { id: 'decking', name: 'Replace Decking', description: 'Replace any damaged plywood or decking' },
   { id: 'drip-edge', name: 'Drip Edge', description: 'Install drip edge along eaves' },
@@ -17,6 +17,7 @@ export const materialInfo = [
   { id: 'shingles', name: 'Shingles', description: 'Install field shingles' },
   { id: 'vents', name: 'Pipe Boots & Vents', description: 'Install pipe boots & vents' },
   { id: 'flashing', name: 'Flashing', description: 'Install all flashing' },
+  { id: 'ridge', name: 'Ridge Vent & Cap', description: 'Install ridge vent and ridge cap' },
   { id: 'cleanup', name: 'Complete Clean Up', description: 'Final cleanup and inspection' },
 ];
 
@@ -898,3 +899,4 @@ export const ShinglesLayer: React.FC<LayerProps> = () => null;
 export const FieldShinglesLayer: React.FC<LayerProps> = () => null;
 export const VentsLayer: React.FC<LayerProps> = () => null;
 export const RidgeCapLayer: React.FC<LayerProps> = () => null;
+export const CleanUpLayer: React.FC<LayerProps> = () => null;
