@@ -316,118 +316,234 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
   );
 };
 
-// Ice & Water Shield - rolls out from peak toward eaves
+// Ice & Water Shield - 3 rolls unrolling from peak to eaves
 export const IceWaterShieldLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
   if (progress < startProgress) return null;
   
-  const easedProgress = easeOutQuint(layerProgress);
+  // Roof geometry constants
+  const peakX = 200;
+  const peakY = 56;
+  const leftEaveX = 42;
+  const rightEaveX = 358;
+  const eaveY = 159;
   
-  // Roll-out: starts from peak (y=56) and expands downward toward eaves (y=159)
-  // Coverage represents how much of the roof is covered
-  const maxCoverageHeight = 60; // Ice & water shield covers ~60px from peak
-  const coverageHeight = maxCoverageHeight * easedProgress;
+  // 3 rolls with staggered timing (each roll starts after the previous begins)
+  const rollCount = 3;
+  const rollDelay = 0.15; // Each roll starts 15% after the previous
+  const rollWidth = 20; // Width of each roll strip
+  const rollGap = 8; // Gap between rolls
   
-  // Left slope: peak at (200, 56), eaves at (42, 159)
-  // Right slope: peak at (200, 56), eaves at (358, 159)
-  const leftSlopeRatio = (159 - 56) / (200 - 42); // ~0.652
-  const rightSlopeRatio = (159 - 56) / (358 - 200); // ~0.652
+  // Roll positions (centered on each slope)
+  const rollOffsets = [
+    -rollWidth - rollGap,    // Left roll
+    0,                       // Center roll  
+    rollWidth + rollGap,     // Right roll
+  ];
   
-  // Calculate the Y position where the shield reaches
-  const shieldBottomY = 56 + coverageHeight;
+  // Calculate individual roll progress with stagger
+  const getRollProgress = (rollIndex: number) => {
+    const rollStart = rollIndex * rollDelay;
+    const rollEnd = rollStart + (1 - rollDelay * (rollCount - 1));
+    const normalizedProgress = (layerProgress - rollStart) / (rollEnd - rollStart);
+    return Math.max(0, Math.min(1, normalizedProgress));
+  };
   
-  // Calculate corresponding X positions on each slope at shieldBottomY
-  const leftX = 42 + (shieldBottomY - 56) / leftSlopeRatio;
-  const rightX = 358 - (shieldBottomY - 56) / rightSlopeRatio;
+  // Easing function for smooth roll-out
+  const easeOutQuart = (x: number): number => 1 - Math.pow(1 - x, 4);
   
-  // Text timing: fade in 20-40%, hold 40-60%, fade out 60-85%
-  const textOpacity = layerProgress < 0.2 
+  // Calculate roll endpoint based on progress (0 = at peak, 1 = at eave)
+  const getRollPath = (rollIndex: number, isLeft: boolean) => {
+    const rollProgress = easeOutQuart(getRollProgress(rollIndex));
+    const offset = rollOffsets[rollIndex];
+    
+    // Direction vector from peak to eave
+    const dx = isLeft ? (leftEaveX - peakX) : (rightEaveX - peakX);
+    const dy = eaveY - peakY;
+    
+    // Perpendicular offset for roll position
+    const perpX = -dy / Math.sqrt(dx * dx + dy * dy);
+    const perpY = dx / Math.sqrt(dx * dx + dy * dy);
+    
+    // Start and end points with offset
+    const startX = peakX + perpX * offset;
+    const startY = peakY + perpY * offset * (isLeft ? 1 : -1);
+    
+    // End point travels along the slope
+    const endX = startX + dx * rollProgress;
+    const endY = startY + dy * rollProgress;
+    
+    return { startX, startY, endX, endY, progress: rollProgress };
+  };
+  
+  // Text timing: fade in 30-50%, hold 50-70%, fade out 70-90%
+  const textOpacity = layerProgress < 0.30 
     ? 0 
-    : layerProgress < 0.4 
-      ? (layerProgress - 0.2) / 0.2 
-      : layerProgress < 0.6 
+    : layerProgress < 0.50 
+      ? (layerProgress - 0.30) / 0.20 
+      : layerProgress < 0.70 
         ? 1 
-        : layerProgress < 0.85 
-          ? 1 - (layerProgress - 0.6) / 0.25 
+        : layerProgress < 0.90 
+          ? 1 - (layerProgress - 0.70) / 0.20 
           : 0;
   
   return (
     <g className="ice-water-shield-layer">
       <defs>
-        {/* Ice & water shield gradient - dark blue/black with slight sheen */}
-        <linearGradient id="iceWaterGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(210 40% 18%)" />
-          <stop offset="50%" stopColor="hsl(210 35% 12%)" />
-          <stop offset="100%" stopColor="hsl(210 30% 8%)" />
+        {/* Dark blue/black ice & water shield gradient */}
+        <linearGradient id="iceWaterRollGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="hsl(210 50% 8%)" />
+          <stop offset="30%" stopColor="hsl(210 45% 15%)" />
+          <stop offset="70%" stopColor="hsl(210 45% 15%)" />
+          <stop offset="100%" stopColor="hsl(210 50% 8%)" />
         </linearGradient>
-        {/* Self-adhesive membrane sheen effect */}
-        <linearGradient id="iceWaterSheen" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="hsl(200 50% 40%)" stopOpacity="0" />
-          <stop offset="45%" stopColor="hsl(200 60% 50%)" stopOpacity="0.25" />
-          <stop offset="55%" stopColor="hsl(200 60% 50%)" stopOpacity="0.25" />
-          <stop offset="100%" stopColor="hsl(200 50% 40%)" stopOpacity="0" />
+        {/* Shiny membrane surface sheen */}
+        <linearGradient id="iceWaterSheen" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="hsl(200 60% 60%)" stopOpacity="0" />
+          <stop offset="40%" stopColor="hsl(200 70% 70%)" stopOpacity="0.3" />
+          <stop offset="60%" stopColor="hsl(200 70% 70%)" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="hsl(200 60% 60%)" stopOpacity="0" />
+        </linearGradient>
+        {/* Roll end cap gradient (the "roll" cylinder) */}
+        <linearGradient id="rollCapGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(210 40% 25%)" />
+          <stop offset="30%" stopColor="hsl(210 35% 18%)" />
+          <stop offset="70%" stopColor="hsl(210 30% 10%)" />
+          <stop offset="100%" stopColor="hsl(210 35% 15%)" />
         </linearGradient>
       </defs>
       
-      {/* Left slope shield */}
-      <polygon
-        points={`200,56 ${leftX},${shieldBottomY} 200,${shieldBottomY}`}
-        fill="url(#iceWaterGradient)"
-        style={{
-          filter: `drop-shadow(0 2px 4px hsl(210 40% 10% / 0.5))`,
-        }}
-      />
-      {/* Left slope sheen overlay */}
-      <polygon
-        points={`200,56 ${leftX},${shieldBottomY} 200,${shieldBottomY}`}
-        fill="url(#iceWaterSheen)"
-      />
+      {/* LEFT SLOPE ROLLS */}
+      {[0, 1, 2].map((rollIndex) => {
+        const { startX, startY, endX, endY, progress: rollProg } = getRollPath(rollIndex, true);
+        if (rollProg <= 0) return null;
+        
+        const rollOpacity = Math.min(1, rollProg * 3);
+        
+        return (
+          <g key={`left-roll-${rollIndex}`} style={{ opacity: rollOpacity }}>
+            {/* Main roll strip */}
+            <line
+              x1={startX}
+              y1={startY}
+              x2={endX}
+              y2={endY}
+              stroke="url(#iceWaterRollGradient)"
+              strokeWidth={rollWidth}
+              strokeLinecap="butt"
+              style={{
+                filter: `drop-shadow(0 2px 4px hsl(210 50% 5% / 0.6))`,
+              }}
+            />
+            {/* Sheen overlay */}
+            <line
+              x1={startX}
+              y1={startY}
+              x2={endX}
+              y2={endY}
+              stroke="url(#iceWaterSheen)"
+              strokeWidth={rollWidth - 2}
+              strokeLinecap="butt"
+            />
+            {/* Roll end cap (cylinder at leading edge) */}
+            <circle
+              cx={endX}
+              cy={endY}
+              r={rollWidth / 2 + 2}
+              fill="url(#rollCapGradient)"
+              stroke="hsl(200 70% 55%)"
+              strokeWidth="1.5"
+              style={{
+                filter: `drop-shadow(0 0 ${6 + rollProg * 8}px hsl(200 70% 55% / 0.7))`,
+              }}
+            />
+            {/* Inner roll spiral detail */}
+            <circle
+              cx={endX}
+              cy={endY}
+              r={rollWidth / 4}
+              fill="hsl(210 40% 12%)"
+              stroke="hsl(200 50% 40%)"
+              strokeWidth="0.5"
+            />
+          </g>
+        );
+      })}
       
-      {/* Right slope shield */}
-      <polygon
-        points={`200,56 ${rightX},${shieldBottomY} 200,${shieldBottomY}`}
-        fill="url(#iceWaterGradient)"
-        style={{
-          filter: `drop-shadow(0 2px 4px hsl(210 40% 10% / 0.5))`,
-        }}
-      />
-      {/* Right slope sheen overlay */}
-      <polygon
-        points={`200,56 ${rightX},${shieldBottomY} 200,${shieldBottomY}`}
-        fill="url(#iceWaterSheen)"
-      />
+      {/* RIGHT SLOPE ROLLS */}
+      {[0, 1, 2].map((rollIndex) => {
+        const { startX, startY, endX, endY, progress: rollProg } = getRollPath(rollIndex, false);
+        if (rollProg <= 0) return null;
+        
+        const rollOpacity = Math.min(1, rollProg * 3);
+        
+        return (
+          <g key={`right-roll-${rollIndex}`} style={{ opacity: rollOpacity }}>
+            {/* Main roll strip */}
+            <line
+              x1={startX}
+              y1={startY}
+              x2={endX}
+              y2={endY}
+              stroke="url(#iceWaterRollGradient)"
+              strokeWidth={rollWidth}
+              strokeLinecap="butt"
+              style={{
+                filter: `drop-shadow(0 2px 4px hsl(210 50% 5% / 0.6))`,
+              }}
+            />
+            {/* Sheen overlay */}
+            <line
+              x1={startX}
+              y1={startY}
+              x2={endX}
+              y2={endY}
+              stroke="url(#iceWaterSheen)"
+              strokeWidth={rollWidth - 2}
+              strokeLinecap="butt"
+            />
+            {/* Roll end cap (cylinder at leading edge) */}
+            <circle
+              cx={endX}
+              cy={endY}
+              r={rollWidth / 2 + 2}
+              fill="url(#rollCapGradient)"
+              stroke="hsl(200 70% 55%)"
+              strokeWidth="1.5"
+              style={{
+                filter: `drop-shadow(0 0 ${6 + rollProg * 8}px hsl(200 70% 55% / 0.7))`,
+              }}
+            />
+            {/* Inner roll spiral detail */}
+            <circle
+              cx={endX}
+              cy={endY}
+              r={rollWidth / 4}
+              fill="hsl(210 40% 12%)"
+              stroke="hsl(200 50% 40%)"
+              strokeWidth="0.5"
+            />
+          </g>
+        );
+      })}
       
-      {/* Leading edge glow - the "roll" edge */}
-      <line
-        x1={leftX}
-        y1={shieldBottomY}
-        x2={rightX}
-        y2={shieldBottomY}
-        stroke="hsl(200 70% 55%)"
-        strokeWidth="3"
-        strokeLinecap="round"
-        style={{
-          filter: `drop-shadow(0 0 ${4 + easedProgress * 8}px hsl(200 70% 55% / 0.8)) drop-shadow(0 0 ${2 + easedProgress * 4}px hsl(200 80% 60% / 0.6))`,
-        }}
-      />
-      
-      {/* Text label - desktop only */}
+      {/* Text label - positioned below roof, centered - desktop only */}
       {!isMobile && textOpacity > 0 && (
         <g style={{ 
           opacity: textOpacity,
-          filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))',
+          filter: 'drop-shadow(0 0 10px hsl(0 0% 0%)) drop-shadow(0 0 20px hsl(0 0% 0% / 0.9))',
         }}>
           <text
             x="200"
-            y="93"
+            y="175"
             textAnchor="middle"
             fill="hsl(45 100% 95%)"
-            fontSize="15"
+            fontSize="14"
             fontWeight="800"
             fontFamily="system-ui, -apple-system, sans-serif"
-            letterSpacing="3"
+            letterSpacing="4"
             stroke="hsl(0 0% 5%)"
             strokeWidth="2.5"
             paintOrder="stroke fill"
@@ -436,13 +552,13 @@ export const IceWaterShieldLayer: React.FC<LayerProps> = ({ progress, startProgr
           </text>
           <text
             x="200"
-            y="114"
+            y="194"
             textAnchor="middle"
             fill="hsl(200 80% 70%)"
-            fontSize="15"
+            fontSize="14"
             fontWeight="800"
             fontFamily="system-ui, -apple-system, sans-serif"
-            letterSpacing="2"
+            letterSpacing="3"
             stroke="hsl(0 0% 5%)"
             strokeWidth="2.5"
             paintOrder="stroke fill"
