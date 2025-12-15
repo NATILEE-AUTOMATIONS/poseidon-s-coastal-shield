@@ -220,10 +220,15 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
   const easedProgress = easeOutQuint(layerProgress);
   const translateY = -150 * (1 - easedProgress);
   
-  // Text wipe synced to drip edge drop - wipes down as bar drops
-  const wipeProgress = easedProgress; // Same as the bar animation
-  const textHeight = 45; // Height of the text area
-  const clipHeight = textHeight * wipeProgress;
+  // Bar Y position (starts at 10, ends at 160)
+  const barY = 160 + translateY;
+  
+  // Text wipe synced to bar position - wipes as bar passes over text
+  // Text area: y=85 (top) to y=130 (bottom)
+  const textTop = 85;
+  const textBottom = 130;
+  const textHeight = textBottom - textTop;
+  const clipHeight = Math.max(0, Math.min(textHeight, barY - textTop));
   
   return (
     <>
@@ -247,14 +252,14 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
         />
       </g>
       
-      {/* Wipe-reveal text label - desktop only */}
-      {!isMobile && wipeProgress > 0 && (
+      {/* Wipe-reveal text label - desktop only, synced to bar position */}
+      {!isMobile && clipHeight > 0 && (
         <>
           <defs>
             <clipPath id="dripEdgeTextWipe">
               <rect 
                 x="100"
-                y="85"
+                y={textTop}
                 width="200"
                 height={clipHeight}
               />
