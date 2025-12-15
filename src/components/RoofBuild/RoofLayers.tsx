@@ -919,7 +919,249 @@ export const StarterStripLayer: React.FC<LayerProps> = ({ progress, startProgres
 };
 export const FlashingLayer: React.FC<LayerProps> = () => null;
 export const ShinglesLayer: React.FC<LayerProps> = () => null;
-export const FieldShinglesLayer: React.FC<LayerProps> = () => null;
+// Field Shingles - courses build up from starter strip to ridge with staggered wave effect
+export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
+  const rawProgress = (progress - startProgress) / (endProgress - startProgress);
+  const layerProgress = Math.max(0, Math.min(1, rawProgress));
+  
+  if (progress < startProgress) return null;
+  
+  // Roof geometry
+  const peakX = 200;
+  const peakY = 55;
+  const leftEaveX = 40;
+  const rightEaveX = 360;
+  const eaveY = 160;
+  
+  // Start just above starter strip (which is 10px tall)
+  const starterStripTop = 150;
+  const roofHeight = starterStripTop - peakY; // ~95px
+  
+  // 8 courses of shingles
+  const courseCount = 8;
+  const courseHeight = roofHeight / courseCount;
+  
+  // Helper to get X at a given Y on the roof slope
+  const getLeftX = (y: number) => {
+    const t = (y - peakY) / (eaveY - peakY);
+    return peakX - t * (peakX - leftEaveX);
+  };
+  const getRightX = (y: number) => {
+    const t = (y - peakY) / (eaveY - peakY);
+    return peakX + t * (rightEaveX - peakX);
+  };
+  
+  // Easing for smooth course reveals
+  const easeOutQuart = (t: number) => 1 - Math.pow(1 - t, 4);
+  
+  // Staggered course animation - each course starts after the previous
+  const getCourseProgress = (courseIndex: number) => {
+    // Bottom courses (higher index) animate first
+    const reversedIndex = courseCount - 1 - courseIndex;
+    const staggerDelay = reversedIndex * 0.08; // 8% delay between courses
+    const courseAnimDuration = 0.35; // Each course takes 35% of total animation
+    const courseStart = staggerDelay;
+    const courseEnd = courseStart + courseAnimDuration;
+    
+    if (layerProgress < courseStart) return 0;
+    if (layerProgress > courseEnd) return 1;
+    return (layerProgress - courseStart) / courseAnimDuration;
+  };
+  
+  // Text timing
+  const textOpacity = isMobile ? 0 : (
+    layerProgress < 0.15 
+      ? 0 
+      : layerProgress < 0.30 
+        ? (layerProgress - 0.15) / 0.15 
+        : layerProgress < 0.65 
+          ? 1 
+          : layerProgress < 0.85 
+            ? 1 - (layerProgress - 0.65) / 0.2 
+            : 0
+  );
+  
+  return (
+    <g className="field-shingles-layer">
+      <defs>
+        {/* Shingle gradient - architectural charcoal look */}
+        <linearGradient id="shingleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(215 18% 28%)" />
+          <stop offset="40%" stopColor="hsl(215 15% 22%)" />
+          <stop offset="100%" stopColor="hsl(215 12% 18%)" />
+        </linearGradient>
+        
+        {/* Clip to roof shape */}
+        <clipPath id="shinglesRoofClip">
+          <polygon points={`${peakX},${peakY} ${leftEaveX},${eaveY} ${rightEaveX},${eaveY}`} />
+        </clipPath>
+      </defs>
+      
+      <g clipPath="url(#shinglesRoofClip)">
+        {Array.from({ length: courseCount }).map((_, i) => {
+          const courseProgress = easeOutQuart(getCourseProgress(i));
+          if (courseProgress <= 0) return null;
+          
+          // Course position (bottom course is high Y, top is low Y)
+          const bottomY = starterStripTop - (i * courseHeight);
+          const topY = bottomY - courseHeight;
+          
+          // Get full width at this course level
+          const topLeftX = getLeftX(topY);
+          const topRightX = getRightX(topY);
+          const bottomLeftX = getLeftX(bottomY);
+          const bottomRightX = getRightX(bottomY);
+          
+          // Wave effect - courses wipe in from alternating sides
+          const goingRight = i % 2 === 0;
+          const topWidth = topRightX - topLeftX;
+          const bottomWidth = bottomRightX - bottomLeftX;
+          
+          let points: string;
+          if (goingRight) {
+            const currentTopRightX = topLeftX + topWidth * courseProgress;
+            const currentBottomRightX = bottomLeftX + bottomWidth * courseProgress;
+            points = `${topLeftX},${topY} ${currentTopRightX},${topY} ${currentBottomRightX},${bottomY} ${bottomLeftX},${bottomY}`;
+          } else {
+            const currentTopLeftX = topRightX - topWidth * courseProgress;
+            const currentBottomLeftX = bottomRightX - bottomWidth * courseProgress;
+            points = `${currentTopLeftX},${topY} ${topRightX},${topY} ${bottomRightX},${bottomY} ${currentBottomLeftX},${bottomY}`;
+          }
+          
+          // Leading edge position for glow
+          const leadingEdgeTopX = goingRight 
+            ? topLeftX + topWidth * courseProgress 
+            : topRightX - topWidth * courseProgress;
+          const leadingEdgeBottomX = goingRight 
+            ? bottomLeftX + bottomWidth * courseProgress 
+            : bottomRightX - bottomWidth * courseProgress;
+          
+          // Shingle tab lines for this course (6 tabs per course)
+          const tabCount = 6;
+          const tabLines = [];
+          for (let t = 1; t < tabCount; t++) {
+            const tabProgress = t / tabCount;
+            const tabTopX = topLeftX + topWidth * tabProgress;
+            const tabBottomX = bottomLeftX + bottomWidth * tabProgress;
+            // Only show tab line if it's been revealed
+            const tabRevealed = goingRight 
+              ? tabProgress <= courseProgress 
+              : tabProgress >= (1 - courseProgress);
+            if (tabRevealed && courseProgress < 1) {
+              tabLines.push(
+                <line
+                  key={`tab-${i}-${t}`}
+                  x1={tabTopX}
+                  y1={topY + 2}
+                  x2={tabBottomX}
+                  y2={bottomY - 1}
+                  stroke="hsl(215 10% 12%)"
+                  strokeWidth="0.5"
+                  opacity={0.6}
+                />
+              );
+            }
+          }
+          
+          return (
+            <g key={`shingle-course-${i}`}>
+              {/* Main shingle course */}
+              <polygon
+                points={points}
+                fill="url(#shingleGrad)"
+                style={{
+                  filter: courseProgress < 1 
+                    ? 'drop-shadow(0 1px 2px hsl(215 20% 8% / 0.4))' 
+                    : undefined,
+                }}
+              />
+              
+              {/* Course shadow line at top edge (when fully revealed) */}
+              {courseProgress >= 1 && i > 0 && (
+                <line
+                  x1={topLeftX}
+                  y1={topY}
+                  x2={topRightX}
+                  y2={topY}
+                  stroke="hsl(215 15% 12%)"
+                  strokeWidth="1.5"
+                  opacity="0.5"
+                />
+              )}
+              
+              {/* Tab divider lines */}
+              {tabLines}
+              
+              {/* Shingle tab pattern lines when complete */}
+              {courseProgress >= 1 && (
+                <>
+                  {Array.from({ length: tabCount - 1 }).map((_, t) => {
+                    const tabProgress = (t + 1) / tabCount;
+                    const tabTopX = topLeftX + topWidth * tabProgress;
+                    const tabBottomX = bottomLeftX + bottomWidth * tabProgress;
+                    return (
+                      <line
+                        key={`tab-complete-${i}-${t}`}
+                        x1={tabTopX}
+                        y1={topY + 2}
+                        x2={tabBottomX}
+                        y2={bottomY - 1}
+                        stroke="hsl(215 10% 12%)"
+                        strokeWidth="0.5"
+                        opacity={0.4}
+                      />
+                    );
+                  })}
+                </>
+              )}
+              
+              {/* Leading edge glow during animation */}
+              {courseProgress < 1 && courseProgress > 0 && (
+                <line
+                  x1={leadingEdgeTopX}
+                  y1={topY}
+                  x2={leadingEdgeBottomX}
+                  y2={bottomY}
+                  stroke="hsl(30 85% 55%)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  style={{
+                    filter: 'drop-shadow(0 0 6px hsl(30 85% 55% / 0.8)) drop-shadow(0 0 12px hsl(30 85% 55% / 0.5))',
+                    opacity: Math.sin(courseProgress * Math.PI),
+                  }}
+                />
+              )}
+            </g>
+          );
+        })}
+      </g>
+      
+      {/* Text label - desktop only */}
+      {textOpacity > 0 && (
+        <g style={{ 
+          opacity: textOpacity,
+          filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 14px hsl(0 0% 0% / 0.9))',
+        }}>
+          <text
+            x="200"
+            y="105"
+            textAnchor="middle"
+            fill="hsl(45 100% 95%)"
+            fontSize="15"
+            fontWeight="800"
+            fontFamily="system-ui, -apple-system, sans-serif"
+            letterSpacing="3"
+            stroke="hsl(0 0% 5%)"
+            strokeWidth="2.5"
+            paintOrder="stroke fill"
+          >
+            SHINGLES
+          </text>
+        </g>
+      )}
+    </g>
+  );
+};
 export const VentsLayer: React.FC<LayerProps> = () => null;
 export const RidgeCapLayer: React.FC<LayerProps> = () => null;
 export const CleanUpLayer: React.FC<LayerProps> = () => null;
