@@ -25,56 +25,10 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
         
         if (!isVisible) return null;
         
-        // Easing functions
-        const easeOutBack = (x: number) => {
-          const c1 = 1.70158;
-          const c3 = c1 + 1;
-          return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
-        };
-        const easeInBack = (x: number) => {
-          const c1 = 1.70158;
-          const c3 = c1 + 1;
-          return c3 * x * x * x - c1 * x * x;
-        };
-        
-        // Animation phases
-        const enterEnd = 0.22;
-        const exitStart = 0.78;
-        
-        // Default state (holding)
-        let translateX = 0;
-        let translateY = 0;
-        let rotate = 0;
-        let scale = 1;
-        
-        if (localProgress < enterEnd) {
-          // ENTER: Slide in from right with bounce
-          const t = localProgress / enterEnd;
-          const eased = easeOutBack(t);
-          
-          translateX = 300 * (1 - eased);
-          translateY = 20 * (1 - eased);
-          rotate = 15 * (1 - eased);
-          scale = 0.9 + (0.1 * eased);
-        } else if (localProgress > exitStart) {
-          // EXIT: Slide out to left
-          const t = (localProgress - exitStart) / (1 - exitStart);
-          const eased = easeInBack(t);
-          
-          translateX = -300 * eased;
-          translateY = -20 * eased;
-          rotate = -15 * eased;
-          scale = 1 - (0.1 * eased);
-        }
-        
         return (
           <div
             key={material.id}
             className="absolute inset-x-5 top-0 flex justify-center"
-            style={{
-              transform: `translateX(${translateX}px) translateY(${translateY}px) rotate(${rotate}deg) scale(${scale})`,
-              willChange: 'transform',
-            }}
           >
             <div
               className="w-full max-w-xs px-6 py-5 rounded-2xl relative overflow-hidden"
