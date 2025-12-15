@@ -566,18 +566,6 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
         <clipPath id="roofClipUnderlayment">
           <polygon points={`${peakX},${peakY} ${leftEaveX},${eaveY} ${rightEaveX},${eaveY}`} />
         </clipPath>
-        {/* Logo pattern - multiple logos per tile for more coverage */}
-        <pattern id="poseidonLogoPattern" x="0" y="0" width="100" height="60" patternUnits="userSpaceOnUse">
-          {/* Row 1 */}
-          <image href="/poseidon-logo.png" x="0" y="0" width="55" height="24" opacity="1" preserveAspectRatio="xMidYMid meet" />
-          <image href="/poseidon-logo.png" x="50" y="0" width="55" height="24" opacity="1" preserveAspectRatio="xMidYMid meet" />
-          {/* Row 2 - offset */}
-          <image href="/poseidon-logo.png" x="25" y="20" width="55" height="24" opacity="1" preserveAspectRatio="xMidYMid meet" />
-          <image href="/poseidon-logo.png" x="75" y="20" width="55" height="24" opacity="1" preserveAspectRatio="xMidYMid meet" />
-          {/* Row 3 */}
-          <image href="/poseidon-logo.png" x="0" y="40" width="55" height="24" opacity="1" preserveAspectRatio="xMidYMid meet" />
-          <image href="/poseidon-logo.png" x="50" y="40" width="55" height="24" opacity="1" preserveAspectRatio="xMidYMid meet" />
-        </pattern>
       </defs>
       
       {/* Text label - rendered first so underlayment covers it */}
@@ -654,11 +642,6 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
               <polygon
                 points={points}
                 fill="url(#underlaymentGrad)"
-              />
-              {/* Logo pattern overlay */}
-              <polygon
-                points={points}
-                fill="url(#poseidonLogoPattern)"
               />
               {/* Course divider line at top edge */}
               {i > 0 && courseProgress >= 1 && (
