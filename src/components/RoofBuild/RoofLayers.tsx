@@ -461,7 +461,7 @@ export const IceWaterShieldLayer: React.FC<LayerProps> = ({ progress, startProgr
         }}>
           <text
             x="200"
-            y="103"
+            y="113"
             textAnchor="middle"
             fill="hsl(45 100% 95%)"
             fontSize="15"
@@ -476,7 +476,7 @@ export const IceWaterShieldLayer: React.FC<LayerProps> = ({ progress, startProgr
           </text>
           <text
             x="200"
-            y="124"
+            y="134"
             textAnchor="middle"
             fill="hsl(200 80% 65%)"
             fontSize="15"
