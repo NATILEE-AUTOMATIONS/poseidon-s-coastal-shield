@@ -14,9 +14,9 @@ const easeInOutQuad = (x: number): number => {
 };
 
 const YardSign: React.FC<YardSignProps> = ({ progress, isMobile }) => {
-  // Animation timing - later on mobile (last thing to show)
-  const dropStart = isMobile ? 0.88 : 0.78;
-  const dropEnd = isMobile ? 0.94 : 0.82;
+  // Animation timing - after underlayment finishes on mobile (~0.78), desktop unchanged
+  const dropStart = isMobile ? 0.80 : 0.78;
+  const dropEnd = isMobile ? 0.88 : 0.82;
   // No fade out - sign stays visible until zoom takes over
 
   // Calculate drop animation (enters from above)

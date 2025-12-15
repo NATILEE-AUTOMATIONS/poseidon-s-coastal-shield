@@ -31,15 +31,15 @@ const RoofBuildSection: React.FC = () => {
   const { setZoomProgress } = useScrollContext();
   const isMobile = useIsMobile();
 
-  // Layer timing - delayed start on mobile (15-90%) so card is visible first
-  // Mobile: spread across 75% of scroll for leisurely viewing, starts later
+  // Layer timing - delayed start on mobile (15-85%) so card is visible first
+  // Mobile: spread across 70% of scroll for leisurely viewing, ends before sign
   // Desktop: Roof layers: 8-60%, Door: 60-72%, Zoom: 72-88%, Gallery: 88%+
   const roofProgress = Math.min(1, progress / (isMobile ? 0.90 : 0.60));
   
-  // Mobile layers spread from 15% to 90%, desktop from 8% to 60%
+  // Mobile layers spread from 15% to 85%, desktop from 8% to 60%
   const mobileLayerStart = 0.15; // Start later so card is visible
   const desktopLayerStart = 0.08;
-  const mobileLayerStep = 0.075; // Each layer gets 7.5% of scroll (75% total / 10 layers)
+  const mobileLayerStep = 0.055; // Reduced from 0.075 so animations fit before sign
   const desktopLayerStep = 0.052; // Each layer gets 5.2% of scroll
   const layerStep = isMobile ? mobileLayerStep : desktopLayerStep;
   const layerStart = isMobile ? mobileLayerStart : desktopLayerStart;
@@ -49,15 +49,15 @@ const RoofBuildSection: React.FC = () => {
   const deckingEnd = layerStart + (layerStep * deckingMultiplier);
   
   // Drip edge - starts sooner on mobile but more deliberate scroll (3x), desktop (3x)
-  const dripEdgeMultiplier = 3;
+  const dripEdgeMultiplier = isMobile ? 2.5 : 3;
   const dripEdgeEnd = deckingEnd + (layerStep * dripEdgeMultiplier);
   
   // Ice & water shield gets 3x scroll distance for visible roll-out
-  const iceWaterMultiplier = 3;
+  const iceWaterMultiplier = isMobile ? 2.5 : 3;
   const iceWaterEnd = dripEdgeEnd + (layerStep * iceWaterMultiplier);
   
   // Underlayment gets 4x scroll distance for the alternating courses animation
-  const underlaymentMultiplier = 4;
+  const underlaymentMultiplier = isMobile ? 3.5 : 4;
   const underlaymentEnd = iceWaterEnd + (layerStep * underlaymentMultiplier);
   
   const layers = [
