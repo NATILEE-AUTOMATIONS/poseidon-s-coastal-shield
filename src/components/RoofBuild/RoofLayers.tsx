@@ -35,6 +35,17 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
   const translateY = -100 * (1 - easedProgress);
   const opacity = 0.2 + (0.8 * easedProgress);
   
+  // Label timing: fade in 20-40%, hold 40-70%, fade out 70-90%
+  const labelOpacity = layerProgress < 0.2 
+    ? 0 
+    : layerProgress < 0.4 
+      ? (layerProgress - 0.2) / 0.2 
+      : layerProgress < 0.7 
+        ? 1 
+        : layerProgress < 0.9 
+          ? 1 - (layerProgress - 0.7) / 0.2 
+          : 0;
+  
   // Roof geometry: peak at (200, 56), left at (42, 159), right at (358, 159)
   // Slope equation left: y = 159 - (159-56)/(200-42) * (x-42) = 159 - 0.652 * (x-42)
   const getLeftY = (x: number) => 159 - ((159 - 56) / (200 - 42)) * (x - 42);
@@ -149,6 +160,74 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
           filter: `drop-shadow(0 0 ${10 + easedProgress * 12}px hsl(168 75% 55% / 0.8))`,
         }}
       />
+      
+      {/* Stacked "Replace Decking" label - centered on roof */}
+      <g 
+        style={{ 
+          opacity: labelOpacity,
+          transition: 'opacity 0.15s ease-out',
+        }}
+      >
+        {/* Dark semi-transparent backdrop pill */}
+        <rect 
+          x="155" 
+          y="90" 
+          width="90" 
+          height="44" 
+          rx="6" 
+          fill="hsl(200 25% 8% / 0.85)"
+          style={{
+            filter: 'drop-shadow(0 2px 8px hsl(0 0% 0% / 0.4))',
+          }}
+        />
+        {/* Teal border glow */}
+        <rect 
+          x="155" 
+          y="90" 
+          width="90" 
+          height="44" 
+          rx="6" 
+          fill="none"
+          stroke="hsl(168 70% 45%)"
+          strokeWidth="1"
+          opacity="0.6"
+          style={{
+            filter: 'drop-shadow(0 0 6px hsl(168 70% 50% / 0.5))',
+          }}
+        />
+        {/* "Replace" text */}
+        <text
+          x="200"
+          y="109"
+          textAnchor="middle"
+          fill="hsl(45 90% 88%)"
+          fontSize="11"
+          fontWeight="600"
+          fontFamily="system-ui, -apple-system, sans-serif"
+          letterSpacing="1.5"
+          style={{
+            textShadow: '0 0 8px hsl(35 80% 60% / 0.6), 0 1px 2px hsl(0 0% 0% / 0.3)',
+          }}
+        >
+          REPLACE
+        </text>
+        {/* "Decking" text */}
+        <text
+          x="200"
+          y="126"
+          textAnchor="middle"
+          fill="hsl(168 70% 65%)"
+          fontSize="12"
+          fontWeight="700"
+          fontFamily="system-ui, -apple-system, sans-serif"
+          letterSpacing="2"
+          style={{
+            textShadow: '0 0 10px hsl(168 70% 50% / 0.7), 0 0 20px hsl(168 70% 50% / 0.4)',
+          }}
+        >
+          DECKING
+        </text>
+      </g>
     </g>
   );
 };
