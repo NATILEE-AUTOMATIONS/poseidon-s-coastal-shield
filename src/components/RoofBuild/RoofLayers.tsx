@@ -453,21 +453,21 @@ export const IceWaterShieldLayer: React.FC<LayerProps> = ({ progress, startProgr
         }}
       />
       
-      {/* Text label - mobile only */}
-      {isMobile && textOpacity > 0 && (
+      {/* Text label - desktop only */}
+      {!isMobile && textOpacity > 0 && (
         <g style={{ 
           opacity: textOpacity,
           filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))',
         }}>
           <text
             x="200"
-            y="113"
+            y="103"
             textAnchor="middle"
             fill="hsl(45 100% 95%)"
             fontSize="15"
             fontWeight="800"
             fontFamily="system-ui, -apple-system, sans-serif"
-            letterSpacing="3"
+            letterSpacing="2"
             stroke="hsl(0 0% 5%)"
             strokeWidth="2.5"
             paintOrder="stroke fill"
@@ -476,7 +476,7 @@ export const IceWaterShieldLayer: React.FC<LayerProps> = ({ progress, startProgr
           </text>
           <text
             x="200"
-            y="134"
+            y="124"
             textAnchor="middle"
             fill="hsl(200 80% 65%)"
             fontSize="15"
