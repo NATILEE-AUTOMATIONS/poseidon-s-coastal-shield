@@ -261,8 +261,8 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
         />
       </g>
       
-      {/* Wipe-reveal text label - desktop only, synced to bar position */}
-      {!isMobile && clipHeight > 0 && textOpacity > 0 && (
+      {/* Wipe-reveal text label - synced to bar position */}
+      {clipHeight > 0 && textOpacity > 0 && (
         <g style={{ 
           filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))',
           opacity: textOpacity,
