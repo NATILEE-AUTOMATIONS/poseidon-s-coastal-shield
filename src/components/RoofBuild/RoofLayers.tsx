@@ -933,9 +933,9 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
   const rightEaveX = 360;
   const eaveY = 160;
   
-  // Start just above starter strip
-  const starterStripTop = 150;
-  const roofHeight = starterStripTop - peakY;
+  // Start at eave level to cover the starter strip
+  const shingleBottom = eaveY;
+  const roofHeight = shingleBottom - peakY;
   
   // 7 courses of shingles (bottom to top)
   const courseCount = 7;
@@ -1035,7 +1035,7 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
           const settleProgress = easeOutElastic(courseProgress);
           
           // Course Y positions (bottom = higher Y value, index 0 = bottom course)
-          const bottomY = starterStripTop - (courseIdx * courseHeight);
+          const bottomY = shingleBottom - (courseIdx * courseHeight);
           const topY = bottomY - courseHeight;
           
           // Full width at this course level
