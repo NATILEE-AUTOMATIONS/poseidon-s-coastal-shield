@@ -78,6 +78,9 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
   // Convert step to rotation (each step = -90°)
   const carouselRotation = -carouselStep * degreesPerStep;
   
+  // Explicit hidden phase - before animation starts
+  const isHiddenPhase = progress < (layers[0]?.start ?? 0) || carouselStep < -0.5;
+  
   return (
     <div 
       className="w-full px-5 mt-8 relative h-44"
@@ -93,23 +96,27 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
         }}
       >
         {visibleMaterials.map((material, index) => {
-          // Hide ALL cards before spin-in begins (carouselStep at or near -1)
-          if (carouselStep <= -0.9) return null;
+          // PHASE 1: Before animation - hide ALL cards
+          if (isHiddenPhase) return null;
           
-          // During spin-in phase (carouselStep -0.9 to 0), only render card 0
-          if (carouselStep < 0 && index !== 0) return null;
+          // PHASE 2: During spin-in (carouselStep -0.5 to 0) - ONLY card 0 renders
+          if (carouselStep < 0) {
+            if (index !== 0) return null;
+            // Card 0 spinning in - only render when close enough to visible
+            if (carouselStep < -0.7) return null;
+          }
           
           // Each card is positioned 90° apart
           const cardBaseRotation = index * degreesPerStep;
           const finalRotation = carouselRotation + cardBaseRotation;
           
-          // Normalize rotation to -180 to 180 range
-          let normalizedRotation = finalRotation % 360;
+          // Normalize to -180 to 180 range with proper modulo
+          let normalizedRotation = ((finalRotation % 360) + 360) % 360;
           if (normalizedRotation > 180) normalizedRotation -= 360;
-          if (normalizedRotation < -180) normalizedRotation += 360;
           
-          // Only render cards that are somewhat facing forward (-100° to 100°)
-          const isVisible = Math.abs(normalizedRotation) < 100;
+          // Stricter visibility during early animation
+          const visibilityThreshold = carouselStep < 0.5 ? 60 : 100;
+          const isVisible = Math.abs(normalizedRotation) < visibilityThreshold;
           if (!isVisible) return null;
           
           // Calculate opacity based on rotation (full opacity at 0°, fade at edges)
