@@ -453,8 +453,8 @@ export const IceWaterShieldLayer: React.FC<LayerProps> = ({ progress, startProgr
         }}
       />
       
-      {/* Text label - positioned below the roof */}
-      {!isMobile && textOpacity > 0 && (
+      {/* Text label - mobile only */}
+      {isMobile && textOpacity > 0 && (
         <g style={{ 
           opacity: textOpacity,
           filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))',
