@@ -34,8 +34,7 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
   return (
     <div className="w-full px-5 mt-8">
       <div
-        key={material.id}
-        className="w-72 mx-auto px-6 py-5 rounded-2xl relative overflow-hidden animate-fade-in"
+        className="w-72 mx-auto px-6 py-5 rounded-2xl relative overflow-hidden"
         style={{
           background: `
             radial-gradient(ellipse at 20% 0%, hsl(168 50% 20% / 0.5), transparent 50%),
