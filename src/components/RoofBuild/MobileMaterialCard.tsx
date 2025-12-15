@@ -9,68 +9,59 @@ interface MobileMaterialCardProps {
 const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layers }) => {
   const visibleMaterials = materialInfo.slice(0, 4);
   
+  // Overlap amount - how much of the transition window shows both cards
+  const overlapAmount = 0.15;
+  
   return (
-    <div className="w-full px-5 mt-8 relative h-40">
+    <div className="w-full px-5 mt-8 relative h-40 overflow-hidden">
       {visibleMaterials.map((material, index) => {
         const layer = layers[index];
         const layerDuration = layer.end - layer.start;
         
-        let localProgress = 0;
-        let isVisible = false;
+        // Extended visibility window for overlap
+        const visibleStart = layer.start;
+        const visibleEnd = layer.end + (layerDuration * overlapAmount);
         
-        if (progress >= layer.start && progress < layer.end) {
-          localProgress = (progress - layer.start) / layerDuration;
-          isVisible = true;
-        }
+        // Check if card should be rendered at all
+        if (progress < visibleStart || progress > visibleEnd) return null;
         
-        if (!isVisible) return null;
-        
-        // Easing
-        const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
-        const easeInCubic = (x: number) => x * x * x;
+        // Calculate where we are in the layer's lifecycle
+        const layerProgress = (progress - layer.start) / layerDuration;
         
         // Animation phases
-        const enterEnd = 0.2;
-        const exitStart = 0.8;
+        const enterDuration = 0.25; // First 25% is entry
+        const exitStart = 1.0; // Exit starts at 100% (when next layer begins)
+        const exitEnd = 1.0 + overlapAmount; // Exit completes after overlap
         
-        // Default state
-        let rotateY = 0;
-        let scale = 1;
-        let translateZ = 0;
+        // Calculate translateX based on phase
+        let translateX = 0;
+        let zIndex = 10;
         
-        if (localProgress < enterEnd) {
-          // ENTER: 3D flip from behind
-          const t = localProgress / enterEnd;
-          const eased = easeOutCubic(t);
-          
-          rotateY = -180 * (1 - eased);
-          scale = 0.6 + (0.4 * eased);
-          translateZ = -200 * (1 - eased);
-        } else if (localProgress > exitStart) {
-          // EXIT: 3D flip forward and away
-          const t = (localProgress - exitStart) / (1 - exitStart);
-          const eased = easeInCubic(t);
-          
-          rotateY = 180 * eased;
-          scale = 1 - (0.4 * eased);
-          translateZ = -200 * eased;
+        if (layerProgress < enterDuration) {
+          // ENTERING: Slide in from right
+          const t = layerProgress / enterDuration;
+          const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
+          translateX = 100 * (1 - eased); // 100% -> 0%
+          zIndex = 20; // On top while entering
+        } else if (layerProgress >= exitStart) {
+          // EXITING: Slide out to left
+          const t = (layerProgress - exitStart) / overlapAmount;
+          const eased = t * t * t; // easeInCubic
+          translateX = -100 * eased; // 0% -> -100%
+          zIndex = 10; // Behind the new card
         }
+        // else: ACTIVE state, translateX stays at 0
         
         return (
           <div
             key={material.id}
             className="absolute inset-x-5 top-0 flex justify-center"
             style={{
-              perspective: '1000px',
+              transform: `translateX(${translateX}%)`,
+              zIndex,
+              transition: 'none', // Pure scroll-driven, no CSS transition
             }}
           >
-            <div
-              style={{
-                transform: `perspective(1000px) rotateY(${rotateY}deg) scale(${scale}) translateZ(${translateZ}px)`,
-                transformStyle: 'preserve-3d',
-                backfaceVisibility: 'hidden',
-              }}
-            >
             <div
               className="w-full max-w-xs px-6 py-5 rounded-2xl relative overflow-hidden"
               style={{
@@ -124,7 +115,6 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
               >
                 {material.description}
               </div>
-            </div>
             </div>
           </div>
         );
