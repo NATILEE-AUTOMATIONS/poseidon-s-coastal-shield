@@ -13,12 +13,12 @@ export const materialInfo = [
   { id: 'drip-eaves', name: 'Drip Edge (Eaves)', description: 'Install drip edge at the eaves' },
   { id: 'ice-water', name: 'Ice & Water Shield', description: 'Apply ice & water shield membrane' },
   { id: 'underlayment', name: 'Underlayment', description: 'Install underlayment over decking' },
-  { id: 'drip-rakes', name: 'Drip Edge (Rakes)', description: 'Install drip edge at rakes' },
   { id: 'starter', name: 'Starter Strip', description: 'Install starter strip shingles' },
+  { id: 'drip-rakes', name: 'Drip Edge (Rakes)', description: 'Install drip edge at rakes' },
   { id: 'shingles', name: 'Shingles', description: 'Install field shingles' },
   { id: 'vents', name: 'Pipe Boots & Vents', description: 'Install pipe boots & vents' },
   { id: 'flashing', name: 'Flashing', description: 'Install all flashing' },
-  { id: 'ridge', name: 'Ridge Vent & Cap', description: 'Install ridge vent and ridge cap' },
+  { id: 'cleanup', name: 'Clean Up', description: 'Final inspection and debris removal' },
 ];
 
 // Easing functions
