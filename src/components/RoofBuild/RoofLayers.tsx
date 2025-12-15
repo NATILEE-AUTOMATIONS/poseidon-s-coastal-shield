@@ -742,11 +742,11 @@ export const StarterStripLayer: React.FC<LayerProps> = ({ progress, startProgres
   
   const easedProgress = easeOutQuint(layerProgress);
   
-  // Roof geometry - match house walls exactly (walls at x=50 to x=350)
-  const eaveY = 157; // Just above wall top (y=160)
-  const leftX = 50;  // Exact left wall edge
-  const rightX = 350; // Exact right wall edge  
-  const stripHeight = 6;
+  // Roof geometry - fill entire roof eave (roof goes from x=40 to x=360)
+  const eaveY = 158; // Just above eave line (y=160)
+  const leftX = 40;  // Full roof left edge
+  const rightX = 360; // Full roof right edge  
+  const stripHeight = 8;
   const totalWidth = rightX - leftX;
   
   // Current width based on progress (left to right wipe)
