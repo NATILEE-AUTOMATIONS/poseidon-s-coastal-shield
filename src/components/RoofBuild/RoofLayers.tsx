@@ -168,19 +168,19 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
           transition: 'opacity 0.15s ease-out',
         }}
       >
-        {/* Dark semi-transparent backdrop pill */}
+        {/* Subtle glassmorphism backdrop */}
         <rect 
           x="155" 
           y="90" 
           width="90" 
           height="44" 
           rx="6" 
-          fill="hsl(200 25% 8% / 0.85)"
+          fill="hsl(168 40% 15% / 0.45)"
           style={{
-            filter: 'drop-shadow(0 2px 8px hsl(0 0% 0% / 0.4))',
+            filter: 'drop-shadow(0 0 12px hsl(168 60% 40% / 0.3))',
           }}
         />
-        {/* Teal border glow */}
+        {/* Soft teal border glow */}
         <rect 
           x="155" 
           y="90" 
@@ -188,11 +188,10 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
           height="44" 
           rx="6" 
           fill="none"
-          stroke="hsl(168 70% 45%)"
+          stroke="hsl(168 60% 50% / 0.4)"
           strokeWidth="1"
-          opacity="0.6"
           style={{
-            filter: 'drop-shadow(0 0 6px hsl(168 70% 50% / 0.5))',
+            filter: 'drop-shadow(0 0 8px hsl(168 70% 50% / 0.35))',
           }}
         />
         {/* "Replace" text */}
