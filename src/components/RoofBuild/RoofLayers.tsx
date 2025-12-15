@@ -574,14 +574,14 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
           <polygon points={`${peakX},${peakY} ${leftEaveX},${eaveY} ${rightEaveX},${eaveY}`} />
         </clipPath>
         {/* Logo pattern for repeating across underlayment */}
-        <pattern id="poseidonLogoPattern" x="0" y="0" width="60" height="40" patternUnits="userSpaceOnUse">
+        <pattern id="poseidonLogoPattern" x="0" y="0" width="80" height="50" patternUnits="userSpaceOnUse">
           <image 
             href="/poseidon-logo.png" 
-            x="10" 
+            x="5" 
             y="5" 
-            width="40" 
-            height="30" 
-            opacity="0.25"
+            width="70" 
+            height="40" 
+            opacity="0.85"
             preserveAspectRatio="xMidYMid meet"
           />
         </pattern>
