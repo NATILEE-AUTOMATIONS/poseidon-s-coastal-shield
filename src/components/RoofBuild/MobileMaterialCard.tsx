@@ -11,42 +11,47 @@ const easeInOutQuad = (t: number): number => {
   return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 };
 
-// Stepped progress with dwell time at each position
-const steppedProgress = (t: number, steps: number, dwellRatio: number = 0.3): number => {
-  // Clamp and handle edge cases
-  if (t <= 0) return 0;
-  if (t >= 1) return 1;
-  
-  const segmentSize = 1 / steps;
-  const currentStep = Math.min(Math.floor(t / segmentSize), steps - 1);
-  const segmentProgress = (t - currentStep * segmentSize) / segmentSize;
-  
-  // Within each segment: dwell for dwellRatio, then animate for (1 - dwellRatio)
-  if (segmentProgress < dwellRatio) {
-    // Dwell phase - stay at current step
-    return currentStep / steps;
-  } else {
-    // Animate phase - smoothly transition to next step
-    const animProgress = (segmentProgress - dwellRatio) / (1 - dwellRatio);
-    const easedAnimProgress = easeInOutQuad(animProgress);
-    return (currentStep + easedAnimProgress) / steps;
-  }
-};
-
 const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layers }) => {
   const visibleMaterials = materialInfo.slice(0, 4);
   const totalCards = visibleMaterials.length;
   const degreesPerStep = 90;
-  const carouselRadius = 160; // Distance from center in px
+  const carouselRadius = 160;
   
-  // Calculate overall progress through all layers (0 to 1)
-  const firstLayerStart = layers[0].start;
-  const lastLayerEnd = layers[totalCards - 1].end;
-  const overallProgress = Math.max(0, Math.min(1, (progress - firstLayerStart) / (lastLayerEnd - firstLayerStart)));
+  // Dwell ratio - how much of each layer's duration to "lock" the card in place
+  const dwellRatio = 0.4;
   
-  // Apply stepped progress with dwell time, then calculate rotation
-  const steppedValue = steppedProgress(overallProgress, totalCards - 1, 0.35);
-  const carouselRotation = -steppedValue * (totalCards - 1) * degreesPerStep;
+  // Calculate carousel position based on which layer is active
+  // This properly syncs with variable-duration layers
+  let carouselStep = 0;
+  
+  for (let i = 0; i < totalCards; i++) {
+    const layer = layers[i];
+    if (progress < layer.start) {
+      // Before this layer - stay at previous step
+      carouselStep = i;
+      break;
+    } else if (progress >= layer.start && progress < layer.end) {
+      // Within this layer - calculate sub-progress with dwell
+      const layerProgress = (progress - layer.start) / (layer.end - layer.start);
+      
+      if (layerProgress < dwellRatio) {
+        // Dwell phase - lock at this card
+        carouselStep = i;
+      } else {
+        // Transition phase - smoothly move to next card
+        const transitionProgress = (layerProgress - dwellRatio) / (1 - dwellRatio);
+        const easedTransition = easeInOutQuad(transitionProgress);
+        carouselStep = i + easedTransition;
+      }
+      break;
+    } else if (i === totalCards - 1) {
+      // Past all layers - stay at last card
+      carouselStep = totalCards - 1;
+    }
+  }
+  
+  // Convert step to rotation (each step = -90°)
+  const carouselRotation = -carouselStep * degreesPerStep;
   
   return (
     <div 
