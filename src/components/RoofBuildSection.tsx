@@ -65,12 +65,12 @@ const RoofBuildSection: React.FC = () => {
     { start: deckingEnd, end: dripEdgeEnd },                                       // 2. Drip Edge Eaves (3x duration)
     { start: dripEdgeEnd, end: iceWaterEnd },                                      // 3. Ice & Water (3x duration)
     { start: iceWaterEnd, end: underlaymentEnd },                                  // 4. Underlayment (4x duration)
-    { start: underlaymentEnd, end: underlaymentEnd + layerStep },                  // 5. Drip Edge Rakes
-    { start: underlaymentEnd + layerStep, end: underlaymentEnd + layerStep * 2 },  // 6. Starter Strip
-    { start: underlaymentEnd + layerStep * 2, end: underlaymentEnd + layerStep * 3 }, // 7. Shingles
-    { start: underlaymentEnd + layerStep * 3, end: underlaymentEnd + layerStep * 4 }, // 8. Vents
-    { start: underlaymentEnd + layerStep * 4, end: underlaymentEnd + layerStep * 5 }, // 9. Flashing
-    { start: underlaymentEnd + layerStep * 5, end: underlaymentEnd + layerStep * 6 }, // 10. Ridge Cap
+    { start: underlaymentEnd, end: underlaymentEnd + layerStep * 2 },                  // 5. Drip Edge Rakes (2x)
+    { start: underlaymentEnd + layerStep * 2, end: underlaymentEnd + layerStep * 5 },  // 6. Starter Strip (3x duration)
+    { start: underlaymentEnd + layerStep * 5, end: underlaymentEnd + layerStep * 6 }, // 7. Shingles
+    { start: underlaymentEnd + layerStep * 6, end: underlaymentEnd + layerStep * 7 }, // 8. Vents
+    { start: underlaymentEnd + layerStep * 7, end: underlaymentEnd + layerStep * 8 }, // 9. Flashing
+    { start: underlaymentEnd + layerStep * 8, end: underlaymentEnd + layerStep * 9 }, // 10. Ridge Cap
   ];
   
   // Calculate when all active layers end (underlayment is the last active one for now)
