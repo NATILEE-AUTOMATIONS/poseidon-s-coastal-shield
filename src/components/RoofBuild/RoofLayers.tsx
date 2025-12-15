@@ -497,7 +497,189 @@ export const IceWaterShieldLayer: React.FC<LayerProps> = ({ progress, startProgr
 
 // Placeholder exports - to be implemented one at a time
 export const DripEdgeRakesLayer: React.FC<LayerProps> = () => null;
-export const UnderlaymentLayer: React.FC<LayerProps> = () => null;
+// Underlayment - horizontal courses alternate left-right, right-left, building up the roof
+export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
+  const rawProgress = (progress - startProgress) / (endProgress - startProgress);
+  const layerProgress = Math.max(0, Math.min(1, rawProgress));
+  
+  if (progress < startProgress) return null;
+  
+  const easeOutQuart = (x: number): number => 1 - Math.pow(1 - x, 4);
+  
+  // Roof geometry
+  const peakX = 200;
+  const peakY = 56;
+  const leftEaveX = 42;
+  const rightEaveX = 358;
+  const eaveY = 159;
+  
+  // Course setup - 5 horizontal courses covering the roof from eave to peak
+  const courseCount = 5;
+  const totalRoofHeight = eaveY - peakY;
+  const courseHeight = totalRoofHeight / courseCount;
+  
+  // Get X bounds at a Y position following roof slope
+  const getLeftX = (y: number) => {
+    const slope = (leftEaveX - peakX) / (eaveY - peakY);
+    return peakX + slope * (y - peakY);
+  };
+  const getRightX = (y: number) => {
+    const slope = (rightEaveX - peakX) / (eaveY - peakY);
+    return peakX + slope * (y - peakY);
+  };
+  
+  // Each course gets a portion of the animation, staggered
+  const getCourseProgress = (courseIndex: number) => {
+    const courseDelay = courseIndex * 0.15;
+    const courseDuration = 0.25;
+    const courseStart = courseDelay;
+    const courseEnd = courseDelay + courseDuration;
+    return Math.max(0, Math.min(1, (layerProgress - courseStart) / (courseEnd - courseStart)));
+  };
+  
+  // Text timing
+  const textOpacity = layerProgress < 0.20 
+    ? 0 
+    : layerProgress < 0.40 
+      ? (layerProgress - 0.20) / 0.20 
+      : layerProgress < 0.70 
+        ? 1 
+        : layerProgress < 0.90 
+          ? 1 - (layerProgress - 0.70) / 0.20 
+          : 0;
+  
+  return (
+    <g className="underlayment-layer">
+      <defs>
+        {/* Gray felt underlayment gradient */}
+        <linearGradient id="underlaymentGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(220 10% 25%)" />
+          <stop offset="50%" stopColor="hsl(220 12% 32%)" />
+          <stop offset="100%" stopColor="hsl(220 10% 25%)" />
+        </linearGradient>
+        {/* Subtle texture sheen */}
+        <linearGradient id="underlaymentSheen" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="hsl(220 15% 45%)" stopOpacity="0" />
+          <stop offset="50%" stopColor="hsl(220 20% 50%)" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="hsl(220 15% 45%)" stopOpacity="0" />
+        </linearGradient>
+        {/* Clip to roof shape */}
+        <clipPath id="roofClipUnderlayment">
+          <polygon points={`${peakX},${peakY} ${leftEaveX},${eaveY} ${rightEaveX},${eaveY}`} />
+        </clipPath>
+      </defs>
+      
+      <g clipPath="url(#roofClipUnderlayment)">
+        {Array.from({ length: courseCount }).map((_, i) => {
+          const courseProgress = easeOutQuart(getCourseProgress(i));
+          if (courseProgress <= 0) return null;
+          
+          // Course position (bottom course is index 0, top is index 4)
+          const bottomY = eaveY - (i * courseHeight);
+          const topY = bottomY - courseHeight;
+          
+          // Get full width at this course level
+          const topLeftX = getLeftX(topY);
+          const topRightX = getRightX(topY);
+          const bottomLeftX = getLeftX(bottomY);
+          const bottomRightX = getRightX(bottomY);
+          
+          const topWidth = topRightX - topLeftX;
+          const bottomWidth = bottomRightX - bottomLeftX;
+          
+          // Alternate direction: even courses go left-to-right, odd go right-to-left
+          const goingRight = i % 2 === 0;
+          
+          let points: string;
+          if (goingRight) {
+            // Left to right - reveal from left edge
+            const currentTopRightX = topLeftX + topWidth * courseProgress;
+            const currentBottomRightX = bottomLeftX + bottomWidth * courseProgress;
+            points = `${topLeftX},${topY} ${currentTopRightX},${topY} ${currentBottomRightX},${bottomY} ${bottomLeftX},${bottomY}`;
+          } else {
+            // Right to left - reveal from right edge
+            const currentTopLeftX = topRightX - topWidth * courseProgress;
+            const currentBottomLeftX = bottomRightX - bottomWidth * courseProgress;
+            points = `${currentTopLeftX},${topY} ${topRightX},${topY} ${bottomRightX},${bottomY} ${currentBottomLeftX},${bottomY}`;
+          }
+          
+          // Leading edge position for glow
+          const leadingEdgeTopX = goingRight 
+            ? topLeftX + topWidth * courseProgress 
+            : topRightX - topWidth * courseProgress;
+          const leadingEdgeBottomX = goingRight 
+            ? bottomLeftX + bottomWidth * courseProgress 
+            : bottomRightX - bottomWidth * courseProgress;
+          
+          return (
+            <g key={`course-${i}`}>
+              {/* Main underlayment strip */}
+              <polygon
+                points={points}
+                fill="url(#underlaymentGrad)"
+                style={{ filter: 'drop-shadow(0 1px 2px hsl(220 15% 10% / 0.4))' }}
+              />
+              {/* Sheen overlay */}
+              <polygon
+                points={points}
+                fill="url(#underlaymentSheen)"
+              />
+              {/* Course divider line at top edge */}
+              {i > 0 && courseProgress >= 1 && (
+                <line
+                  x1={topLeftX}
+                  y1={topY}
+                  x2={topRightX}
+                  y2={topY}
+                  stroke="hsl(220 15% 20%)"
+                  strokeWidth="1"
+                  opacity="0.5"
+                />
+              )}
+              {/* Leading edge glow */}
+              <line
+                x1={leadingEdgeTopX}
+                y1={topY}
+                x2={leadingEdgeBottomX}
+                y2={bottomY}
+                stroke="hsl(220 30% 55%)"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                style={{
+                  filter: `drop-shadow(0 0 ${4 + courseProgress * 6}px hsl(220 30% 55% / 0.8))`,
+                }}
+              />
+            </g>
+          );
+        })}
+      </g>
+      
+      {/* Text label */}
+      {!isMobile && textOpacity > 0 && (
+        <g style={{ 
+          opacity: textOpacity,
+          filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))',
+        }}>
+          <text
+            x="200"
+            y="113"
+            textAnchor="middle"
+            fill="hsl(45 100% 95%)"
+            fontSize="15"
+            fontWeight="800"
+            fontFamily="system-ui, -apple-system, sans-serif"
+            letterSpacing="3"
+            stroke="hsl(0 0% 5%)"
+            strokeWidth="2.5"
+            paintOrder="stroke fill"
+          >
+            UNDERLAYMENT
+          </text>
+        </g>
+      )}
+    </g>
+  );
+};
 export const StarterStripLayer: React.FC<LayerProps> = () => null;
 export const FlashingLayer: React.FC<LayerProps> = () => null;
 export const ShinglesLayer: React.FC<LayerProps> = () => null;
