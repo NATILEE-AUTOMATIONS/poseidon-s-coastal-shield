@@ -598,27 +598,6 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
         </g>
       )}
       
-      {/* Logos rendered BEFORE courses so underlayment covers them */}
-      <g clipPath="url(#logoClip)">
-        {/* Top center - main prominent logo */}
-        <image href="/poseidon-logo.png" x="140" y="62" width="120" height="50" opacity="0.95" preserveAspectRatio="xMidYMid meet" />
-        
-        {/* Row 2 - two logos */}
-        <image href="/poseidon-logo.png" x="80" y="90" width="100" height="42" opacity="0.9" preserveAspectRatio="xMidYMid meet" />
-        <image href="/poseidon-logo.png" x="220" y="90" width="100" height="42" opacity="0.9" preserveAspectRatio="xMidYMid meet" />
-        
-        {/* Row 3 - three logos */}
-        <image href="/poseidon-logo.png" x="50" y="118" width="90" height="38" opacity="0.85" preserveAspectRatio="xMidYMid meet" />
-        <image href="/poseidon-logo.png" x="155" y="118" width="90" height="38" opacity="0.85" preserveAspectRatio="xMidYMid meet" />
-        <image href="/poseidon-logo.png" x="260" y="118" width="90" height="38" opacity="0.85" preserveAspectRatio="xMidYMid meet" />
-        
-        {/* Row 4 - four logos near bottom */}
-        <image href="/poseidon-logo.png" x="45" y="142" width="80" height="34" opacity="0.8" preserveAspectRatio="xMidYMid meet" />
-        <image href="/poseidon-logo.png" x="130" y="142" width="80" height="34" opacity="0.8" preserveAspectRatio="xMidYMid meet" />
-        <image href="/poseidon-logo.png" x="215" y="142" width="80" height="34" opacity="0.8" preserveAspectRatio="xMidYMid meet" />
-        <image href="/poseidon-logo.png" x="300" y="142" width="80" height="34" opacity="0.8" preserveAspectRatio="xMidYMid meet" />
-      </g>
-      
       <g clipPath="url(#roofClipUnderlayment)">
         {Array.from({ length: courseCount }).map((_, i) => {
           const courseProgress = easeOutQuart(getCourseProgress(i));
@@ -695,6 +674,27 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
             </g>
           );
         })}
+      </g>
+      
+      {/* Logos ON TOP of underlayment - clipped to where underlayment has been laid */}
+      <g clipPath="url(#roofClipUnderlayment)" style={{ opacity: layerProgress > 0 ? 1 : 0 }}>
+        {/* Top center - main prominent logo */}
+        <image href="/poseidon-logo.png" x="140" y="62" width="120" height="50" opacity="0.95" preserveAspectRatio="xMidYMid meet" />
+        
+        {/* Row 2 - two logos */}
+        <image href="/poseidon-logo.png" x="80" y="90" width="100" height="42" opacity="0.9" preserveAspectRatio="xMidYMid meet" />
+        <image href="/poseidon-logo.png" x="220" y="90" width="100" height="42" opacity="0.9" preserveAspectRatio="xMidYMid meet" />
+        
+        {/* Row 3 - three logos */}
+        <image href="/poseidon-logo.png" x="50" y="118" width="90" height="38" opacity="0.85" preserveAspectRatio="xMidYMid meet" />
+        <image href="/poseidon-logo.png" x="155" y="118" width="90" height="38" opacity="0.85" preserveAspectRatio="xMidYMid meet" />
+        <image href="/poseidon-logo.png" x="260" y="118" width="90" height="38" opacity="0.85" preserveAspectRatio="xMidYMid meet" />
+        
+        {/* Row 4 - four logos near bottom */}
+        <image href="/poseidon-logo.png" x="45" y="142" width="80" height="34" opacity="0.8" preserveAspectRatio="xMidYMid meet" />
+        <image href="/poseidon-logo.png" x="130" y="142" width="80" height="34" opacity="0.8" preserveAspectRatio="xMidYMid meet" />
+        <image href="/poseidon-logo.png" x="215" y="142" width="80" height="34" opacity="0.8" preserveAspectRatio="xMidYMid meet" />
+        <image href="/poseidon-logo.png" x="300" y="142" width="80" height="34" opacity="0.8" preserveAspectRatio="xMidYMid meet" />
       </g>
     </g>
   );
