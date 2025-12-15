@@ -13,7 +13,7 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
   const overlapAmount = 0.2;
   
   return (
-    <div className="w-full px-5 mt-8 relative h-40 overflow-hidden">
+    <div className="w-full px-5 mt-8 relative h-40 overflow-hidden" style={{ perspective: '1000px' }}>
       {visibleMaterials.map((material, index) => {
         const layer = layers[index];
         const layerDuration = layer.end - layer.start;
@@ -30,21 +30,24 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
         const enterEnd = overlapAmount; // Entry: 0 to 0.2
         const exitStart = 1.0; // Exit: 1.0 to 1.2 (only in extended window)
         
-        let translateX = 0;
+        let rotateY = 0;
+        let opacity = 1;
         let zIndex = 15;
         
         if (layerProgress < enterEnd) {
-          // ENTERING: Slide in from right (0% to 20%)
+          // ENTERING: Rotate in from right (90deg -> 0deg)
           const t = layerProgress / enterEnd;
           const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
-          translateX = 100 * (1 - eased); // 100% -> 0%
-          zIndex = 20; // On top while entering
+          rotateY = 90 * (1 - eased); // 90deg -> 0deg
+          opacity = eased;
+          zIndex = 20;
         } else if (layerProgress >= exitStart) {
-          // EXITING: Slide out to left (100% to 120%)
+          // EXITING: Rotate out to left (0deg -> -90deg)
           const t = (layerProgress - exitStart) / overlapAmount;
           const eased = t * t * t; // easeInCubic
-          translateX = -100 * eased; // 0% -> -100%
-          zIndex = 10; // Behind entering card
+          rotateY = -90 * eased; // 0deg -> -90deg
+          opacity = 1 - eased;
+          zIndex = 10;
         }
         
         return (
@@ -52,8 +55,10 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
             key={material.id}
             className="absolute inset-x-5 top-0 flex justify-center"
             style={{
-              transform: `translateX(${translateX}%)`,
+              transform: `rotateY(${rotateY}deg)`,
+              opacity,
               zIndex,
+              transformStyle: 'preserve-3d',
             }}
           >
             <div
