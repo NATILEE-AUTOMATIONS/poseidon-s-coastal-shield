@@ -9,46 +9,35 @@ interface MobileMaterialCardProps {
 const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layers }) => {
   const visibleMaterials = materialInfo.slice(0, 4);
   
-  // Overlap amount - how much of the transition window shows both cards
-  const overlapAmount = 0.15;
-  
   return (
     <div className="w-full px-5 mt-8 relative h-40 overflow-hidden">
       {visibleMaterials.map((material, index) => {
         const layer = layers[index];
         const layerDuration = layer.end - layer.start;
         
-        // Extended visibility window for overlap
-        const visibleStart = layer.start;
-        const visibleEnd = layer.end + (layerDuration * overlapAmount);
+        // Only visible during this layer's window
+        if (progress < layer.start || progress >= layer.end) return null;
         
-        // Check if card should be rendered at all
-        if (progress < visibleStart || progress > visibleEnd) return null;
-        
-        // Calculate where we are in the layer's lifecycle
+        // Calculate where we are in the layer's lifecycle (0 to 1)
         const layerProgress = (progress - layer.start) / layerDuration;
         
-        // Animation phases
-        const enterDuration = 0.25; // First 25% is entry
-        const exitStart = 1.0; // Exit starts at 100% (when next layer begins)
-        const exitEnd = 1.0 + overlapAmount; // Exit completes after overlap
+        // Animation phases - entry and exit happen within the layer's own window
+        const enterEnd = 0.2; // First 20% is entry
+        const exitStart = 0.8; // Last 20% is exit
         
         // Calculate translateX based on phase
         let translateX = 0;
-        let zIndex = 10;
         
-        if (layerProgress < enterDuration) {
+        if (layerProgress < enterEnd) {
           // ENTERING: Slide in from right
-          const t = layerProgress / enterDuration;
+          const t = layerProgress / enterEnd;
           const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
           translateX = 100 * (1 - eased); // 100% -> 0%
-          zIndex = 20; // On top while entering
-        } else if (layerProgress >= exitStart) {
+        } else if (layerProgress > exitStart) {
           // EXITING: Slide out to left
-          const t = (layerProgress - exitStart) / overlapAmount;
+          const t = (layerProgress - exitStart) / (1 - exitStart);
           const eased = t * t * t; // easeInCubic
           translateX = -100 * eased; // 0% -> -100%
-          zIndex = 10; // Behind the new card
         }
         // else: ACTIVE state, translateX stays at 0
         
@@ -58,8 +47,6 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
             className="absolute inset-x-5 top-0 flex justify-center"
             style={{
               transform: `translateX(${translateX}%)`,
-              zIndex,
-              transition: 'none', // Pure scroll-driven, no CSS transition
             }}
           >
             <div
