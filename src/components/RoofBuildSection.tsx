@@ -12,6 +12,7 @@ import {
   VentsLayer,
   FlashingLayer,
   RidgeCapLayer,
+  CleanUpLayer,
   materialInfo,
 } from './RoofBuild/RoofLayers';
 
@@ -63,7 +64,7 @@ const RoofBuildSection: React.FC = () => {
   const starterStripMultiplier = isMobile ? 1.5 : 2;
   const starterStripEnd = underlaymentEnd + (layerStep * starterStripMultiplier);
   
-  // 9 layers total (removed Drip Edge Rakes)
+  // 10 layers total
   const layers = [
     { start: layerStart, end: deckingEnd },                    // 1. Decking
     { start: deckingEnd, end: dripEdgeEnd },                   // 2. Drip Edge
@@ -73,11 +74,12 @@ const RoofBuildSection: React.FC = () => {
     { start: starterStripEnd, end: starterStripEnd + layerStep }, // 6. Shingles
     { start: starterStripEnd + layerStep, end: starterStripEnd + layerStep * 2 }, // 7. Vents
     { start: starterStripEnd + layerStep * 2, end: starterStripEnd + layerStep * 3 }, // 8. Flashing
-    { start: starterStripEnd + layerStep * 3, end: starterStripEnd + layerStep * 4 }, // 9. Complete Clean Up
+    { start: starterStripEnd + layerStep * 3, end: starterStripEnd + layerStep * 4 }, // 9. Ridge Vent & Cap
+    { start: starterStripEnd + layerStep * 4, end: starterStripEnd + layerStep * 5 }, // 10. Complete Clean Up
   ];
   
   // Calculate when all active layers end
-  const roofLayersEnd = starterStripEnd + layerStep * 4 + 0.05;
+  const roofLayersEnd = starterStripEnd + layerStep * 5 + 0.05;
 
   // Show hint during buffer period (before animation starts)
   const showScrollHint = progress < layerStart;
@@ -240,7 +242,7 @@ const RoofBuildSection: React.FC = () => {
                   {/* House base with animated door */}
                   <HouseSVG doorAngle={doorAngle} lightBoost={zoomProgress} />
                   
-                  {/* Animated roof layers - 9 layers in correct installation order */}
+                  {/* Animated roof layers - 10 layers in correct installation order */}
                   {/* 1. Replace Decking */}
                   <DeckingLayer progress={progress} startProgress={layers[0].start} endProgress={layers[0].end} isMobile={isMobile} />
                   
@@ -256,8 +258,10 @@ const RoofBuildSection: React.FC = () => {
                   <VentsLayer progress={progress} startProgress={layers[6].start} endProgress={layers[6].end} />
                   {/* 8. Flashing */}
                   <FlashingLayer progress={progress} startProgress={layers[7].start} endProgress={layers[7].end} />
-                  {/* 9. Complete Clean Up */}
+                  {/* 9. Ridge Vent & Cap */}
                   <RidgeCapLayer progress={progress} startProgress={layers[8].start} endProgress={layers[8].end} />
+                  {/* 10. Complete Clean Up */}
+                  <CleanUpLayer progress={progress} startProgress={layers[9].start} endProgress={layers[9].end} />
                   
                   {/* 2. Drip Edge rendered after all layers to be on top */}
                   <DripEdgeEavesLayer progress={progress} startProgress={layers[1].start} endProgress={layers[1].end} isMobile={isMobile} />
@@ -331,7 +335,7 @@ const RoofBuildSection: React.FC = () => {
               className="absolute right-0 lg:right-4 top-1/2 -translate-y-1/2 pl-4 hidden lg:block w-56"
             >
               <div className="space-y-5">
-                {materialInfo.slice(5, 9).map((material, index) => {
+                {materialInfo.slice(5, 10).map((material, index) => {
                   // Right side shows 6-9 (indices 5-8)
                   const actualIndex = index + 5;
                   const exitProgress = getLabelExitProgress(index);
