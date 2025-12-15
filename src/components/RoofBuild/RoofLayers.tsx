@@ -10,7 +10,7 @@ interface LayerProps {
 // Material info for step cards
 export const materialInfo = [
   { id: 'decking', name: 'Replace Decking', description: 'Replace any damaged plywood or decking' },
-  { id: 'drip-eaves', name: 'Drip Edge (Eaves)', description: 'Install drip edge at the eaves' },
+  { id: 'drip-eaves', name: 'Drip Edge', description: 'Install drip edge at the eaves' },
   { id: 'ice-water', name: 'Ice & Water Shield', description: 'Apply ice & water shield membrane' },
   { id: 'underlayment', name: 'Underlayment', description: 'Install underlayment over decking' },
   { id: 'starter', name: 'Starter Strip', description: 'Install starter strip shingles' },
