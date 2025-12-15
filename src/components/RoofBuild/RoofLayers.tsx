@@ -187,7 +187,7 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
         >
           REPLACE
         </text>
-        {/* "Decking" text with warm orange glow */}
+        {/* "Decking" text with dark glow */}
         <text
           x="200"
           y="124"
@@ -201,7 +201,7 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
           strokeWidth="2.5"
           paintOrder="stroke fill"
           style={{
-            filter: 'drop-shadow(0 0 8px hsl(30 95% 60%)) drop-shadow(0 0 16px hsl(25 90% 55% / 0.8))',
+            filter: 'drop-shadow(0 0 6px hsl(0 0% 0%)) drop-shadow(0 0 12px hsl(0 0% 0% / 0.8))',
           }}
         >
           DECKING
