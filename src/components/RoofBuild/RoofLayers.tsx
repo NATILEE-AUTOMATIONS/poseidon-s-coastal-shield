@@ -10,15 +10,15 @@ interface LayerProps {
 // Material info for step cards
 export const materialInfo = [
   { id: 'decking', name: 'Replace Decking', description: 'Replace any damaged plywood or decking' },
-  { id: 'drip-eaves', name: 'Drip Edge', description: 'Install drip edge at the eaves' },
+  { id: 'drip-eaves', name: 'Drip Edge (Eaves)', description: 'Install drip edge at the eaves' },
   { id: 'ice-water', name: 'Ice & Water Shield', description: 'Apply ice & water shield membrane' },
   { id: 'underlayment', name: 'Underlayment', description: 'Install underlayment over decking' },
-  { id: 'starter', name: 'Starter Strip', description: 'Install starter strip shingles' },
   { id: 'drip-rakes', name: 'Drip Edge (Rakes)', description: 'Install drip edge at rakes' },
+  { id: 'starter', name: 'Starter Strip', description: 'Install starter strip shingles' },
   { id: 'shingles', name: 'Shingles', description: 'Install field shingles' },
   { id: 'vents', name: 'Pipe Boots & Vents', description: 'Install pipe boots & vents' },
   { id: 'flashing', name: 'Flashing', description: 'Install all flashing' },
-  { id: 'cleanup', name: 'Clean Up', description: 'Final inspection and debris removal' },
+  { id: 'ridge', name: 'Ridge Vent & Cap', description: 'Install ridge vent and ridge cap' },
 ];
 
 // Easing functions
