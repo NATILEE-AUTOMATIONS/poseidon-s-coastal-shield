@@ -575,6 +575,32 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
         </clipPath>
       </defs>
       
+      {/* Text label - rendered first so underlayment covers it */}
+      {!isMobile && textOpacity > 0 && (
+        <g style={{ 
+          opacity: textOpacity,
+          transform: `scale(${textScale})`,
+          transformOrigin: '200px 113px',
+        }}>
+          <text
+            x="200"
+            y="113"
+            textAnchor="middle"
+            fill="hsl(45 100% 95%)"
+            fontSize="13"
+            fontWeight="800"
+            fontFamily="system-ui, -apple-system, sans-serif"
+            letterSpacing="2"
+            stroke="hsl(0 0% 5%)"
+            strokeWidth="2.5"
+            paintOrder="stroke fill"
+            style={{ filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))' }}
+          >
+            UNDERLAYMENT
+          </text>
+        </g>
+      )}
+      
       <g clipPath="url(#roofClipUnderlayment)">
         {Array.from({ length: courseCount }).map((_, i) => {
           const courseProgress = easeOutQuart(getCourseProgress(i));
@@ -659,43 +685,6 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
           );
         })}
       </g>
-      
-      {/* Text label - scale-in animation, clipped by course 2 rolling over */}
-      {!isMobile && textOpacity > 0 && textClipLeftX < textRightX && (
-        <g style={{ 
-          filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))',
-        }}>
-          <defs>
-            <clipPath id="underlaymentTextClip">
-              <rect x={textClipLeftX} y="80" width={textRightX - textClipLeftX} height="50" />
-            </clipPath>
-          </defs>
-          <g 
-            clipPath="url(#underlaymentTextClip)"
-            style={{ 
-              opacity: textOpacity,
-              transform: `scale(${textScale})`,
-              transformOrigin: '200px 113px',
-            }}
-          >
-            <text
-              x="200"
-              y="113"
-              textAnchor="middle"
-              fill="hsl(45 100% 95%)"
-              fontSize="13"
-              fontWeight="800"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              letterSpacing="2"
-              stroke="hsl(0 0% 5%)"
-              strokeWidth="2.5"
-              paintOrder="stroke fill"
-            >
-              UNDERLAYMENT
-            </text>
-          </g>
-        </g>
-      )}
     </g>
   );
 };
