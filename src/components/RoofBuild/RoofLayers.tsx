@@ -316,8 +316,146 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
   );
 };
 
-// Ice & Water Shield - placeholder
-export const IceWaterShieldLayer: React.FC<LayerProps> = () => null;
+// Ice & Water Shield - membrane unrolls from peak to eaves
+export const IceWaterShieldLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
+  const rawProgress = (progress - startProgress) / (endProgress - startProgress);
+  const layerProgress = Math.max(0, Math.min(1, rawProgress));
+  
+  if (progress < startProgress) return null;
+  
+  const easeOutQuint = (x: number): number => 1 - Math.pow(1 - x, 5);
+  const easedProgress = easeOutQuint(layerProgress);
+  
+  // Roof geometry
+  const peakX = 200;
+  const peakY = 56;
+  const leftEaveX = 42;
+  const rightEaveX = 358;
+  const eaveY = 159;
+  
+  // Calculate how far down the membrane has unrolled (0 = peak, 1 = eave)
+  const unrollAmount = easedProgress;
+  
+  // Current Y position of the leading edge
+  const currentY = peakY + (eaveY - peakY) * unrollAmount;
+  
+  // Calculate X positions at the current Y level (following roof slope)
+  const leftSlope = (leftEaveX - peakX) / (eaveY - peakY);
+  const rightSlope = (rightEaveX - peakX) / (eaveY - peakY);
+  const currentLeftX = peakX + leftSlope * (currentY - peakY);
+  const currentRightX = peakX + rightSlope * (currentY - peakY);
+  
+  // Text timing: fade in 25-45%, hold 45-65%, fade out 65-85%
+  const textOpacity = layerProgress < 0.25 
+    ? 0 
+    : layerProgress < 0.45 
+      ? (layerProgress - 0.25) / 0.20 
+      : layerProgress < 0.65 
+        ? 1 
+        : layerProgress < 0.85 
+          ? 1 - (layerProgress - 0.65) / 0.20 
+          : 0;
+  
+  // Text wipe synced to unroll - text area from y=90 to y=130
+  const textTop = 90;
+  const textBottom = 130;
+  const textClipHeight = Math.max(0, Math.min(textBottom - textTop, currentY - textTop));
+  
+  return (
+    <g className="ice-water-shield-layer">
+      <defs>
+        {/* Dark membrane gradient - matches the dark theme */}
+        <linearGradient id="iceMembraneGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+          <stop offset="0%" stopColor="hsl(200 30% 8%)" />
+          <stop offset="40%" stopColor="hsl(200 35% 12%)" />
+          <stop offset="100%" stopColor="hsl(200 30% 8%)" />
+        </linearGradient>
+        {/* Subtle surface sheen */}
+        <linearGradient id="iceMembraneSheen" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="hsl(200 50% 40%)" stopOpacity="0" />
+          <stop offset="30%" stopColor="hsl(200 60% 50%)" stopOpacity="0.15" />
+          <stop offset="50%" stopColor="hsl(200 70% 55%)" stopOpacity="0.2" />
+          <stop offset="70%" stopColor="hsl(200 60% 50%)" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="hsl(200 50% 40%)" stopOpacity="0" />
+        </linearGradient>
+        {/* Wipe clip for text */}
+        <clipPath id="iceTextWipe">
+          <rect x="100" y={textTop} width="200" height={textClipHeight} />
+        </clipPath>
+      </defs>
+      
+      {/* Main membrane - dark polygon covering revealed area */}
+      <polygon
+        points={`${peakX},${peakY} ${currentLeftX},${currentY} ${currentRightX},${currentY}`}
+        fill="url(#iceMembraneGrad)"
+        style={{
+          filter: 'drop-shadow(0 2px 6px hsl(200 40% 5% / 0.6))',
+        }}
+      />
+      
+      {/* Sheen overlay */}
+      <polygon
+        points={`${peakX},${peakY} ${currentLeftX},${currentY} ${currentRightX},${currentY}`}
+        fill="url(#iceMembraneSheen)"
+      />
+      
+      {/* Leading edge glow line - the "unrolling" edge */}
+      <line
+        x1={currentLeftX}
+        y1={currentY}
+        x2={currentRightX}
+        y2={currentY}
+        stroke="hsl(200 80% 60%)"
+        strokeWidth="3"
+        strokeLinecap="round"
+        style={{
+          filter: `drop-shadow(0 0 ${6 + easedProgress * 10}px hsl(200 80% 60% / 0.9)) drop-shadow(0 0 ${3 + easedProgress * 5}px hsl(200 90% 70% / 0.6))`,
+        }}
+      />
+      
+      {/* Text label with wipe reveal - desktop only */}
+      {!isMobile && textClipHeight > 0 && (
+        <g style={{ 
+          filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))',
+          opacity: textOpacity,
+        }}>
+          <g clipPath="url(#iceTextWipe)">
+            <text
+              x="200"
+              y="105"
+              textAnchor="middle"
+              fill="hsl(45 100% 95%)"
+              fontSize="15"
+              fontWeight="800"
+              fontFamily="system-ui, -apple-system, sans-serif"
+              letterSpacing="3"
+              stroke="hsl(0 0% 5%)"
+              strokeWidth="2.5"
+              paintOrder="stroke fill"
+            >
+              ICE & WATER
+            </text>
+            <text
+              x="200"
+              y="126"
+              textAnchor="middle"
+              fill="hsl(200 80% 65%)"
+              fontSize="15"
+              fontWeight="800"
+              fontFamily="system-ui, -apple-system, sans-serif"
+              letterSpacing="2"
+              stroke="hsl(0 0% 5%)"
+              strokeWidth="2.5"
+              paintOrder="stroke fill"
+            >
+              SHIELD
+            </text>
+          </g>
+        </g>
+      )}
+    </g>
+  );
+};
 
 // Placeholder exports - to be implemented one at a time
 export const DripEdgeRakesLayer: React.FC<LayerProps> = () => null;
