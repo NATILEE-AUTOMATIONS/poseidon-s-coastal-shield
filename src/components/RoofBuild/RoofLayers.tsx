@@ -566,6 +566,18 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
         <clipPath id="roofClipUnderlayment">
           <polygon points={`${peakX},${peakY} ${leftEaveX},${eaveY} ${rightEaveX},${eaveY}`} />
         </clipPath>
+        {/* Poseidon logo pattern - like branded underlayment */}
+        <pattern id="poseidonLogoPattern" x="0" y="0" width="70" height="30" patternUnits="userSpaceOnUse">
+          <image 
+            href="/poseidon-logo.png" 
+            x="5" 
+            y="3" 
+            width="60" 
+            height="24" 
+            opacity="0.9"
+            preserveAspectRatio="xMidYMid meet"
+          />
+        </pattern>
       </defs>
       
       {/* Text label - rendered first so underlayment covers it */}
@@ -642,6 +654,11 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
               <polygon
                 points={points}
                 fill="url(#underlaymentGrad)"
+              />
+              {/* Poseidon logo pattern overlay */}
+              <polygon
+                points={points}
+                fill="url(#poseidonLogoPattern)"
               />
               {/* Course divider line at top edge */}
               {i > 0 && courseProgress >= 1 && (
