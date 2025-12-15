@@ -742,12 +742,19 @@ export const StarterStripLayer: React.FC<LayerProps> = ({ progress, startProgres
   
   const easedProgress = easeOutQuint(layerProgress);
   
-  // Roof geometry - fill entire roof eave (roof goes from x=40 to x=360)
-  const eaveY = 158; // Just above eave line (y=160)
-  const leftX = 40;  // Full roof left edge
-  const rightX = 360; // Full roof right edge  
-  const stripHeight = 8;
-  const totalWidth = rightX - leftX;
+  // Roof geometry - angled ends to match roof slope
+  // Roof: left (40,160) -> peak (200,55) -> right (360,160)
+  // Slope: rise/run = 105/160 = 0.656, so for 10px up, x moves ~15px inward
+  const eaveY = 160;
+  const stripHeight = 10;
+  const topY = eaveY - stripHeight;
+  
+  // Calculate angled points (top edge follows roof slope)
+  const leftBottomX = 40;
+  const rightBottomX = 360;
+  const leftTopX = 40 + (stripHeight / 0.656); // ~55
+  const rightTopX = 360 - (stripHeight / 0.656); // ~345
+  const totalWidth = rightBottomX - leftBottomX;
   
   // Current width based on progress (left to right wipe)
   const currentWidth = totalWidth * easedProgress;
@@ -781,8 +788,8 @@ export const StarterStripLayer: React.FC<LayerProps> = ({ progress, startProgres
         {/* Clip for left-to-right wipe effect */}
         <clipPath id="starterStripClip">
           <rect 
-            x={leftX} 
-            y={eaveY - stripHeight - 2} 
+            x={leftBottomX} 
+            y={topY - 2} 
             width={currentWidth} 
             height={stripHeight + 6}
           />
@@ -791,39 +798,39 @@ export const StarterStripLayer: React.FC<LayerProps> = ({ progress, startProgres
       
       {/* Main strip body - clipped for wipe effect */}
       <g clipPath="url(#starterStripClip)">
-        {/* The actual starter strip rectangle */}
-        <rect
-          x={leftX}
-          y={eaveY - stripHeight}
-          width={totalWidth}
-          height={stripHeight}
+        {/* The actual starter strip - trapezoid shape with angled ends */}
+        <polygon
+          points={`${leftBottomX},${eaveY} ${rightBottomX},${eaveY} ${rightTopX},${topY} ${leftTopX},${topY}`}
           fill="url(#starterStripGrad)"
-          rx="0.5"
           style={{
             filter: 'drop-shadow(0 2px 4px hsl(220 20% 10% / 0.5))',
           }}
         />
         
         {/* Shingle tab divider lines */}
-        {[0.12, 0.25, 0.37, 0.5, 0.62, 0.75, 0.87].map((pos, i) => (
-          <line
-            key={i}
-            x1={leftX + totalWidth * pos}
-            y1={eaveY - stripHeight + 1}
-            x2={leftX + totalWidth * pos}
-            y2={eaveY - 1}
-            stroke="hsl(220 10% 14%)"
-            strokeWidth="1.2"
-            opacity="0.7"
-          />
-        ))}
+        {[0.15, 0.30, 0.45, 0.55, 0.70, 0.85].map((pos, i) => {
+          const bottomX = leftBottomX + totalWidth * pos;
+          const topX = leftTopX + (rightTopX - leftTopX) * pos;
+          return (
+            <line
+              key={i}
+              x1={bottomX}
+              y1={eaveY - 1}
+              x2={topX}
+              y2={topY + 1}
+              stroke="hsl(220 10% 14%)"
+              strokeWidth="1.2"
+              opacity="0.6"
+            />
+          );
+        })}
         
-        {/* Top edge teal accent glow */}
+        {/* Top edge teal accent glow - angled to match roof */}
         <line
-          x1={leftX}
-          y1={eaveY - stripHeight}
-          x2={rightX}
-          y2={eaveY - stripHeight}
+          x1={leftTopX}
+          y1={topY}
+          x2={rightTopX}
+          y2={topY}
           stroke="hsl(168 70% 50%)"
           strokeWidth="2"
           opacity="0.8"
@@ -836,9 +843,9 @@ export const StarterStripLayer: React.FC<LayerProps> = ({ progress, startProgres
       {/* Leading edge glow - orange/gold accent that moves with wipe */}
       {easedProgress > 0.01 && easedProgress < 0.99 && (
         <line
-          x1={leftX + currentWidth}
-          y1={eaveY - stripHeight - 3}
-          x2={leftX + currentWidth}
+          x1={leftBottomX + currentWidth}
+          y1={topY - 3}
+          x2={leftBottomX + currentWidth}
           y2={eaveY + 3}
           stroke="hsl(30 95% 55%)"
           strokeWidth="4"
