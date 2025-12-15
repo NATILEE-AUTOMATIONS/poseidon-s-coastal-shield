@@ -11,6 +11,24 @@ const easeInOutQuad = (t: number): number => {
   return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 };
 
+// Stepped progress with dwell time at each position
+const steppedProgress = (t: number, steps: number, dwellRatio: number = 0.3): number => {
+  const segmentSize = 1 / steps;
+  const currentStep = Math.floor(t / segmentSize);
+  const segmentProgress = (t % segmentSize) / segmentSize;
+  
+  // Within each segment: dwell for dwellRatio, then animate for (1 - dwellRatio)
+  if (segmentProgress < dwellRatio) {
+    // Dwell phase - stay at current step
+    return currentStep / steps;
+  } else {
+    // Animate phase - smoothly transition to next step
+    const animProgress = (segmentProgress - dwellRatio) / (1 - dwellRatio);
+    const easedAnimProgress = easeInOutQuad(animProgress);
+    return (currentStep + easedAnimProgress) / steps;
+  }
+};
+
 const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layers }) => {
   const visibleMaterials = materialInfo.slice(0, 4);
   const totalCards = visibleMaterials.length;
@@ -22,9 +40,9 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
   const lastLayerEnd = layers[totalCards - 1].end;
   const overallProgress = Math.max(0, Math.min(1, (progress - firstLayerStart) / (lastLayerEnd - firstLayerStart)));
   
-  // Apply easing and calculate carousel rotation (0° to -270° for 4 cards)
-  const easedProgress = easeInOutQuad(overallProgress);
-  const carouselRotation = -easedProgress * (totalCards - 1) * degreesPerStep;
+  // Apply stepped progress with dwell time, then calculate rotation
+  const steppedValue = steppedProgress(overallProgress, totalCards - 1, 0.35);
+  const carouselRotation = -steppedValue * (totalCards - 1) * degreesPerStep;
   
   return (
     <div 
