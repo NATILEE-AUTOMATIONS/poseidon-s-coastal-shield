@@ -55,30 +55,39 @@ const RoofBuildSection: React.FC = () => {
   const iceWaterMultiplier = 3;
   const iceWaterEnd = dripEdgeEnd + (layerStep * iceWaterMultiplier);
   
+  // Underlayment gets 4x scroll distance for the alternating courses animation
+  const underlaymentMultiplier = 4;
+  const underlaymentEnd = iceWaterEnd + (layerStep * underlaymentMultiplier);
+  
   const layers = [
     { start: layerStart, end: deckingEnd },                                        // 1. Decking (6x duration)
     { start: deckingEnd, end: dripEdgeEnd },                                       // 2. Drip Edge Eaves (3x duration)
     { start: dripEdgeEnd, end: iceWaterEnd },                                      // 3. Ice & Water (3x duration)
-    { start: iceWaterEnd, end: iceWaterEnd + layerStep },                          // 4. Underlayment
-    { start: iceWaterEnd + layerStep, end: iceWaterEnd + layerStep * 2 },          // 5. Drip Edge Rakes
-    { start: iceWaterEnd + layerStep * 2, end: iceWaterEnd + layerStep * 3 },      // 6. Starter Strip
-    { start: iceWaterEnd + layerStep * 3, end: iceWaterEnd + layerStep * 4 },      // 7. Shingles
-    { start: iceWaterEnd + layerStep * 4, end: iceWaterEnd + layerStep * 5 },      // 8. Vents
-    { start: iceWaterEnd + layerStep * 5, end: iceWaterEnd + layerStep * 6 },      // 9. Flashing
-    { start: iceWaterEnd + layerStep * 6, end: iceWaterEnd + layerStep * 7 },      // 10. Ridge Cap
+    { start: iceWaterEnd, end: underlaymentEnd },                                  // 4. Underlayment (4x duration)
+    { start: underlaymentEnd, end: underlaymentEnd + layerStep },                  // 5. Drip Edge Rakes
+    { start: underlaymentEnd + layerStep, end: underlaymentEnd + layerStep * 2 },  // 6. Starter Strip
+    { start: underlaymentEnd + layerStep * 2, end: underlaymentEnd + layerStep * 3 }, // 7. Shingles
+    { start: underlaymentEnd + layerStep * 3, end: underlaymentEnd + layerStep * 4 }, // 8. Vents
+    { start: underlaymentEnd + layerStep * 4, end: underlaymentEnd + layerStep * 5 }, // 9. Flashing
+    { start: underlaymentEnd + layerStep * 5, end: underlaymentEnd + layerStep * 6 }, // 10. Ridge Cap
   ];
+  
+  // Calculate when all active layers end (underlayment is the last active one for now)
+  const roofLayersEnd = underlaymentEnd + 0.05; // Small buffer after underlayment
 
   // Show hint during buffer period (before animation starts)
   const showScrollHint = progress < layerStart;
   
-  // Door animation: starts at 60%, fully open at 72% (DESKTOP ONLY)
-  const doorAngle = !isMobile && progress > 0.60 
-    ? Math.min(75, ((progress - 0.60) / 0.12) * 75) 
+  // Door animation: starts after roof layers complete, fully open 12% later (DESKTOP ONLY)
+  const doorStart = Math.max(0.70, roofLayersEnd);
+  const doorAngle = !isMobile && progress > doorStart 
+    ? Math.min(75, ((progress - doorStart) / 0.12) * 75) 
     : 0;
 
-  // Door zoom: starts at 72%, completes at 88% (DESKTOP ONLY)
-  const zoomProgress = !isMobile && progress > 0.72 
-    ? Math.min(1, (progress - 0.72) / 0.16)
+  // Door zoom: starts after door opens, completes 16% later (DESKTOP ONLY)
+  const zoomStart = doorStart + 0.12;
+  const zoomProgress = !isMobile && progress > zoomStart 
+    ? Math.min(1, (progress - zoomStart) / 0.16)
     : 0;
   
   // Update scroll context so navbar can fade (desktop only)
