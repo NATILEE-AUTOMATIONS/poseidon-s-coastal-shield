@@ -219,7 +219,11 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
   
   const easedProgress = easeOutQuint(layerProgress);
   const translateY = -150 * (1 - easedProgress);
-  const opacity = 0.2 + (0.8 * easedProgress);
+  
+  // Text wipe synced to drip edge drop - wipes down as bar drops
+  const wipeProgress = easedProgress; // Same as the bar animation
+  const textHeight = 45; // Height of the text area
+  const clipHeight = textHeight * wipeProgress;
   
   return (
     <>
@@ -243,46 +247,59 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
         />
       </g>
       
-      {/* Static text label - same position as decking, desktop only */}
-      {!isMobile && (
-        <g>
-          <text
-            x="200"
-            y="103"
-            textAnchor="middle"
-            fill="hsl(45 100% 95%)"
-            fontSize="15"
-            fontWeight="800"
-            fontFamily="system-ui, -apple-system, sans-serif"
-            letterSpacing="3"
-            stroke="hsl(0 0% 5%)"
-            strokeWidth="2.5"
-            paintOrder="stroke fill"
-            style={{
-              filter: 'drop-shadow(0 0 6px hsl(0 0% 0%)) drop-shadow(0 0 12px hsl(0 0% 0% / 0.8))',
-            }}
-          >
-            REPLACE
-          </text>
-          <text
-            x="200"
-            y="124"
-            textAnchor="middle"
-            fill="hsl(25 100% 75%)"
-            fontSize="15"
-            fontWeight="800"
-            fontFamily="system-ui, -apple-system, sans-serif"
-            letterSpacing="2"
-            stroke="hsl(0 0% 5%)"
-            strokeWidth="2.5"
-            paintOrder="stroke fill"
-            style={{
-              filter: 'drop-shadow(0 0 6px hsl(0 0% 0%)) drop-shadow(0 0 12px hsl(0 0% 0% / 0.8))',
-            }}
-          >
-            DRIP EDGE
-          </text>
-        </g>
+      {/* Wipe-reveal text label - desktop only */}
+      {!isMobile && wipeProgress > 0 && (
+        <>
+          <defs>
+            <clipPath id="dripEdgeTextWipe">
+              <rect 
+                x="100"
+                y="85"
+                width="200"
+                height={clipHeight}
+              />
+            </clipPath>
+          </defs>
+          
+          <g clipPath="url(#dripEdgeTextWipe)">
+            <text
+              x="200"
+              y="103"
+              textAnchor="middle"
+              fill="hsl(45 100% 95%)"
+              fontSize="15"
+              fontWeight="800"
+              fontFamily="system-ui, -apple-system, sans-serif"
+              letterSpacing="3"
+              stroke="hsl(0 0% 5%)"
+              strokeWidth="2.5"
+              paintOrder="stroke fill"
+              style={{
+                filter: 'drop-shadow(0 0 6px hsl(0 0% 0%)) drop-shadow(0 0 12px hsl(0 0% 0% / 0.8))',
+              }}
+            >
+              REPLACE
+            </text>
+            <text
+              x="200"
+              y="124"
+              textAnchor="middle"
+              fill="hsl(25 100% 75%)"
+              fontSize="15"
+              fontWeight="800"
+              fontFamily="system-ui, -apple-system, sans-serif"
+              letterSpacing="2"
+              stroke="hsl(0 0% 5%)"
+              strokeWidth="2.5"
+              paintOrder="stroke fill"
+              style={{
+                filter: 'drop-shadow(0 0 6px hsl(0 0% 0%)) drop-shadow(0 0 12px hsl(0 0% 0% / 0.8))',
+              }}
+            >
+              DRIP EDGE
+            </text>
+          </g>
+        </>
       )}
     </>
   );
