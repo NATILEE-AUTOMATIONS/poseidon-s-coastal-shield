@@ -132,8 +132,8 @@ const RoofBuildSection: React.FC = () => {
 
   // Calculate which materials are "active" (currently animating)
   const getActiveMaterials = () => {
-    return materialInfo.map((_, index) => 
-      progress >= layers[index].start && progress < layers[index].end
+    return layers.map((layer) => 
+      progress >= layer.start && progress < layer.end
     );
   };
 
