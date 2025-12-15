@@ -566,26 +566,15 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
         <clipPath id="roofClipUnderlayment">
           <polygon points={`${peakX},${peakY} ${leftEaveX},${eaveY} ${rightEaveX},${eaveY}`} />
         </clipPath>
-        {/* Logo pattern - clean staggered layout */}
-        <pattern id="poseidonLogoPattern" x="0" y="0" width="90" height="50" patternUnits="userSpaceOnUse">
-          {/* First row logo */}
+        {/* Logo pattern - organized grid with bigger logos */}
+        <pattern id="poseidonLogoPattern" x="0" y="0" width="50" height="22" patternUnits="userSpaceOnUse">
           <image 
             href="/poseidon-logo.png" 
-            x="5" 
-            y="5" 
-            width="40" 
-            height="20" 
-            opacity="0.75"
-            preserveAspectRatio="xMidYMid meet"
-          />
-          {/* Second row logo - offset for staggered effect */}
-          <image 
-            href="/poseidon-logo.png" 
-            x="45" 
-            y="28" 
-            width="40" 
-            height="20" 
-            opacity="0.75"
+            x="2" 
+            y="2" 
+            width="46" 
+            height="18" 
+            opacity="0.85"
             preserveAspectRatio="xMidYMid meet"
           />
         </pattern>
