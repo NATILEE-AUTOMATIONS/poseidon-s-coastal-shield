@@ -93,10 +93,10 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
         }}
       >
         {visibleMaterials.map((material, index) => {
-          // Hide all cards when carouselStep is very close to -1 (before spin-in)
-          if (carouselStep < -0.95) return null;
+          // Hide ALL cards before spin-in begins (carouselStep at or near -1)
+          if (carouselStep <= -0.9) return null;
           
-          // During spin-in phase (carouselStep -1 to 0), only show card 0
+          // During spin-in phase (carouselStep -0.9 to 0), only render card 0
           if (carouselStep < 0 && index !== 0) return null;
           
           // Each card is positioned 90° apart
