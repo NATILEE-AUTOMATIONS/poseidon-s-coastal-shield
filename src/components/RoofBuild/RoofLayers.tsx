@@ -316,234 +316,194 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
   );
 };
 
-// Ice & Water Shield - 3 rolls unrolling from peak to eaves
+// Ice & Water Shield - 3 clean strips extending from peak to eaves
 export const IceWaterShieldLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
   if (progress < startProgress) return null;
   
-  // Roof geometry constants
+  // Roof geometry
   const peakX = 200;
   const peakY = 56;
   const leftEaveX = 42;
   const rightEaveX = 358;
   const eaveY = 159;
   
-  // 3 rolls with staggered timing (each roll starts after the previous begins)
-  const rollCount = 3;
-  const rollDelay = 0.15; // Each roll starts 15% after the previous
-  const rollWidth = 20; // Width of each roll strip
-  const rollGap = 8; // Gap between rolls
+  // 3 strips per slope with staggered timing
+  const stripWidth = 28;
+  const stripGap = 4;
+  const stripDelay = 0.12;
   
-  // Roll positions (centered on each slope)
-  const rollOffsets = [
-    -rollWidth - rollGap,    // Left roll
-    0,                       // Center roll  
-    rollWidth + rollGap,     // Right roll
-  ];
+  // Easing
+  const easeOutQuart = (x: number): number => 1 - Math.pow(1 - x, 4);
   
-  // Calculate individual roll progress with stagger
-  const getRollProgress = (rollIndex: number) => {
-    const rollStart = rollIndex * rollDelay;
-    const rollEnd = rollStart + (1 - rollDelay * (rollCount - 1));
-    const normalizedProgress = (layerProgress - rollStart) / (rollEnd - rollStart);
+  // Calculate strip progress with stagger
+  const getStripProgress = (index: number) => {
+    const stripStart = index * stripDelay;
+    const normalizedProgress = (layerProgress - stripStart) / (1 - stripDelay * 2);
     return Math.max(0, Math.min(1, normalizedProgress));
   };
   
-  // Easing function for smooth roll-out
-  const easeOutQuart = (x: number): number => 1 - Math.pow(1 - x, 4);
+  // Left slope angle and length
+  const leftDx = leftEaveX - peakX;
+  const leftDy = eaveY - peakY;
+  const leftLength = Math.sqrt(leftDx * leftDx + leftDy * leftDy);
+  const leftAngle = Math.atan2(leftDy, leftDx) * 180 / Math.PI;
   
-  // Calculate roll endpoint based on progress (0 = at peak, 1 = at eave)
-  const getRollPath = (rollIndex: number, isLeft: boolean) => {
-    const rollProgress = easeOutQuart(getRollProgress(rollIndex));
-    const offset = rollOffsets[rollIndex];
-    
-    // Direction vector from peak to eave
-    const dx = isLeft ? (leftEaveX - peakX) : (rightEaveX - peakX);
-    const dy = eaveY - peakY;
-    
-    // Perpendicular offset for roll position
-    const perpX = -dy / Math.sqrt(dx * dx + dy * dy);
-    const perpY = dx / Math.sqrt(dx * dx + dy * dy);
-    
-    // Start and end points with offset
-    const startX = peakX + perpX * offset;
-    const startY = peakY + perpY * offset * (isLeft ? 1 : -1);
-    
-    // End point travels along the slope
-    const endX = startX + dx * rollProgress;
-    const endY = startY + dy * rollProgress;
-    
-    return { startX, startY, endX, endY, progress: rollProgress };
-  };
+  // Right slope angle and length
+  const rightDx = rightEaveX - peakX;
+  const rightDy = eaveY - peakY;
+  const rightLength = Math.sqrt(rightDx * rightDx + rightDy * rightDy);
+  const rightAngle = Math.atan2(rightDy, rightDx) * 180 / Math.PI;
   
-  // Text timing: fade in 30-50%, hold 50-70%, fade out 70-90%
-  const textOpacity = layerProgress < 0.30 
+  // Text timing
+  const textOpacity = layerProgress < 0.25 
     ? 0 
-    : layerProgress < 0.50 
-      ? (layerProgress - 0.30) / 0.20 
-      : layerProgress < 0.70 
+    : layerProgress < 0.45 
+      ? (layerProgress - 0.25) / 0.20 
+      : layerProgress < 0.65 
         ? 1 
-        : layerProgress < 0.90 
-          ? 1 - (layerProgress - 0.70) / 0.20 
+        : layerProgress < 0.85 
+          ? 1 - (layerProgress - 0.65) / 0.20 
           : 0;
   
   return (
     <g className="ice-water-shield-layer">
       <defs>
-        {/* Dark blue/black ice & water shield gradient */}
-        <linearGradient id="iceWaterRollGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="hsl(210 50% 8%)" />
-          <stop offset="30%" stopColor="hsl(210 45% 15%)" />
-          <stop offset="70%" stopColor="hsl(210 45% 15%)" />
-          <stop offset="100%" stopColor="hsl(210 50% 8%)" />
+        {/* Dark membrane gradient */}
+        <linearGradient id="iceShieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(210 45% 12%)" />
+          <stop offset="50%" stopColor="hsl(210 40% 18%)" />
+          <stop offset="100%" stopColor="hsl(210 45% 12%)" />
         </linearGradient>
-        {/* Shiny membrane surface sheen */}
-        <linearGradient id="iceWaterSheen" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="hsl(200 60% 60%)" stopOpacity="0" />
-          <stop offset="40%" stopColor="hsl(200 70% 70%)" stopOpacity="0.3" />
-          <stop offset="60%" stopColor="hsl(200 70% 70%)" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="hsl(200 60% 60%)" stopOpacity="0" />
-        </linearGradient>
-        {/* Roll end cap gradient (the "roll" cylinder) */}
-        <linearGradient id="rollCapGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(210 40% 25%)" />
-          <stop offset="30%" stopColor="hsl(210 35% 18%)" />
-          <stop offset="70%" stopColor="hsl(210 30% 10%)" />
-          <stop offset="100%" stopColor="hsl(210 35% 15%)" />
+        {/* Subtle sheen */}
+        <linearGradient id="iceShieldSheen" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="hsl(200 60% 50%)" stopOpacity="0" />
+          <stop offset="50%" stopColor="hsl(200 70% 60%)" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="hsl(200 60% 50%)" stopOpacity="0" />
         </linearGradient>
       </defs>
       
-      {/* LEFT SLOPE ROLLS */}
-      {[0, 1, 2].map((rollIndex) => {
-        const { startX, startY, endX, endY, progress: rollProg } = getRollPath(rollIndex, true);
-        if (rollProg <= 0) return null;
+      {/* LEFT SLOPE - 3 strips */}
+      {[0, 1, 2].map((i) => {
+        const stripProg = easeOutQuart(getStripProgress(i));
+        if (stripProg <= 0) return null;
         
-        const rollOpacity = Math.min(1, rollProg * 3);
+        const currentLength = leftLength * stripProg;
+        const offsetY = (i - 1) * (stripWidth + stripGap);
         
         return (
-          <g key={`left-roll-${rollIndex}`} style={{ opacity: rollOpacity }}>
-            {/* Main roll strip */}
-            <line
-              x1={startX}
-              y1={startY}
-              x2={endX}
-              y2={endY}
-              stroke="url(#iceWaterRollGradient)"
-              strokeWidth={rollWidth}
-              strokeLinecap="butt"
+          <g 
+            key={`left-${i}`}
+            style={{ 
+              transform: `rotate(${leftAngle}deg)`,
+              transformOrigin: `${peakX}px ${peakY}px`,
+            }}
+          >
+            {/* Main strip */}
+            <rect
+              x={peakX}
+              y={peakY - stripWidth/2 + offsetY}
+              width={currentLength}
+              height={stripWidth}
+              fill="url(#iceShieldGrad)"
               style={{
-                filter: `drop-shadow(0 2px 4px hsl(210 50% 5% / 0.6))`,
+                filter: 'drop-shadow(0 1px 3px hsl(210 50% 5% / 0.5))',
               }}
             />
             {/* Sheen overlay */}
+            <rect
+              x={peakX}
+              y={peakY - stripWidth/2 + offsetY + 2}
+              width={currentLength}
+              height={stripWidth - 4}
+              fill="url(#iceShieldSheen)"
+            />
+            {/* Leading edge glow */}
             <line
-              x1={startX}
-              y1={startY}
-              x2={endX}
-              y2={endY}
-              stroke="url(#iceWaterSheen)"
-              strokeWidth={rollWidth - 2}
-              strokeLinecap="butt"
-            />
-            {/* Roll end cap (cylinder at leading edge) */}
-            <circle
-              cx={endX}
-              cy={endY}
-              r={rollWidth / 2 + 2}
-              fill="url(#rollCapGradient)"
+              x1={peakX + currentLength}
+              y1={peakY - stripWidth/2 + offsetY}
+              x2={peakX + currentLength}
+              y2={peakY + stripWidth/2 + offsetY}
               stroke="hsl(200 70% 55%)"
-              strokeWidth="1.5"
+              strokeWidth="2"
+              strokeLinecap="round"
               style={{
-                filter: `drop-shadow(0 0 ${6 + rollProg * 8}px hsl(200 70% 55% / 0.7))`,
+                filter: `drop-shadow(0 0 ${4 + stripProg * 6}px hsl(200 70% 55% / 0.8))`,
               }}
-            />
-            {/* Inner roll spiral detail */}
-            <circle
-              cx={endX}
-              cy={endY}
-              r={rollWidth / 4}
-              fill="hsl(210 40% 12%)"
-              stroke="hsl(200 50% 40%)"
-              strokeWidth="0.5"
             />
           </g>
         );
       })}
       
-      {/* RIGHT SLOPE ROLLS */}
-      {[0, 1, 2].map((rollIndex) => {
-        const { startX, startY, endX, endY, progress: rollProg } = getRollPath(rollIndex, false);
-        if (rollProg <= 0) return null;
+      {/* RIGHT SLOPE - 3 strips */}
+      {[0, 1, 2].map((i) => {
+        const stripProg = easeOutQuart(getStripProgress(i));
+        if (stripProg <= 0) return null;
         
-        const rollOpacity = Math.min(1, rollProg * 3);
+        const currentLength = rightLength * stripProg;
+        const offsetY = (i - 1) * (stripWidth + stripGap);
         
         return (
-          <g key={`right-roll-${rollIndex}`} style={{ opacity: rollOpacity }}>
-            {/* Main roll strip */}
-            <line
-              x1={startX}
-              y1={startY}
-              x2={endX}
-              y2={endY}
-              stroke="url(#iceWaterRollGradient)"
-              strokeWidth={rollWidth}
-              strokeLinecap="butt"
+          <g 
+            key={`right-${i}`}
+            style={{ 
+              transform: `rotate(${rightAngle}deg)`,
+              transformOrigin: `${peakX}px ${peakY}px`,
+            }}
+          >
+            {/* Main strip */}
+            <rect
+              x={peakX}
+              y={peakY - stripWidth/2 + offsetY}
+              width={currentLength}
+              height={stripWidth}
+              fill="url(#iceShieldGrad)"
               style={{
-                filter: `drop-shadow(0 2px 4px hsl(210 50% 5% / 0.6))`,
+                filter: 'drop-shadow(0 1px 3px hsl(210 50% 5% / 0.5))',
               }}
             />
             {/* Sheen overlay */}
+            <rect
+              x={peakX}
+              y={peakY - stripWidth/2 + offsetY + 2}
+              width={currentLength}
+              height={stripWidth - 4}
+              fill="url(#iceShieldSheen)"
+            />
+            {/* Leading edge glow */}
             <line
-              x1={startX}
-              y1={startY}
-              x2={endX}
-              y2={endY}
-              stroke="url(#iceWaterSheen)"
-              strokeWidth={rollWidth - 2}
-              strokeLinecap="butt"
-            />
-            {/* Roll end cap (cylinder at leading edge) */}
-            <circle
-              cx={endX}
-              cy={endY}
-              r={rollWidth / 2 + 2}
-              fill="url(#rollCapGradient)"
+              x1={peakX + currentLength}
+              y1={peakY - stripWidth/2 + offsetY}
+              x2={peakX + currentLength}
+              y2={peakY + stripWidth/2 + offsetY}
               stroke="hsl(200 70% 55%)"
-              strokeWidth="1.5"
+              strokeWidth="2"
+              strokeLinecap="round"
               style={{
-                filter: `drop-shadow(0 0 ${6 + rollProg * 8}px hsl(200 70% 55% / 0.7))`,
+                filter: `drop-shadow(0 0 ${4 + stripProg * 6}px hsl(200 70% 55% / 0.8))`,
               }}
-            />
-            {/* Inner roll spiral detail */}
-            <circle
-              cx={endX}
-              cy={endY}
-              r={rollWidth / 4}
-              fill="hsl(210 40% 12%)"
-              stroke="hsl(200 50% 40%)"
-              strokeWidth="0.5"
             />
           </g>
         );
       })}
       
-      {/* Text label - positioned below roof, centered - desktop only */}
+      {/* Text label - centered on roof */}
       {!isMobile && textOpacity > 0 && (
         <g style={{ 
           opacity: textOpacity,
-          filter: 'drop-shadow(0 0 10px hsl(0 0% 0%)) drop-shadow(0 0 20px hsl(0 0% 0% / 0.9))',
+          filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))',
         }}>
           <text
             x="200"
-            y="175"
+            y="103"
             textAnchor="middle"
             fill="hsl(45 100% 95%)"
-            fontSize="14"
+            fontSize="15"
             fontWeight="800"
             fontFamily="system-ui, -apple-system, sans-serif"
-            letterSpacing="4"
+            letterSpacing="3"
             stroke="hsl(0 0% 5%)"
             strokeWidth="2.5"
             paintOrder="stroke fill"
@@ -552,13 +512,13 @@ export const IceWaterShieldLayer: React.FC<LayerProps> = ({ progress, startProgr
           </text>
           <text
             x="200"
-            y="194"
+            y="124"
             textAnchor="middle"
             fill="hsl(200 80% 70%)"
-            fontSize="14"
+            fontSize="15"
             fontWeight="800"
             fontFamily="system-ui, -apple-system, sans-serif"
-            letterSpacing="3"
+            letterSpacing="2"
             stroke="hsl(0 0% 5%)"
             strokeWidth="2.5"
             paintOrder="stroke fill"
