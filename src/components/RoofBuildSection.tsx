@@ -130,7 +130,15 @@ const RoofBuildSection: React.FC = () => {
     return materialInfo.map((_, index) => progress >= layers[index].end);
   };
 
+  // Calculate which materials are "active" (currently animating)
+  const getActiveMaterials = () => {
+    return materialInfo.map((_, index) => 
+      progress >= layers[index].start && progress < layers[index].end
+    );
+  };
+
   const lockedMaterials = getLockedMaterials();
+  const activeMaterials = getActiveMaterials();
 
   return (
     <section
@@ -277,8 +285,8 @@ const RoofBuildSection: React.FC = () => {
                       <div 
                         className="text-sm font-semibold tracking-wide whitespace-nowrap"
                         style={{
-                          color: lockedMaterials[index] ? 'hsl(168 80% 60%)' : 'hsl(168 50% 40%)',
-                          textShadow: lockedMaterials[index] 
+                          color: (lockedMaterials[index] || activeMaterials[index]) ? 'hsl(168 80% 60%)' : 'hsl(168 50% 40%)',
+                          textShadow: (lockedMaterials[index] || activeMaterials[index])
                             ? '0 0 20px hsl(168 80% 50% / 0.8), 0 0 40px hsl(168 80% 50% / 0.4)' 
                             : 'none',
                         }}
@@ -289,7 +297,7 @@ const RoofBuildSection: React.FC = () => {
                       <div 
                         className="text-xs text-muted-foreground/70 mt-1 leading-relaxed"
                         style={{
-                          opacity: lockedMaterials[index] ? 1 : 0.5,
+                          opacity: (lockedMaterials[index] || activeMaterials[index]) ? 1 : 0.5,
                         }}
                       >
                         {material.description}
@@ -331,8 +339,8 @@ const RoofBuildSection: React.FC = () => {
                       <div 
                         className="text-sm font-semibold tracking-wide whitespace-nowrap"
                         style={{
-                          color: lockedMaterials[index + 5] ? 'hsl(168 80% 60%)' : 'hsl(168 50% 40%)',
-                          textShadow: lockedMaterials[index + 5] 
+                          color: (lockedMaterials[index + 5] || activeMaterials[index + 5]) ? 'hsl(168 80% 60%)' : 'hsl(168 50% 40%)',
+                          textShadow: (lockedMaterials[index + 5] || activeMaterials[index + 5])
                             ? '0 0 20px hsl(168 80% 50% / 0.8), 0 0 40px hsl(168 80% 50% / 0.4)' 
                             : 'none',
                         }}
@@ -343,7 +351,7 @@ const RoofBuildSection: React.FC = () => {
                       <div 
                         className="text-xs text-muted-foreground/70 mt-1 leading-relaxed"
                         style={{
-                          opacity: lockedMaterials[index + 5] ? 1 : 0.5,
+                          opacity: (lockedMaterials[index + 5] || activeMaterials[index + 5]) ? 1 : 0.5,
                         }}
                       >
                         {material.description}
