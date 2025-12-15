@@ -12,10 +12,10 @@ const easeInOutQuad = (t: number): number => {
 };
 
 const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layers }) => {
-  const visibleMaterials = materialInfo; // All 10 materials
+  const visibleMaterials = materialInfo.slice(0, 4);
   const totalCards = visibleMaterials.length;
-  const degreesPerStep = 36; // 360° / 10 cards = 36° per card
-  const carouselRadius = 180;
+  const degreesPerStep = 90;
+  const carouselRadius = 160;
   
   // Dwell ratio - how much of each layer's duration to "lock" the card in place
   const dwellRatio = 0.4;
@@ -108,8 +108,8 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
           if (normalizedRotation > 180) normalizedRotation -= 360;
           if (normalizedRotation < -180) normalizedRotation += 360;
           
-          // Only render cards that are somewhat facing forward (-50° to 50°)
-          const isVisible = Math.abs(normalizedRotation) < 50;
+          // Only render cards that are somewhat facing forward (-100° to 100°)
+          const isVisible = Math.abs(normalizedRotation) < 100;
           if (!isVisible) return null;
           
           // Calculate opacity based on rotation (full opacity at 0°, fade at edges)

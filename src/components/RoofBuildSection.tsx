@@ -62,15 +62,15 @@ const RoofBuildSection: React.FC = () => {
   
   const layers = [
     { start: layerStart, end: deckingEnd },                                        // 1. Decking (6x duration)
-    { start: deckingEnd, end: dripEdgeEnd },                                       // 2. Drip Edge (3x duration)
+    { start: deckingEnd, end: dripEdgeEnd },                                       // 2. Drip Edge Eaves (3x duration)
     { start: dripEdgeEnd, end: iceWaterEnd },                                      // 3. Ice & Water (3x duration)
     { start: iceWaterEnd, end: underlaymentEnd },                                  // 4. Underlayment (4x duration)
-    { start: underlaymentEnd, end: underlaymentEnd + layerStep * 2 },              // 5. Starter Strip (2x duration)
-    { start: underlaymentEnd + layerStep * 2, end: underlaymentEnd + layerStep * 3 }, // 6. Drip Edge Rakes
-    { start: underlaymentEnd + layerStep * 3, end: underlaymentEnd + layerStep * 4 }, // 7. Shingles
-    { start: underlaymentEnd + layerStep * 4, end: underlaymentEnd + layerStep * 5 }, // 8. Vents
-    { start: underlaymentEnd + layerStep * 5, end: underlaymentEnd + layerStep * 6 }, // 9. Flashing
-    { start: underlaymentEnd + layerStep * 6, end: underlaymentEnd + layerStep * 7 }, // 10. Clean Up
+    { start: underlaymentEnd, end: underlaymentEnd + layerStep },                  // 5. Drip Edge Rakes
+    { start: underlaymentEnd + layerStep, end: underlaymentEnd + layerStep * 2 },  // 6. Starter Strip
+    { start: underlaymentEnd + layerStep * 2, end: underlaymentEnd + layerStep * 3 }, // 7. Shingles
+    { start: underlaymentEnd + layerStep * 3, end: underlaymentEnd + layerStep * 4 }, // 8. Vents
+    { start: underlaymentEnd + layerStep * 4, end: underlaymentEnd + layerStep * 5 }, // 9. Flashing
+    { start: underlaymentEnd + layerStep * 5, end: underlaymentEnd + layerStep * 6 }, // 10. Ridge Cap
   ];
   
   // Calculate when all active layers end (underlayment is the last active one for now)
@@ -246,17 +246,17 @@ const RoofBuildSection: React.FC = () => {
                   <IceWaterShieldLayer progress={progress} startProgress={layers[2].start} endProgress={layers[2].end} isMobile={isMobile} />
                   {/* 4. Underlayment */}
                   <UnderlaymentLayer progress={progress} startProgress={layers[3].start} endProgress={layers[3].end} />
-                  {/* 5. Starter Strip */}
-                  <StarterStripLayer progress={progress} startProgress={layers[4].start} endProgress={layers[4].end} isMobile={isMobile} />
-                  {/* 6. Drip Edge (Rakes) */}
-                  <DripEdgeRakesLayer progress={progress} startProgress={layers[5].start} endProgress={layers[5].end} />
+                  {/* 5. Drip Edge (Rakes) */}
+                  <DripEdgeRakesLayer progress={progress} startProgress={layers[4].start} endProgress={layers[4].end} />
+                  {/* 6. Starter Strip */}
+                  <StarterStripLayer progress={progress} startProgress={layers[5].start} endProgress={layers[5].end} />
                   {/* 7. Shingles */}
                   <FieldShinglesLayer progress={progress} startProgress={layers[6].start} endProgress={layers[6].end} />
                   {/* 8. Pipe Boots & Vents */}
                   <VentsLayer progress={progress} startProgress={layers[7].start} endProgress={layers[7].end} />
                   {/* 9. Flashing */}
                   <FlashingLayer progress={progress} startProgress={layers[8].start} endProgress={layers[8].end} />
-                  {/* 10. Clean Up */}
+                  {/* 10. Ridge Vent & Cap */}
                   <RidgeCapLayer progress={progress} startProgress={layers[9].start} endProgress={layers[9].end} />
                   
                   {/* Drip Edge rendered after all layers to be on top */}
