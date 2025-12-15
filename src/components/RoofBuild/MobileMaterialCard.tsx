@@ -46,31 +46,25 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
         let translateY = 0;
         let rotate = 0;
         let scale = 1;
-        let clipPercent = 100; // 100 = fully visible
-        let glowIntensity = 0.3;
         
         if (localProgress < enterEnd) {
-          // ENTER: Diagonal slice reveal from bottom-right corner
+          // ENTER: Slide in from right with bounce
           const t = localProgress / enterEnd;
           const eased = easeOutBack(t);
           
-          translateX = 80 * (1 - eased);
-          translateY = 40 * (1 - eased);
-          rotate = 8 * (1 - eased);
-          scale = 0.85 + (0.15 * Math.min(1, eased));
-          clipPercent = t * 100; // Slice opens from 0% to 100%
-          glowIntensity = 0.8 * eased;
+          translateX = 300 * (1 - eased);
+          translateY = 20 * (1 - eased);
+          rotate = 15 * (1 - eased);
+          scale = 0.9 + (0.1 * eased);
         } else if (localProgress > exitStart) {
-          // EXIT: Diagonal slice out to top-left corner
+          // EXIT: Slide out to left
           const t = (localProgress - exitStart) / (1 - exitStart);
           const eased = easeInBack(t);
           
-          translateX = -60 * eased;
-          translateY = -30 * eased;
-          rotate = -6 * eased;
+          translateX = -300 * eased;
+          translateY = -20 * eased;
+          rotate = -15 * eased;
           scale = 1 - (0.1 * eased);
-          clipPercent = (1 - t) * 100; // Slice closes from 100% to 0%
-          glowIntensity = 0.3 * (1 - eased);
         }
         
         return (
@@ -78,9 +72,8 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
             key={material.id}
             className="absolute inset-x-5 top-0 flex justify-center"
             style={{
-              clipPath: `polygon(0% ${100 - clipPercent}%, ${clipPercent}% 0%, 100% ${clipPercent}%, ${100 - clipPercent}% 100%)`,
               transform: `translateX(${translateX}px) translateY(${translateY}px) rotate(${rotate}deg) scale(${scale})`,
-              willChange: 'transform, clip-path',
+              willChange: 'transform',
             }}
           >
             <div
@@ -93,27 +86,11 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
                 `,
                 boxShadow: `
                   0 0 0 1px hsl(168 50% 30% / 0.5),
-                  0 0 ${30 + glowIntensity * 40}px hsl(168 60% 40% / ${glowIntensity}),
-                  0 ${10 + glowIntensity * 15}px ${30 + glowIntensity * 30}px hsl(0 0% 0% / 0.6)
+                  0 0 50px hsl(168 60% 40% / 0.5),
+                  0 20px 50px hsl(0 0% 0% / 0.6)
                 `,
               }}
             >
-              {/* Animated shine sweep on entry */}
-              <div 
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background: `linear-gradient(
-                    105deg,
-                    transparent 40%,
-                    hsl(168 70% 60% / ${glowIntensity * 0.4}) 45%,
-                    hsl(168 70% 60% / ${glowIntensity * 0.6}) 50%,
-                    hsl(168 70% 60% / ${glowIntensity * 0.4}) 55%,
-                    transparent 60%
-                  )`,
-                  transform: `translateX(${(1 - glowIntensity) * 200 - 100}%)`,
-                }}
-              />
-              
               {/* Step indicator */}
               <div className="flex items-center gap-3 mb-4 relative z-10">
                 <span
@@ -121,7 +98,7 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
                   style={{
                     fontFamily: 'ui-monospace, monospace',
                     color: 'hsl(168 70% 50%)',
-                    textShadow: `0 0 ${15 + glowIntensity * 20}px hsl(168 80% 45% / ${0.4 + glowIntensity * 0.4})`,
+                    textShadow: '0 0 25px hsl(168 80% 45% / 0.6)',
                   }}
                 >
                   {index + 1}
