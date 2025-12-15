@@ -218,6 +218,26 @@ const RoofBuildSection: React.FC = () => {
                   {/* Animated roof layers - 10 layers in correct installation order */}
                   {/* 1. Replace Decking */}
                   <DeckingLayer progress={progress} startProgress={layers[0].start} endProgress={layers[0].end} isMobile={isMobile} />
+                  
+                  {/* Desktop-only "Replace Decking" label during decking animation */}
+                  {!isMobile && progress >= layers[0].start && progress <= layers[0].end && (
+                    <g>
+                      <text
+                        x="200"
+                        y="105"
+                        textAnchor="middle"
+                        fill="hsl(168 80% 60%)"
+                        fontSize="14"
+                        fontWeight="600"
+                        style={{
+                          filter: 'drop-shadow(0 0 12px hsl(168 80% 50% / 0.8)) drop-shadow(0 0 24px hsl(168 80% 50% / 0.5))',
+                          opacity: Math.min(1, ((progress - layers[0].start) / (layers[0].end - layers[0].start)) * 2),
+                        }}
+                      >
+                        Replace Decking
+                      </text>
+                    </g>
+                  )}
                   {/* 2. Drip Edge (Eaves) */}
                   <DripEdgeEavesLayer progress={progress} startProgress={layers[1].start} endProgress={layers[1].end} />
                   {/* 3. Ice & Water Shield */}
