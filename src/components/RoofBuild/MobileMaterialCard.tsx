@@ -19,10 +19,10 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
         const layer = layers[index];
         const layerDuration = layer.end - layer.start;
         
-        // Card timing within its layer
-        // Spin in: 0-20%
-        // Hold: 20-75%
-        // Spin out: 75-100%
+        // Card timing - more deliberate pacing
+        // Spin in: 0-30% (slower entry)
+        // Hold: 30-70%
+        // Spin out: 70-100% (slower exit)
         
         let localProgress = 0;
         let isVisible = false;
@@ -34,14 +34,16 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
         
         if (!isVisible) return null;
         
-        // Easing
-        const easeOutQuint = (x: number) => 1 - Math.pow(1 - x, 5);
-        const easeInQuint = (x: number) => Math.pow(x, 5);
+        // Smoother easing - sextic for ultra-smooth feel
+        const easeOutSextic = (x: number) => 1 - Math.pow(1 - x, 6);
+        const easeInSextic = (x: number) => Math.pow(x, 6);
+        // Smooth in-out for natural weight
+        const easeInOutCubic = (x: number) => 
+          x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
         
-        // Spin in phase (0-20%)
-        const spinInEnd = 0.18;
-        // Hold phase (18-78%)
-        const spinOutStart = 0.78;
+        // Extended timing phases
+        const spinInEnd = 0.28;
+        const spinOutStart = 0.72;
         
         let rotateY = 0;
         let rotateX = 0;
@@ -50,23 +52,23 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
         let translateZ = 0;
         
         if (localProgress < spinInEnd) {
-          // Spin in - rotate from -90deg
+          // Spin in - slower, more deliberate rotation
           const t = localProgress / spinInEnd;
-          const eased = easeOutQuint(t);
-          rotateY = -85 * (1 - eased);
-          rotateX = 8 * (1 - eased);
-          scale = 0.7 + (0.3 * eased);
-          opacity = eased;
-          translateZ = -100 * (1 - eased);
+          const eased = easeOutSextic(t);
+          rotateY = -75 * (1 - eased);
+          rotateX = 5 * (1 - eased);
+          scale = 0.85 + (0.15 * eased);
+          opacity = easeInOutCubic(t);
+          translateZ = -60 * (1 - eased);
         } else if (localProgress > spinOutStart) {
-          // Spin out - rotate to 90deg
+          // Spin out - smooth, weighted exit
           const t = (localProgress - spinOutStart) / (1 - spinOutStart);
-          const eased = easeInQuint(t);
-          rotateY = 85 * eased;
-          rotateX = -8 * eased;
-          scale = 1 - (0.3 * eased);
-          opacity = 1 - eased;
-          translateZ = -100 * eased;
+          const eased = easeInSextic(t);
+          rotateY = 75 * eased;
+          rotateX = -5 * eased;
+          scale = 1 - (0.15 * eased);
+          opacity = 1 - easeInOutCubic(t);
+          translateZ = -60 * eased;
         }
         
         return (
