@@ -7,18 +7,17 @@ interface LayerProps {
   isMobile?: boolean;
 }
 
-// Material info for step cards
+// Material info for step cards - 9 steps total
 export const materialInfo = [
   { id: 'decking', name: 'Replace Decking', description: 'Replace any damaged plywood or decking' },
-  { id: 'drip-eaves', name: 'Drip Edge (Eaves)', description: 'Install drip edge at the eaves' },
+  { id: 'drip-edge', name: 'Drip Edge', description: 'Install drip edge along eaves' },
   { id: 'ice-water', name: 'Ice & Water Shield', description: 'Apply ice & water shield membrane' },
   { id: 'underlayment', name: 'Underlayment', description: 'Install underlayment over decking' },
-  { id: 'drip-rakes', name: 'Drip Edge (Rakes)', description: 'Install drip edge at rakes' },
   { id: 'starter', name: 'Starter Strip', description: 'Install starter strip shingles' },
   { id: 'shingles', name: 'Shingles', description: 'Install field shingles' },
   { id: 'vents', name: 'Pipe Boots & Vents', description: 'Install pipe boots & vents' },
   { id: 'flashing', name: 'Flashing', description: 'Install all flashing' },
-  { id: 'ridge', name: 'Ridge Vent & Cap', description: 'Install ridge vent and ridge cap' },
+  { id: 'cleanup', name: 'Complete Clean Up', description: 'Final cleanup and inspection' },
 ];
 
 // Easing functions
