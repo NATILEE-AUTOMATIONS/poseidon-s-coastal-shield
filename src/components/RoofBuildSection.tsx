@@ -43,12 +43,12 @@ const RoofBuildSection: React.FC = () => {
   const layerStep = isMobile ? mobileLayerStep : desktopLayerStep;
   const layerStart = isMobile ? mobileLayerStart : desktopLayerStart;
   
-  // Decking gets 6x the scroll distance for a dramatic, visible animation
-  const deckingMultiplier = 6;
+  // Decking - faster on mobile (3x), slower on desktop (6x)
+  const deckingMultiplier = isMobile ? 3 : 6;
   const deckingEnd = layerStart + (layerStep * deckingMultiplier);
   
-  // Drip edge - faster on mobile (1.5x), slower on desktop (3x)
-  const dripEdgeMultiplier = isMobile ? 1.5 : 3;
+  // Drip edge - starts sooner on mobile but more deliberate scroll (3x), desktop (3x)
+  const dripEdgeMultiplier = 3;
   const dripEdgeEnd = deckingEnd + (layerStep * dripEdgeMultiplier);
   
   // Ice & water shield gets 3x scroll distance for visible roll-out
