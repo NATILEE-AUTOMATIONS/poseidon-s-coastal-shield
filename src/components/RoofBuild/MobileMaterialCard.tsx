@@ -7,10 +7,8 @@ interface MobileMaterialCardProps {
 }
 
 const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layers }) => {
-  // Only show first 4 materials on mobile
   const visibleMaterials = materialInfo.slice(0, 4);
   
-  // Find which material is currently active
   let activeIndex = -1;
   let localProgress = 0;
   
@@ -23,97 +21,145 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
     }
   }
   
-  // If before first layer or after 4th layer, don't show
   if (activeIndex === -1) return null;
   
   const material = visibleMaterials[activeIndex];
   if (!material) return null;
   
-  // Deliberate, cinematic timing
-  // Entry: slow fade up (first 20%)
-  // Hold: full visibility (20% to 75%)  
-  // Exit: gentle fade down (last 25%)
-  const entryEnd = 0.20;
-  const exitStart = 0.75;
+  // Staggered timing for each element
+  // Number: 0-15%
+  // Line: 10-25%
+  // Title: 15-35% (typewriter)
+  // Description: 25-45%
+  // Exit all: 80-100%
   
-  let cardOpacity = 1;
-  let translateY = 0;
-  let blur = 0;
+  const getElementProgress = (start: number, end: number) => {
+    if (localProgress < start) return 0;
+    if (localProgress > end) return 1;
+    return (localProgress - start) / (end - start);
+  };
   
-  // Quintic easing for ultra-smooth feel
+  // Easing with slight overshoot for tactile feel
+  const easeOutBack = (x: number) => {
+    const c1 = 1.70158;
+    const c3 = c1 + 1;
+    return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+  };
+  
   const easeOutQuint = (x: number) => 1 - Math.pow(1 - x, 5);
   const easeInQuint = (x: number) => Math.pow(x, 5);
   
-  if (localProgress < entryEnd) {
-    const entryProgress = localProgress / entryEnd;
-    const eased = easeOutQuint(entryProgress);
-    cardOpacity = eased;
-    translateY = 20 * (1 - eased);
-    blur = 4 * (1 - eased);
-  } else if (localProgress > exitStart) {
-    const exitProgress = (localProgress - exitStart) / (1 - exitStart);
-    const eased = easeInQuint(exitProgress);
-    cardOpacity = 1 - eased;
-    translateY = -15 * eased;
-    blur = 3 * eased;
-  }
+  // Element animations
+  const numberProgress = getElementProgress(0, 0.15);
+  const lineProgress = getElementProgress(0.10, 0.25);
+  const titleProgress = getElementProgress(0.15, 0.40);
+  const descProgress = getElementProgress(0.30, 0.50);
+  
+  // Exit phase
+  const isExiting = localProgress > 0.78;
+  const exitProgress = isExiting ? easeInQuint((localProgress - 0.78) / 0.22) : 0;
+  
+  // Number animation - drops in with weight
+  const numberEased = easeOutBack(numberProgress);
+  const numberY = 25 * (1 - Math.min(1, numberEased));
+  const numberOpacity = Math.min(1, numberProgress * 5) * (1 - exitProgress);
+  const numberScale = 0.8 + (0.2 * easeOutQuint(numberProgress));
+  
+  // Line animation - wipes in from center
+  const lineWidth = 50 * easeOutQuint(lineProgress);
+  const lineOpacity = lineProgress * (1 - exitProgress);
+  
+  // Title - typewriter effect
+  const titleChars = material.name.split('');
+  const charsToShow = Math.floor(titleChars.length * easeOutQuint(titleProgress));
+  const titleOpacity = 1 - exitProgress;
+  
+  // Description - fades up from blur
+  const descEased = easeOutQuint(descProgress);
+  const descOpacity = descEased * (1 - exitProgress);
+  const descY = 12 * (1 - descEased);
+  const descBlur = 6 * (1 - descEased);
 
   return (
-    <div className="w-full flex justify-center px-6 mt-8">
-      <div
-        className="text-center"
-        style={{
-          opacity: cardOpacity,
-          transform: `translateY(${translateY}px)`,
-          filter: blur > 0 ? `blur(${blur}px)` : 'none',
-          willChange: 'transform, opacity, filter',
-        }}
-      >
-        {/* Step number - large, monospace, glowing */}
+    <div className="w-full flex justify-center px-6 mt-10">
+      <div className="text-center">
+        
+        {/* Step number - drops in with weight */}
         <div
-          className="font-light tracking-tight"
           style={{
             fontFamily: 'ui-monospace, monospace',
-            fontSize: '4.5rem',
-            lineHeight: 0.9,
-            color: 'hsl(168 70% 50%)',
+            fontSize: '5rem',
+            fontWeight: 200,
+            lineHeight: 0.85,
+            color: 'hsl(168 65% 48%)',
             textShadow: `
-              0 0 20px hsl(168 80% 45% / 0.7),
-              0 0 40px hsl(168 75% 40% / 0.4)
+              0 0 25px hsl(168 80% 45% / ${0.5 + numberProgress * 0.3}),
+              0 0 50px hsl(168 75% 40% / ${0.2 + numberProgress * 0.2})
             `,
+            opacity: numberOpacity,
+            transform: `translateY(${numberY}px) scale(${numberScale})`,
+            willChange: 'transform, opacity',
           }}
         >
           {activeIndex + 1}
         </div>
 
-        {/* Thin divider line */}
+        {/* Thin line - wipes from center */}
         <div 
-          className="mx-auto my-3"
+          className="mx-auto mt-4 mb-5"
           style={{
-            width: '40px',
-            height: '1px',
-            background: 'linear-gradient(90deg, transparent, hsl(168 60% 45%), transparent)',
-            opacity: 0.6,
+            width: `${lineWidth}px`,
+            height: '2px',
+            background: 'hsl(168 55% 42%)',
+            opacity: lineOpacity,
+            boxShadow: '0 0 8px hsl(168 60% 45% / 0.5)',
           }}
         />
 
-        {/* Material name - clean, bold */}
+        {/* Material name - typewriter */}
         <div
-          className="text-xl font-semibold tracking-wide uppercase"
+          className="text-lg font-medium tracking-widest uppercase h-7"
           style={{
-            color: 'hsl(0 0% 94%)',
-            letterSpacing: '0.15em',
+            color: 'hsl(0 0% 92%)',
+            opacity: titleOpacity,
+            letterSpacing: '0.2em',
           }}
         >
-          {material.name}
+          {titleChars.map((char, i) => (
+            <span
+              key={i}
+              style={{
+                opacity: i < charsToShow ? 1 : 0,
+                transition: 'opacity 0.05s',
+              }}
+            >
+              {char}
+            </span>
+          ))}
+          {/* Cursor */}
+          {titleProgress > 0 && titleProgress < 1 && (
+            <span
+              style={{
+                opacity: Math.sin(Date.now() / 150) > 0 ? 0.8 : 0,
+                color: 'hsl(168 70% 55%)',
+                marginLeft: '2px',
+              }}
+            >
+              |
+            </span>
+          )}
         </div>
         
-        {/* Description - subtle, secondary */}
+        {/* Description - fades up from blur */}
         <div
-          className="text-sm mt-2 max-w-xs mx-auto"
+          className="text-sm mt-3 max-w-[280px] mx-auto"
           style={{ 
-            color: 'hsl(168 10% 55%)',
-            lineHeight: 1.5,
+            color: 'hsl(168 8% 50%)',
+            lineHeight: 1.6,
+            opacity: descOpacity,
+            transform: `translateY(${descY}px)`,
+            filter: descBlur > 0.5 ? `blur(${descBlur}px)` : 'none',
+            willChange: 'transform, opacity, filter',
           }}
         >
           {material.description}
