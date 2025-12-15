@@ -246,7 +246,7 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
       
       {/* Static text label - same position as decking, desktop only */}
       {!isMobile && (
-        <g style={{ opacity }}>
+        <g>
           <text
             x="200"
             y="103"
