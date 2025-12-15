@@ -676,8 +676,41 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
         })}
       </g>
       
-      {/* Logos ON TOP of underlayment - clipped to where underlayment has been laid */}
-      <g clipPath="url(#roofClipUnderlayment)" style={{ opacity: layerProgress > 0 ? 1 : 0 }}>
+      {/* Dynamic clip path that matches actual underlayment coverage */}
+      <defs>
+        <clipPath id="underlaymentCoverageClip">
+          {Array.from({ length: courseCount }).map((_, i) => {
+            const courseProgress = easeOutQuart(getCourseProgress(i));
+            if (courseProgress <= 0) return null;
+            
+            const bottomY = eaveY - (i * courseHeight);
+            const topY = bottomY - courseHeight;
+            const topLeftX = getLeftX(topY);
+            const topRightX = getRightX(topY);
+            const bottomLeftX = getLeftX(bottomY);
+            const bottomRightX = getRightX(bottomY);
+            const topWidth = topRightX - topLeftX;
+            const bottomWidth = bottomRightX - bottomLeftX;
+            const goingRight = i % 2 === 0;
+            
+            let points: string;
+            if (goingRight) {
+              const currentTopRightX = topLeftX + topWidth * courseProgress;
+              const currentBottomRightX = bottomLeftX + bottomWidth * courseProgress;
+              points = `${topLeftX},${topY} ${currentTopRightX},${topY} ${currentBottomRightX},${bottomY} ${bottomLeftX},${bottomY}`;
+            } else {
+              const currentTopLeftX = topRightX - topWidth * courseProgress;
+              const currentBottomLeftX = bottomRightX - bottomWidth * courseProgress;
+              points = `${currentTopLeftX},${topY} ${topRightX},${topY} ${bottomRightX},${bottomY} ${currentBottomLeftX},${bottomY}`;
+            }
+            
+            return <polygon key={`clip-course-${i}`} points={points} />;
+          })}
+        </clipPath>
+      </defs>
+      
+      {/* Logos clipped to actual underlayment coverage - appear/disappear as courses roll */}
+      <g clipPath="url(#underlaymentCoverageClip)">
         {/* Top center - main prominent logo */}
         <image href="/poseidon-logo.png" x="140" y="62" width="120" height="50" opacity="0.95" preserveAspectRatio="xMidYMid meet" />
         
