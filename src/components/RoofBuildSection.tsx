@@ -51,17 +51,21 @@ const RoofBuildSection: React.FC = () => {
   const dripEdgeMultiplier = 3;
   const dripEdgeEnd = deckingEnd + (layerStep * dripEdgeMultiplier);
   
+  // Ice & water shield gets 3x scroll distance for visible roll-out
+  const iceWaterMultiplier = 3;
+  const iceWaterEnd = dripEdgeEnd + (layerStep * iceWaterMultiplier);
+  
   const layers = [
     { start: layerStart, end: deckingEnd },                                        // 1. Decking (6x duration)
     { start: deckingEnd, end: dripEdgeEnd },                                       // 2. Drip Edge Eaves (3x duration)
-    { start: dripEdgeEnd, end: dripEdgeEnd + layerStep },                          // 3. Ice & Water
-    { start: dripEdgeEnd + layerStep, end: dripEdgeEnd + layerStep * 2 },          // 4. Underlayment
-    { start: dripEdgeEnd + layerStep * 2, end: dripEdgeEnd + layerStep * 3 },      // 5. Drip Edge Rakes
-    { start: dripEdgeEnd + layerStep * 3, end: dripEdgeEnd + layerStep * 4 },      // 6. Starter Strip
-    { start: dripEdgeEnd + layerStep * 4, end: dripEdgeEnd + layerStep * 5 },      // 7. Shingles
-    { start: dripEdgeEnd + layerStep * 5, end: dripEdgeEnd + layerStep * 6 },      // 8. Vents
-    { start: dripEdgeEnd + layerStep * 6, end: dripEdgeEnd + layerStep * 7 },      // 9. Flashing
-    { start: dripEdgeEnd + layerStep * 7, end: dripEdgeEnd + layerStep * 8 },      // 10. Ridge Cap
+    { start: dripEdgeEnd, end: iceWaterEnd },                                      // 3. Ice & Water (3x duration)
+    { start: iceWaterEnd, end: iceWaterEnd + layerStep },                          // 4. Underlayment
+    { start: iceWaterEnd + layerStep, end: iceWaterEnd + layerStep * 2 },          // 5. Drip Edge Rakes
+    { start: iceWaterEnd + layerStep * 2, end: iceWaterEnd + layerStep * 3 },      // 6. Starter Strip
+    { start: iceWaterEnd + layerStep * 3, end: iceWaterEnd + layerStep * 4 },      // 7. Shingles
+    { start: iceWaterEnd + layerStep * 4, end: iceWaterEnd + layerStep * 5 },      // 8. Vents
+    { start: iceWaterEnd + layerStep * 5, end: iceWaterEnd + layerStep * 6 },      // 9. Flashing
+    { start: iceWaterEnd + layerStep * 6, end: iceWaterEnd + layerStep * 7 },      // 10. Ridge Cap
   ];
 
   // Show hint during buffer period (before animation starts)
@@ -229,7 +233,7 @@ const RoofBuildSection: React.FC = () => {
                   {/* 2. Drip Edge (Eaves) - rendered last for top layer */}
                   
                   {/* 3. Ice & Water Shield */}
-                  <IceWaterShieldLayer progress={progress} startProgress={layers[2].start} endProgress={layers[2].end} />
+                  <IceWaterShieldLayer progress={progress} startProgress={layers[2].start} endProgress={layers[2].end} isMobile={isMobile} />
                   {/* 4. Underlayment */}
                   <UnderlaymentLayer progress={progress} startProgress={layers[3].start} endProgress={layers[3].end} />
                   {/* 5. Drip Edge (Rakes) */}

@@ -230,6 +230,15 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
   const textHeight = textBottom - textTop;
   const clipHeight = Math.max(0, Math.min(textHeight, barY - textTop));
   
+  // Text fade out: starts at 70% progress, fully gone by 90%
+  const fadeOutStart = 0.70;
+  const fadeOutEnd = 0.90;
+  const textOpacity = layerProgress < fadeOutStart 
+    ? 1 
+    : layerProgress > fadeOutEnd 
+      ? 0 
+      : 1 - (layerProgress - fadeOutStart) / (fadeOutEnd - fadeOutStart);
+  
   return (
     <>
       {/* Animated drip edge line */}
@@ -253,8 +262,11 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
       </g>
       
       {/* Wipe-reveal text label - desktop only, synced to bar position */}
-      {!isMobile && clipHeight > 0 && (
-        <g style={{ filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))' }}>
+      {!isMobile && clipHeight > 0 && textOpacity > 0 && (
+        <g style={{ 
+          filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))',
+          opacity: textOpacity,
+        }}>
           <defs>
             <clipPath id="dripEdgeTextWipe">
               <rect 
@@ -304,9 +316,147 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
   );
 };
 
+// Ice & Water Shield - rolls out from peak toward eaves
+export const IceWaterShieldLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
+  const rawProgress = (progress - startProgress) / (endProgress - startProgress);
+  const layerProgress = Math.max(0, Math.min(1, rawProgress));
+  
+  if (progress < startProgress) return null;
+  
+  const easedProgress = easeOutQuint(layerProgress);
+  
+  // Roll-out: starts from peak (y=56) and expands downward toward eaves (y=159)
+  // Coverage represents how much of the roof is covered
+  const maxCoverageHeight = 60; // Ice & water shield covers ~60px from peak
+  const coverageHeight = maxCoverageHeight * easedProgress;
+  
+  // Left slope: peak at (200, 56), eaves at (42, 159)
+  // Right slope: peak at (200, 56), eaves at (358, 159)
+  const leftSlopeRatio = (159 - 56) / (200 - 42); // ~0.652
+  const rightSlopeRatio = (159 - 56) / (358 - 200); // ~0.652
+  
+  // Calculate the Y position where the shield reaches
+  const shieldBottomY = 56 + coverageHeight;
+  
+  // Calculate corresponding X positions on each slope at shieldBottomY
+  const leftX = 42 + (shieldBottomY - 56) / leftSlopeRatio;
+  const rightX = 358 - (shieldBottomY - 56) / rightSlopeRatio;
+  
+  // Text timing: fade in 20-40%, hold 40-60%, fade out 60-85%
+  const textOpacity = layerProgress < 0.2 
+    ? 0 
+    : layerProgress < 0.4 
+      ? (layerProgress - 0.2) / 0.2 
+      : layerProgress < 0.6 
+        ? 1 
+        : layerProgress < 0.85 
+          ? 1 - (layerProgress - 0.6) / 0.25 
+          : 0;
+  
+  return (
+    <g className="ice-water-shield-layer">
+      <defs>
+        {/* Ice & water shield gradient - dark blue/black with slight sheen */}
+        <linearGradient id="iceWaterGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(210 40% 18%)" />
+          <stop offset="50%" stopColor="hsl(210 35% 12%)" />
+          <stop offset="100%" stopColor="hsl(210 30% 8%)" />
+        </linearGradient>
+        {/* Self-adhesive membrane sheen effect */}
+        <linearGradient id="iceWaterSheen" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="hsl(200 50% 40%)" stopOpacity="0" />
+          <stop offset="45%" stopColor="hsl(200 60% 50%)" stopOpacity="0.25" />
+          <stop offset="55%" stopColor="hsl(200 60% 50%)" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="hsl(200 50% 40%)" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      
+      {/* Left slope shield */}
+      <polygon
+        points={`200,56 ${leftX},${shieldBottomY} 200,${shieldBottomY}`}
+        fill="url(#iceWaterGradient)"
+        style={{
+          filter: `drop-shadow(0 2px 4px hsl(210 40% 10% / 0.5))`,
+        }}
+      />
+      {/* Left slope sheen overlay */}
+      <polygon
+        points={`200,56 ${leftX},${shieldBottomY} 200,${shieldBottomY}`}
+        fill="url(#iceWaterSheen)"
+      />
+      
+      {/* Right slope shield */}
+      <polygon
+        points={`200,56 ${rightX},${shieldBottomY} 200,${shieldBottomY}`}
+        fill="url(#iceWaterGradient)"
+        style={{
+          filter: `drop-shadow(0 2px 4px hsl(210 40% 10% / 0.5))`,
+        }}
+      />
+      {/* Right slope sheen overlay */}
+      <polygon
+        points={`200,56 ${rightX},${shieldBottomY} 200,${shieldBottomY}`}
+        fill="url(#iceWaterSheen)"
+      />
+      
+      {/* Leading edge glow - the "roll" edge */}
+      <line
+        x1={leftX}
+        y1={shieldBottomY}
+        x2={rightX}
+        y2={shieldBottomY}
+        stroke="hsl(200 70% 55%)"
+        strokeWidth="3"
+        strokeLinecap="round"
+        style={{
+          filter: `drop-shadow(0 0 ${4 + easedProgress * 8}px hsl(200 70% 55% / 0.8)) drop-shadow(0 0 ${2 + easedProgress * 4}px hsl(200 80% 60% / 0.6))`,
+        }}
+      />
+      
+      {/* Text label - desktop only */}
+      {!isMobile && textOpacity > 0 && (
+        <g style={{ 
+          opacity: textOpacity,
+          filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))',
+        }}>
+          <text
+            x="200"
+            y="93"
+            textAnchor="middle"
+            fill="hsl(45 100% 95%)"
+            fontSize="15"
+            fontWeight="800"
+            fontFamily="system-ui, -apple-system, sans-serif"
+            letterSpacing="3"
+            stroke="hsl(0 0% 5%)"
+            strokeWidth="2.5"
+            paintOrder="stroke fill"
+          >
+            ICE & WATER
+          </text>
+          <text
+            x="200"
+            y="114"
+            textAnchor="middle"
+            fill="hsl(200 80% 70%)"
+            fontSize="15"
+            fontWeight="800"
+            fontFamily="system-ui, -apple-system, sans-serif"
+            letterSpacing="2"
+            stroke="hsl(0 0% 5%)"
+            strokeWidth="2.5"
+            paintOrder="stroke fill"
+          >
+            SHIELD
+          </text>
+        </g>
+      )}
+    </g>
+  );
+};
+
 // Placeholder exports - to be implemented one at a time
 export const DripEdgeRakesLayer: React.FC<LayerProps> = () => null;
-export const IceWaterShieldLayer: React.FC<LayerProps> = () => null;
 export const UnderlaymentLayer: React.FC<LayerProps> = () => null;
 export const StarterStripLayer: React.FC<LayerProps> = () => null;
 export const FlashingLayer: React.FC<LayerProps> = () => null;
