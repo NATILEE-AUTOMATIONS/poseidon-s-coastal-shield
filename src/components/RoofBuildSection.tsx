@@ -44,33 +44,37 @@ const RoofBuildSection: React.FC = () => {
   const layerStep = isMobile ? mobileLayerStep : desktopLayerStep;
   const layerStart = isMobile ? mobileLayerStart : desktopLayerStart;
   
-  // Decking - faster on mobile (3x), slower on desktop (6x)
-  const deckingMultiplier = isMobile ? 3 : 6;
+  // Decking - reduced multipliers to fit all layers within 60% scroll
+  const deckingMultiplier = isMobile ? 2 : 2.5;
   const deckingEnd = layerStart + (layerStep * deckingMultiplier);
   
-  // Drip edge - starts sooner on mobile but more deliberate scroll (3x), desktop (3x)
-  const dripEdgeMultiplier = isMobile ? 2.5 : 3;
+  // Drip edge
+  const dripEdgeMultiplier = isMobile ? 1.5 : 2;
   const dripEdgeEnd = deckingEnd + (layerStep * dripEdgeMultiplier);
   
-  // Ice & water shield gets 3x scroll distance for visible roll-out
-  const iceWaterMultiplier = isMobile ? 2.5 : 3;
+  // Ice & water shield
+  const iceWaterMultiplier = isMobile ? 1.5 : 2;
   const iceWaterEnd = dripEdgeEnd + (layerStep * iceWaterMultiplier);
   
-  // Underlayment gets 4x scroll distance for the alternating courses animation
-  const underlaymentMultiplier = isMobile ? 4.5 : 4;
+  // Underlayment
+  const underlaymentMultiplier = isMobile ? 2 : 2;
   const underlaymentEnd = iceWaterEnd + (layerStep * underlaymentMultiplier);
   
+  // Starter strip gets 2x multiplier
+  const starterStripMultiplier = isMobile ? 1.5 : 2;
+  const starterStripEnd = underlaymentEnd + (layerStep * starterStripMultiplier);
+  
   const layers = [
-    { start: layerStart, end: deckingEnd },                                        // 1. Decking (6x duration)
-    { start: deckingEnd, end: dripEdgeEnd },                                       // 2. Drip Edge Eaves (3x duration)
-    { start: dripEdgeEnd, end: iceWaterEnd },                                      // 3. Ice & Water (3x duration)
-    { start: iceWaterEnd, end: underlaymentEnd },                                  // 4. Underlayment (4x duration)
-    { start: underlaymentEnd, end: underlaymentEnd + layerStep * 2 },                  // 5. Drip Edge Rakes (2x)
-    { start: underlaymentEnd + layerStep * 2, end: underlaymentEnd + layerStep * 5 },  // 6. Starter Strip (3x duration)
-    { start: underlaymentEnd + layerStep * 5, end: underlaymentEnd + layerStep * 6 }, // 7. Shingles
-    { start: underlaymentEnd + layerStep * 6, end: underlaymentEnd + layerStep * 7 }, // 8. Vents
-    { start: underlaymentEnd + layerStep * 7, end: underlaymentEnd + layerStep * 8 }, // 9. Flashing
-    { start: underlaymentEnd + layerStep * 8, end: underlaymentEnd + layerStep * 9 }, // 10. Ridge Cap
+    { start: layerStart, end: deckingEnd },                    // 1. Decking
+    { start: deckingEnd, end: dripEdgeEnd },                   // 2. Drip Edge Eaves
+    { start: dripEdgeEnd, end: iceWaterEnd },                  // 3. Ice & Water
+    { start: iceWaterEnd, end: underlaymentEnd },              // 4. Underlayment
+    { start: underlaymentEnd, end: underlaymentEnd + layerStep }, // 5. Drip Edge Rakes
+    { start: underlaymentEnd + layerStep, end: starterStripEnd }, // 6. Starter Strip (2x)
+    { start: starterStripEnd, end: starterStripEnd + layerStep }, // 7. Shingles
+    { start: starterStripEnd + layerStep, end: starterStripEnd + layerStep * 2 }, // 8. Vents
+    { start: starterStripEnd + layerStep * 2, end: starterStripEnd + layerStep * 3 }, // 9. Flashing
+    { start: starterStripEnd + layerStep * 3, end: starterStripEnd + layerStep * 4 }, // 10. Ridge Cap
   ];
   
   // Calculate when all active layers end (underlayment is the last active one for now)
