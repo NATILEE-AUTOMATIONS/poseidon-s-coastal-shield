@@ -316,7 +316,7 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
   );
 };
 
-// Ice & Water Shield - strips roll down from peak toward eaves
+// Ice & Water Shield - horizontal courses unroll left-to-right from eaves upward
 export const IceWaterShieldLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
@@ -324,7 +324,6 @@ export const IceWaterShieldLayer: React.FC<LayerProps> = ({ progress, startProgr
   if (progress < startProgress) return null;
   
   const easeOutQuart = (x: number): number => 1 - Math.pow(1 - x, 4);
-  const easedProgress = easeOutQuart(layerProgress);
   
   // Roof geometry
   const peakX = 200;
@@ -333,107 +332,123 @@ export const IceWaterShieldLayer: React.FC<LayerProps> = ({ progress, startProgr
   const rightEaveX = 358;
   const eaveY = 159;
   
-  // Ice & water shield covers bottom ~40% of roof height (along eaves)
-  // It starts rolling from about 40% down the roof and covers to the eave
-  const shieldStartY = peakY + (eaveY - peakY) * 0.55; // Start point (where shield begins)
-  const shieldHeight = eaveY - shieldStartY; // Total height to cover
+  // 2 courses of ice & water shield near the eaves
+  const courseHeight = 22;
+  const courses = [
+    { y: eaveY - courseHeight, delay: 0 },      // Bottom course (at eave)
+    { y: eaveY - courseHeight * 2 - 2, delay: 0.35 }, // Second course above
+  ];
   
-  // Current Y position of the leading edge (rolls from shieldStartY down to eaveY)
-  const currentY = shieldStartY + shieldHeight * easedProgress;
+  // Get X bounds at a Y position following roof slope
+  const getLeftX = (y: number) => {
+    const slope = (leftEaveX - peakX) / (eaveY - peakY);
+    return peakX + slope * (y - peakY);
+  };
+  const getRightX = (y: number) => {
+    const slope = (rightEaveX - peakX) / (eaveY - peakY);
+    return peakX + slope * (y - peakY);
+  };
   
-  // Calculate X positions at any Y level (following roof slope)
-  const leftSlope = (leftEaveX - peakX) / (eaveY - peakY);
-  const rightSlope = (rightEaveX - peakX) / (eaveY - peakY);
-  
-  const getLeftX = (y: number) => peakX + leftSlope * (y - peakY);
-  const getRightX = (y: number) => peakX + rightSlope * (y - peakY);
-  
-  const startLeftX = getLeftX(shieldStartY);
-  const startRightX = getRightX(shieldStartY);
-  const currentLeftX = getLeftX(currentY);
-  const currentRightX = getRightX(currentY);
-  
-  // Text timing: fade in 25-45%, hold 45-65%, fade out 65-85%
-  const textOpacity = layerProgress < 0.25 
+  // Text timing
+  const textOpacity = layerProgress < 0.30 
     ? 0 
-    : layerProgress < 0.45 
-      ? (layerProgress - 0.25) / 0.20 
-      : layerProgress < 0.65 
+    : layerProgress < 0.50 
+      ? (layerProgress - 0.30) / 0.20 
+      : layerProgress < 0.70 
         ? 1 
-        : layerProgress < 0.85 
-          ? 1 - (layerProgress - 0.65) / 0.20 
+        : layerProgress < 0.90 
+          ? 1 - (layerProgress - 0.70) / 0.20 
           : 0;
   
   return (
     <g className="ice-water-shield-layer">
       <defs>
         {/* Dark membrane gradient */}
-        <linearGradient id="iceShieldGrad" x1="50%" y1="0%" x2="50%" y2="100%">
-          <stop offset="0%" stopColor="hsl(200 35% 10%)" />
-          <stop offset="50%" stopColor="hsl(200 40% 16%)" />
-          <stop offset="100%" stopColor="hsl(200 35% 10%)" />
+        <linearGradient id="iceMembraneGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(200 40% 12%)" />
+          <stop offset="50%" stopColor="hsl(200 45% 18%)" />
+          <stop offset="100%" stopColor="hsl(200 40% 12%)" />
         </linearGradient>
-        {/* Surface sheen */}
-        <linearGradient id="iceShieldSheen" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="hsl(200 60% 55%)" stopOpacity="0" />
-          <stop offset="40%" stopColor="hsl(200 70% 60%)" stopOpacity="0.2" />
-          <stop offset="60%" stopColor="hsl(200 70% 60%)" stopOpacity="0.2" />
-          <stop offset="100%" stopColor="hsl(200 60% 55%)" stopOpacity="0" />
+        {/* Sheen effect */}
+        <linearGradient id="iceMembraneSheen" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="hsl(200 70% 60%)" stopOpacity="0" />
+          <stop offset="50%" stopColor="hsl(200 80% 65%)" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="hsl(200 70% 60%)" stopOpacity="0" />
         </linearGradient>
+        {/* Clip to roof shape */}
+        <clipPath id="roofClipIce">
+          <polygon points={`${peakX},${peakY} ${leftEaveX},${eaveY} ${rightEaveX},${eaveY}`} />
+        </clipPath>
       </defs>
       
-      {/* Left slope shield - trapezoid shape rolling down */}
-      <polygon
-        points={`
-          ${startLeftX},${shieldStartY} 
-          ${startRightX},${shieldStartY}
-          ${currentRightX},${currentY}
-          ${currentLeftX},${currentY}
-        `}
-        fill="url(#iceShieldGrad)"
-        style={{
-          filter: 'drop-shadow(0 2px 4px hsl(200 40% 5% / 0.5))',
-        }}
-      />
+      <g clipPath="url(#roofClipIce)">
+        {courses.map((course, i) => {
+          // Calculate this course's progress with delay
+          const courseProgress = Math.max(0, Math.min(1, (layerProgress - course.delay) / (1 - course.delay)));
+          if (courseProgress <= 0) return null;
+          
+          const easedCourse = easeOutQuart(courseProgress);
+          
+          const topY = course.y;
+          const bottomY = course.y + courseHeight;
+          
+          // Full width of course at this Y level
+          const topLeftX = getLeftX(topY);
+          const topRightX = getRightX(topY);
+          const bottomLeftX = getLeftX(bottomY);
+          const bottomRightX = getRightX(bottomY);
+          
+          const fullWidth = topRightX - topLeftX;
+          
+          // Unroll from left edge toward right
+          const currentWidth = fullWidth * easedCourse;
+          const currentRightTopX = topLeftX + currentWidth;
+          const currentRightBottomX = bottomLeftX + (bottomRightX - bottomLeftX) * easedCourse;
+          
+          return (
+            <g key={`course-${i}`}>
+              {/* Main membrane strip */}
+              <polygon
+                points={`
+                  ${topLeftX},${topY}
+                  ${currentRightTopX},${topY}
+                  ${currentRightBottomX},${bottomY}
+                  ${bottomLeftX},${bottomY}
+                `}
+                fill="url(#iceMembraneGrad)"
+                style={{
+                  filter: 'drop-shadow(0 1px 3px hsl(200 40% 5% / 0.4))',
+                }}
+              />
+              {/* Sheen overlay */}
+              <polygon
+                points={`
+                  ${topLeftX},${topY}
+                  ${currentRightTopX},${topY}
+                  ${currentRightBottomX},${bottomY}
+                  ${bottomLeftX},${bottomY}
+                `}
+                fill="url(#iceMembraneSheen)"
+              />
+              {/* Leading edge glow (right side, where it's unrolling) */}
+              <line
+                x1={currentRightTopX}
+                y1={topY}
+                x2={currentRightBottomX}
+                y2={bottomY}
+                stroke="hsl(200 80% 60%)"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                style={{
+                  filter: `drop-shadow(0 0 ${5 + easedCourse * 8}px hsl(200 80% 60% / 0.9))`,
+                }}
+              />
+            </g>
+          );
+        })}
+      </g>
       
-      {/* Sheen overlay */}
-      <polygon
-        points={`
-          ${startLeftX},${shieldStartY} 
-          ${startRightX},${shieldStartY}
-          ${currentRightX},${currentY}
-          ${currentLeftX},${currentY}
-        `}
-        fill="url(#iceShieldSheen)"
-      />
-      
-      {/* Top edge - where shield starts */}
-      <line
-        x1={startLeftX}
-        y1={shieldStartY}
-        x2={startRightX}
-        y2={shieldStartY}
-        stroke="hsl(200 70% 50%)"
-        strokeWidth="2"
-        strokeLinecap="round"
-        opacity={0.6}
-      />
-      
-      {/* Leading edge glow - the rolling edge moving down */}
-      <line
-        x1={currentLeftX}
-        y1={currentY}
-        x2={currentRightX}
-        y2={currentY}
-        stroke="hsl(200 80% 60%)"
-        strokeWidth="3"
-        strokeLinecap="round"
-        style={{
-          filter: `drop-shadow(0 0 ${6 + easedProgress * 10}px hsl(200 80% 60% / 0.9)) drop-shadow(0 0 ${3 + easedProgress * 5}px hsl(200 90% 70% / 0.6))`,
-        }}
-      />
-      
-      {/* Text label - fades in/out */}
+      {/* Text label */}
       {!isMobile && textOpacity > 0 && (
         <g style={{ 
           opacity: textOpacity,
