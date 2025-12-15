@@ -46,30 +46,30 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
         let translateY = 0;
         let rotate = 0;
         let scale = 1;
-        let opacity = 1;
+        let clipPercent = 100; // 100 = fully visible
         let glowIntensity = 0.3;
         
         if (localProgress < enterEnd) {
-          // ENTER: Swing in from bottom-right with overshoot
+          // ENTER: Diagonal slice reveal from bottom-right corner
           const t = localProgress / enterEnd;
           const eased = easeOutBack(t);
           
-          translateX = 150 * (1 - eased);
-          translateY = 80 * (1 - eased);
-          rotate = 25 * (1 - eased);
-          scale = 0.3 + (0.7 * Math.min(1, eased));
-          opacity = Math.min(1, t * 4);
+          translateX = 80 * (1 - eased);
+          translateY = 40 * (1 - eased);
+          rotate = 8 * (1 - eased);
+          scale = 0.85 + (0.15 * Math.min(1, eased));
+          clipPercent = t * 100; // Slice opens from 0% to 100%
           glowIntensity = 0.8 * eased;
         } else if (localProgress > exitStart) {
-          // EXIT: Swing out to top-left
+          // EXIT: Diagonal slice out to top-left corner
           const t = (localProgress - exitStart) / (1 - exitStart);
           const eased = easeInBack(t);
           
-          translateX = -150 * eased;
-          translateY = -60 * eased;
-          rotate = -20 * eased;
-          scale = 1 - (0.5 * eased);
-          opacity = 1 - Math.min(1, t * 2);
+          translateX = -60 * eased;
+          translateY = -30 * eased;
+          rotate = -6 * eased;
+          scale = 1 - (0.1 * eased);
+          clipPercent = (1 - t) * 100; // Slice closes from 100% to 0%
           glowIntensity = 0.3 * (1 - eased);
         }
         
@@ -78,9 +78,9 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
             key={material.id}
             className="absolute inset-x-5 top-0 flex justify-center"
             style={{
-              opacity,
+              clipPath: `polygon(0% ${100 - clipPercent}%, ${clipPercent}% 0%, 100% ${clipPercent}%, ${100 - clipPercent}% 100%)`,
               transform: `translateX(${translateX}px) translateY(${translateY}px) rotate(${rotate}deg) scale(${scale})`,
-              willChange: 'transform, opacity',
+              willChange: 'transform, clip-path',
             }}
           >
             <div
