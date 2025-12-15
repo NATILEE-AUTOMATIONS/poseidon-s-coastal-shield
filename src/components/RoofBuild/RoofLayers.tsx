@@ -538,15 +538,21 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
   };
   
   // Text timing - starts immediately with underlayment, scale-in animation
+  // Text disappears when course 2 (3rd layer, index 2) rolls over it
+  const course2Progress = easeOutQuart(getCourseProgress(2));
   const textProgress = layerProgress < 0.12 
     ? layerProgress / 0.12 
-    : layerProgress < 0.75 
-      ? 1 
-      : layerProgress < 0.90 
-        ? 1 - (layerProgress - 0.75) / 0.15 
-        : 0;
-  const textScale = 0.5 + (Math.min(1, textProgress) * 0.5); // Scale from 0.5 to 1
+    : 1;
+  const textScale = 0.5 + (Math.min(1, textProgress) * 0.5);
   const textOpacity = textProgress;
+  
+  // Course 2 goes right-to-left, so clip text from right side as it passes
+  // Text is centered at x=200, roughly 80px wide (160 to 240)
+  const textLeftX = 120;
+  const textRightX = 280;
+  const textWidth = textRightX - textLeftX;
+  // As course2Progress goes 0->1, clip moves from right to left
+  const textClipRightX = textRightX - (textWidth * course2Progress);
   
   return (
     <g className="underlayment-layer">
@@ -654,29 +660,40 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
         })}
       </g>
       
-      {/* Text label - scale-in animation */}
-      {!isMobile && textOpacity > 0 && (
+      {/* Text label - scale-in animation, clipped by course 2 rolling over */}
+      {!isMobile && textOpacity > 0 && textClipRightX > textLeftX && (
         <g style={{ 
-          opacity: textOpacity,
-          transform: `scale(${textScale})`,
-          transformOrigin: '200px 113px',
           filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))',
         }}>
-          <text
-            x="200"
-            y="113"
-            textAnchor="middle"
-            fill="hsl(45 100% 95%)"
-            fontSize="13"
-            fontWeight="800"
-            fontFamily="system-ui, -apple-system, sans-serif"
-            letterSpacing="2"
-            stroke="hsl(0 0% 5%)"
-            strokeWidth="2.5"
-            paintOrder="stroke fill"
+          <defs>
+            <clipPath id="underlaymentTextClip">
+              <rect x={textLeftX} y="80" width={textClipRightX - textLeftX} height="50" />
+            </clipPath>
+          </defs>
+          <g 
+            clipPath="url(#underlaymentTextClip)"
+            style={{ 
+              opacity: textOpacity,
+              transform: `scale(${textScale})`,
+              transformOrigin: '200px 113px',
+            }}
           >
-            UNDERLAYMENT
-          </text>
+            <text
+              x="200"
+              y="113"
+              textAnchor="middle"
+              fill="hsl(45 100% 95%)"
+              fontSize="13"
+              fontWeight="800"
+              fontFamily="system-ui, -apple-system, sans-serif"
+              letterSpacing="2"
+              stroke="hsl(0 0% 5%)"
+              strokeWidth="2.5"
+              paintOrder="stroke fill"
+            >
+              UNDERLAYMENT
+            </text>
+          </g>
         </g>
       )}
     </g>
