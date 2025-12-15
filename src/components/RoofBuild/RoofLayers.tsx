@@ -733,7 +733,162 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
     </g>
   );
 };
-export const StarterStripLayer: React.FC<LayerProps> = () => null;
+// Starter Strip - simple left-to-right wipe along the eave
+export const StarterStripLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
+  const rawProgress = (progress - startProgress) / (endProgress - startProgress);
+  const layerProgress = Math.max(0, Math.min(1, rawProgress));
+  
+  if (progress < startProgress) return null;
+  
+  const easedProgress = easeOutQuint(layerProgress);
+  
+  // Strip geometry - along the eave line
+  const stripStartX = 38;
+  const stripEndX = 362;
+  const stripY = 157; // Just above drip edge
+  const stripHeight = 8;
+  const totalWidth = stripEndX - stripStartX;
+  
+  // Current width based on progress (left to right wipe)
+  const currentWidth = totalWidth * easedProgress;
+  
+  // Leading edge glow intensity
+  const glowIntensity = easedProgress < 0.95 ? 1 : (1 - easedProgress) / 0.05;
+  
+  // Text timing: fade in 15-35%, hold 35-60%, fade out 60-80%
+  const textOpacity = isMobile ? 0 : (
+    layerProgress < 0.15 
+      ? 0 
+      : layerProgress < 0.35 
+        ? (layerProgress - 0.15) / 0.2 
+        : layerProgress < 0.60 
+          ? 1 
+          : layerProgress < 0.80 
+            ? 1 - (layerProgress - 0.60) / 0.2 
+            : 0
+  );
+  
+  return (
+    <g className="starter-strip-layer">
+      <defs>
+        {/* Dark shingle gradient */}
+        <linearGradient id="starterStripGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(220 20% 28%)" />
+          <stop offset="50%" stopColor="hsl(220 18% 22%)" />
+          <stop offset="100%" stopColor="hsl(220 15% 18%)" />
+        </linearGradient>
+        
+        {/* Clip for wipe effect */}
+        <clipPath id="starterStripClip">
+          <rect 
+            x={stripStartX} 
+            y={stripY - stripHeight} 
+            width={currentWidth} 
+            height={stripHeight + 4}
+          />
+        </clipPath>
+      </defs>
+      
+      {/* Main strip body - clipped for wipe effect */}
+      <g clipPath="url(#starterStripClip)">
+        <rect
+          x={stripStartX}
+          y={stripY - stripHeight}
+          width={totalWidth}
+          height={stripHeight}
+          fill="url(#starterStripGrad)"
+          rx="1"
+        />
+        
+        {/* Subtle shingle tab lines */}
+        {[0.15, 0.35, 0.55, 0.75, 0.95].map((pos, i) => (
+          <line
+            key={i}
+            x1={stripStartX + totalWidth * pos}
+            y1={stripY - stripHeight + 1}
+            x2={stripStartX + totalWidth * pos}
+            y2={stripY - 1}
+            stroke="hsl(220 15% 12%)"
+            strokeWidth="1"
+            opacity="0.6"
+          />
+        ))}
+        
+        {/* Top edge teal accent */}
+        <line
+          x1={stripStartX}
+          y1={stripY - stripHeight}
+          x2={stripEndX}
+          y2={stripY - stripHeight}
+          stroke="hsl(168 70% 50%)"
+          strokeWidth="1.5"
+          opacity="0.7"
+          style={{
+            filter: 'drop-shadow(0 0 4px hsl(168 70% 50% / 0.6))',
+          }}
+        />
+      </g>
+      
+      {/* Leading edge glow - orange/gold accent */}
+      {easedProgress > 0 && easedProgress < 1 && (
+        <line
+          x1={stripStartX + currentWidth}
+          y1={stripY - stripHeight - 2}
+          x2={stripStartX + currentWidth}
+          y2={stripY + 2}
+          stroke="hsl(30 95% 55%)"
+          strokeWidth="3"
+          strokeLinecap="round"
+          opacity={glowIntensity}
+          style={{
+            filter: `drop-shadow(0 0 8px hsl(30 95% 55% / 0.9)) drop-shadow(0 0 16px hsl(25 100% 50% / 0.7))`,
+          }}
+        />
+      )}
+      
+      {/* Text label - desktop only */}
+      {textOpacity > 0 && (
+        <g 
+          style={{ 
+            opacity: textOpacity,
+            filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 14px hsl(0 0% 0% / 0.9))',
+          }}
+        >
+          <text
+            x="200"
+            y="103"
+            textAnchor="middle"
+            fill="hsl(45 100% 95%)"
+            fontSize="15"
+            fontWeight="800"
+            fontFamily="system-ui, -apple-system, sans-serif"
+            letterSpacing="3"
+            stroke="hsl(0 0% 5%)"
+            strokeWidth="2.5"
+            paintOrder="stroke fill"
+          >
+            STARTER
+          </text>
+          <text
+            x="200"
+            y="124"
+            textAnchor="middle"
+            fill="hsl(168 80% 70%)"
+            fontSize="15"
+            fontWeight="800"
+            fontFamily="system-ui, -apple-system, sans-serif"
+            letterSpacing="3"
+            stroke="hsl(0 0% 5%)"
+            strokeWidth="2.5"
+            paintOrder="stroke fill"
+          >
+            STRIP
+          </text>
+        </g>
+      )}
+    </g>
+  );
+};
 export const FlashingLayer: React.FC<LayerProps> = () => null;
 export const ShinglesLayer: React.FC<LayerProps> = () => null;
 export const FieldShinglesLayer: React.FC<LayerProps> = () => null;
