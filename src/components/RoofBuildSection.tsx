@@ -264,13 +264,14 @@ const RoofBuildSection: React.FC = () => {
                   const isExiting = progress >= 0.60;
                   
                   // During exit: slide left and fade out
-                  // Before exit: normal lock-in animation
+                  // Before exit: normal lock-in animation (active OR locked shows full)
+                  const isActive = activeMaterials[index] || lockedMaterials[index];
                   const translateX = isExiting 
                     ? -150 * exitProgress 
-                    : (lockedMaterials[index] ? 0 : -20);
+                    : (isActive ? 0 : -20);
                   const opacity = isExiting 
                     ? Math.max(0, 1 - exitProgress) 
-                    : (lockedMaterials[index] ? 1 : 0.25);
+                    : (isActive ? 1 : 0.25);
                   
                   return (
                     <div
@@ -318,13 +319,14 @@ const RoofBuildSection: React.FC = () => {
                   const isExiting = progress >= 0.60;
                   
                   // During exit: slide right and fade out (positive X)
-                  // Before exit: normal lock-in animation
+                  // Before exit: normal lock-in animation (active OR locked shows full)
+                  const isActive = activeMaterials[index + 5] || lockedMaterials[index + 5];
                   const translateX = isExiting 
                     ? 150 * exitProgress 
-                    : (lockedMaterials[index + 5] ? 0 : 20);
+                    : (isActive ? 0 : 20);
                   const opacity = isExiting 
                     ? Math.max(0, 1 - exitProgress) 
-                    : (lockedMaterials[index + 5] ? 1 : 0.25);
+                    : (isActive ? 1 : 0.25);
                   
                   return (
                     <div
