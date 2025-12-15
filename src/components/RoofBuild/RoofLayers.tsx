@@ -557,22 +557,34 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
   return (
     <g className="underlayment-layer">
       <defs>
-        {/* Gray felt underlayment gradient */}
+        {/* Poseidon teal underlayment gradient */}
         <linearGradient id="underlaymentGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(220 10% 25%)" />
-          <stop offset="50%" stopColor="hsl(220 12% 32%)" />
-          <stop offset="100%" stopColor="hsl(220 10% 25%)" />
+          <stop offset="0%" stopColor="hsl(168 45% 22%)" />
+          <stop offset="50%" stopColor="hsl(168 50% 28%)" />
+          <stop offset="100%" stopColor="hsl(168 45% 22%)" />
         </linearGradient>
         {/* Subtle texture sheen */}
         <linearGradient id="underlaymentSheen" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="hsl(220 15% 45%)" stopOpacity="0" />
-          <stop offset="50%" stopColor="hsl(220 20% 50%)" stopOpacity="0.15" />
-          <stop offset="100%" stopColor="hsl(220 15% 45%)" stopOpacity="0" />
+          <stop offset="0%" stopColor="hsl(168 60% 45%)" stopOpacity="0" />
+          <stop offset="50%" stopColor="hsl(168 70% 55%)" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="hsl(168 60% 45%)" stopOpacity="0" />
         </linearGradient>
         {/* Clip to roof shape */}
         <clipPath id="roofClipUnderlayment">
           <polygon points={`${peakX},${peakY} ${leftEaveX},${eaveY} ${rightEaveX},${eaveY}`} />
         </clipPath>
+        {/* Logo pattern for repeating across underlayment */}
+        <pattern id="poseidonLogoPattern" x="0" y="0" width="60" height="40" patternUnits="userSpaceOnUse">
+          <image 
+            href="/poseidon-logo.png" 
+            x="10" 
+            y="5" 
+            width="40" 
+            height="30" 
+            opacity="0.25"
+            preserveAspectRatio="xMidYMid meet"
+          />
+        </pattern>
       </defs>
       
       {/* Text label - rendered first so underlayment covers it */}
@@ -649,7 +661,12 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
               <polygon
                 points={points}
                 fill="url(#underlaymentGrad)"
-                style={{ filter: 'drop-shadow(0 1px 2px hsl(220 15% 10% / 0.4))' }}
+                style={{ filter: 'drop-shadow(0 1px 2px hsl(168 30% 10% / 0.4))' }}
+              />
+              {/* Logo pattern overlay */}
+              <polygon
+                points={points}
+                fill="url(#poseidonLogoPattern)"
               />
               {/* Sheen overlay */}
               <polygon
@@ -663,7 +680,7 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
                   y1={topY}
                   x2={topRightX}
                   y2={topY}
-                  stroke="hsl(220 15% 20%)"
+                  stroke="hsl(168 40% 18%)"
                   strokeWidth="1"
                   opacity="0.5"
                 />
@@ -674,11 +691,11 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
                 y1={topY}
                 x2={leadingEdgeBottomX}
                 y2={bottomY}
-                stroke="hsl(220 30% 55%)"
+                stroke="hsl(168 70% 50%)"
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 style={{
-                  filter: `drop-shadow(0 0 ${4 + courseProgress * 6}px hsl(220 30% 55% / 0.8))`,
+                  filter: `drop-shadow(0 0 ${4 + courseProgress * 6}px hsl(168 70% 50% / 0.8))`,
                 }}
               />
             </g>
