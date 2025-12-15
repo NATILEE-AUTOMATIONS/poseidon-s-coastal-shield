@@ -187,12 +187,12 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
         >
           REPLACE
         </text>
-        {/* "Decking" text with strong teal glow */}
+        {/* "Decking" text with warm orange glow */}
         <text
           x="200"
           y="124"
           textAnchor="middle"
-          fill="hsl(168 90% 75%)"
+          fill="hsl(35 100% 90%)"
           fontSize="15"
           fontWeight="800"
           fontFamily="system-ui, -apple-system, sans-serif"
@@ -201,7 +201,7 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
           strokeWidth="2.5"
           paintOrder="stroke fill"
           style={{
-            filter: 'drop-shadow(0 0 8px hsl(168 90% 60%)) drop-shadow(0 0 16px hsl(168 80% 55% / 0.8))',
+            filter: 'drop-shadow(0 0 8px hsl(30 95% 60%)) drop-shadow(0 0 16px hsl(25 90% 55% / 0.8))',
           }}
         >
           DECKING
