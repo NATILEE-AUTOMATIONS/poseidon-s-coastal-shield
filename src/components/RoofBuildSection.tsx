@@ -123,14 +123,14 @@ const RoofBuildSection: React.FC = () => {
   const mobileOverlayMultiplier = isMobile ? 0 : 1;
 
   // Calculate staggered exit progress for label pairs (desktop only)
-  // Labels exit from 0.60 to 0.72 (as door opens, before zoom completes)
+  // Labels exit from 0.78 to 0.90 (after roof layers complete, as door opens)
   const getLabelExitProgress = (pairIndex: number): number => {
-    const doorStart = 0.60;
-    const doorEnd = 0.72;
-    const doorRange = doorEnd - doorStart;
-    const pairWindow = doorRange / 5;
+    const labelExitStart = 0.78;
+    const labelExitEnd = 0.90;
+    const exitRange = labelExitEnd - labelExitStart;
+    const pairWindow = exitRange / 5;
     
-    const pairStart = doorStart + (pairIndex * pairWindow);
+    const pairStart = labelExitStart + (pairIndex * pairWindow);
     const pairEnd = pairStart + pairWindow;
     
     if (progress < pairStart) return 0;
@@ -277,7 +277,7 @@ const RoofBuildSection: React.FC = () => {
               <div className="space-y-5">
                 {materialInfo.slice(0, 5).map((material, index) => {
                   const exitProgress = getLabelExitProgress(index);
-                  const isExiting = progress >= 0.60;
+                  const isExiting = progress >= 0.78;
                   
                   // During exit: slide left and fade out
                   // Before exit: normal lock-in animation (active OR locked shows full)
@@ -332,7 +332,7 @@ const RoofBuildSection: React.FC = () => {
               <div className="space-y-5">
                 {materialInfo.slice(5).map((material, index) => {
                   const exitProgress = getLabelExitProgress(index); // Same pair index as left side
-                  const isExiting = progress >= 0.60;
+                  const isExiting = progress >= 0.78;
                   
                   // During exit: slide right and fade out (positive X)
                   // Before exit: normal lock-in animation (active OR locked shows full)
