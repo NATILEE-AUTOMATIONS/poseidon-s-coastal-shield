@@ -733,7 +733,143 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
     </g>
   );
 };
-export const StarterStripLayer: React.FC<LayerProps> = () => null;
+// Starter Strip - narrow band along the eaves, animates with wipe-in from center
+export const StarterStripLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
+  const rawProgress = (progress - startProgress) / (endProgress - startProgress);
+  const layerProgress = Math.max(0, Math.min(1, rawProgress));
+  
+  if (progress < startProgress) return null;
+  
+  const easeOutQuint = (x: number): number => 1 - Math.pow(1 - x, 5);
+  const easedProgress = easeOutQuint(layerProgress);
+  
+  // Roof geometry - starter strip sits just above the eaves
+  const peakX = 200;
+  const leftEaveX = 45;
+  const rightEaveX = 355;
+  const eaveY = 159;
+  const stripHeight = 8; // Narrow strip
+  const stripTopY = eaveY - stripHeight;
+  
+  // Calculate strip widths at top and bottom following roof slope
+  const getLeftX = (y: number) => {
+    const slope = (leftEaveX - peakX) / (eaveY - 56);
+    return peakX + slope * (y - 56);
+  };
+  const getRightX = (y: number) => {
+    const slope = (rightEaveX - peakX) / (eaveY - 56);
+    return peakX + slope * (y - 56);
+  };
+  
+  const topLeftX = getLeftX(stripTopY);
+  const topRightX = getRightX(stripTopY);
+  
+  // Animate from center outward
+  const centerX = peakX;
+  const leftExtent = (centerX - topLeftX) * easedProgress;
+  const rightExtent = (topRightX - centerX) * easedProgress;
+  
+  const currentLeftX = centerX - leftExtent;
+  const currentRightX = centerX + rightExtent;
+  
+  // Bottom follows the same pattern but at eave level
+  const bottomLeftExtent = (centerX - leftEaveX) * easedProgress;
+  const bottomRightExtent = (rightEaveX - centerX) * easedProgress;
+  
+  const currentBottomLeftX = centerX - bottomLeftExtent;
+  const currentBottomRightX = centerX + bottomRightExtent;
+  
+  // Text fade timing
+  const textOpacity = layerProgress > 0.1 && layerProgress < 0.85 
+    ? Math.min(1, (layerProgress - 0.1) / 0.2) * Math.min(1, (0.85 - layerProgress) / 0.15)
+    : 0;
+  
+  return (
+    <g className="starter-strip-layer">
+      <defs>
+        <linearGradient id="starterStripGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(220 15% 25%)" />
+          <stop offset="50%" stopColor="hsl(220 12% 20%)" />
+          <stop offset="100%" stopColor="hsl(220 10% 18%)" />
+        </linearGradient>
+      </defs>
+      
+      {/* Main starter strip - dark asphalt color */}
+      <polygon
+        points={`${currentLeftX},${stripTopY} ${currentRightX},${stripTopY} ${currentBottomRightX},${eaveY} ${currentBottomLeftX},${eaveY}`}
+        fill="url(#starterStripGrad)"
+        style={{
+          filter: 'drop-shadow(0 2px 4px hsl(0 0% 0% / 0.5))',
+        }}
+      />
+      
+      {/* Subtle edge highlight at top */}
+      {easedProgress > 0.1 && (
+        <line
+          x1={currentLeftX}
+          y1={stripTopY}
+          x2={currentRightX}
+          y2={stripTopY}
+          stroke="hsl(220 20% 35%)"
+          strokeWidth="1"
+          opacity={0.6}
+        />
+      )}
+      
+      {/* Leading edge glow - left side */}
+      {easedProgress < 1 && (
+        <>
+          <line
+            x1={currentLeftX}
+            y1={stripTopY}
+            x2={currentBottomLeftX}
+            y2={eaveY}
+            stroke="hsl(168 70% 50%)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            style={{
+              filter: 'drop-shadow(0 0 6px hsl(168 80% 50% / 0.8))',
+            }}
+          />
+          <line
+            x1={currentRightX}
+            y1={stripTopY}
+            x2={currentBottomRightX}
+            y2={eaveY}
+            stroke="hsl(168 70% 50%)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            style={{
+              filter: 'drop-shadow(0 0 6px hsl(168 80% 50% / 0.8))',
+            }}
+          />
+        </>
+      )}
+      
+      {/* Text label - desktop only */}
+      {!isMobile && textOpacity > 0 && (
+        <g style={{ opacity: textOpacity }}>
+          <text
+            x="200"
+            y="148"
+            textAnchor="middle"
+            fill="hsl(45 100% 95%)"
+            fontSize="11"
+            fontWeight="800"
+            fontFamily="system-ui, -apple-system, sans-serif"
+            letterSpacing="2"
+            stroke="hsl(0 0% 5%)"
+            strokeWidth="2"
+            paintOrder="stroke fill"
+            style={{ filter: 'drop-shadow(0 0 8px hsl(0 0% 0%))' }}
+          >
+            STARTER STRIP
+          </text>
+        </g>
+      )}
+    </g>
+  );
+};
 export const FlashingLayer: React.FC<LayerProps> = () => null;
 export const ShinglesLayer: React.FC<LayerProps> = () => null;
 export const FieldShinglesLayer: React.FC<LayerProps> = () => null;
