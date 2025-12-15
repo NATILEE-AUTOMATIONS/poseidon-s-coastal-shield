@@ -557,31 +557,24 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
   return (
     <g className="underlayment-layer">
       <defs>
-        {/* Poseidon teal underlayment gradient */}
+        {/* Solid teal underlayment - no gradient */}
         <linearGradient id="underlaymentGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(168 45% 22%)" />
-          <stop offset="50%" stopColor="hsl(168 50% 28%)" />
-          <stop offset="100%" stopColor="hsl(168 45% 22%)" />
-        </linearGradient>
-        {/* Subtle texture sheen */}
-        <linearGradient id="underlaymentSheen" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="hsl(168 60% 45%)" stopOpacity="0" />
-          <stop offset="50%" stopColor="hsl(168 70% 55%)" stopOpacity="0.12" />
-          <stop offset="100%" stopColor="hsl(168 60% 45%)" stopOpacity="0" />
+          <stop offset="0%" stopColor="hsl(168 35% 32%)" />
+          <stop offset="100%" stopColor="hsl(168 35% 32%)" />
         </linearGradient>
         {/* Clip to roof shape */}
         <clipPath id="roofClipUnderlayment">
           <polygon points={`${peakX},${peakY} ${leftEaveX},${eaveY} ${rightEaveX},${eaveY}`} />
         </clipPath>
-        {/* Logo pattern for repeating across underlayment */}
-        <pattern id="poseidonLogoPattern" x="0" y="0" width="80" height="50" patternUnits="userSpaceOnUse">
+        {/* Logo pattern - smaller tiles for more logos */}
+        <pattern id="poseidonLogoPattern" x="0" y="0" width="45" height="28" patternUnits="userSpaceOnUse">
           <image 
             href="/poseidon-logo.png" 
-            x="5" 
-            y="5" 
-            width="70" 
-            height="40" 
-            opacity="0.85"
+            x="2" 
+            y="2" 
+            width="41" 
+            height="24" 
+            opacity="0.9"
             preserveAspectRatio="xMidYMid meet"
           />
         </pattern>
@@ -657,21 +650,15 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
           
           return (
             <g key={`course-${i}`}>
-              {/* Main underlayment strip */}
+              {/* Main underlayment strip - solid color */}
               <polygon
                 points={points}
                 fill="url(#underlaymentGrad)"
-                style={{ filter: 'drop-shadow(0 1px 2px hsl(168 30% 10% / 0.4))' }}
               />
               {/* Logo pattern overlay */}
               <polygon
                 points={points}
                 fill="url(#poseidonLogoPattern)"
-              />
-              {/* Sheen overlay */}
-              <polygon
-                points={points}
-                fill="url(#underlaymentSheen)"
               />
               {/* Course divider line at top edge */}
               {i > 0 && courseProgress >= 1 && (
@@ -680,23 +667,20 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
                   y1={topY}
                   x2={topRightX}
                   y2={topY}
-                  stroke="hsl(168 40% 18%)"
+                  stroke="hsl(168 30% 22%)"
                   strokeWidth="1"
-                  opacity="0.5"
+                  opacity="0.6"
                 />
               )}
-              {/* Leading edge glow */}
+              {/* Simple leading edge line - no glow */}
               <line
                 x1={leadingEdgeTopX}
                 y1={topY}
                 x2={leadingEdgeBottomX}
                 y2={bottomY}
-                stroke="hsl(168 70% 50%)"
-                strokeWidth="2.5"
+                stroke="hsl(168 40% 45%)"
+                strokeWidth="2"
                 strokeLinecap="round"
-                style={{
-                  filter: `drop-shadow(0 0 ${4 + courseProgress * 6}px hsl(168 70% 50% / 0.8))`,
-                }}
               />
             </g>
           );
