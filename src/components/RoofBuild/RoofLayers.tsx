@@ -316,141 +316,220 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
   );
 };
 
-// Ice & Water Shield - membrane unrolls from peak to eaves
+// Ice & Water Shield - horizontal strips roll out along eaves only
 export const IceWaterShieldLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
   if (progress < startProgress) return null;
   
-  const easeOutQuint = (x: number): number => 1 - Math.pow(1 - x, 5);
-  const easedProgress = easeOutQuint(layerProgress);
+  const easeOutQuart = (x: number): number => 1 - Math.pow(1 - x, 4);
   
   // Roof geometry
   const peakX = 200;
-  const peakY = 56;
   const leftEaveX = 42;
   const rightEaveX = 358;
   const eaveY = 159;
   
-  // Calculate how far down the membrane has unrolled (0 = peak, 1 = eave)
-  const unrollAmount = easedProgress;
+  // Ice & water shield covers bottom ~35% of roof (along eaves)
+  // 2 strips per side that roll out from center toward edges
+  const stripHeight = 18;
+  const stripGap = 3;
+  const strips = [
+    { yOffset: 0 },   // Bottom strip (at eave)
+    { yOffset: stripHeight + stripGap },  // Second strip above
+  ];
   
-  // Current Y position of the leading edge
-  const currentY = peakY + (eaveY - peakY) * unrollAmount;
+  // Calculate X bounds at a given Y position (following roof slope)
+  const getXBoundsAtY = (y: number) => {
+    const leftSlope = (leftEaveX - peakX) / (eaveY - 56);
+    const rightSlope = (rightEaveX - peakX) / (eaveY - 56);
+    const leftX = peakX + leftSlope * (y - 56);
+    const rightX = peakX + rightSlope * (y - 56);
+    return { leftX, rightX };
+  };
   
-  // Calculate X positions at the current Y level (following roof slope)
-  const leftSlope = (leftEaveX - peakX) / (eaveY - peakY);
-  const rightSlope = (rightEaveX - peakX) / (eaveY - peakY);
-  const currentLeftX = peakX + leftSlope * (currentY - peakY);
-  const currentRightX = peakX + rightSlope * (currentY - peakY);
+  // Stagger timing for each strip
+  const getStripProgress = (stripIndex: number) => {
+    const delay = stripIndex * 0.2;
+    const normalizedProgress = (layerProgress - delay) / (1 - delay);
+    return Math.max(0, Math.min(1, normalizedProgress));
+  };
   
-  // Text timing: fade in 25-45%, hold 45-65%, fade out 65-85%
-  const textOpacity = layerProgress < 0.25 
+  // Text timing: fade in 30-50%, hold 50-70%, fade out 70-90%
+  const textOpacity = layerProgress < 0.30 
     ? 0 
-    : layerProgress < 0.45 
-      ? (layerProgress - 0.25) / 0.20 
-      : layerProgress < 0.65 
+    : layerProgress < 0.50 
+      ? (layerProgress - 0.30) / 0.20 
+      : layerProgress < 0.70 
         ? 1 
-        : layerProgress < 0.85 
-          ? 1 - (layerProgress - 0.65) / 0.20 
+        : layerProgress < 0.90 
+          ? 1 - (layerProgress - 0.70) / 0.20 
           : 0;
-  
-  // Text wipe synced to unroll - text area from y=90 to y=130
-  const textTop = 90;
-  const textBottom = 130;
-  const textClipHeight = Math.max(0, Math.min(textBottom - textTop, currentY - textTop));
   
   return (
     <g className="ice-water-shield-layer">
       <defs>
-        {/* Dark membrane gradient - matches the dark theme */}
-        <linearGradient id="iceMembraneGrad" x1="50%" y1="0%" x2="50%" y2="100%">
-          <stop offset="0%" stopColor="hsl(200 30% 8%)" />
-          <stop offset="40%" stopColor="hsl(200 35% 12%)" />
-          <stop offset="100%" stopColor="hsl(200 30% 8%)" />
+        {/* Dark membrane gradient */}
+        <linearGradient id="iceStripGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(200 35% 10%)" />
+          <stop offset="50%" stopColor="hsl(200 40% 15%)" />
+          <stop offset="100%" stopColor="hsl(200 35% 10%)" />
         </linearGradient>
-        {/* Subtle surface sheen */}
-        <linearGradient id="iceMembraneSheen" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="hsl(200 50% 40%)" stopOpacity="0" />
-          <stop offset="30%" stopColor="hsl(200 60% 50%)" stopOpacity="0.15" />
-          <stop offset="50%" stopColor="hsl(200 70% 55%)" stopOpacity="0.2" />
-          <stop offset="70%" stopColor="hsl(200 60% 50%)" stopOpacity="0.15" />
-          <stop offset="100%" stopColor="hsl(200 50% 40%)" stopOpacity="0" />
+        {/* Horizontal sheen effect */}
+        <linearGradient id="iceStripSheen" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="hsl(200 60% 55%)" stopOpacity="0" />
+          <stop offset="50%" stopColor="hsl(200 70% 60%)" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="hsl(200 60% 55%)" stopOpacity="0" />
         </linearGradient>
-        {/* Wipe clip for text */}
-        <clipPath id="iceTextWipe">
-          <rect x="100" y={textTop} width="200" height={textClipHeight} />
+        {/* Clip paths for each strip following roof slope */}
+        <clipPath id="leftRoofClip">
+          <polygon points="42,159 200,56 200,159" />
+        </clipPath>
+        <clipPath id="rightRoofClip">
+          <polygon points="200,56 358,159 200,159" />
         </clipPath>
       </defs>
       
-      {/* Main membrane - dark polygon covering revealed area */}
-      <polygon
-        points={`${peakX},${peakY} ${currentLeftX},${currentY} ${currentRightX},${currentY}`}
-        fill="url(#iceMembraneGrad)"
-        style={{
-          filter: 'drop-shadow(0 2px 6px hsl(200 40% 5% / 0.6))',
-        }}
-      />
+      {/* LEFT SLOPE STRIPS */}
+      <g clipPath="url(#leftRoofClip)">
+        {strips.map((strip, i) => {
+          const stripProg = easeOutQuart(getStripProgress(i));
+          if (stripProg <= 0) return null;
+          
+          const y = eaveY - strip.yOffset - stripHeight;
+          const { leftX, rightX } = getXBoundsAtY(y);
+          
+          // Roll out from center (peakX) toward left edge
+          const currentWidth = (peakX - leftX) * stripProg;
+          const currentLeftX = peakX - currentWidth;
+          
+          return (
+            <g key={`left-strip-${i}`}>
+              {/* Main strip */}
+              <rect
+                x={currentLeftX}
+                y={y}
+                width={currentWidth}
+                height={stripHeight}
+                fill="url(#iceStripGrad)"
+                style={{
+                  filter: 'drop-shadow(0 1px 3px hsl(200 40% 5% / 0.5))',
+                }}
+              />
+              {/* Sheen */}
+              <rect
+                x={currentLeftX}
+                y={y + 2}
+                width={currentWidth}
+                height={stripHeight - 4}
+                fill="url(#iceStripSheen)"
+              />
+              {/* Leading edge glow */}
+              <line
+                x1={currentLeftX}
+                y1={y}
+                x2={currentLeftX}
+                y2={y + stripHeight}
+                stroke="hsl(200 80% 60%)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                style={{
+                  filter: `drop-shadow(0 0 ${4 + stripProg * 6}px hsl(200 80% 60% / 0.9))`,
+                }}
+              />
+            </g>
+          );
+        })}
+      </g>
       
-      {/* Sheen overlay */}
-      <polygon
-        points={`${peakX},${peakY} ${currentLeftX},${currentY} ${currentRightX},${currentY}`}
-        fill="url(#iceMembraneSheen)"
-      />
+      {/* RIGHT SLOPE STRIPS */}
+      <g clipPath="url(#rightRoofClip)">
+        {strips.map((strip, i) => {
+          const stripProg = easeOutQuart(getStripProgress(i));
+          if (stripProg <= 0) return null;
+          
+          const y = eaveY - strip.yOffset - stripHeight;
+          const { leftX, rightX } = getXBoundsAtY(y);
+          
+          // Roll out from center (peakX) toward right edge
+          const currentWidth = (rightX - peakX) * stripProg;
+          
+          return (
+            <g key={`right-strip-${i}`}>
+              {/* Main strip */}
+              <rect
+                x={peakX}
+                y={y}
+                width={currentWidth}
+                height={stripHeight}
+                fill="url(#iceStripGrad)"
+                style={{
+                  filter: 'drop-shadow(0 1px 3px hsl(200 40% 5% / 0.5))',
+                }}
+              />
+              {/* Sheen */}
+              <rect
+                x={peakX}
+                y={y + 2}
+                width={currentWidth}
+                height={stripHeight - 4}
+                fill="url(#iceStripSheen)"
+              />
+              {/* Leading edge glow */}
+              <line
+                x1={peakX + currentWidth}
+                y1={y}
+                x2={peakX + currentWidth}
+                y2={y + stripHeight}
+                stroke="hsl(200 80% 60%)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                style={{
+                  filter: `drop-shadow(0 0 ${4 + stripProg * 6}px hsl(200 80% 60% / 0.9))`,
+                }}
+              />
+            </g>
+          );
+        })}
+      </g>
       
-      {/* Leading edge glow line - the "unrolling" edge */}
-      <line
-        x1={currentLeftX}
-        y1={currentY}
-        x2={currentRightX}
-        y2={currentY}
-        stroke="hsl(200 80% 60%)"
-        strokeWidth="3"
-        strokeLinecap="round"
-        style={{
-          filter: `drop-shadow(0 0 ${6 + easedProgress * 10}px hsl(200 80% 60% / 0.9)) drop-shadow(0 0 ${3 + easedProgress * 5}px hsl(200 90% 70% / 0.6))`,
-        }}
-      />
-      
-      {/* Text label with wipe reveal - desktop only */}
-      {!isMobile && textClipHeight > 0 && (
+      {/* Text label - centered, fades in/out */}
+      {!isMobile && textOpacity > 0 && (
         <g style={{ 
-          filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))',
           opacity: textOpacity,
+          filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))',
         }}>
-          <g clipPath="url(#iceTextWipe)">
-            <text
-              x="200"
-              y="105"
-              textAnchor="middle"
-              fill="hsl(45 100% 95%)"
-              fontSize="15"
-              fontWeight="800"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              letterSpacing="3"
-              stroke="hsl(0 0% 5%)"
-              strokeWidth="2.5"
-              paintOrder="stroke fill"
-            >
-              ICE & WATER
-            </text>
-            <text
-              x="200"
-              y="126"
-              textAnchor="middle"
-              fill="hsl(200 80% 65%)"
-              fontSize="15"
-              fontWeight="800"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              letterSpacing="2"
-              stroke="hsl(0 0% 5%)"
-              strokeWidth="2.5"
-              paintOrder="stroke fill"
-            >
-              SHIELD
-            </text>
-          </g>
+          <text
+            x="200"
+            y="103"
+            textAnchor="middle"
+            fill="hsl(45 100% 95%)"
+            fontSize="15"
+            fontWeight="800"
+            fontFamily="system-ui, -apple-system, sans-serif"
+            letterSpacing="3"
+            stroke="hsl(0 0% 5%)"
+            strokeWidth="2.5"
+            paintOrder="stroke fill"
+          >
+            ICE & WATER
+          </text>
+          <text
+            x="200"
+            y="124"
+            textAnchor="middle"
+            fill="hsl(200 80% 65%)"
+            fontSize="15"
+            fontWeight="800"
+            fontFamily="system-ui, -apple-system, sans-serif"
+            letterSpacing="2"
+            stroke="hsl(0 0% 5%)"
+            strokeWidth="2.5"
+            paintOrder="stroke fill"
+          >
+            SHIELD
+          </text>
         </g>
       )}
     </g>
