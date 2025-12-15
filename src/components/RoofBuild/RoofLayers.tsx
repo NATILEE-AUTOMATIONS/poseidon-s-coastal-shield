@@ -1045,10 +1045,10 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
           const bottomRightX = getRightX(bottomY);
           const courseWidth = bottomRightX - bottomLeftX;
           
-          // 8 tabs per course with stagger offset for odd courses - add extra tab for offset courses
-          const baseTabCount = 8;
-          const tabOffset = courseIdx % 2 === 1 ? 0.5 : 0;
-          const tabCount = baseTabCount + (tabOffset > 0 ? 1 : 0); // Extra tab to fill right edge
+          // 9 tabs per course - ensures full coverage with offset pattern
+          const tabCount = 9;
+          const tabWidth = 1.0 / 8; // Each tab is 1/8th of roof width
+          const tabOffset = courseIdx % 2 === 1 ? tabWidth / 2 : 0; // Half-tab offset on alternate courses
           
           // Drop distance for entrance animation
           const dropDistance = 25;
@@ -1066,20 +1066,21 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
               {/* Individual shingle tabs */}
               {Array.from({ length: tabCount }).map((_, tabIdx) => {
                 // Tab entrance stagger within course
-                const tabDelay = tabIdx * 0.08;
+                const tabDelay = tabIdx * 0.06;
                 const tabProgress = Math.max(0, Math.min(1, (courseProgress - tabDelay) / 0.5));
                 if (tabProgress <= 0) return null;
                 
                 const tabEased = easeOutBack(tabProgress);
                 
-                // Tab positions with half-tab offset
-                const tabStartRatio = (tabIdx - tabOffset) / tabCount;
-                const tabEndRatio = (tabIdx + 1 - tabOffset) / tabCount;
+                // Tab positions - calculate raw positions then clamp
+                const rawStart = tabIdx * tabWidth - tabOffset;
+                const rawEnd = (tabIdx + 1) * tabWidth - tabOffset;
                 
-                // Clamp to 0-1 range
-                const clampedStart = Math.max(0, Math.min(1, tabStartRatio));
-                const clampedEnd = Math.max(0, Math.min(1, tabEndRatio));
+                // Clamp to 0-1 range (roof bounds)
+                const clampedStart = Math.max(0, rawStart);
+                const clampedEnd = Math.min(1, rawEnd);
                 
+                // Skip if tab is completely outside roof bounds
                 if (clampedStart >= clampedEnd) return null;
                 
                 // Calculate tab corners
