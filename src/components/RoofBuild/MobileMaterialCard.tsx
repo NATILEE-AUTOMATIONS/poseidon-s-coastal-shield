@@ -20,33 +20,58 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
   // Dwell ratio - how much of each layer's duration to "lock" the card in place
   const dwellRatio = 0.4;
   
+  // Initial spin-in: card 1 spins in from off-screen when layer 0 starts
+  // Use first 20% of layer 0 for the spin-in animation
+  const spinInRatio = 0.2;
+  
   // Calculate carousel position based on which layer is active
   // This properly syncs with variable-duration layers
-  let carouselStep = 0;
+  let carouselStep = -1; // Start with no card visible (off by one rotation)
   
-  for (let i = 0; i < totalCards; i++) {
-    const layer = layers[i];
-    if (progress < layer.start) {
-      // Before this layer - stay at previous step
-      carouselStep = i;
-      break;
-    } else if (progress >= layer.start && progress < layer.end) {
-      // Within this layer - calculate sub-progress with dwell
-      const layerProgress = (progress - layer.start) / (layer.end - layer.start);
+  const firstLayer = layers[0];
+  
+  // Before first layer starts - no cards visible
+  if (progress < firstLayer.start) {
+    carouselStep = -1;
+  } else {
+    for (let i = 0; i < totalCards; i++) {
+      const layer = layers[i];
       
-      if (layerProgress < dwellRatio) {
-        // Dwell phase - lock at this card
-        carouselStep = i;
-      } else {
-        // Transition phase - smoothly move to next card
-        const transitionProgress = (layerProgress - dwellRatio) / (1 - dwellRatio);
-        const easedTransition = easeInOutQuad(transitionProgress);
-        carouselStep = i + easedTransition;
+      if (progress >= layer.start && progress < layer.end) {
+        const layerProgress = (progress - layer.start) / (layer.end - layer.start);
+        
+        if (i === 0) {
+          // First card: spin-in from -1 to 0, then dwell, then transition
+          if (layerProgress < spinInRatio) {
+            // Spin-in phase
+            const spinProgress = layerProgress / spinInRatio;
+            const easedSpin = easeInOutQuad(spinProgress);
+            carouselStep = -1 + easedSpin; // -1 to 0
+          } else if (layerProgress < spinInRatio + dwellRatio) {
+            // Dwell phase - lock at card 0
+            carouselStep = 0;
+          } else {
+            // Transition phase - move to next card
+            const transitionStart = spinInRatio + dwellRatio;
+            const transitionProgress = (layerProgress - transitionStart) / (1 - transitionStart);
+            const easedTransition = easeInOutQuad(transitionProgress);
+            carouselStep = easedTransition;
+          }
+        } else {
+          // Other cards: normal dwell + transition
+          if (layerProgress < dwellRatio) {
+            carouselStep = i;
+          } else {
+            const transitionProgress = (layerProgress - dwellRatio) / (1 - dwellRatio);
+            const easedTransition = easeInOutQuad(transitionProgress);
+            carouselStep = i + easedTransition;
+          }
+        }
+        break;
+      } else if (progress >= layer.end && i === totalCards - 1) {
+        // Past all layers - stay at last card
+        carouselStep = totalCards - 1;
       }
-      break;
-    } else if (i === totalCards - 1) {
-      // Past all layers - stay at last card
-      carouselStep = totalCards - 1;
     }
   }
   
