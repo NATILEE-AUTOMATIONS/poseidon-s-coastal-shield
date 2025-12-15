@@ -20,7 +20,7 @@ import YardSign from './RoofBuild/YardSign';
 import { useScrollContext } from '@/context/ScrollContext';
 import ImageGallery3D from './RoofBuild/ImageGallery3D';
 import MobileFirstImage from './RoofBuild/MobileFirstImage';
-import MobileMaterialCard from './RoofBuild/MobileMaterialCard';
+
 
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -268,10 +268,6 @@ const RoofBuildSection: React.FC = () => {
               </div>
             </div>
 
-            {/* Mobile Material Card - shows current material synced to animation */}
-            {isMobile && (
-              <MobileMaterialCard progress={progress} layers={layers} />
-            )}
 
 
             {/* Material labels - left side (positioned as overlay) */}
