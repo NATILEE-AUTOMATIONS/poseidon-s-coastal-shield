@@ -226,8 +226,8 @@ const RoofBuildSection: React.FC = () => {
                   {/* Animated roof layers - 10 layers in correct installation order */}
                   {/* 1. Replace Decking */}
                   <DeckingLayer progress={progress} startProgress={layers[0].start} endProgress={layers[0].end} isMobile={isMobile} />
-                  {/* 2. Drip Edge (Eaves) */}
-                  <DripEdgeEavesLayer progress={progress} startProgress={layers[1].start} endProgress={layers[1].end} />
+                  {/* 2. Drip Edge (Eaves) - rendered last for top layer */}
+                  
                   {/* 3. Ice & Water Shield */}
                   <IceWaterShieldLayer progress={progress} startProgress={layers[2].start} endProgress={layers[2].end} />
                   {/* 4. Underlayment */}
@@ -244,6 +244,9 @@ const RoofBuildSection: React.FC = () => {
                   <FlashingLayer progress={progress} startProgress={layers[8].start} endProgress={layers[8].end} />
                   {/* 10. Ridge Vent & Cap */}
                   <RidgeCapLayer progress={progress} startProgress={layers[9].start} endProgress={layers[9].end} />
+                  
+                  {/* Drip Edge rendered after all layers to be on top */}
+                  <DripEdgeEavesLayer progress={progress} startProgress={layers[1].start} endProgress={layers[1].end} isMobile={isMobile} />
                   
                   {/* Yard sign drops in as door opens */}
                   <YardSign progress={progress} />
