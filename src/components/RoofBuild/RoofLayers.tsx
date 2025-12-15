@@ -35,15 +35,15 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
   const translateY = -100 * (1 - easedProgress);
   const opacity = 0.2 + (0.8 * easedProgress);
   
-  // Label timing: fade in 20-40%, hold 40-70%, fade out 70-90%
+  // Label timing: fade in 20-40%, hold 40-55%, fade out 55-75%
   const labelOpacity = layerProgress < 0.2 
     ? 0 
     : layerProgress < 0.4 
       ? (layerProgress - 0.2) / 0.2 
-      : layerProgress < 0.7 
+      : layerProgress < 0.55 
         ? 1 
-        : layerProgress < 0.9 
-          ? 1 - (layerProgress - 0.7) / 0.2 
+        : layerProgress < 0.75 
+          ? 1 - (layerProgress - 0.55) / 0.2 
           : 0;
   
   // Roof geometry: peak at (200, 56), left at (42, 159), right at (358, 159)
