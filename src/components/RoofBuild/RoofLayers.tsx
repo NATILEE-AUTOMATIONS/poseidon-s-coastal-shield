@@ -919,7 +919,7 @@ export const StarterStripLayer: React.FC<LayerProps> = ({ progress, startProgres
 };
 export const FlashingLayer: React.FC<LayerProps> = () => null;
 export const ShinglesLayer: React.FC<LayerProps> = () => null;
-// Field Shingles - courses build up from starter strip to ridge with staggered wave effect
+// Field Shingles - individual tabs cascade from bottom to top with flip-drop entrance
 export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
@@ -933,12 +933,12 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
   const rightEaveX = 360;
   const eaveY = 160;
   
-  // Start just above starter strip (which is 10px tall)
+  // Start just above starter strip
   const starterStripTop = 150;
-  const roofHeight = starterStripTop - peakY; // ~95px
+  const roofHeight = starterStripTop - peakY;
   
-  // 8 courses of shingles
-  const courseCount = 8;
+  // 7 courses of shingles (bottom to top)
+  const courseCount = 7;
   const courseHeight = roofHeight / courseCount;
   
   // Helper to get X at a given Y on the roof slope
@@ -951,15 +951,23 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
     return peakX + t * (rightEaveX - peakX);
   };
   
-  // Easing for smooth course reveals
-  const easeOutQuart = (t: number) => 1 - Math.pow(1 - t, 4);
+  // Bounce easing for satisfying drop
+  const easeOutBack = (t: number) => {
+    const c1 = 1.70158;
+    const c3 = c1 + 1;
+    return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+  };
   
-  // Staggered course animation - each course starts after the previous
+  // Elastic settle for premium feel
+  const easeOutElastic = (t: number) => {
+    if (t === 0 || t === 1) return t;
+    return Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * ((2 * Math.PI) / 3)) + 1;
+  };
+  
+  // Course animation - BOTTOM courses first (index 0 = bottom)
   const getCourseProgress = (courseIndex: number) => {
-    // Bottom courses (higher index) animate first
-    const reversedIndex = courseCount - 1 - courseIndex;
-    const staggerDelay = reversedIndex * 0.08; // 8% delay between courses
-    const courseAnimDuration = 0.35; // Each course takes 35% of total animation
+    const staggerDelay = courseIndex * 0.10; // 10% delay between courses, bottom first
+    const courseAnimDuration = 0.25;
     const courseStart = staggerDelay;
     const courseEnd = courseStart + courseAnimDuration;
     
@@ -969,26 +977,47 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
   };
   
   // Text timing
-  const textOpacity = isMobile ? 0 : (
-    layerProgress < 0.15 
+  const textOpacity = (
+    layerProgress < 0.12 
       ? 0 
-      : layerProgress < 0.30 
-        ? (layerProgress - 0.15) / 0.15 
-        : layerProgress < 0.65 
+      : layerProgress < 0.25 
+        ? (layerProgress - 0.12) / 0.13 
+        : layerProgress < 0.60 
           ? 1 
-          : layerProgress < 0.85 
-            ? 1 - (layerProgress - 0.65) / 0.2 
+          : layerProgress < 0.80 
+            ? 1 - (layerProgress - 0.60) / 0.2 
             : 0
   );
+  
+  // Generate shingle colors with subtle variation
+  const getShingleColor = (courseIndex: number, tabIndex: number) => {
+    const seed = (courseIndex * 7 + tabIndex * 13) % 100;
+    const baseL = 20 + (seed % 8); // 20-27% lightness variation
+    const baseS = 12 + (seed % 6); // 12-17% saturation variation
+    return `hsl(220 ${baseS}% ${baseL}%)`;
+  };
   
   return (
     <g className="field-shingles-layer">
       <defs>
-        {/* Shingle gradient - architectural charcoal look */}
-        <linearGradient id="shingleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(215 18% 28%)" />
-          <stop offset="40%" stopColor="hsl(215 15% 22%)" />
-          <stop offset="100%" stopColor="hsl(215 12% 18%)" />
+        {/* Architectural shingle gradient with dimensional look */}
+        <linearGradient id="shingleDimensional" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(220 14% 26%)" />
+          <stop offset="25%" stopColor="hsl(220 12% 22%)" />
+          <stop offset="75%" stopColor="hsl(220 10% 18%)" />
+          <stop offset="100%" stopColor="hsl(220 8% 14%)" />
+        </linearGradient>
+        
+        {/* Highlight gradient for 3D effect */}
+        <linearGradient id="shingleHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(220 15% 35%)" stopOpacity="0.4" />
+          <stop offset="30%" stopColor="hsl(220 10% 25%)" stopOpacity="0" />
+        </linearGradient>
+        
+        {/* Shadow gradient for depth */}
+        <linearGradient id="shingleShadow" x1="0%" y1="100%" x2="0%" y2="0%">
+          <stop offset="0%" stopColor="hsl(220 20% 8%)" stopOpacity="0.6" />
+          <stop offset="40%" stopColor="hsl(220 15% 12%)" stopOpacity="0" />
         </linearGradient>
         
         {/* Clip to roof shape */}
@@ -998,136 +1027,156 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
       </defs>
       
       <g clipPath="url(#shinglesRoofClip)">
-        {Array.from({ length: courseCount }).map((_, i) => {
-          const courseProgress = easeOutQuart(getCourseProgress(i));
+        {Array.from({ length: courseCount }).map((_, courseIdx) => {
+          const courseProgress = getCourseProgress(courseIdx);
           if (courseProgress <= 0) return null;
           
-          // Course position (bottom course is high Y, top is low Y)
-          const bottomY = starterStripTop - (i * courseHeight);
+          const easedProgress = easeOutBack(Math.min(1, courseProgress * 1.1));
+          const settleProgress = easeOutElastic(courseProgress);
+          
+          // Course Y positions (bottom = higher Y value, index 0 = bottom course)
+          const bottomY = starterStripTop - (courseIdx * courseHeight);
           const topY = bottomY - courseHeight;
           
-          // Get full width at this course level
+          // Full width at this course level
           const topLeftX = getLeftX(topY);
           const topRightX = getRightX(topY);
           const bottomLeftX = getLeftX(bottomY);
           const bottomRightX = getRightX(bottomY);
+          const courseWidth = bottomRightX - bottomLeftX;
           
-          // Wave effect - courses wipe in from alternating sides
-          const goingRight = i % 2 === 0;
-          const topWidth = topRightX - topLeftX;
-          const bottomWidth = bottomRightX - bottomLeftX;
+          // 8 tabs per course with stagger offset for odd courses
+          const tabCount = 8;
+          const tabOffset = courseIdx % 2 === 1 ? 0.5 : 0; // Half-tab offset on alternate courses
           
-          let points: string;
-          if (goingRight) {
-            const currentTopRightX = topLeftX + topWidth * courseProgress;
-            const currentBottomRightX = bottomLeftX + bottomWidth * courseProgress;
-            points = `${topLeftX},${topY} ${currentTopRightX},${topY} ${currentBottomRightX},${bottomY} ${bottomLeftX},${bottomY}`;
-          } else {
-            const currentTopLeftX = topRightX - topWidth * courseProgress;
-            const currentBottomLeftX = bottomRightX - bottomWidth * courseProgress;
-            points = `${currentTopLeftX},${topY} ${topRightX},${topY} ${bottomRightX},${bottomY} ${currentBottomLeftX},${bottomY}`;
-          }
-          
-          // Leading edge position for glow
-          const leadingEdgeTopX = goingRight 
-            ? topLeftX + topWidth * courseProgress 
-            : topRightX - topWidth * courseProgress;
-          const leadingEdgeBottomX = goingRight 
-            ? bottomLeftX + bottomWidth * courseProgress 
-            : bottomRightX - bottomWidth * courseProgress;
-          
-          // Shingle tab lines for this course (6 tabs per course)
-          const tabCount = 6;
-          const tabLines = [];
-          for (let t = 1; t < tabCount; t++) {
-            const tabProgress = t / tabCount;
-            const tabTopX = topLeftX + topWidth * tabProgress;
-            const tabBottomX = bottomLeftX + bottomWidth * tabProgress;
-            // Only show tab line if it's been revealed
-            const tabRevealed = goingRight 
-              ? tabProgress <= courseProgress 
-              : tabProgress >= (1 - courseProgress);
-            if (tabRevealed && courseProgress < 1) {
-              tabLines.push(
-                <line
-                  key={`tab-${i}-${t}`}
-                  x1={tabTopX}
-                  y1={topY + 2}
-                  x2={tabBottomX}
-                  y2={bottomY - 1}
-                  stroke="hsl(215 10% 12%)"
-                  strokeWidth="0.5"
-                  opacity={0.6}
-                />
-              );
-            }
-          }
+          // Drop distance for entrance animation
+          const dropDistance = 25;
+          const currentDrop = dropDistance * (1 - easedProgress);
+          const rotation = (1 - settleProgress) * -15; // Slight rotation during drop
           
           return (
-            <g key={`shingle-course-${i}`}>
-              {/* Main shingle course */}
-              <polygon
-                points={points}
-                fill="url(#shingleGrad)"
-                style={{
-                  filter: courseProgress < 1 
-                    ? 'drop-shadow(0 1px 2px hsl(215 20% 8% / 0.4))' 
-                    : undefined,
-                }}
-              />
-              
-              {/* Course shadow line at top edge (when fully revealed) */}
-              {courseProgress >= 1 && i > 0 && (
-                <line
-                  x1={topLeftX}
-                  y1={topY}
-                  x2={topRightX}
-                  y2={topY}
-                  stroke="hsl(215 15% 12%)"
-                  strokeWidth="1.5"
-                  opacity="0.5"
-                />
-              )}
-              
-              {/* Tab divider lines */}
-              {tabLines}
-              
-              {/* Shingle tab pattern lines when complete */}
-              {courseProgress >= 1 && (
-                <>
-                  {Array.from({ length: tabCount - 1 }).map((_, t) => {
-                    const tabProgress = (t + 1) / tabCount;
-                    const tabTopX = topLeftX + topWidth * tabProgress;
-                    const tabBottomX = bottomLeftX + bottomWidth * tabProgress;
-                    return (
+            <g 
+              key={`course-${courseIdx}`}
+              style={{
+                transform: `translateY(${currentDrop}px)`,
+                opacity: Math.min(1, courseProgress * 3),
+              }}
+            >
+              {/* Individual shingle tabs */}
+              {Array.from({ length: tabCount }).map((_, tabIdx) => {
+                // Tab entrance stagger within course
+                const tabDelay = tabIdx * 0.08;
+                const tabProgress = Math.max(0, Math.min(1, (courseProgress - tabDelay) / 0.5));
+                if (tabProgress <= 0) return null;
+                
+                const tabEased = easeOutBack(tabProgress);
+                
+                // Tab positions with half-tab offset
+                const tabStartRatio = (tabIdx - tabOffset) / tabCount;
+                const tabEndRatio = (tabIdx + 1 - tabOffset) / tabCount;
+                
+                // Clamp to 0-1 range
+                const clampedStart = Math.max(0, Math.min(1, tabStartRatio));
+                const clampedEnd = Math.max(0, Math.min(1, tabEndRatio));
+                
+                if (clampedStart >= clampedEnd) return null;
+                
+                // Calculate tab corners
+                const tabTopLeftX = topLeftX + (topRightX - topLeftX) * clampedStart;
+                const tabTopRightX = topLeftX + (topRightX - topLeftX) * clampedEnd;
+                const tabBottomLeftX = bottomLeftX + courseWidth * clampedStart;
+                const tabBottomRightX = bottomLeftX + courseWidth * clampedEnd;
+                
+                const tabCenterX = (tabBottomLeftX + tabBottomRightX) / 2;
+                const tabCenterY = (topY + bottomY) / 2;
+                
+                // Individual tab drop and rotation
+                const tabDrop = 15 * (1 - tabEased);
+                const tabRotation = (1 - tabEased) * (tabIdx % 2 === 0 ? -8 : 8);
+                
+                const shingleColor = getShingleColor(courseIdx, tabIdx);
+                
+                return (
+                  <g 
+                    key={`tab-${courseIdx}-${tabIdx}`}
+                    style={{
+                      transform: `translate(${tabCenterX}px, ${tabCenterY + tabDrop}px) rotate(${tabRotation}deg) translate(${-tabCenterX}px, ${-tabCenterY}px)`,
+                      opacity: tabProgress,
+                    }}
+                  >
+                    {/* Base shingle */}
+                    <polygon
+                      points={`${tabTopLeftX},${topY} ${tabTopRightX},${topY} ${tabBottomRightX},${bottomY} ${tabBottomLeftX},${bottomY}`}
+                      fill={shingleColor}
+                    />
+                    
+                    {/* Dimensional highlight (top edge) */}
+                    <polygon
+                      points={`${tabTopLeftX},${topY} ${tabTopRightX},${topY} ${tabBottomRightX},${bottomY} ${tabBottomLeftX},${bottomY}`}
+                      fill="url(#shingleHighlight)"
+                    />
+                    
+                    {/* Shadow (bottom edge) */}
+                    <polygon
+                      points={`${tabTopLeftX},${topY} ${tabTopRightX},${topY} ${tabBottomRightX},${bottomY} ${tabBottomLeftX},${bottomY}`}
+                      fill="url(#shingleShadow)"
+                    />
+                    
+                    {/* Tab divider line (right edge) */}
+                    {tabIdx < tabCount - 1 && clampedEnd < 1 && (
                       <line
-                        key={`tab-complete-${i}-${t}`}
-                        x1={tabTopX}
-                        y1={topY + 2}
-                        x2={tabBottomX}
+                        x1={tabTopRightX}
+                        y1={topY + 1}
+                        x2={tabBottomRightX}
                         y2={bottomY - 1}
-                        stroke="hsl(215 10% 12%)"
-                        strokeWidth="0.5"
-                        opacity={0.4}
+                        stroke="hsl(220 15% 10%)"
+                        strokeWidth="1"
+                        opacity={0.7 * tabProgress}
                       />
-                    );
-                  })}
-                </>
-              )}
+                    )}
+                    
+                    {/* Granule texture dots */}
+                    {tabProgress >= 0.8 && (
+                      <>
+                        <circle 
+                          cx={tabCenterX - 3} 
+                          cy={tabCenterY - 2} 
+                          r="1" 
+                          fill="hsl(220 8% 28%)" 
+                          opacity="0.3"
+                        />
+                        <circle 
+                          cx={tabCenterX + 4} 
+                          cy={tabCenterY + 1} 
+                          r="0.8" 
+                          fill="hsl(220 10% 15%)" 
+                          opacity="0.4"
+                        />
+                        <circle 
+                          cx={tabCenterX - 1} 
+                          cy={tabCenterY + 3} 
+                          r="0.6" 
+                          fill="hsl(220 6% 30%)" 
+                          opacity="0.25"
+                        />
+                      </>
+                    )}
+                  </g>
+                );
+              })}
               
-              {/* Leading edge glow during animation */}
-              {courseProgress < 1 && courseProgress > 0 && (
+              {/* Course shadow line (appears when course is mostly complete) */}
+              {courseProgress > 0.7 && courseIdx > 0 && (
                 <line
-                  x1={leadingEdgeTopX}
-                  y1={topY}
-                  x2={leadingEdgeBottomX}
+                  x1={bottomLeftX + 2}
+                  y1={bottomY}
+                  x2={bottomRightX - 2}
                   y2={bottomY}
-                  stroke="hsl(30 85% 55%)"
+                  stroke="hsl(220 20% 8%)"
                   strokeWidth="2"
-                  strokeLinecap="round"
+                  opacity={0.4 * Math.min(1, (courseProgress - 0.7) / 0.3)}
                   style={{
-                    filter: 'drop-shadow(0 0 6px hsl(30 85% 55% / 0.8)) drop-shadow(0 0 12px hsl(30 85% 55% / 0.5))',
-                    opacity: Math.sin(courseProgress * Math.PI),
+                    filter: 'blur(1px)',
                   }}
                 />
               )}
@@ -1136,23 +1185,23 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
         })}
       </g>
       
-      {/* Text label - desktop only */}
+      {/* Text label */}
       {textOpacity > 0 && (
         <g style={{ 
           opacity: textOpacity,
-          filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 14px hsl(0 0% 0% / 0.9))',
+          filter: 'drop-shadow(0 0 10px hsl(0 0% 0%)) drop-shadow(0 0 20px hsl(0 0% 0% / 0.8))',
         }}>
           <text
             x="200"
-            y="105"
+            y="100"
             textAnchor="middle"
             fill="hsl(45 100% 95%)"
-            fontSize="15"
+            fontSize="16"
             fontWeight="800"
             fontFamily="system-ui, -apple-system, sans-serif"
-            letterSpacing="3"
+            letterSpacing="4"
             stroke="hsl(0 0% 5%)"
-            strokeWidth="2.5"
+            strokeWidth="3"
             paintOrder="stroke fill"
           >
             SHINGLES
