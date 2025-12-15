@@ -537,17 +537,15 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
     return Math.max(0, Math.min(1, (layerProgress - courseStart) / (courseEnd - courseStart)));
   };
   
-  // Text timing - show earlier, scale-in animation
-  const textProgress = layerProgress < 0.05 
-    ? 0 
-    : layerProgress < 0.15 
-      ? (layerProgress - 0.05) / 0.10 
-      : layerProgress < 0.75 
-        ? 1 
-        : layerProgress < 0.90 
-          ? 1 - (layerProgress - 0.75) / 0.15 
-          : 0;
-  const textScale = 0.5 + (textProgress * 0.5); // Scale from 0.5 to 1
+  // Text timing - starts immediately with underlayment, scale-in animation
+  const textProgress = layerProgress < 0.12 
+    ? layerProgress / 0.12 
+    : layerProgress < 0.75 
+      ? 1 
+      : layerProgress < 0.90 
+        ? 1 - (layerProgress - 0.75) / 0.15 
+        : 0;
+  const textScale = 0.5 + (Math.min(1, textProgress) * 0.5); // Scale from 0.5 to 1
   const textOpacity = textProgress;
   
   return (
