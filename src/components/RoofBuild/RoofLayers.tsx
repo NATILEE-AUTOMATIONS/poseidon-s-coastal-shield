@@ -254,7 +254,7 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
       
       {/* Wipe-reveal text label - desktop only, synced to bar position */}
       {!isMobile && clipHeight > 0 && (
-        <>
+        <g style={{ filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))' }}>
           <defs>
             <clipPath id="dripEdgeTextWipe">
               <rect 
@@ -279,9 +279,6 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
               stroke="hsl(0 0% 5%)"
               strokeWidth="2.5"
               paintOrder="stroke fill"
-              style={{
-                filter: 'drop-shadow(0 0 6px hsl(0 0% 0%)) drop-shadow(0 0 12px hsl(0 0% 0% / 0.8))',
-              }}
             >
               REPLACE
             </text>
@@ -297,14 +294,11 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
               stroke="hsl(0 0% 5%)"
               strokeWidth="2.5"
               paintOrder="stroke fill"
-              style={{
-                filter: 'drop-shadow(0 0 6px hsl(0 0% 0%)) drop-shadow(0 0 12px hsl(0 0% 0% / 0.8))',
-              }}
             >
               DRIP EDGE
             </text>
           </g>
-        </>
+        </g>
       )}
     </>
   );
