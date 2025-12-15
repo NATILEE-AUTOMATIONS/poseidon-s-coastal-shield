@@ -537,16 +537,18 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
     return Math.max(0, Math.min(1, (layerProgress - courseStart) / (courseEnd - courseStart)));
   };
   
-  // Text timing
-  const textOpacity = layerProgress < 0.20 
+  // Text timing - show earlier, scale-in animation
+  const textProgress = layerProgress < 0.05 
     ? 0 
-    : layerProgress < 0.40 
-      ? (layerProgress - 0.20) / 0.20 
-      : layerProgress < 0.70 
+    : layerProgress < 0.15 
+      ? (layerProgress - 0.05) / 0.10 
+      : layerProgress < 0.75 
         ? 1 
         : layerProgress < 0.90 
-          ? 1 - (layerProgress - 0.70) / 0.20 
+          ? 1 - (layerProgress - 0.75) / 0.15 
           : 0;
+  const textScale = 0.5 + (textProgress * 0.5); // Scale from 0.5 to 1
+  const textOpacity = textProgress;
   
   return (
     <g className="underlayment-layer">
@@ -654,10 +656,12 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
         })}
       </g>
       
-      {/* Text label */}
+      {/* Text label - scale-in animation */}
       {!isMobile && textOpacity > 0 && (
         <g style={{ 
           opacity: textOpacity,
+          transform: `scale(${textScale})`,
+          transformOrigin: '200px 113px',
           filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))',
         }}>
           <text
@@ -665,10 +669,10 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
             y="113"
             textAnchor="middle"
             fill="hsl(45 100% 95%)"
-            fontSize="15"
+            fontSize="13"
             fontWeight="800"
             fontFamily="system-ui, -apple-system, sans-serif"
-            letterSpacing="3"
+            letterSpacing="2"
             stroke="hsl(0 0% 5%)"
             strokeWidth="2.5"
             paintOrder="stroke fill"
