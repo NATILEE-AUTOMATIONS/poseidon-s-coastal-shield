@@ -47,8 +47,8 @@ const RoofBuildSection: React.FC = () => {
   const deckingMultiplier = 6;
   const deckingEnd = layerStart + (layerStep * deckingMultiplier);
   
-  // Drip edge gets 3x scroll distance for slower, more visible drop
-  const dripEdgeMultiplier = 3;
+  // Drip edge - faster on mobile (1.5x), slower on desktop (3x)
+  const dripEdgeMultiplier = isMobile ? 1.5 : 3;
   const dripEdgeEnd = deckingEnd + (layerStep * dripEdgeMultiplier);
   
   // Ice & water shield gets 3x scroll distance for visible roll-out
