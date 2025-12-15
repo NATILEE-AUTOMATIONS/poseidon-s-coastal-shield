@@ -57,7 +57,7 @@ const RoofBuildSection: React.FC = () => {
   const iceWaterEnd = dripEdgeEnd + (layerStep * iceWaterMultiplier);
   
   // Underlayment gets 4x scroll distance for the alternating courses animation
-  const underlaymentMultiplier = isMobile ? 3.5 : 4;
+  const underlaymentMultiplier = isMobile ? 4.5 : 4;
   const underlaymentEnd = iceWaterEnd + (layerStep * underlaymentMultiplier);
   
   const layers = [
