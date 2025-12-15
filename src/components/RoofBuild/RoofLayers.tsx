@@ -211,7 +211,7 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
   );
 };
 // Neon orange drip edge along the eaves (bottom edge of roof)
-export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress }) => {
+export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
@@ -240,6 +240,48 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
           filter: `drop-shadow(0 0 ${6 + easedProgress * 10}px hsl(25 95% 55% / 0.8)) drop-shadow(0 0 ${3 + easedProgress * 5}px hsl(30 100% 60% / 0.6))`,
         }}
       />
+      
+      {/* Stacked "Replace Drip Edge" label - desktop only, same style as decking */}
+      {!isMobile && (
+        <g>
+          <text
+            x="200"
+            y="103"
+            textAnchor="middle"
+            fill="hsl(45 100% 95%)"
+            fontSize="15"
+            fontWeight="800"
+            fontFamily="system-ui, -apple-system, sans-serif"
+            letterSpacing="3"
+            stroke="hsl(0 0% 5%)"
+            strokeWidth="2.5"
+            paintOrder="stroke fill"
+            style={{
+              filter: 'drop-shadow(0 0 6px hsl(0 0% 0%)) drop-shadow(0 0 12px hsl(0 0% 0% / 0.8))',
+            }}
+          >
+            REPLACE
+          </text>
+          <text
+            x="200"
+            y="124"
+            textAnchor="middle"
+            fill="hsl(25 100% 75%)"
+            fontSize="15"
+            fontWeight="800"
+            fontFamily="system-ui, -apple-system, sans-serif"
+            letterSpacing="2"
+            stroke="hsl(0 0% 5%)"
+            strokeWidth="2.5"
+            paintOrder="stroke fill"
+            style={{
+              filter: 'drop-shadow(0 0 6px hsl(0 0% 0%)) drop-shadow(0 0 12px hsl(0 0% 0% / 0.8))',
+            }}
+          >
+            DRIP EDGE
+          </text>
+        </g>
+      )}
     </g>
   );
 };
