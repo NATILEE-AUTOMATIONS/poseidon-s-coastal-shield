@@ -3,6 +3,7 @@ import poseidonLogo from '@/assets/poseidon-logo.png';
 
 interface YardSignProps {
   progress: number;
+  isMobile?: boolean;
 }
 
 // easeInOutQuad for smooth drop animation (same as roofing materials)
@@ -12,10 +13,10 @@ const easeInOutQuad = (x: number): number => {
     : 1 - Math.pow(-2 * x + 2, 2) / 2;
 };
 
-const YardSign: React.FC<YardSignProps> = ({ progress }) => {
-  // Animation timing
-  const dropStart = 0.78;
-  const dropEnd = 0.82;
+const YardSign: React.FC<YardSignProps> = ({ progress, isMobile }) => {
+  // Animation timing - later on mobile (last thing to show)
+  const dropStart = isMobile ? 0.88 : 0.78;
+  const dropEnd = isMobile ? 0.94 : 0.82;
   // No fade out - sign stays visible until zoom takes over
 
   // Calculate drop animation (enters from above)

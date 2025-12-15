@@ -261,8 +261,8 @@ const RoofBuildSection: React.FC = () => {
                   {/* Drip Edge rendered after all layers to be on top */}
                   <DripEdgeEavesLayer progress={progress} startProgress={layers[1].start} endProgress={layers[1].end} isMobile={isMobile} />
                   
-                  {/* Yard sign drops in as door opens */}
-                  <YardSign progress={progress} />
+                  {/* Yard sign drops in - last on mobile */}
+                  <YardSign progress={progress} isMobile={isMobile} />
                 </svg>
               </div>
             </div>
