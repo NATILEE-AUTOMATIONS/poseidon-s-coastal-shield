@@ -453,8 +453,8 @@ export const IceWaterShieldLayer: React.FC<LayerProps> = ({ progress, startProgr
         }}
       />
       
-      {/* Text label - desktop only */}
-      {!isMobile && textOpacity > 0 && (
+      {/* Text label */}
+      {textOpacity > 0 && (
         <g style={{ 
           opacity: textOpacity,
           filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))',
@@ -574,7 +574,7 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
       </defs>
       
       {/* Text label - rendered first so underlayment covers it */}
-      {!isMobile && textOpacity > 0 && (
+      {textOpacity > 0 && (
         <g style={{ 
           opacity: textOpacity,
           transform: `scale(${textScale})`,
@@ -857,8 +857,8 @@ export const StarterStripLayer: React.FC<LayerProps> = ({ progress, startProgres
         />
       )}
       
-      {/* Text label - desktop only, wipe-reveal synced with strip animation */}
-      {!isMobile && easedProgress > 0 && (
+      {/* Text label - wipe-reveal synced with strip animation */}
+      {easedProgress > 0 && (
         <g style={{ 
           filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 14px hsl(0 0% 0% / 0.9))',
         }}>
