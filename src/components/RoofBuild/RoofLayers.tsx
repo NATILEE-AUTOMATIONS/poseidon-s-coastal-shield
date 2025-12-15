@@ -161,67 +161,45 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
         }}
       />
       
-      {/* Stacked "Replace Decking" label - centered on roof */}
+      {/* Stacked "Replace Decking" label - centered on roof, no backdrop */}
       <g 
         style={{ 
           opacity: labelOpacity,
           transition: 'opacity 0.15s ease-out',
         }}
       >
-        {/* Subtle glassmorphism backdrop */}
-        <rect 
-          x="155" 
-          y="90" 
-          width="90" 
-          height="44" 
-          rx="6" 
-          fill="hsl(168 40% 15% / 0.45)"
-          style={{
-            filter: 'drop-shadow(0 0 12px hsl(168 60% 40% / 0.3))',
-          }}
-        />
-        {/* Soft teal border glow */}
-        <rect 
-          x="155" 
-          y="90" 
-          width="90" 
-          height="44" 
-          rx="6" 
-          fill="none"
-          stroke="hsl(168 60% 50% / 0.4)"
-          strokeWidth="1"
-          style={{
-            filter: 'drop-shadow(0 0 8px hsl(168 70% 50% / 0.35))',
-          }}
-        />
-        {/* "Replace" text */}
+        {/* "Replace" text with strong glow */}
         <text
           x="200"
-          y="109"
+          y="105"
           textAnchor="middle"
-          fill="hsl(45 90% 88%)"
-          fontSize="11"
-          fontWeight="600"
+          fill="hsl(45 95% 85%)"
+          fontSize="13"
+          fontWeight="700"
           fontFamily="system-ui, -apple-system, sans-serif"
-          letterSpacing="1.5"
+          letterSpacing="2.5"
+          stroke="hsl(25 60% 25%)"
+          strokeWidth="0.5"
           style={{
-            textShadow: '0 0 8px hsl(35 80% 60% / 0.6), 0 1px 2px hsl(0 0% 0% / 0.3)',
+            filter: 'drop-shadow(0 0 8px hsl(35 90% 55%)) drop-shadow(0 0 16px hsl(35 80% 50% / 0.6)) drop-shadow(0 0 24px hsl(30 70% 40% / 0.4))',
           }}
         >
           REPLACE
         </text>
-        {/* "Decking" text */}
+        {/* "Decking" text with strong teal glow */}
         <text
           x="200"
-          y="126"
+          y="124"
           textAnchor="middle"
-          fill="hsl(168 70% 65%)"
-          fontSize="12"
-          fontWeight="700"
+          fill="hsl(168 80% 70%)"
+          fontSize="14"
+          fontWeight="800"
           fontFamily="system-ui, -apple-system, sans-serif"
-          letterSpacing="2"
+          letterSpacing="3"
+          stroke="hsl(168 50% 20%)"
+          strokeWidth="0.5"
           style={{
-            textShadow: '0 0 10px hsl(168 70% 50% / 0.7), 0 0 20px hsl(168 70% 50% / 0.4)',
+            filter: 'drop-shadow(0 0 10px hsl(168 80% 55%)) drop-shadow(0 0 20px hsl(168 70% 50% / 0.7)) drop-shadow(0 0 30px hsl(168 60% 45% / 0.5))',
           }}
         >
           DECKING
