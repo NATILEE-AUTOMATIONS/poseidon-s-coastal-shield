@@ -333,13 +333,13 @@ export const IceWaterShieldLayer: React.FC<LayerProps> = ({ progress, startProgr
   const rightEaveX = 358;
   const eaveY = 159;
   
-  // Shield starts partway down the roof and rolls to eave
-  const startY = peakY + (eaveY - peakY) * 0.45; // Start ~45% down
+  // Shield starts at peak and rolls to eave
+  const startY = peakY; // Start at the peak
   const totalDrop = eaveY - startY;
   const currentY = startY + totalDrop * easedProgress;
   
   // Strip width (as fraction of slope width at that Y)
-  const stripWidthRatio = 0.35;
+  const stripWidthRatio = 0.4;
   
   // Get X at Y following roof slope
   const getLeftSlopeX = (y: number) => peakX + ((leftEaveX - peakX) / (eaveY - peakY)) * (y - peakY);
@@ -453,7 +453,7 @@ export const IceWaterShieldLayer: React.FC<LayerProps> = ({ progress, startProgr
         }}
       />
       
-      {/* Text label */}
+      {/* Text label - positioned below the roof */}
       {!isMobile && textOpacity > 0 && (
         <g style={{ 
           opacity: textOpacity,
@@ -461,10 +461,10 @@ export const IceWaterShieldLayer: React.FC<LayerProps> = ({ progress, startProgr
         }}>
           <text
             x="200"
-            y="103"
+            y="178"
             textAnchor="middle"
             fill="hsl(45 100% 95%)"
-            fontSize="15"
+            fontSize="14"
             fontWeight="800"
             fontFamily="system-ui, -apple-system, sans-serif"
             letterSpacing="3"
@@ -476,10 +476,10 @@ export const IceWaterShieldLayer: React.FC<LayerProps> = ({ progress, startProgr
           </text>
           <text
             x="200"
-            y="124"
+            y="197"
             textAnchor="middle"
             fill="hsl(200 80% 65%)"
-            fontSize="15"
+            fontSize="14"
             fontWeight="800"
             fontFamily="system-ui, -apple-system, sans-serif"
             letterSpacing="2"
