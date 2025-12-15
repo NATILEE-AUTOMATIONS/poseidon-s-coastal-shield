@@ -13,9 +13,13 @@ const easeInOutQuad = (t: number): number => {
 
 // Stepped progress with dwell time at each position
 const steppedProgress = (t: number, steps: number, dwellRatio: number = 0.3): number => {
+  // Clamp and handle edge cases
+  if (t <= 0) return 0;
+  if (t >= 1) return 1;
+  
   const segmentSize = 1 / steps;
-  const currentStep = Math.floor(t / segmentSize);
-  const segmentProgress = (t % segmentSize) / segmentSize;
+  const currentStep = Math.min(Math.floor(t / segmentSize), steps - 1);
+  const segmentProgress = (t - currentStep * segmentSize) / segmentSize;
   
   // Within each segment: dwell for dwellRatio, then animate for (1 - dwellRatio)
   if (segmentProgress < dwellRatio) {
