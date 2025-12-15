@@ -857,44 +857,61 @@ export const StarterStripLayer: React.FC<LayerProps> = ({ progress, startProgres
         />
       )}
       
-      {/* Text label - desktop only */}
-      {textOpacity > 0 && (
-        <g 
-          style={{ 
-            opacity: textOpacity,
-            filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 14px hsl(0 0% 0% / 0.9))',
-          }}
-        >
-          <text
-            x="200"
-            y="103"
-            textAnchor="middle"
-            fill="hsl(45 100% 95%)"
-            fontSize="15"
-            fontWeight="800"
-            fontFamily="system-ui, -apple-system, sans-serif"
-            letterSpacing="3"
-            stroke="hsl(0 0% 5%)"
-            strokeWidth="2.5"
-            paintOrder="stroke fill"
+      {/* Text label - desktop only, wipe-reveal synced with strip animation */}
+      {!isMobile && easedProgress > 0 && (
+        <g style={{ 
+          filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 14px hsl(0 0% 0% / 0.9))',
+        }}>
+          <defs>
+            {/* Clip path that follows the strip wipe position */}
+            <clipPath id="starterTextWipeClip">
+              <rect 
+                x={leftBottomX} 
+                y="90" 
+                width={currentWidth} 
+                height="50"
+              />
+            </clipPath>
+          </defs>
+          
+          {/* Text revealed by wipe - appears as strip passes */}
+          <g 
+            clipPath="url(#starterTextWipeClip)"
+            style={{
+              opacity: layerProgress < 0.8 ? 1 : Math.max(0, 1 - (layerProgress - 0.8) / 0.15),
+            }}
           >
-            STARTER
-          </text>
-          <text
-            x="200"
-            y="124"
-            textAnchor="middle"
-            fill="hsl(30 95% 65%)"
-            fontSize="15"
-            fontWeight="800"
-            fontFamily="system-ui, -apple-system, sans-serif"
-            letterSpacing="3"
-            stroke="hsl(0 0% 5%)"
-            strokeWidth="2.5"
-            paintOrder="stroke fill"
-          >
-            STRIP
-          </text>
+            <text
+              x="200"
+              y="103"
+              textAnchor="middle"
+              fill="hsl(45 100% 95%)"
+              fontSize="15"
+              fontWeight="800"
+              fontFamily="system-ui, -apple-system, sans-serif"
+              letterSpacing="3"
+              stroke="hsl(0 0% 5%)"
+              strokeWidth="2.5"
+              paintOrder="stroke fill"
+            >
+              STARTER
+            </text>
+            <text
+              x="200"
+              y="124"
+              textAnchor="middle"
+              fill="hsl(30 95% 65%)"
+              fontSize="15"
+              fontWeight="800"
+              fontFamily="system-ui, -apple-system, sans-serif"
+              letterSpacing="3"
+              stroke="hsl(0 0% 5%)"
+              strokeWidth="2.5"
+              paintOrder="stroke fill"
+            >
+              STRIP
+            </text>
+          </g>
         </g>
       )}
     </g>
