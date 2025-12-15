@@ -529,9 +529,10 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
   };
   
   // Each course gets a portion of the animation, staggered
+  // Mobile: faster stagger (0.10) so all courses complete within scroll window
   const getCourseProgress = (courseIndex: number) => {
-    const courseDelay = courseIndex * 0.15;
-    const courseDuration = 0.25;
+    const courseDelay = courseIndex * (isMobile ? 0.10 : 0.15);
+    const courseDuration = isMobile ? 0.35 : 0.25;
     const courseStart = courseDelay;
     const courseEnd = courseDelay + courseDuration;
     return Math.max(0, Math.min(1, (layerProgress - courseStart) / (courseEnd - courseStart)));
