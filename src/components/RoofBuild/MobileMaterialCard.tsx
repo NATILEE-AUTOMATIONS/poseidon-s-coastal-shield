@@ -144,7 +144,7 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
                   `,
                 }}
               >
-                {/* Step indicator */}
+              {/* Step indicator - ensure index matches material */}
                 <div className="flex items-center gap-3 mb-4 relative z-10">
                   <span
                     className="text-3xl font-light"
@@ -154,7 +154,7 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
                       textShadow: '0 0 25px hsl(168 80% 45% / 0.6)',
                     }}
                   >
-                    {index + 1}
+                    {materialInfo.indexOf(material) + 1}
                   </span>
                   <div 
                     className="flex-1 h-px"
