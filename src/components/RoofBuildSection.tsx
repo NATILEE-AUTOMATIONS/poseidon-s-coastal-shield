@@ -71,15 +71,15 @@ const RoofBuildSection: React.FC = () => {
     { start: dripEdgeEnd, end: iceWaterEnd },                  // 3. Ice & Water
     { start: iceWaterEnd, end: underlaymentEnd },              // 4. Underlayment
     { start: underlaymentEnd, end: starterStripEnd },          // 5. Starter Strip (2x)
-    { start: starterStripEnd, end: starterStripEnd + layerStep }, // 6. Shingles
-    { start: starterStripEnd + layerStep, end: starterStripEnd + layerStep * 2 }, // 7. Vents
-    { start: starterStripEnd + layerStep * 2, end: starterStripEnd + layerStep * 3 }, // 8. Flashing
-    { start: starterStripEnd + layerStep * 3, end: starterStripEnd + layerStep * 4 }, // 9. Ridge Vent & Cap
-    { start: starterStripEnd + layerStep * 4, end: starterStripEnd + layerStep * 5 }, // 10. Complete Clean Up
+    { start: starterStripEnd, end: starterStripEnd + layerStep * 3 }, // 6. Shingles (3x duration for 8 courses)
+    { start: starterStripEnd + layerStep * 3, end: starterStripEnd + layerStep * 4 }, // 7. Vents
+    { start: starterStripEnd + layerStep * 4, end: starterStripEnd + layerStep * 5 }, // 8. Flashing
+    { start: starterStripEnd + layerStep * 5, end: starterStripEnd + layerStep * 6 }, // 9. Ridge Vent & Cap
+    { start: starterStripEnd + layerStep * 6, end: starterStripEnd + layerStep * 7 }, // 10. Complete Clean Up
   ];
   
   // Calculate when all active layers end
-  const roofLayersEnd = starterStripEnd + layerStep * 5 + 0.05;
+  const roofLayersEnd = starterStripEnd + layerStep * 7 + 0.05;
 
   // Show hint during buffer period (before animation starts)
   const showScrollHint = progress < layerStart;
@@ -253,7 +253,7 @@ const RoofBuildSection: React.FC = () => {
                   {/* 5. Starter Strip */}
                   <StarterStripLayer progress={progress} startProgress={layers[4].start} endProgress={layers[4].end} isMobile={isMobile} />
                   {/* 6. Shingles */}
-                  <FieldShinglesLayer progress={progress} startProgress={layers[5].start} endProgress={layers[5].end} />
+                  <FieldShinglesLayer progress={progress} startProgress={layers[5].start} endProgress={layers[5].end} isMobile={isMobile} />
                   {/* 7. Pipe Boots & Vents */}
                   <VentsLayer progress={progress} startProgress={layers[6].start} endProgress={layers[6].end} />
                   {/* 8. Flashing */}
