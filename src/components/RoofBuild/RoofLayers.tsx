@@ -1045,9 +1045,10 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
           const bottomRightX = getRightX(bottomY);
           const courseWidth = bottomRightX - bottomLeftX;
           
-          // 8 tabs per course with stagger offset for odd courses
-          const tabCount = 8;
-          const tabOffset = courseIdx % 2 === 1 ? 0.5 : 0; // Half-tab offset on alternate courses
+          // 8 tabs per course with stagger offset for odd courses - add extra tab for offset courses
+          const baseTabCount = 8;
+          const tabOffset = courseIdx % 2 === 1 ? 0.5 : 0;
+          const tabCount = baseTabCount + (tabOffset > 0 ? 1 : 0); // Extra tab to fill right edge
           
           // Drop distance for entrance animation
           const dropDistance = 25;
