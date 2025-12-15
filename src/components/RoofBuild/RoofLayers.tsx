@@ -733,7 +733,7 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
     </g>
   );
 };
-// Starter Strip - simple left-to-right wipe along the eave
+// Starter Strip - left-to-right wipe along the eave, positioned just inside the roof edge
 export const StarterStripLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
@@ -742,12 +742,13 @@ export const StarterStripLayer: React.FC<LayerProps> = ({ progress, startProgres
   
   const easedProgress = easeOutQuint(layerProgress);
   
-  // Strip geometry - along the eave line
-  const stripStartX = 38;
-  const stripEndX = 362;
-  const stripY = 157; // Just above drip edge
-  const stripHeight = 8;
-  const totalWidth = stripEndX - stripStartX;
+  // Roof geometry - match the house roof exactly
+  // Eave line is at y=159, from x=42 to x=358
+  const eaveY = 156; // Slightly above the actual eave line (159) to sit ON the roof
+  const leftX = 44;
+  const rightX = 356;
+  const stripHeight = 10;
+  const totalWidth = rightX - leftX;
   
   // Current width based on progress (left to right wipe)
   const currentWidth = totalWidth * easedProgress;
@@ -755,93 +756,97 @@ export const StarterStripLayer: React.FC<LayerProps> = ({ progress, startProgres
   // Leading edge glow intensity
   const glowIntensity = easedProgress < 0.95 ? 1 : (1 - easedProgress) / 0.05;
   
-  // Text timing: fade in 15-35%, hold 35-60%, fade out 60-80%
+  // Text timing: fade in 10-25%, hold 25-55%, fade out 55-75%
   const textOpacity = isMobile ? 0 : (
-    layerProgress < 0.15 
+    layerProgress < 0.10 
       ? 0 
-      : layerProgress < 0.35 
-        ? (layerProgress - 0.15) / 0.2 
-        : layerProgress < 0.60 
+      : layerProgress < 0.25 
+        ? (layerProgress - 0.10) / 0.15 
+        : layerProgress < 0.55 
           ? 1 
-          : layerProgress < 0.80 
-            ? 1 - (layerProgress - 0.60) / 0.2 
+          : layerProgress < 0.75 
+            ? 1 - (layerProgress - 0.55) / 0.2 
             : 0
   );
   
   return (
     <g className="starter-strip-layer">
       <defs>
-        {/* Dark shingle gradient */}
+        {/* Dark shingle gradient - charcoal color */}
         <linearGradient id="starterStripGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(220 20% 28%)" />
-          <stop offset="50%" stopColor="hsl(220 18% 22%)" />
-          <stop offset="100%" stopColor="hsl(220 15% 18%)" />
+          <stop offset="0%" stopColor="hsl(220 15% 32%)" />
+          <stop offset="50%" stopColor="hsl(220 12% 25%)" />
+          <stop offset="100%" stopColor="hsl(220 10% 20%)" />
         </linearGradient>
         
-        {/* Clip for wipe effect */}
+        {/* Clip for left-to-right wipe effect */}
         <clipPath id="starterStripClip">
           <rect 
-            x={stripStartX} 
-            y={stripY - stripHeight} 
+            x={leftX} 
+            y={eaveY - stripHeight - 2} 
             width={currentWidth} 
-            height={stripHeight + 4}
+            height={stripHeight + 6}
           />
         </clipPath>
       </defs>
       
       {/* Main strip body - clipped for wipe effect */}
       <g clipPath="url(#starterStripClip)">
+        {/* The actual starter strip rectangle */}
         <rect
-          x={stripStartX}
-          y={stripY - stripHeight}
+          x={leftX}
+          y={eaveY - stripHeight}
           width={totalWidth}
           height={stripHeight}
           fill="url(#starterStripGrad)"
-          rx="1"
+          rx="0.5"
+          style={{
+            filter: 'drop-shadow(0 2px 4px hsl(220 20% 10% / 0.5))',
+          }}
         />
         
-        {/* Subtle shingle tab lines */}
-        {[0.15, 0.35, 0.55, 0.75, 0.95].map((pos, i) => (
+        {/* Shingle tab divider lines */}
+        {[0.12, 0.25, 0.37, 0.5, 0.62, 0.75, 0.87].map((pos, i) => (
           <line
             key={i}
-            x1={stripStartX + totalWidth * pos}
-            y1={stripY - stripHeight + 1}
-            x2={stripStartX + totalWidth * pos}
-            y2={stripY - 1}
-            stroke="hsl(220 15% 12%)"
-            strokeWidth="1"
-            opacity="0.6"
+            x1={leftX + totalWidth * pos}
+            y1={eaveY - stripHeight + 1}
+            x2={leftX + totalWidth * pos}
+            y2={eaveY - 1}
+            stroke="hsl(220 10% 14%)"
+            strokeWidth="1.2"
+            opacity="0.7"
           />
         ))}
         
-        {/* Top edge teal accent */}
+        {/* Top edge teal accent glow */}
         <line
-          x1={stripStartX}
-          y1={stripY - stripHeight}
-          x2={stripEndX}
-          y2={stripY - stripHeight}
+          x1={leftX}
+          y1={eaveY - stripHeight}
+          x2={rightX}
+          y2={eaveY - stripHeight}
           stroke="hsl(168 70% 50%)"
-          strokeWidth="1.5"
-          opacity="0.7"
+          strokeWidth="2"
+          opacity="0.8"
           style={{
-            filter: 'drop-shadow(0 0 4px hsl(168 70% 50% / 0.6))',
+            filter: 'drop-shadow(0 0 6px hsl(168 70% 50% / 0.7)) drop-shadow(0 0 12px hsl(168 70% 50% / 0.4))',
           }}
         />
       </g>
       
-      {/* Leading edge glow - orange/gold accent */}
-      {easedProgress > 0 && easedProgress < 1 && (
+      {/* Leading edge glow - orange/gold accent that moves with wipe */}
+      {easedProgress > 0.01 && easedProgress < 0.99 && (
         <line
-          x1={stripStartX + currentWidth}
-          y1={stripY - stripHeight - 2}
-          x2={stripStartX + currentWidth}
-          y2={stripY + 2}
+          x1={leftX + currentWidth}
+          y1={eaveY - stripHeight - 3}
+          x2={leftX + currentWidth}
+          y2={eaveY + 3}
           stroke="hsl(30 95% 55%)"
-          strokeWidth="3"
+          strokeWidth="4"
           strokeLinecap="round"
           opacity={glowIntensity}
           style={{
-            filter: `drop-shadow(0 0 8px hsl(30 95% 55% / 0.9)) drop-shadow(0 0 16px hsl(25 100% 50% / 0.7))`,
+            filter: `drop-shadow(0 0 10px hsl(30 95% 55%)) drop-shadow(0 0 20px hsl(25 100% 50% / 0.8))`,
           }}
         />
       )}
