@@ -168,20 +168,21 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
           transition: 'opacity 0.15s ease-out',
         }}
       >
-        {/* "Replace" text with strong glow */}
+        {/* "Replace" text with strong contrast */}
         <text
           x="200"
-          y="105"
+          y="103"
           textAnchor="middle"
-          fill="hsl(45 95% 85%)"
-          fontSize="13"
-          fontWeight="700"
+          fill="hsl(45 100% 95%)"
+          fontSize="14"
+          fontWeight="800"
           fontFamily="system-ui, -apple-system, sans-serif"
-          letterSpacing="2.5"
-          stroke="hsl(25 60% 25%)"
-          strokeWidth="0.5"
+          letterSpacing="3"
+          stroke="hsl(0 0% 5%)"
+          strokeWidth="2.5"
+          paintOrder="stroke fill"
           style={{
-            filter: 'drop-shadow(0 0 8px hsl(35 90% 55%)) drop-shadow(0 0 16px hsl(35 80% 50% / 0.6)) drop-shadow(0 0 24px hsl(30 70% 40% / 0.4))',
+            filter: 'drop-shadow(0 0 6px hsl(40 100% 70%)) drop-shadow(0 0 12px hsl(35 90% 60% / 0.8))',
           }}
         >
           REPLACE
@@ -191,15 +192,16 @@ export const DeckingLayer: React.FC<LayerProps> = ({ progress, startProgress, en
           x="200"
           y="124"
           textAnchor="middle"
-          fill="hsl(168 80% 70%)"
-          fontSize="14"
+          fill="hsl(168 90% 75%)"
+          fontSize="15"
           fontWeight="800"
           fontFamily="system-ui, -apple-system, sans-serif"
-          letterSpacing="3"
-          stroke="hsl(168 50% 20%)"
-          strokeWidth="0.5"
+          letterSpacing="3.5"
+          stroke="hsl(0 0% 5%)"
+          strokeWidth="2.5"
+          paintOrder="stroke fill"
           style={{
-            filter: 'drop-shadow(0 0 10px hsl(168 80% 55%)) drop-shadow(0 0 20px hsl(168 70% 50% / 0.7)) drop-shadow(0 0 30px hsl(168 60% 45% / 0.5))',
+            filter: 'drop-shadow(0 0 8px hsl(168 90% 60%)) drop-shadow(0 0 16px hsl(168 80% 55% / 0.8))',
           }}
         >
           DECKING
