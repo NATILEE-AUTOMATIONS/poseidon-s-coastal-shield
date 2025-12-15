@@ -566,18 +566,10 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
         <clipPath id="roofClipUnderlayment">
           <polygon points={`${peakX},${peakY} ${leftEaveX},${eaveY} ${rightEaveX},${eaveY}`} />
         </clipPath>
-        {/* Poseidon logo pattern - like branded underlayment */}
-        <pattern id="poseidonLogoPattern" x="0" y="0" width="70" height="30" patternUnits="userSpaceOnUse">
-          <image 
-            href="/poseidon-logo.png" 
-            x="5" 
-            y="3" 
-            width="60" 
-            height="24" 
-            opacity="0.9"
-            preserveAspectRatio="xMidYMid meet"
-          />
-        </pattern>
+        {/* Clip for logos to stay within roof */}
+        <clipPath id="logoClip">
+          <polygon points={`${peakX},${peakY} ${leftEaveX},${eaveY} ${rightEaveX},${eaveY}`} />
+        </clipPath>
       </defs>
       
       {/* Text label - rendered first so underlayment covers it */}
@@ -655,11 +647,6 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
                 points={points}
                 fill="url(#underlaymentGrad)"
               />
-              {/* Poseidon logo pattern overlay */}
-              <polygon
-                points={points}
-                fill="url(#poseidonLogoPattern)"
-              />
               {/* Course divider line at top edge */}
               {i > 0 && courseProgress >= 1 && (
                 <line
@@ -687,6 +674,27 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
             </g>
           );
         })}
+      </g>
+      
+      {/* Manually placed large logos - clipped to roof shape */}
+      <g clipPath="url(#logoClip)" style={{ opacity: layerProgress > 0.3 ? Math.min(1, (layerProgress - 0.3) * 2) : 0 }}>
+        {/* Top center - main prominent logo */}
+        <image href="/poseidon-logo.png" x="140" y="62" width="120" height="50" opacity="0.95" preserveAspectRatio="xMidYMid meet" />
+        
+        {/* Row 2 - two logos */}
+        <image href="/poseidon-logo.png" x="80" y="90" width="100" height="42" opacity="0.9" preserveAspectRatio="xMidYMid meet" />
+        <image href="/poseidon-logo.png" x="220" y="90" width="100" height="42" opacity="0.9" preserveAspectRatio="xMidYMid meet" />
+        
+        {/* Row 3 - three logos */}
+        <image href="/poseidon-logo.png" x="50" y="118" width="90" height="38" opacity="0.85" preserveAspectRatio="xMidYMid meet" />
+        <image href="/poseidon-logo.png" x="155" y="118" width="90" height="38" opacity="0.85" preserveAspectRatio="xMidYMid meet" />
+        <image href="/poseidon-logo.png" x="260" y="118" width="90" height="38" opacity="0.85" preserveAspectRatio="xMidYMid meet" />
+        
+        {/* Row 4 - four logos near bottom */}
+        <image href="/poseidon-logo.png" x="45" y="142" width="80" height="34" opacity="0.8" preserveAspectRatio="xMidYMid meet" />
+        <image href="/poseidon-logo.png" x="130" y="142" width="80" height="34" opacity="0.8" preserveAspectRatio="xMidYMid meet" />
+        <image href="/poseidon-logo.png" x="215" y="142" width="80" height="34" opacity="0.8" preserveAspectRatio="xMidYMid meet" />
+        <image href="/poseidon-logo.png" x="300" y="142" width="80" height="34" opacity="0.8" preserveAspectRatio="xMidYMid meet" />
       </g>
     </g>
   );
