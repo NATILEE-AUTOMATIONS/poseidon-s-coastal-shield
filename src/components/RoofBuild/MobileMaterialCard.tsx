@@ -26,23 +26,22 @@ const MobileMaterialCard: React.FC<MobileMaterialCardProps> = ({ progress, layer
         // layerProgress: 0 to 1.0 is normal, 1.0 to 1.2 is exit overlap
         const layerProgress = (progress - layer.start) / layerDuration;
         
-        // Animation phases
-        const enterEnd = 0.2; // First 20% is entry
-        const exitStart = 0.8; // Exit starts at 80%
-        const exitEnd = 1.0 + overlapAmount; // Exit completes at 120%
+        // Animation phases - SYNCED so exit and entry happen at same time
+        const enterEnd = overlapAmount; // Entry: 0 to 0.2
+        const exitStart = 1.0; // Exit: 1.0 to 1.2 (only in extended window)
         
         let translateX = 0;
         let zIndex = 15;
         
         if (layerProgress < enterEnd) {
-          // ENTERING: Slide in from right
+          // ENTERING: Slide in from right (0% to 20%)
           const t = layerProgress / enterEnd;
           const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
           translateX = 100 * (1 - eased); // 100% -> 0%
           zIndex = 20; // On top while entering
-        } else if (layerProgress > exitStart) {
-          // EXITING: Slide out to left
-          const t = (layerProgress - exitStart) / (exitEnd - exitStart);
+        } else if (layerProgress >= exitStart) {
+          // EXITING: Slide out to left (100% to 120%)
+          const t = (layerProgress - exitStart) / overlapAmount;
           const eased = t * t * t; // easeInCubic
           translateX = -100 * eased; // 0% -> -100%
           zIndex = 10; // Behind entering card
