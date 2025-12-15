@@ -229,7 +229,6 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
         style={{
           transform: `translateY(${translateY}px)`,
           transformOrigin: '200px 159px',
-          opacity,
         }}
       >
         <line 
