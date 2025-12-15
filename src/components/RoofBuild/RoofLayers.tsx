@@ -222,28 +222,31 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
   const opacity = 0.2 + (0.8 * easedProgress);
   
   return (
-    <g 
-      className="drip-edge-eaves-layer"
-      style={{
-        transform: `translateY(${translateY}px)`,
-        transformOrigin: '200px 159px',
-        opacity,
-      }}
-    >
-      <line 
-        x1="35" y1="160" 
-        x2="365" y2="160" 
-        stroke="hsl(25 95% 55%)"
-        strokeWidth="4"
-        strokeLinecap="round"
+    <>
+      {/* Animated drip edge line */}
+      <g 
+        className="drip-edge-eaves-layer"
         style={{
-          filter: `drop-shadow(0 0 ${6 + easedProgress * 10}px hsl(25 95% 55% / 0.8)) drop-shadow(0 0 ${3 + easedProgress * 5}px hsl(30 100% 60% / 0.6))`,
+          transform: `translateY(${translateY}px)`,
+          transformOrigin: '200px 159px',
+          opacity,
         }}
-      />
+      >
+        <line 
+          x1="35" y1="160" 
+          x2="365" y2="160" 
+          stroke="hsl(25 95% 55%)"
+          strokeWidth="4"
+          strokeLinecap="round"
+          style={{
+            filter: `drop-shadow(0 0 ${6 + easedProgress * 10}px hsl(25 95% 55% / 0.8)) drop-shadow(0 0 ${3 + easedProgress * 5}px hsl(30 100% 60% / 0.6))`,
+          }}
+        />
+      </g>
       
-      {/* Stacked "Replace Drip Edge" label - desktop only, same style as decking */}
+      {/* Static text label - same position as decking, desktop only */}
       {!isMobile && (
-        <g>
+        <g style={{ opacity }}>
           <text
             x="200"
             y="103"
@@ -282,7 +285,7 @@ export const DripEdgeEavesLayer: React.FC<LayerProps> = ({ progress, startProgre
           </text>
         </g>
       )}
-    </g>
+    </>
   );
 };
 
