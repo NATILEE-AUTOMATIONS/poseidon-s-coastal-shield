@@ -1096,26 +1096,23 @@ export const ShinglesLayer: React.FC<LayerProps> = ({ progress, startProgress, e
       
       {/* SHINGLES text label */}
       {textOpacity > 0 && (
-        <g 
-          style={{ opacity: textOpacity }}
-          filter="url(#textGlow)"
-        >
+        <g style={{ opacity: textOpacity }}>
           <defs>
             <filter id="shinglesTextGlow" x="-50%" y="-50%" width="200%" height="200%">
-              <feDropShadow dx="0" dy="0" stdDeviation="2" floodColor="hsl(0 0% 0%)" floodOpacity="0.8" />
+              <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="hsl(0 0% 0%)" floodOpacity="0.9" />
             </filter>
           </defs>
           <text
             x={peakX}
-            y={110}
+            y={115}
             textAnchor="middle"
-            fontSize={isMobile ? 18 : 15}
-            fontWeight="700"
+            fontSize={isMobile ? 20 : 15}
+            fontWeight="800"
             fontFamily="system-ui, sans-serif"
-            letterSpacing="2"
+            letterSpacing="3"
             fill="hsl(0 0% 100%)"
-            stroke="hsl(0 0% 5%)"
-            strokeWidth="2.5"
+            stroke="hsl(0 0% 0%)"
+            strokeWidth="3"
             paintOrder="stroke fill"
             filter="url(#shinglesTextGlow)"
           >
