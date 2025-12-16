@@ -961,18 +961,22 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
     return Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * ((2 * Math.PI) / 3)) + 1;
   };
   
-  // Course animation - animate in groups of 3-4 courses at a time
-  const getCourseProgress = (courseIndex: number) => {
-    const groupSize = 4; // 4 courses per group
-    const groupIndex = Math.floor(courseIndex / groupSize);
-    const staggerDelay = groupIndex * 0.15; // Delay between groups
-    const courseAnimDuration = 0.25;
-    const courseStart = staggerDelay;
-    const courseEnd = courseStart + courseAnimDuration;
+  // Stair-step animation - like real roofers install from bottom-left corner diagonally
+  // Each shingle's progress is based on its diagonal position (courseIdx + tabIdx)
+  const getShingleProgress = (courseIndex: number, tabIndex: number, totalTabs: number) => {
+    // Diagonal index - shingles on same diagonal animate together
+    const diagonalIdx = courseIndex + tabIndex;
+    const maxDiagonal = courseCount + 12; // Approximate max diagonal
+    const normalizedDiagonal = diagonalIdx / maxDiagonal;
     
-    if (layerProgress < courseStart) return 0;
-    if (layerProgress > courseEnd) return 1;
-    return (layerProgress - courseStart) / courseAnimDuration;
+    // Stagger based on diagonal position
+    const shingleStart = normalizedDiagonal * 0.7;
+    const shingleDuration = 0.15;
+    const shingleEnd = shingleStart + shingleDuration;
+    
+    if (layerProgress < shingleStart) return 0;
+    if (layerProgress > shingleEnd) return 1;
+    return (layerProgress - shingleStart) / shingleDuration;
   };
   
   // Text timing
@@ -1030,12 +1034,6 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
       
       <g clipPath="url(#shinglesRoofClip)">
         {Array.from({ length: courseCount }).map((_, courseIdx) => {
-          const courseProgress = getCourseProgress(courseIdx);
-          if (courseProgress <= 0) return null;
-          
-          const easedProgress = easeOutBack(Math.min(1, courseProgress * 1.1));
-          const settleProgress = easeOutElastic(courseProgress);
-          
           // Course Y positions (bottom = higher Y value, index 0 = bottom course)
           const bottomY = shingleBottom - (courseIdx * courseHeight);
           const topY = bottomY - courseHeight;
@@ -1047,123 +1045,72 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
           const bottomRightX = getRightX(bottomY);
           const courseWidth = bottomRightX - bottomLeftX;
           
-          // 9 tabs per course - ensures full coverage with offset pattern
-          const tabCount = 9;
-          const tabWidth = 1.0 / 8; // Each tab is 1/8th of roof width
-          const tabOffset = courseIdx % 2 === 1 ? tabWidth / 2 : 0; // Half-tab offset on alternate courses
-          
-          // Drop distance for entrance animation
-          const dropDistance = 25;
-          const currentDrop = dropDistance * (1 - easedProgress);
-          const rotation = (1 - settleProgress) * -15; // Slight rotation during drop
+          const actualCourseWidth = bottomRightX - bottomLeftX;
+          const tabsPerCourse = Math.max(4, Math.round(actualCourseWidth / 22));
+          const tabWidthRatio = 1 / tabsPerCourse;
+          const offsetRatio = courseIdx % 2 === 1 ? tabWidthRatio / 2 : 0;
           
           return (
-            <g 
-              key={`course-${courseIdx}`}
-              style={{
-                transform: `translateY(${currentDrop}px)`,
-                opacity: Math.min(1, courseProgress * 3),
-              }}
-            >
-              {/* Individual shingle tabs with adaptive count for consistent proportions */}
-              {(() => {
-                const actualCourseWidth = bottomRightX - bottomLeftX;
-                // Smaller tabs for detailed architectural look - target ~22px
-                const tabsPerCourse = Math.max(4, Math.round(actualCourseWidth / 22));
-                const tabWidthRatio = 1 / tabsPerCourse;
-                const offsetRatio = courseIdx % 2 === 1 ? tabWidthRatio / 2 : 0;
+            <g key={`course-${courseIdx}`}>
+              {/* Individual shingle tabs with stair-step animation */}
+              {Array.from({ length: tabsPerCourse + 2 }).map((_, tabIdx) => {
+                // Get individual shingle progress based on diagonal position
+                const shingleProgress = getShingleProgress(courseIdx, tabIdx, tabsPerCourse);
+                if (shingleProgress <= 0) return null;
                 
-                const courseEased = easeOutBack(Math.min(1, courseProgress * 1.2));
-                const courseDrop = 15 * (1 - courseEased);
+                const easedProgress = easeOutBack(Math.min(1, shingleProgress * 1.2));
                 
-                // Slight darkening toward bottom of roof for depth
-                const depthDarken = (courseIdx / courseCount) * 3;
+                // Calculate tab boundaries with offset
+                const rawStart = tabIdx * tabWidthRatio - offsetRatio;
+                const rawEnd = (tabIdx + 1) * tabWidthRatio - offsetRatio;
+                
+                // Clamp to roof bounds
+                const clampedStart = Math.max(0, rawStart);
+                const clampedEnd = Math.min(1, rawEnd);
+                
+                if (clampedStart >= clampedEnd) return null;
+                
+                // Calculate corner positions
+                const tabTopLeftX = topLeftX + (topRightX - topLeftX) * clampedStart;
+                const tabTopRightX = topLeftX + (topRightX - topLeftX) * clampedEnd;
+                const tabBottomLeftX = bottomLeftX + courseWidth * clampedStart;
+                const tabBottomRightX = bottomLeftX + courseWidth * clampedEnd;
+                
+                const shingleColor = getShingleColor(courseIdx, tabIdx);
+                
+                // Drop animation from above
+                const dropDistance = 15;
+                const currentDrop = dropDistance * (1 - easedProgress);
                 
                 return (
                   <g 
+                    key={`tab-${tabIdx}`}
                     style={{
-                      transform: `translateY(${courseDrop}px)`,
-                      opacity: Math.min(1, courseProgress * 2.5),
+                      transform: `translateY(${currentDrop}px)`,
+                      opacity: Math.min(1, shingleProgress * 3),
                     }}
                   >
-                    {/* First: solid background course to prevent gaps */}
+                    {/* Base shingle rectangle */}
                     <polygon
-                      points={`${topLeftX},${topY} ${topRightX},${topY} ${bottomRightX},${bottomY} ${bottomLeftX},${bottomY}`}
-                      fill={getShingleColor(courseIdx, 0)}
+                      points={`${tabTopLeftX},${topY} ${tabTopRightX},${topY} ${tabBottomRightX},${bottomY} ${tabBottomLeftX},${bottomY}`}
+                      fill={shingleColor}
                     />
                     
-                    {/* Then: individual tabs on top for texture */}
-                    {Array.from({ length: tabsPerCourse + 2 }).map((_, tabIdx) => {
-                      // Calculate tab boundaries with offset
-                      const rawStart = tabIdx * tabWidthRatio - offsetRatio;
-                      const rawEnd = (tabIdx + 1) * tabWidthRatio - offsetRatio;
-                      
-                      // Clamp to roof bounds
-                      const clampedStart = Math.max(0, rawStart);
-                      const clampedEnd = Math.min(1, rawEnd);
-                      
-                      if (clampedStart >= clampedEnd) return null;
-                      
-                      // Calculate corner positions - no gaps, full coverage
-                      const tabTopLeftX = topLeftX + (topRightX - topLeftX) * clampedStart;
-                      const tabTopRightX = topLeftX + (topRightX - topLeftX) * clampedEnd;
-                      const tabBottomLeftX = bottomLeftX + courseWidth * clampedStart;
-                      const tabBottomRightX = bottomLeftX + courseWidth * clampedEnd;
-                      
-                      const shingleColor = getShingleColor(courseIdx, tabIdx);
-                      
-                      
-                      return (
-                        <g key={`tab-${tabIdx}`}>
-                          {/* Base shingle rectangle */}
-                          <polygon
-                            points={`${tabTopLeftX},${topY} ${tabTopRightX},${topY} ${tabBottomRightX},${bottomY} ${tabBottomLeftX},${bottomY}`}
-                            fill={shingleColor}
-                          />
-                          
-                          
-                          {/* Right edge divider - subtle separation */}
-                          {clampedEnd < 1 && (
-                            <line
-                              x1={tabTopRightX}
-                              y1={topY + 0.5}
-                              x2={tabBottomRightX}
-                              y2={bottomY - 0.5}
-                              stroke="hsl(210 8% 8%)"
-                              strokeWidth="0.8"
-                              opacity={0.6}
-                            />
-                          )}
-                        </g>
-                      );
-                    })}
-                    
-                    {/* Course bottom shadow - clean line */}
-                    <line
-                      x1={bottomLeftX + 1}
-                      y1={bottomY + 0.5}
-                      x2={bottomRightX - 1}
-                      y2={bottomY + 0.5}
-                      stroke="hsl(210 8% 6%)"
-                      strokeWidth="1.5"
-                      opacity={0.5}
-                    />
+                    {/* Right edge divider - subtle separation */}
+                    {clampedEnd < 1 && (
+                      <line
+                        x1={tabTopRightX}
+                        y1={topY + 0.5}
+                        x2={tabBottomRightX}
+                        y2={bottomY - 0.5}
+                        stroke="hsl(210 8% 8%)"
+                        strokeWidth="0.8"
+                        opacity={0.6}
+                      />
+                    )}
                   </g>
                 );
-              })()}
-              
-              {/* Course shadow line - clean, no blur */}
-              {courseProgress > 0.7 && courseIdx > 0 && (
-                <line
-                  x1={bottomLeftX + 2}
-                  y1={bottomY}
-                  x2={bottomRightX - 2}
-                  y2={bottomY}
-                  stroke="hsl(210 10% 6%)"
-                  strokeWidth="1.5"
-                  opacity={0.35 * Math.min(1, (courseProgress - 0.7) / 0.3)}
-                />
-              )}
+              })}
             </g>
           );
         })}
