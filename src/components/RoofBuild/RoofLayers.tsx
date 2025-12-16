@@ -1315,40 +1315,45 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
       {/* ========= CHIMNEY FLASHING ========= */}
       {/* Chimney: M88 50 L122 50 L122 117 L88 130 Z */}
       <g>
-        {/* Front apron - angled piece at the bottom front */}
+        {/* FRONT piece - covers front face of chimney at base */}
         <path
-          d="M84 134 L84 128 L126 115 L126 121 Z"
+          d="M88 130 L88 118 L122 105 L122 117 Z"
+          fill={flashingDark}
+          stroke={flashingEdge}
+          strokeWidth="0.75"
+        />
+        
+        {/* LEFT side piece - short, hugs the corner */}
+        <path
+          d="M84 132 L84 118 L88 118 L88 130 Z"
           fill="url(#darkFlashingGrad)"
+          stroke={flashingEdge}
+          strokeWidth="0.75"
+        />
+        
+        {/* RIGHT side piece - short, hugs the corner */}
+        <path
+          d="M122 117 L122 105 L126 105 L126 119 Z"
+          fill="url(#darkFlashingGrad)"
+          stroke={flashingEdge}
+          strokeWidth="0.75"
+        />
+        
+        {/* Bottom apron - angled piece extending onto roof */}
+        <path
+          d="M82 134 L84 132 L88 130 L122 117 L126 119 L128 121 L88 136 Z"
+          fill={flashingDark}
           stroke={flashingEdge}
           strokeWidth="1"
         />
         
-        {/* Front apron drip edge */}
+        {/* Drip edge at very bottom */}
         <path
-          d="M82 136 L82 134 L128 121 L128 123 Z"
-          fill={flashingDark}
+          d="M80 136 L88 136 L128 121 L130 123 L88 138 L78 138 Z"
+          fill={flashingMid}
           stroke={flashingEdge}
           strokeWidth="0.5"
         />
-        
-        {/* Left side piece - goes up along chimney */}
-        <path
-          d="M84 128 L84 95 L89 95 L89 128 Z"
-          fill="url(#darkFlashingGrad)"
-          stroke={flashingEdge}
-          strokeWidth="0.75"
-        />
-        
-        {/* Right side piece - goes up along chimney */}
-        <path
-          d="M121 115 L121 88 L126 88 L126 115 Z"
-          fill="url(#darkFlashingGrad)"
-          stroke={flashingEdge}
-          strokeWidth="0.75"
-        />
-        
-        {/* Top edge highlight for subtle 3D effect */}
-        <line x1="84" y1="128" x2="126" y2="115" stroke={flashingEdge} strokeWidth="1" />
       </g>
       
       {/* Text label */}
