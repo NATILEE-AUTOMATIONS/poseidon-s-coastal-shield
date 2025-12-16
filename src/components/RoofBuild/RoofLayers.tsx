@@ -1047,8 +1047,9 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
           const courseWidth = bottomRightX - bottomLeftX;
           
           const actualCourseWidth = bottomRightX - bottomLeftX;
-          // Detailed 22px tabs (same on all devices)
-          const tabsPerCourse = Math.max(4, Math.round(actualCourseWidth / 22));
+          // Mobile: narrower tabs (14px) for more square proportions, Desktop: 22px
+          const targetTabWidth = isMobile ? 14 : 22;
+          const tabsPerCourse = Math.max(4, Math.round(actualCourseWidth / targetTabWidth));
           const tabWidthRatio = 1 / tabsPerCourse;
           const offsetRatio = courseIdx % 2 === 1 ? tabWidthRatio / 2 : 0;
           
