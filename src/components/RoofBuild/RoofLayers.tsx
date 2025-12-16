@@ -732,6 +732,23 @@ export const UnderlaymentLayer: React.FC<LayerProps> = ({ progress, startProgres
           <image href="/poseidon-logo.png" x="300" y="142" width="80" height="34" opacity="0.8" preserveAspectRatio="xMidYMid meet" />
         </g>
       )}
+      
+      {/* Logos clipped to actual underlayment coverage - MOBILE ONLY */}
+      {isMobile && (
+        <g clipPath="url(#underlaymentCoverageClip)">
+          {/* Top center logo */}
+          <image href="/poseidon-logo.png" x="150" y="68" width="100" height="42" opacity="0.9" preserveAspectRatio="xMidYMid meet" />
+          
+          {/* Row 2 - two logos */}
+          <image href="/poseidon-logo.png" x="90" y="100" width="90" height="38" opacity="0.85" preserveAspectRatio="xMidYMid meet" />
+          <image href="/poseidon-logo.png" x="220" y="100" width="90" height="38" opacity="0.85" preserveAspectRatio="xMidYMid meet" />
+          
+          {/* Row 3 - three logos near bottom */}
+          <image href="/poseidon-logo.png" x="60" y="130" width="80" height="34" opacity="0.8" preserveAspectRatio="xMidYMid meet" />
+          <image href="/poseidon-logo.png" x="160" y="130" width="80" height="34" opacity="0.8" preserveAspectRatio="xMidYMid meet" />
+          <image href="/poseidon-logo.png" x="260" y="130" width="80" height="34" opacity="0.8" preserveAspectRatio="xMidYMid meet" />
+        </g>
+      )}
     </g>
   );
 };
