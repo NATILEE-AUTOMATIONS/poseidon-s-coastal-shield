@@ -84,35 +84,13 @@ const HeroSection = () => {
           </Button>
         </div>
 
-        {/* Line and text container - tight spacing */}
-        <div className="mt-4 sm:mt-6 flex flex-col items-center relative w-full" style={{ height: '280px', minHeight: '280px' }}>
-          {/* Text - at top of container */}
-          <div className="absolute left-1/2 -translate-x-1/2 text-center px-6 w-full" style={{ top: '0' }}>
-            <h2 
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-none"
-              style={{
-                color: 'hsl(30 95% 60%)',
-                textShadow: '0 0 15px hsl(30 95% 55% / 0.8), 0 0 30px hsl(30 95% 55% / 0.5)',
-              }}
-            >
-              910 Roofing
-            </h2>
-            <h3 
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-none"
-              style={{
-                color: 'hsl(168 70% 55%)',
-                textShadow: '0 0 15px hsl(168 70% 50% / 0.8), 0 0 30px hsl(168 70% 50% / 0.6), 0 0 45px hsl(168 70% 50% / 0.4)',
-              }}
-            >
-              Done Right
-            </h3>
-          </div>
-          
-          {/* Scroll-triggered glowing line - starts just below text */}
+        {/* Line and text container - fixed height so text stays static */}
+        <div className="mt-10 sm:mt-16 flex flex-col items-center relative w-full" style={{ height: '500px', minHeight: '500px' }}>
+          {/* Scroll-triggered glowing line */}
           <div 
             className="w-4 sm:w-3 rounded-full absolute left-1/2 -translate-x-1/2"
             style={{
-              top: '200px',
+              top: 0,
               height: `${Math.min(lineHeight, 350)}px`,
               background: 'linear-gradient(to bottom, hsl(168 70% 45%), hsl(168 80% 55%))',
               boxShadow: `
@@ -125,6 +103,31 @@ const HeroSection = () => {
               transition: 'opacity 0.2s ease-out',
             }}
           />
+          
+          {/* Text - STATIC position at fixed location */}
+          <div 
+            className="absolute left-1/2 -translate-x-1/2 text-center px-6 w-full"
+            style={{ top: '380px' }}
+          >
+          <h2 
+              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight"
+              style={{
+                color: 'hsl(30 95% 60%)',
+                textShadow: '0 0 15px hsl(30 95% 55% / 0.8), 0 0 30px hsl(30 95% 55% / 0.5)',
+              }}
+            >
+              910 Roofing
+            </h2>
+            <h3 
+              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mt-2"
+              style={{
+                color: 'hsl(168 70% 55%)',
+                textShadow: '0 0 15px hsl(168 70% 50% / 0.8), 0 0 30px hsl(168 70% 50% / 0.6), 0 0 45px hsl(168 70% 50% / 0.4)',
+              }}
+            >
+              Done Right
+            </h3>
+          </div>
         </div>
       </div>
 
