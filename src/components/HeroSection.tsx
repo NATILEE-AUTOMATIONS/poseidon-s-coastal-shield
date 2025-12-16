@@ -273,7 +273,7 @@ const HeroSection = () => {
         
         // Drip edge animation: starts after decking completes
         const dripStart = windowHeight * 1.4;
-        const dripEnd = windowHeight * 2.1;
+        const dripEnd = windowHeight * 1.9;
         const dripProgress = Math.max(0, Math.min(1, (scrollY - dripStart) / (dripEnd - dripStart)));
         setDripEdgeProgress(dripProgress);
       }
@@ -289,7 +289,7 @@ const HeroSection = () => {
   const lineHeight = Math.min(lineProgress * 1.2, 1) * 350;
 
   return (
-    <section ref={sectionRef} className="relative w-full overflow-hidden bg-gradient-mesh" style={{ minHeight: isMobile ? '250vh' : '100vh' }}>
+    <section ref={sectionRef} className="relative w-full overflow-hidden bg-gradient-mesh" style={{ minHeight: isMobile ? '220vh' : '100vh' }}>
       {/* Wrapper - sticky on mobile to keep content visible during scroll animations */}
       <div className={isMobile ? "sticky top-0 h-screen w-full" : "relative w-full h-full"}>
         {/* Subtle Grid Overlay */}
