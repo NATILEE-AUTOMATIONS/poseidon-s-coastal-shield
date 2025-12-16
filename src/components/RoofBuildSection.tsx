@@ -259,8 +259,10 @@ const RoofBuildSection: React.FC = () => {
                   )}
                   {/* Mobile shingle overlay - covers any shingle bleed-through */}
                   <MobileShingleOverlay progress={progress} startProgress={layers[5].start} endProgress={layers[5].end} isMobile={isMobile} />
-                  {/* 7. Pipe Boots & Vents */}
-                  <VentsLayer progress={progress} startProgress={layers[6].start} endProgress={layers[6].end} isMobile={isMobile} />
+                  {/* 7. Pipe Boots & Vents - Desktop only */}
+                  {!isMobile && (
+                    <VentsLayer progress={progress} startProgress={layers[6].start} endProgress={layers[6].end} />
+                  )}
                   {/* 8. Flashing - Desktop only */}
                   {!isMobile && (
                     <FlashingLayer progress={progress} startProgress={layers[7].start} endProgress={layers[7].end} />
