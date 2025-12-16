@@ -1218,11 +1218,11 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
         </linearGradient>
       </defs>
       
-      {/* Pipe Boot - Left slope */}
+      {/* Pipe Boot - Left slope - positioned lower to avoid text overlap */}
       {pipeBootOpacity > 0 && (
         <g 
           style={{
-            transform: `translate(165px, ${113 + pipeBootY}px) rotate(${pipeBootRotate}deg)`,
+            transform: `translate(105px, ${135 + pipeBootY}px) rotate(${pipeBootRotate}deg)`,
             transformOrigin: '0 0',
             opacity: pipeBootOpacity,
           }}
@@ -1279,11 +1279,11 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
         </g>
       )}
       
-      {/* Box Vent - Right slope */}
+      {/* Box Vent - Right slope - positioned lower to avoid text overlap */}
       {ventOpacity > 0 && (
         <g 
           style={{
-            transform: `translate(290px, ${125 + ventY}px) rotate(${ventRotate}deg)`,
+            transform: `translate(295px, ${140 + ventY}px) rotate(${ventRotate}deg)`,
             transformOrigin: '0 0',
             opacity: ventOpacity,
           }}
