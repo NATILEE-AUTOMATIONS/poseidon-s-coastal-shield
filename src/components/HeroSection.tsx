@@ -113,17 +113,17 @@ const HeroSection = () => {
           
           {/* Text - fixed position with light-up effect */}
           <div 
-            className={`absolute text-center px-6 w-full transition-all duration-700 ease-out ${textLit ? 'scale-105' : 'scale-100'}`}
+            className={`absolute text-center px-6 w-full transition-all duration-700 ease-out ${textLit ? 'scale-[1.02]' : 'scale-100'}`}
             style={{ top: '355px' }}
           >
             <h2 
               className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight transition-all duration-700"
               style={{
-                color: textLit ? 'hsl(30 100% 65%)' : 'hsl(30 95% 60%)',
+                color: 'hsl(30 95% 60%)',
                 textShadow: textLit 
-                  ? '0 0 20px hsl(30 100% 60% / 1), 0 0 40px hsl(30 100% 55% / 0.9), 0 0 60px hsl(30 95% 50% / 0.7), 0 0 100px hsl(30 90% 50% / 0.5)'
-                  : '0 0 15px hsl(30 95% 55% / 0.8), 0 0 30px hsl(30 95% 55% / 0.5)',
-                filter: textLit ? 'brightness(1.2)' : 'brightness(1)',
+                  ? '0 0 15px hsl(30 95% 55% / 0.9), 0 0 30px hsl(30 95% 55% / 0.6), 0 0 50px hsl(30 95% 55% / 0.3)'
+                  : '0 0 10px hsl(30 95% 55% / 0.5), 0 0 20px hsl(30 95% 55% / 0.3)',
+                opacity: textLit ? 1 : 0.7,
               }}
             >
               910 Roofing
@@ -131,11 +131,11 @@ const HeroSection = () => {
             <h3 
               className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mt-2 transition-all duration-700"
               style={{
-                color: textLit ? 'hsl(168 80% 60%)' : 'hsl(168 70% 55%)',
+                color: 'hsl(168 70% 55%)',
                 textShadow: textLit
-                  ? '0 0 20px hsl(168 80% 55% / 1), 0 0 40px hsl(168 75% 50% / 0.9), 0 0 60px hsl(168 70% 50% / 0.7), 0 0 100px hsl(168 65% 50% / 0.5)'
-                  : '0 0 15px hsl(168 70% 50% / 0.8), 0 0 30px hsl(168 70% 50% / 0.6), 0 0 45px hsl(168 70% 50% / 0.4)',
-                filter: textLit ? 'brightness(1.2)' : 'brightness(1)',
+                  ? '0 0 15px hsl(168 70% 50% / 0.9), 0 0 30px hsl(168 70% 50% / 0.6), 0 0 50px hsl(168 70% 50% / 0.4)'
+                  : '0 0 10px hsl(168 70% 50% / 0.5), 0 0 20px hsl(168 70% 50% / 0.3)',
+                opacity: textLit ? 1 : 0.7,
               }}
             >
               Done Right
