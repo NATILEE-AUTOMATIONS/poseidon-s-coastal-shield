@@ -1354,41 +1354,60 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
         </g>
       )}
       
-      {/* Text label with cinematic reveal */}
-      {textOpacity > 0 && (
-        <g style={{ opacity: textOpacity }}>
-          <text
-            x="200"
-            y="100"
-            textAnchor="middle"
-            fontSize="13"
-            fontWeight="800"
-            fontFamily="system-ui, sans-serif"
-            letterSpacing="2"
-            fill="hsl(168 90% 75%)"
-            stroke="hsl(0 0% 0%)"
-            strokeWidth="3"
-            paintOrder="stroke fill"
-            filter="url(#ventsTextGlow)"
+      {/* Text label with wipe reveal synced to pipe boot descent */}
+      {pipeBootProgress > 0 && (
+        <g>
+          <defs>
+            {/* Clip path that follows pipe boot Y position */}
+            <clipPath id="ventsTextWipeClip">
+              <rect 
+                x="100" 
+                y="70" 
+                width="200" 
+                height={Math.max(0, (135 + pipeBootY) - 70)}
+              />
+            </clipPath>
+          </defs>
+          
+          <g 
+            clipPath="url(#ventsTextWipeClip)"
+            style={{
+              opacity: layerProgress < 0.85 ? 1 : Math.max(0, 1 - (layerProgress - 0.85) / 0.12),
+            }}
           >
-            PIPE BOOTS
-          </text>
-          <text
-            x="200"
-            y="116"
-            textAnchor="middle"
-            fontSize="13"
-            fontWeight="800"
-            fontFamily="system-ui, sans-serif"
-            letterSpacing="2"
-            fill="hsl(30 90% 65%)"
-            stroke="hsl(0 0% 0%)"
-            strokeWidth="3"
-            paintOrder="stroke fill"
-            filter="url(#ventsTextGlow)"
-          >
-            & VENTS
-          </text>
+            <text
+              x="200"
+              y="100"
+              textAnchor="middle"
+              fontSize="13"
+              fontWeight="800"
+              fontFamily="system-ui, sans-serif"
+              letterSpacing="2"
+              fill="hsl(168 90% 75%)"
+              stroke="hsl(0 0% 0%)"
+              strokeWidth="3"
+              paintOrder="stroke fill"
+              filter="url(#ventsTextGlow)"
+            >
+              PIPE BOOTS
+            </text>
+            <text
+              x="200"
+              y="116"
+              textAnchor="middle"
+              fontSize="13"
+              fontWeight="800"
+              fontFamily="system-ui, sans-serif"
+              letterSpacing="2"
+              fill="hsl(30 90% 65%)"
+              stroke="hsl(0 0% 0%)"
+              strokeWidth="3"
+              paintOrder="stroke fill"
+              filter="url(#ventsTextGlow)"
+            >
+              & VENTS
+            </text>
+          </g>
         </g>
       )}
     </g>
