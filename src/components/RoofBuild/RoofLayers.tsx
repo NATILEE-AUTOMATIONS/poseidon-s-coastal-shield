@@ -1394,5 +1394,56 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
 
 export const RidgeCapLayer: React.FC<LayerProps> = () => null;
 export const CleanUpLayer: React.FC<LayerProps> = () => null;
-// NUCLEAR DELETE - MobileShingleOverlay removed entirely
 export const MobileShingleOverlay: React.FC<LayerProps> = () => null;
+
+// Simple mobile-only vents layer - drops in like drip edge
+export const MobileVentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress }) => {
+  const rawProgress = (progress - startProgress) / (endProgress - startProgress);
+  const layerProgress = Math.max(0, Math.min(1, rawProgress));
+  
+  if (progress < startProgress) return null;
+  
+  const easedProgress = easeOutQuint(layerProgress);
+  const translateY = -150 * (1 - easedProgress);
+  
+  // Text visible for middle 1/3
+  const textOpacity = layerProgress >= 0.33 && layerProgress <= 0.67 
+    ? Math.min(1, (layerProgress - 0.33) * 6) * (layerProgress <= 0.5 ? 1 : Math.max(0, 1 - (layerProgress - 0.5) * 6))
+    : 0;
+  
+  return (
+    <g 
+      className="mobile-vents-layer"
+      style={{
+        transform: `translateY(${translateY}px)`,
+        transformOrigin: '200px 125px',
+      }}
+    >
+      {/* Simple pipe boot */}
+      <g style={{ transform: 'translate(120px, 120px)' }}>
+        <ellipse cx="0" cy="8" rx="10" ry="3" fill="hsl(168 40% 30%)" stroke="hsl(168 70% 50%)" strokeWidth="1.5" />
+        <rect x="-3" y="-12" width="6" height="12" rx="1" fill="hsl(168 50% 40%)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
+        <ellipse cx="0" cy="-12" rx="4" ry="1.5" fill="hsl(168 60% 50%)" stroke="hsl(168 80% 60%)" strokeWidth="1" />
+      </g>
+      
+      {/* Simple box vent */}
+      <g style={{ transform: 'translate(280px, 125px)' }}>
+        <rect x="-12" y="3" width="24" height="6" rx="1" fill="hsl(168 30% 25%)" stroke="hsl(168 70% 45%)" strokeWidth="1" />
+        <rect x="-10" y="-8" width="20" height="12" rx="2" fill="hsl(168 45% 40%)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
+        <path d="M-11,-8 L-11,-12 Q-11,-15 -8,-15 L8,-15 Q11,-15 11,-12 L11,-8 Z" fill="hsl(168 50% 45%)" stroke="hsl(168 85% 60%)" strokeWidth="1.5" />
+      </g>
+      
+      {/* Text label */}
+      {textOpacity > 0 && (
+        <g style={{ opacity: textOpacity }}>
+          <text x="200" y="100" textAnchor="middle" fontSize="13" fontWeight="800" fontFamily="system-ui, sans-serif" letterSpacing="2" fill="hsl(168 90% 75%)" stroke="hsl(0 0% 0%)" strokeWidth="3" paintOrder="stroke fill">
+            PIPE BOOTS
+          </text>
+          <text x="200" y="116" textAnchor="middle" fontSize="13" fontWeight="800" fontFamily="system-ui, sans-serif" letterSpacing="2" fill="hsl(30 90% 65%)" stroke="hsl(0 0% 0%)" strokeWidth="3" paintOrder="stroke fill">
+            & VENTS
+          </text>
+        </g>
+      )}
+    </g>
+  );
+};
