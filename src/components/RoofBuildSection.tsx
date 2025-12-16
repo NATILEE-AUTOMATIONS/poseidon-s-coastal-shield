@@ -17,7 +17,7 @@ import {
   materialInfo,
 } from './RoofBuild/RoofLayers';
 
-import YardSign from './RoofBuild/YardSign';
+
 import { useScrollContext } from '@/context/ScrollContext';
 import ImageGallery3D from './RoofBuild/ImageGallery3D';
 
@@ -279,8 +279,6 @@ const RoofBuildSection: React.FC = () => {
                   {/* 2. Drip Edge rendered after all layers to be on top */}
                   <DripEdgeEavesLayer progress={progress} startProgress={layers[1].start} endProgress={layers[1].end} isMobile={isMobile} />
                   
-                  {/* Yard sign drops in - Desktop only */}
-                  {!isMobile && <YardSign progress={progress} />}
                 </svg>
               </div>
             </div>
