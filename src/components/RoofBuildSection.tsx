@@ -25,6 +25,7 @@ import ImageGallery3D from './RoofBuild/ImageGallery3D';
 
 
 import { useIsMobile } from '@/hooks/use-mobile';
+import MobileStepCards from './RoofBuild/MobileStepCards';
 
 
 const RoofBuildSection: React.FC = () => {
@@ -280,7 +281,10 @@ const RoofBuildSection: React.FC = () => {
               </div>
             </div>
 
-
+            {/* Mobile Step Cards - below house */}
+            {isMobile && (
+              <MobileStepCards progress={progress} layers={layers} />
+            )}
 
             {/* Material labels - left side (positioned as overlay) */}
             <div
