@@ -1266,46 +1266,24 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
   );
 };
 
-// Chimney Flashing - dark, simple design like real flashing
-export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
+// Chimney Flashing - renders BEHIND pipe/vents
+export const ChimneyFlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
   if (progress < startProgress) return null;
   
   const easedProgress = easeOutQuint(layerProgress);
-  
-  // Drop-in animation
   const translateY = -80 * (1 - easedProgress);
   const opacity = 0.4 + (0.6 * easedProgress);
   
-  // Text timing: fade in 15-35%, hold 35-60%, fade out 60-85%
-  const textOpacity = layerProgress < 0.15 
-    ? 0 
-    : layerProgress < 0.35 
-      ? (layerProgress - 0.15) / 0.2 
-      : layerProgress < 0.60 
-        ? 1 
-        : layerProgress < 0.85 
-          ? 1 - (layerProgress - 0.60) / 0.25 
-          : 0;
-  
-  // Dark flashing colors (like the reference image)
   const flashingDark = "hsl(220 10% 18%)";
   const flashingMid = "hsl(220 8% 25%)";
   const flashingEdge = "hsl(220 12% 30%)";
   
-  // Pipe boot position (matching VentsLayer)
-  const pipeBootX = isMobile ? 120 : 130;
-  const pipeBootBaseY = isMobile ? 120 : 125;
-  
-  // Vent position (matching VentsLayer)
-  const ventX = isMobile ? 280 : 270;
-  const ventBaseY = isMobile ? 125 : 130;
-  
   return (
     <g 
-      className="flashing-layer"
+      className="chimney-flashing-layer"
       style={{
         transform: `translateY(${isMobile ? Math.round(translateY) : translateY}px)`,
         opacity,
@@ -1320,50 +1298,53 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         </linearGradient>
       </defs>
       
-      {/* ========= CHIMNEY FLASHING ========= */}
       {/* Chimney: M88 50 L122 50 L122 117 L88 130 Z */}
       <g>
-        {/* FRONT piece - covers front face of chimney at base */}
-        <path
-          d="M88 130 L88 118 L122 105 L122 117 Z"
-          fill={flashingDark}
-          stroke={flashingEdge}
-          strokeWidth="0.75"
-        />
-        
-        {/* LEFT side piece - short, hugs the corner */}
-        <path
-          d="M84 132 L84 118 L88 118 L88 130 Z"
-          fill="url(#darkFlashingGrad)"
-          stroke={flashingEdge}
-          strokeWidth="0.75"
-        />
-        
-        {/* RIGHT side piece - short, hugs the corner */}
-        <path
-          d="M122 117 L122 105 L126 105 L126 119 Z"
-          fill="url(#darkFlashingGrad)"
-          stroke={flashingEdge}
-          strokeWidth="0.75"
-        />
-        
-        {/* Bottom apron - angled piece extending onto roof */}
-        <path
-          d="M82 134 L84 132 L88 130 L122 117 L126 119 L128 121 L88 136 Z"
-          fill={flashingDark}
-          stroke={flashingEdge}
-          strokeWidth="1"
-        />
-        
-        {/* Drip edge at very bottom */}
-        <path
-          d="M80 136 L88 136 L128 121 L130 123 L88 138 L78 138 Z"
-          fill={flashingMid}
-          stroke={flashingEdge}
-          strokeWidth="0.5"
-        />
+        <path d="M88 130 L88 118 L122 105 L122 117 Z" fill={flashingDark} stroke={flashingEdge} strokeWidth="0.75" />
+        <path d="M84 132 L84 118 L88 118 L88 130 Z" fill="url(#darkFlashingGrad)" stroke={flashingEdge} strokeWidth="0.75" />
+        <path d="M122 117 L122 105 L126 105 L126 119 Z" fill="url(#darkFlashingGrad)" stroke={flashingEdge} strokeWidth="0.75" />
+        <path d="M82 134 L84 132 L88 130 L122 117 L126 119 L128 121 L88 136 Z" fill={flashingDark} stroke={flashingEdge} strokeWidth="1" />
+        <path d="M80 136 L88 136 L128 121 L130 123 L88 138 L78 138 Z" fill={flashingMid} stroke={flashingEdge} strokeWidth="0.5" />
       </g>
-      
+    </g>
+  );
+};
+
+// Pipe/Vent Flashing - renders ON TOP of pipe/vents
+export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
+  const rawProgress = (progress - startProgress) / (endProgress - startProgress);
+  const layerProgress = Math.max(0, Math.min(1, rawProgress));
+  
+  if (progress < startProgress) return null;
+  
+  const easedProgress = easeOutQuint(layerProgress);
+  const translateY = -80 * (1 - easedProgress);
+  const opacity = 0.4 + (0.6 * easedProgress);
+  
+  const textOpacity = layerProgress < 0.15 ? 0 
+    : layerProgress < 0.35 ? (layerProgress - 0.15) / 0.2 
+    : layerProgress < 0.60 ? 1 
+    : layerProgress < 0.85 ? 1 - (layerProgress - 0.60) / 0.25 
+    : 0;
+  
+  const flashingDark = "hsl(220 10% 18%)";
+  const flashingMid = "hsl(220 8% 25%)";
+  const flashingEdge = "hsl(220 12% 30%)";
+  
+  const pipeBootX = isMobile ? 120 : 130;
+  const pipeBootBaseY = isMobile ? 120 : 125;
+  const ventX = isMobile ? 280 : 270;
+  const ventBaseY = isMobile ? 125 : 130;
+  
+  return (
+    <g 
+      className="flashing-layer"
+      style={{
+        transform: `translateY(${isMobile ? Math.round(translateY) : translateY}px)`,
+        opacity,
+        willChange: 'transform, opacity',
+      }}
+    >
       {/* ========= PIPE BOOT FLASHING ========= */}
       {/* Pipe boot positioned at (pipeBootX, pipeBootBaseY) with base ellipse at cy=12 */}
       <g style={{ transform: `translate(${pipeBootX}px, ${pipeBootBaseY}px)` }}>
