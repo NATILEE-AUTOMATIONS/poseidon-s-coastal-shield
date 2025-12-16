@@ -1291,18 +1291,18 @@ export const MobileVentsLayer: React.FC<LayerProps> = ({ progress, startProgress
         contain: 'layout style paint',
       } as React.CSSProperties}
     >
-      {/* Simple pipe boot - symmetrical position, clear of chimney */}
+      {/* Simple pipe boot - close to center */}
       <g>
-        <ellipse cx="165" cy="138" rx="8" ry="3" fill="hsl(168 40% 30%)" stroke="hsl(168 70% 50%)" strokeWidth="1.5" />
-        <rect x="162" y="123" width="6" height="15" rx="1" fill="hsl(168 50% 40%)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
-        <ellipse cx="165" cy="123" rx="4" ry="1.5" fill="hsl(168 60% 50%)" stroke="hsl(168 80% 60%)" strokeWidth="1" />
+        <ellipse cx="180" cy="138" rx="8" ry="3" fill="hsl(168 40% 30%)" stroke="hsl(168 70% 50%)" strokeWidth="1.5" />
+        <rect x="177" y="123" width="6" height="15" rx="1" fill="hsl(168 50% 40%)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
+        <ellipse cx="180" cy="123" rx="4" ry="1.5" fill="hsl(168 60% 50%)" stroke="hsl(168 80% 60%)" strokeWidth="1" />
       </g>
       
-      {/* Simple box vent - symmetrical with pipe (both 35px from center) */}
+      {/* Simple box vent - close to center, symmetrical with pipe */}
       <g>
-        <rect x="223" y="131" width="24" height="6" rx="1" fill="hsl(168 30% 25%)" stroke="hsl(168 70% 45%)" strokeWidth="1" />
-        <rect x="225" y="118" width="20" height="14" rx="2" fill="hsl(168 45% 40%)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
-        <path d="M224,118 L224,112 Q224,109 227,109 L243,109 Q246,109 246,112 L246,118 Z" fill="hsl(168 50% 45%)" stroke="hsl(168 85% 60%)" strokeWidth="1.5" />
+        <rect x="208" y="131" width="24" height="6" rx="1" fill="hsl(168 30% 25%)" stroke="hsl(168 70% 45%)" strokeWidth="1" />
+        <rect x="210" y="118" width="20" height="14" rx="2" fill="hsl(168 45% 40%)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
+        <path d="M209,118 L209,112 Q209,109 212,109 L228,109 Q231,109 231,112 L231,118 Z" fill="hsl(168 50% 45%)" stroke="hsl(168 85% 60%)" strokeWidth="1.5" />
       </g>
       
       {/* Text label - no fade, just visible/hidden */}
