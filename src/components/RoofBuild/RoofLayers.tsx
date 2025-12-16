@@ -1152,7 +1152,7 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
   const pipeBootX = isMobile ? 120 : 130;
   const pipeBootBaseY = isMobile ? 130 : 135;
   const ventX = isMobile ? 280 : 270;
-  const ventBaseY = isMobile ? 135 : 140;
+  const ventBaseY = isMobile ? 125 : 130;
   
   // Drop-in transforms - gentler on mobile
   const pipeBootY = (1 - pipeBootEased) * (isMobile ? -60 : -80);
