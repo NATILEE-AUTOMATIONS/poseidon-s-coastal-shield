@@ -150,15 +150,15 @@ const HeroSection = () => {
             </h3>
           </div>
           
-          {/* Mobile-only static house - positioned outside padded container for full width */}
+          {/* Mobile-only static house - no padding, full width */}
           {isMobile && (
             <div 
-              className="absolute w-full flex justify-center"
+              className="absolute left-0 right-0 flex justify-center"
               style={{ top: '520px' }}
             >
               <svg
-                viewBox="50 50 300 200"
-                className="w-full max-w-[100vw]"
+                viewBox="30 40 340 220"
+                className="w-[85vw]"
                 style={{
                   filter: 'drop-shadow(0 0 30px hsl(168 80% 45% / 0.25))',
                 }}
