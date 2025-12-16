@@ -1151,7 +1151,131 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
     </g>
   );
 };
-export const VentsLayer: React.FC<LayerProps> = () => null;
+// Pipe Boots & Vents - drop in with teal neon glow
+export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress }) => {
+  const rawProgress = (progress - startProgress) / (endProgress - startProgress);
+  const layerProgress = Math.max(0, Math.min(1, rawProgress));
+  
+  if (progress < startProgress) return null;
+  
+  const easedProgress = easeOutQuint(layerProgress);
+  
+  // Staggered timing: pipe boot first, then box vent
+  const pipeBootProgress = Math.min(1, layerProgress * 2);
+  const boxVentProgress = Math.max(0, Math.min(1, (layerProgress - 0.3) * 1.5));
+  
+  const pipeBootEased = easeOutQuint(pipeBootProgress);
+  const boxVentEased = easeOutQuint(boxVentProgress);
+  
+  // Drop-in animation values
+  const pipeBootY = -60 * (1 - pipeBootEased);
+  const pipeBootOpacity = 0.2 + 0.8 * pipeBootEased;
+  
+  const boxVentY = -60 * (1 - boxVentEased);
+  const boxVentOpacity = 0.2 + 0.8 * boxVentEased;
+  
+  // Label timing
+  const labelOpacity = layerProgress < 0.3 ? 0 : layerProgress < 0.5 ? (layerProgress - 0.3) / 0.2 : layerProgress < 0.7 ? 1 : layerProgress < 0.9 ? 1 - (layerProgress - 0.7) / 0.2 : 0;
+  
+  return (
+    <g className="vents-layer">
+      <defs>
+        {/* Pipe boot gradients */}
+        <linearGradient id="pipeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(210 10% 35%)" />
+          <stop offset="100%" stopColor="hsl(210 10% 20%)" />
+        </linearGradient>
+        <linearGradient id="bootGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(20 8% 25%)" />
+          <stop offset="50%" stopColor="hsl(20 6% 18%)" />
+          <stop offset="100%" stopColor="hsl(20 8% 22%)" />
+        </linearGradient>
+        {/* Box vent gradients */}
+        <linearGradient id="ventBaseGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(210 8% 30%)" />
+          <stop offset="100%" stopColor="hsl(210 8% 18%)" />
+        </linearGradient>
+        <linearGradient id="ventHoodGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(210 10% 35%)" />
+          <stop offset="100%" stopColor="hsl(210 10% 22%)" />
+        </linearGradient>
+        {/* Teal neon glow filter */}
+        <filter id="ventGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="3" result="blur" />
+          <feFlood floodColor="hsl(168 70% 45%)" floodOpacity="0.6" />
+          <feComposite in2="blur" operator="in" />
+          <feMerge>
+            <feMergeNode />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      
+      {/* Pipe Boot - left roof slope */}
+      <g 
+        transform={`translate(0, ${pipeBootY})`}
+        opacity={pipeBootOpacity}
+        filter="url(#ventGlow)"
+      >
+        {/* Rubber boot base */}
+        <ellipse cx="145" cy="118" rx="10" ry="4" fill="url(#bootGradient)" />
+        {/* Boot cone */}
+        <path 
+          d="M135,118 Q140,105 145,100 Q150,105 155,118 Z" 
+          fill="url(#bootGradient)"
+        />
+        {/* Metal pipe */}
+        <rect x="142" y="88" width="6" height="14" fill="url(#pipeGradient)" rx="1" />
+        {/* Pipe cap */}
+        <rect x="140" y="85" width="10" height="4" fill="hsl(210 10% 40%)" rx="1" />
+        {/* Highlight */}
+        <line x1="144" y1="90" x2="144" y2="100" stroke="hsl(168 60% 60%)" strokeWidth="0.5" opacity="0.5" />
+      </g>
+      
+      {/* Box Vent - right roof slope */}
+      <g 
+        transform={`translate(0, ${boxVentY})`}
+        opacity={boxVentOpacity}
+        filter="url(#ventGlow)"
+      >
+        {/* Vent base/flange */}
+        <rect x="270" y="125" width="28" height="3" fill="url(#ventBaseGradient)" rx="1" />
+        {/* Vent body */}
+        <rect x="273" y="115" width="22" height="10" fill="url(#ventBaseGradient)" rx="1" />
+        {/* Vent hood */}
+        <path 
+          d="M271,115 L284,108 L297,115 Z" 
+          fill="url(#ventHoodGradient)"
+        />
+        {/* Mesh/louvers */}
+        <line x1="276" y1="117" x2="276" y2="123" stroke="hsl(210 5% 12%)" strokeWidth="1" />
+        <line x1="280" y1="117" x2="280" y2="123" stroke="hsl(210 5% 12%)" strokeWidth="1" />
+        <line x1="284" y1="117" x2="284" y2="123" stroke="hsl(210 5% 12%)" strokeWidth="1" />
+        <line x1="288" y1="117" x2="288" y2="123" stroke="hsl(210 5% 12%)" strokeWidth="1" />
+        <line x1="292" y1="117" x2="292" y2="123" stroke="hsl(210 5% 12%)" strokeWidth="1" />
+        {/* Highlight edge */}
+        <line x1="271" y1="115" x2="284" y2="108" stroke="hsl(168 60% 55%)" strokeWidth="0.5" opacity="0.6" />
+      </g>
+      
+      {/* Label */}
+      <g opacity={labelOpacity}>
+        <text
+          x="200"
+          y="145"
+          fill="hsl(168 70% 65%)"
+          fontSize="12"
+          fontWeight="700"
+          fontFamily="system-ui, -apple-system, sans-serif"
+          textAnchor="middle"
+          letterSpacing="2"
+          filter="url(#ventGlow)"
+        >
+          PIPE BOOTS & VENTS
+        </text>
+      </g>
+    </g>
+  );
+};
 export const RidgeCapLayer: React.FC<LayerProps> = () => null;
 export const CleanUpLayer: React.FC<LayerProps> = () => null;
 
