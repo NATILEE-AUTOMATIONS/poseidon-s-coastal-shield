@@ -1,3 +1,4 @@
+// Cache bust: 2025-01-14 - Shingles/Vents FULLY REMOVED from mobile
 import React, { useRef, useEffect } from 'react';
 import { useScrollProgress } from '@/hooks/useScrollProgress';
 import GridBackground from './RoofBuild/GridBackground';
