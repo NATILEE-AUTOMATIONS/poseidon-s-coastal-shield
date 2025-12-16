@@ -918,43 +918,31 @@ export const FlashingLayer: React.FC<LayerProps> = () => null;
 export const ShinglesLayer: React.FC<LayerProps> = () => null;
 // Field Shingles - individual tabs cascade from bottom to top with flip-drop entrance
 export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
-  const containerRef = React.useRef<SVGGElement>(null);
-  const [isSmallScreen, setIsSmallScreen] = React.useState(false);
+  // Mobile-first: default to hiding shingles, only show when confirmed large screen
+  const [shouldRender, setShouldRender] = React.useState(false);
 
   React.useEffect(() => {
     const checkSize = () => {
-      if (containerRef.current) {
-        const svg = containerRef.current.ownerSVGElement;
-        if (svg) {
-          const rect = svg.getBoundingClientRect();
-          // If the SVG is rendered smaller than 500px wide, hide shingles
-          setIsSmallScreen(rect.width < 500);
-        }
-      }
+      // Check actual window width - this is the most reliable method
+      const isLargeScreen = window.innerWidth >= 768;
+      setShouldRender(isLargeScreen);
     };
 
-    // Initial check after mount
-    const timeout = setTimeout(checkSize, 100);
+    // Check immediately
+    checkSize();
 
-    // Use ResizeObserver to detect container size changes
-    const observer = new ResizeObserver(checkSize);
-    if (containerRef.current?.ownerSVGElement) {
-      observer.observe(containerRef.current.ownerSVGElement);
-    }
-
-    return () => {
-      clearTimeout(timeout);
-      observer.disconnect();
-    };
+    // Listen for resize
+    window.addEventListener('resize', checkSize);
+    return () => window.removeEventListener('resize', checkSize);
   }, []);
 
-  // Don't render shingles if screen is small (mobile)
-  if (isSmallScreen) return <g ref={containerRef} className="field-shingles-layer" />;
+  // Don't render anything on mobile - return null, not an empty <g>
+  if (!shouldRender || isMobile) return null;
 
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
-  if (progress < startProgress) return <g ref={containerRef} className="field-shingles-layer" />;
+  if (progress < startProgress) return null;
   
   // Roof geometry
   const peakX = 200;
@@ -1044,7 +1032,7 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
   };
   
   return (
-    <g className="field-shingles-layer" ref={containerRef}>
+    <g className="field-shingles-layer">
       <defs>
         {/* Warm neutral highlight */}
         <linearGradient id="shingleHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
