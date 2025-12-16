@@ -255,8 +255,10 @@ const RoofBuildSection: React.FC = () => {
                   <StarterStripLayer progress={progress} startProgress={layers[4].start} endProgress={layers[4].end} isMobile={isMobile} />
                   {/* 6. Shingles */}
                   <ShinglesLayer progress={progress} startProgress={layers[5].start} endProgress={layers[5].end} isMobile={isMobile} />
-                  {/* 7. Pipe Boots & Vents */}
-                  <VentsLayer progress={progress} startProgress={layers[6].start} endProgress={layers[6].end} isMobile={isMobile} />
+                  {/* 7. Pipe Boots & Vents - Desktop only */}
+                  {!isMobile && (
+                    <VentsLayer progress={progress} startProgress={layers[6].start} endProgress={layers[6].end} isMobile={isMobile} />
+                  )}
                   {/* 8. Flashing - Desktop only */}
                   {!isMobile && (
                     <FlashingLayer progress={progress} startProgress={layers[7].start} endProgress={layers[7].end} />
