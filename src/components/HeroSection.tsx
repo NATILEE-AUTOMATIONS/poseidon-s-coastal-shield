@@ -85,7 +85,7 @@ const HeroSection = () => {
         </div>
 
         {/* Line and text container */}
-        <div className="mt-10 sm:mt-16 flex flex-col items-center relative" style={{ height: '450px' }}>
+        <div className="mt-10 sm:mt-16 flex flex-col items-center">
           {/* Scroll-triggered glowing line */}
           <div 
             className="w-4 sm:w-3 rounded-full"
@@ -103,8 +103,8 @@ const HeroSection = () => {
             }}
           />
           
-          {/* Static text - fixed at bottom of container */}
-          <div className="absolute bottom-0 text-center px-6">
+          {/* Text - just below the line */}
+          <div className="mt-8 text-center px-6">
             <h2 
               className="text-4xl md:text-5xl font-bold tracking-tight"
               style={{
