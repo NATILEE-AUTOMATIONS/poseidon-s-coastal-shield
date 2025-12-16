@@ -1134,35 +1134,34 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
   
   if (progress < startProgress) return null;
   
-  // Simple easeOutQuint for smooth drop-in (like drip edge)
-  const easeOutQuint = (x: number): number => {
-    return 1 - Math.pow(1 - x, 5);
-  };
+  // Exact same easing as drip edge
+  const easedProgress = easeOutQuint(layerProgress);
   
-  // Both drop in together - simple like drip edge
-  const dropProgress = Math.max(0, Math.min(1, layerProgress * 1.5));
-  const dropEased = easeOutQuint(dropProgress);
+  // Same drop-in pattern as drip edge: starts at -150, ends at 0
+  const translateY = -150 * (1 - easedProgress);
   
-  // Responsive positioning - aligned at same height on roof
+  // Responsive positioning
   const pipeBootX = isMobile ? 120 : 130;
   const pipeBootBaseY = isMobile ? 120 : 125;
   const ventX = isMobile ? 280 : 270;
   const ventBaseY = isMobile ? 125 : 130;
   
-  // Simple drop-in from above (no rotation)
-  const dropY = (1 - dropEased) * (isMobile ? -100 : -120);
-  const dropOpacity = Math.min(1, dropProgress * 2.5);
-  
   // Subtle glow intensity
-  const glowIntensity = dropProgress > 0.8 ? 1 + Math.sin((dropProgress - 0.8) * 15) * 0.15 : 1;
+  const glowIntensity = easedProgress > 0.8 ? 1 + Math.sin((easedProgress - 0.8) * 15) * 0.15 : 1;
   
-  // Text visible for 1/3 of animation time (middle third: 0.33 to 0.67)
+  // Text visible for middle 1/3 of animation
   const textOpacity = layerProgress >= 0.33 && layerProgress <= 0.67 
     ? Math.min(1, (layerProgress - 0.33) * 6) * (layerProgress <= 0.5 ? 1 : Math.max(0, 1 - (layerProgress - 0.5) * 6))
     : 0;
   
   return (
-    <g className="vents-layer">
+    <g 
+      className="vents-layer"
+      style={{
+        transform: `translateY(${translateY}px)`,
+        transformOrigin: '200px 125px',
+      }}
+    >
       <defs>
         {/* Neon glow filters */}
         <filter id="pipeBootGlow" x="-100%" y="-100%" width="300%" height="300%">
@@ -1214,15 +1213,12 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
       </defs>
       
       {/* Pipe Boot - positioned to clear chimney and text */}
-      {dropOpacity > 0 && (
-        <g 
-          style={{
-            transform: `translate(${pipeBootX}px, ${pipeBootBaseY + dropY}px)`,
-            transformOrigin: '0 0',
-            opacity: dropOpacity,
-          }}
-          filter="url(#pipeBootGlow)"
-        >
+      <g 
+        style={{
+          transform: `translate(${pipeBootX}px, ${pipeBootBaseY}px)`,
+        }}
+        filter="url(#pipeBootGlow)"
+      >
           {/* Rubber boot base - cone shape */}
           <ellipse 
             cx="0" 
@@ -1271,19 +1267,15 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
             strokeWidth="0.5"
             opacity={0.8}
           />
-        </g>
-      )}
+      </g>
       
       {/* Box Vent - Right slope */}
-      {dropOpacity > 0 && (
-        <g 
-          style={{
-            transform: `translate(${ventX}px, ${ventBaseY + dropY}px)`,
-            transformOrigin: '0 0',
-            opacity: dropOpacity,
-          }}
-          filter="url(#ventGlow)"
-        >
+      <g 
+        style={{
+          transform: `translate(${ventX}px, ${ventBaseY}px)`,
+        }}
+        filter="url(#ventGlow)"
+      >
           {/* Vent base/flange */}
           <rect 
             x="-16" 
@@ -1348,8 +1340,7 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
             strokeWidth="1"
             opacity={0.9}
           />
-        </g>
-      )}
+      </g>
       
       {/* Text label - visible for middle 1/3 of animation */}
       {textOpacity > 0 && (
