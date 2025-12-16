@@ -918,10 +918,43 @@ export const FlashingLayer: React.FC<LayerProps> = () => null;
 export const ShinglesLayer: React.FC<LayerProps> = () => null;
 // Field Shingles - individual tabs cascade from bottom to top with flip-drop entrance
 export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
+  const containerRef = React.useRef<SVGGElement>(null);
+  const [isSmallScreen, setIsSmallScreen] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkSize = () => {
+      if (containerRef.current) {
+        const svg = containerRef.current.ownerSVGElement;
+        if (svg) {
+          const rect = svg.getBoundingClientRect();
+          // If the SVG is rendered smaller than 500px wide, hide shingles
+          setIsSmallScreen(rect.width < 500);
+        }
+      }
+    };
+
+    // Initial check after mount
+    const timeout = setTimeout(checkSize, 100);
+
+    // Use ResizeObserver to detect container size changes
+    const observer = new ResizeObserver(checkSize);
+    if (containerRef.current?.ownerSVGElement) {
+      observer.observe(containerRef.current.ownerSVGElement);
+    }
+
+    return () => {
+      clearTimeout(timeout);
+      observer.disconnect();
+    };
+  }, []);
+
+  // Don't render shingles if screen is small (mobile)
+  if (isSmallScreen) return <g ref={containerRef} className="field-shingles-layer" />;
+
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
-  if (progress < startProgress) return null;
+  if (progress < startProgress) return <g ref={containerRef} className="field-shingles-layer" />;
   
   // Roof geometry
   const peakX = 200;
@@ -1011,7 +1044,7 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
   };
   
   return (
-    <g className="field-shingles-layer">
+    <g className="field-shingles-layer" ref={containerRef}>
       <defs>
         {/* Warm neutral highlight */}
         <linearGradient id="shingleHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
