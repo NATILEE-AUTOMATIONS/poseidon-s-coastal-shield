@@ -989,27 +989,18 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
             : 0
   );
   
-  // Slate blue-gray shingles with randomized pattern to avoid alignment
-  const getShingleColor = (courseIndex: number, tabIndex: number) => {
-    // Use prime multipliers and add course-based offset to break patterns
-    const primes = [7, 11, 13, 17, 19, 23, 29, 31, 37, 41];
-    const coursePrime = primes[courseIndex % primes.length];
-    const seed = (courseIndex * 31 + tabIndex * coursePrime + courseIndex * tabIndex) % 100;
-    const seed2 = (courseIndex * 17 + tabIndex * 43 + Math.floor(courseIndex / 2) * 13) % 100;
-    const seed3 = (tabIndex * 29 + courseIndex * 53 + (courseIndex + tabIndex) * 7) % 100;
-    
-    // Cool slate blue-gray tones with good variation
-    const baseH = 195 + (seed % 25); // 195-220 blue-gray range
-    const baseS = 6 + (seed2 % 10); // 6-15% saturation
-    const baseL = 12 + (seed3 % 14); // 12-25% lightness
-    return `hsl(${baseH} ${baseS}% ${baseL}%)`;
-  };
+  // Simple 3-color palette for clean, consistent look
+  const shinglePalette = [
+    'hsl(210 8% 18%)',   // Dark slate
+    'hsl(205 10% 22%)',  // Medium slate  
+    'hsl(215 7% 16%)',   // Deep slate
+  ];
   
-  // Accent highlights
-  const getGranuleAccent = (courseIndex: number, tabIndex: number) => {
-    const seed = (courseIndex * 37 + tabIndex * 47 + courseIndex * tabIndex * 3) % 100;
-    const baseL = 18 + (seed % 14);
-    return `hsl(208 12% ${baseL}%)`;
+  // Deterministic but well-distributed color selection
+  const getShingleColor = (courseIndex: number, tabIndex: number) => {
+    // Simple hash that distributes colors evenly
+    const hash = (courseIndex * 3 + tabIndex * 5 + Math.floor(tabIndex / 2)) % 3;
+    return shinglePalette[hash];
   };
   
   return (
@@ -1126,14 +1117,7 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                       const tabBottomRightX = bottomLeftX + courseWidth * clampedEnd;
                       
                       const shingleColor = getShingleColor(courseIdx, tabIdx);
-                      const granuleAccent = getGranuleAccent(courseIdx, tabIdx);
-                      const tabCenterX = (tabBottomLeftX + tabBottomRightX) / 2;
-                      const tabCenterY = (topY + bottomY) / 2;
                       
-                      // Exposure line position (visible bottom portion of shingle)
-                      const exposureY = topY + (bottomY - topY) * 0.6;
-                      const expLeftX = topLeftX + (topRightX - topLeftX) * clampedStart + (bottomLeftX - topLeftX) * 0.6 * clampedStart / (clampedEnd - clampedStart || 1);
-                      const expRightX = topLeftX + (topRightX - topLeftX) * clampedEnd + (bottomRightX - topRightX) * 0.6;
                       
                       return (
                         <g key={`tab-${tabIdx}`}>
@@ -1143,45 +1127,28 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                             fill={shingleColor}
                           />
                           
-                          {/* Granule texture overlay */}
-                          <polygon
-                            points={`${tabTopLeftX},${topY} ${tabTopRightX},${topY} ${tabBottomRightX},${bottomY} ${tabBottomLeftX},${bottomY}`}
-                            fill="url(#granuleTexture)"
-                          />
-                          
-                          {/* Highlight overlay for 3D */}
+                          {/* Subtle highlight at top */}
                           <polygon
                             points={`${tabTopLeftX},${topY} ${tabTopRightX},${topY} ${tabBottomRightX},${bottomY} ${tabBottomLeftX},${bottomY}`}
                             fill="url(#shingleHighlight)"
                           />
                           
-                          {/* Shadow overlay at bottom */}
+                          {/* Shadow at bottom for depth */}
                           <polygon
                             points={`${tabTopLeftX},${topY} ${tabTopRightX},${topY} ${tabBottomRightX},${bottomY} ${tabBottomLeftX},${bottomY}`}
                             fill="url(#shingleShadow)"
                           />
                           
-                          {/* Exposure line - where shingle overlaps the one below */}
-                          <line
-                            x1={tabBottomLeftX + 1}
-                            y1={bottomY - courseHeight * 0.35}
-                            x2={tabBottomRightX - 1}
-                            y2={bottomY - courseHeight * 0.35}
-                            stroke="hsl(210 10% 10%)"
-                            strokeWidth="0.8"
-                            opacity={0.4}
-                          />
-                          
-                          {/* Right edge divider line */}
+                          {/* Right edge divider - subtle */}
                           {clampedEnd < 1 && (
                             <line
                               x1={tabTopRightX}
                               y1={topY + 1}
                               x2={tabBottomRightX}
                               y2={bottomY - 1}
-                              stroke="hsl(210 12% 8%)"
-                              strokeWidth="1.2"
-                              opacity={0.6}
+                              stroke="hsl(210 10% 10%)"
+                              strokeWidth="0.8"
+                              opacity={0.4}
                             />
                           )}
                         </g>
