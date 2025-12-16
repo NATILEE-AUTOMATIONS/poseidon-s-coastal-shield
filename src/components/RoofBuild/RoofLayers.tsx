@@ -989,12 +989,12 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
             : 0
   );
   
-  // Simple dark palette
+  // Simple dark palette with more contrast
   const shinglePalette = [
-    'hsl(210 6% 12%)',   // darkest
+    'hsl(210 6% 10%)',   // darkest
     'hsl(210 5% 16%)',   // dark
-    'hsl(210 4% 20%)',   // medium dark
-    'hsl(210 3% 24%)',   // medium
+    'hsl(210 4% 22%)',   // medium
+    'hsl(210 3% 28%)',   // lightest
   ];
   
   // Pseudo-random with position-based offset to break patterns
@@ -1134,16 +1134,16 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                             fill="url(#shingleShadow)"
                           />
                           
-                          {/* Right edge divider - dark gap line for clear separation */}
+                          {/* Right edge divider - subtle separation */}
                           {clampedEnd < 1 && (
                             <line
                               x1={tabTopRightX}
-                              y1={topY + 0.3}
+                              y1={topY + 0.5}
                               x2={tabBottomRightX}
-                              y2={bottomY - 0.3}
-                              stroke="hsl(210 10% 5%)"
-                              strokeWidth="1.2"
-                              opacity={0.9}
+                              y2={bottomY - 0.5}
+                              stroke="hsl(210 8% 8%)"
+                              strokeWidth="0.8"
+                              opacity={0.6}
                             />
                           )}
                         </g>
