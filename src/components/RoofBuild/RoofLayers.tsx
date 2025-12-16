@@ -918,8 +918,11 @@ export const FlashingLayer: React.FC<LayerProps> = () => null;
 export const ShinglesLayer: React.FC<LayerProps> = () => null;
 // Field Shingles - individual tabs cascade from bottom to top with flip-drop entrance
 export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
-  // If isMobile prop is true, don't render
-  if (isMobile) return null;
+  // NUCLEAR: Synchronous user-agent check during render - zero timing gap
+  const isDefinitelyMobile = typeof navigator !== 'undefined' && 
+    /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
+  if (isDefinitelyMobile || isMobile) return null;
 
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
