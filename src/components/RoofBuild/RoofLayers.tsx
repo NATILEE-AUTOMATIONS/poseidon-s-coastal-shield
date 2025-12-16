@@ -1324,36 +1324,36 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         )}
       </defs>
       
-      {/* Chimney flashing - wraps around the angled bottom of chimney */}
-      {/* Chimney body: M88 50 L122 50 L122 117 L88 130 Z */}
+      {/* Chimney flashing - realistic step flashing that hugs the chimney */}
+      {/* Chimney body is: M88 50 L122 50 L122 117 L88 130 Z */}
       <g filter={isMobile ? undefined : "url(#flashingGlow)"}>
-        {/* Base flashing strip that follows the angled chimney bottom */}
+        {/* Counter flashing - runs along the angled bottom edge */}
         <path 
-          d={`M84,133 L84,127 L124,114 L126,120 L86,133 Z`}
+          d="M85 132 L85 128 L125 115 L125 119 Z"
           fill="url(#flashingMetalGrad)"
-          stroke="hsl(210 30% 80%)"
+          stroke="hsl(210 35% 75%)"
+          strokeWidth="1.5"
+          strokeLinejoin="round"
+        />
+        
+        {/* Left side apron flashing - wraps around uphill corner */}
+        <path 
+          d="M82 132 L82 108 L88 108 L88 128 Z"
+          fill="url(#flashingMetalGrad)"
+          stroke="hsl(210 35% 75%)"
           strokeWidth="1"
         />
-        {/* Left side step flashing (vertical strip on uphill side) */}
-        <rect 
-          x="84" 
-          y="105" 
-          width="6" 
-          height="28"
+        
+        {/* Right side apron flashing - wraps around downhill corner */}
+        <path 
+          d="M122 98 L128 98 L128 119 L122 117 Z"
           fill="url(#flashingMetalGrad)"
-          stroke="hsl(210 30% 80%)"
+          stroke="hsl(210 35% 75%)"
           strokeWidth="1"
         />
-        {/* Right side step flashing (vertical strip on downhill side) */}
-        <rect 
-          x="120" 
-          y="97" 
-          width="6" 
-          height="23"
-          fill="url(#flashingMetalGrad)"
-          stroke="hsl(210 30% 80%)"
-          strokeWidth="1"
-        />
+        
+        {/* Top edge highlight for depth */}
+        <line x1="85" y1="128" x2="125" y2="115" stroke="hsl(210 50% 85%)" strokeWidth="1" />
       </g>
       
       {/* Pipe boot flashing collar */}
