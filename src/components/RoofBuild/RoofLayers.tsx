@@ -1299,6 +1299,10 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   const pipeBootX = isMobile ? 120 : 130;
   const pipeBootBaseY = isMobile ? 120 : 125;
   
+  // Vent position (matching VentsLayer)
+  const ventX = isMobile ? 280 : 270;
+  const ventBaseY = isMobile ? 125 : 130;
+  
   return (
     <g 
       className="flashing-layer"
@@ -1405,6 +1409,55 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         />
       </g>
       
+      {/* ========= VENT FLASHING ========= */}
+      {/* Box vent positioned at (ventX, ventBaseY) with base rect at y=5 */}
+      <g style={{ transform: `translate(${ventX}px, ${ventBaseY}px)` }}>
+        {/* Outer flashing collar - dark rectangle around vent base */}
+        <rect
+          x="-24"
+          y="8"
+          width="48"
+          height="10"
+          rx="1"
+          fill={flashingDark}
+          stroke={flashingEdge}
+          strokeWidth="1"
+        />
+        
+        {/* Inner ring for depth */}
+        <rect
+          x="-20"
+          y="9"
+          width="40"
+          height="7"
+          rx="0.5"
+          fill={flashingMid}
+          stroke={flashingEdge}
+          strokeWidth="0.5"
+        />
+        
+        {/* Top highlight edge */}
+        <rect
+          x="-18"
+          y="8"
+          width="36"
+          height="5"
+          rx="0.5"
+          fill="none"
+          stroke="hsl(220 15% 35%)"
+          strokeWidth="0.75"
+        />
+        
+        {/* Front apron extending down the roof */}
+        <path
+          d="M-24 18 L-26 22 L26 22 L24 18 Z"
+          fill={flashingDark}
+          stroke={flashingEdge}
+          strokeWidth="0.5"
+        />
+      </g>
+      
+      {/* Text label */}
       {textOpacity > 0 && (
         <g style={{ opacity: textOpacity }}>
           <text
