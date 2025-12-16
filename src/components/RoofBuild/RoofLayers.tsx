@@ -825,18 +825,15 @@ export const StarterStripLayer: React.FC<LayerProps> = ({ progress, startProgres
           );
         })}
         
-        {/* Top edge teal accent glow - angled to match roof */}
+        {/* Top edge accent - clean, no glow */}
         <line
           x1={leftTopX}
           y1={topY}
           x2={rightTopX}
           y2={topY}
-          stroke="hsl(168 70% 50%)"
-          strokeWidth="2"
-          opacity="0.8"
-          style={{
-            filter: 'drop-shadow(0 0 6px hsl(168 70% 50% / 0.7)) drop-shadow(0 0 12px hsl(168 70% 50% / 0.4))',
-          }}
+          stroke="hsl(168 50% 40%)"
+          strokeWidth="1.5"
+          opacity="0.5"
         />
       </g>
       
