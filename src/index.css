@@ -598,3 +598,10 @@
 .animate-light-particle-float {
   animation: light-particle-float 3s ease-out infinite;
 }
+
+/* Hide shingles on mobile - CSS media query is bulletproof */
+@media (max-width: 767px) {
+  .field-shingles-layer {
+    display: none !important;
+  }
+}
