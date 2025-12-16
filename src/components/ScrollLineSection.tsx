@@ -36,7 +36,7 @@ const ScrollLineSection: React.FC = () => {
   return (
     <section 
       ref={sectionRef}
-      className="relative min-h-[80vh] bg-background flex flex-col items-center justify-start pt-16 pb-24 overflow-hidden"
+      className="relative min-h-[80vh] bg-background flex flex-col items-center justify-start -mt-20 pt-0 pb-24 overflow-hidden"
     >
       {/* Glowing line container */}
       <div className="relative flex flex-col items-center">
