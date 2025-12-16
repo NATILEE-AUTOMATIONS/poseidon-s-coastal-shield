@@ -986,12 +986,12 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
             : 0
   );
   
-  // Simple dark palette - darker values
+  // Balanced dark palette - tighter range for consistency
   const shinglePalette = [
-    'hsl(210 6% 6%)',    // darkest
-    'hsl(210 5% 10%)',   // dark
-    'hsl(210 4% 14%)',   // medium dark
-    'hsl(210 3% 18%)',   // medium
+    'hsl(210 5% 12%)',   // dark
+    'hsl(210 4% 14%)',   // slightly lighter
+    'hsl(210 4% 16%)',   // medium
+    'hsl(210 3% 18%)',   // lightest
   ];
   
   // Pseudo-random with position-based offset to break patterns
