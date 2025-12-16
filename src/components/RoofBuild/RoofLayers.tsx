@@ -937,8 +937,8 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
   const shingleBottom = eaveY;
   const roofHeight = shingleBottom - peakY;
   
-  // 7 courses of shingles (bottom to top)
-  const courseCount = 7;
+  // 12 courses of shingles for realistic thin proportions
+  const courseCount = 12;
   const courseHeight = roofHeight / courseCount;
   
   // Helper to get X at a given Y on the roof slope
@@ -966,8 +966,8 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
   
   // Course animation - BOTTOM courses first (index 0 = bottom)
   const getCourseProgress = (courseIndex: number) => {
-    const staggerDelay = courseIndex * 0.10; // 10% delay between courses, bottom first
-    const courseAnimDuration = 0.25;
+    const staggerDelay = courseIndex * 0.06; // Faster stagger for more courses
+    const courseAnimDuration = 0.20;
     const courseStart = staggerDelay;
     const courseEnd = courseStart + courseAnimDuration;
     
