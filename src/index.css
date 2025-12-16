@@ -423,6 +423,24 @@
   }
 }
 
+/* Hide shingles on small screens - container query for Lovable preview */
+@container (max-width: 500px) {
+  .field-shingles-layer {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
+}
+
+/* Media query fallback for real mobile devices */
+@media (max-width: 767px) {
+  .field-shingles-layer {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
+}
+
 /* Portal vortex animations */
 @keyframes portal-ring-pulse {
   0%, 100% {
