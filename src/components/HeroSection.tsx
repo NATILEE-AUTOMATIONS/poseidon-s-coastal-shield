@@ -111,35 +111,60 @@ const HeroSection = () => {
             }}
           />
           
-          {/* Text - fixed position with light-up effect */}
+          {/* Text - fixed position with left-to-right light-up effect */}
           <div 
-            className={`absolute text-center px-6 w-full transition-all duration-700 ease-out ${textLit ? 'scale-[1.02]' : 'scale-100'}`}
+            className="absolute text-center px-6 w-full"
             style={{ top: '355px' }}
           >
-            <h2 
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight transition-all duration-700"
-              style={{
-                color: 'hsl(30 95% 60%)',
-                textShadow: textLit 
-                  ? '0 0 15px hsl(30 95% 55% / 0.9), 0 0 30px hsl(30 95% 55% / 0.6), 0 0 50px hsl(30 95% 55% / 0.3)'
-                  : '0 0 10px hsl(30 95% 55% / 0.5), 0 0 20px hsl(30 95% 55% / 0.3)',
-                opacity: textLit ? 1 : 0.7,
-              }}
-            >
-              910 Roofing
-            </h2>
-            <h3 
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mt-2 transition-all duration-700"
-              style={{
-                color: 'hsl(168 70% 55%)',
-                textShadow: textLit
-                  ? '0 0 15px hsl(168 70% 50% / 0.9), 0 0 30px hsl(168 70% 50% / 0.6), 0 0 50px hsl(168 70% 50% / 0.4)'
-                  : '0 0 10px hsl(168 70% 50% / 0.5), 0 0 20px hsl(168 70% 50% / 0.3)',
-                opacity: textLit ? 1 : 0.7,
-              }}
-            >
-              Done Right
-            </h3>
+            <div className="relative inline-block">
+              {/* Base dim text */}
+              <h2 
+                className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight transition-opacity duration-300"
+                style={{
+                  color: 'hsl(30 95% 60%)',
+                  textShadow: '0 0 10px hsl(30 95% 55% / 0.5), 0 0 20px hsl(30 95% 55% / 0.3)',
+                  opacity: textLit ? 0 : 0.7,
+                }}
+              >
+                910 Roofing
+              </h2>
+              {/* Lit text with clip-path sweep */}
+              <h2 
+                className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight absolute inset-0 transition-all duration-700 ease-out"
+                style={{
+                  color: 'hsl(30 95% 60%)',
+                  textShadow: '0 0 15px hsl(30 95% 55% / 0.9), 0 0 30px hsl(30 95% 55% / 0.6), 0 0 50px hsl(30 95% 55% / 0.3)',
+                  clipPath: textLit ? 'inset(0 0 0 0)' : 'inset(0 100% 0 0)',
+                }}
+              >
+                910 Roofing
+              </h2>
+            </div>
+            <div className="relative inline-block mt-2">
+              {/* Base dim text */}
+              <h3 
+                className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold transition-opacity duration-300"
+                style={{
+                  color: 'hsl(168 70% 55%)',
+                  textShadow: '0 0 10px hsl(168 70% 50% / 0.5), 0 0 20px hsl(168 70% 50% / 0.3)',
+                  opacity: textLit ? 0 : 0.7,
+                }}
+              >
+                Done Right
+              </h3>
+              {/* Lit text with clip-path sweep */}
+              <h3 
+                className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold absolute inset-0 transition-all duration-700 ease-out"
+                style={{
+                  color: 'hsl(168 70% 55%)',
+                  textShadow: '0 0 15px hsl(168 70% 50% / 0.9), 0 0 30px hsl(168 70% 50% / 0.6), 0 0 50px hsl(168 70% 50% / 0.4)',
+                  clipPath: textLit ? 'inset(0 0 0 0)' : 'inset(0 100% 0 0)',
+                  transitionDelay: textLit ? '0.2s' : '0s',
+                }}
+              >
+                Done Right
+              </h3>
+            </div>
           </div>
         </div>
       </div>
