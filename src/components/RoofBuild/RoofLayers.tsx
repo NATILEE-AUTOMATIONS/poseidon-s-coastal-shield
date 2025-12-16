@@ -1376,7 +1376,7 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
           <g 
             clipPath="url(#ventsTextWipeClip)"
             style={{
-              opacity: layerProgress < 0.85 ? 1 : Math.max(0, 1 - (layerProgress - 0.85) / 0.12),
+              opacity: layerProgress < 0.95 ? 1 : Math.max(0, 1 - (layerProgress - 0.95) / 0.05),
             }}
           >
             <text
