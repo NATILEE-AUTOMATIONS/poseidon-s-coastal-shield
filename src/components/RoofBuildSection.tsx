@@ -8,9 +8,6 @@ import {
   IceWaterShieldLayer,
   UnderlaymentLayer,
   StarterStripLayer,
-  FieldShinglesLayer,
-  MobileShingleOverlay,
-  VentsLayer,
   FlashingLayer,
   RidgeCapLayer,
   CleanUpLayer,
@@ -253,20 +250,7 @@ const RoofBuildSection: React.FC = () => {
                   <UnderlaymentLayer progress={progress} startProgress={layers[3].start} endProgress={layers[3].end} isMobile={isMobile} />
                   {/* 5. Starter Strip */}
                   <StarterStripLayer progress={progress} startProgress={layers[4].start} endProgress={layers[4].end} isMobile={isMobile} />
-                  {/* 6. Shingles - REMOVED (keeping code for future re-addition)
-                  {!isMobile && (
-                    <FieldShinglesLayer progress={progress} startProgress={layers[5].start} endProgress={layers[5].end} isMobile={isMobile} />
-                  )}
-                  */}
-                  {/* Mobile shingle overlay - REMOVED (keeping code for future re-addition)
-                  <MobileShingleOverlay progress={progress} startProgress={layers[5].start} endProgress={layers[5].end} isMobile={isMobile} />
-                  */}
-                  {/* 7. Pipe Boots & Vents - REMOVED (keeping code for future re-addition)
-                  {!isMobile && (
-                    <VentsLayer progress={progress} startProgress={layers[6].start} endProgress={layers[6].end} />
-                  )}
-                  */}
-                  {/* 8. Flashing - Desktop only */}
+                  {/* 6. Flashing - Desktop only */}
                   {!isMobile && (
                     <FlashingLayer progress={progress} startProgress={layers[7].start} endProgress={layers[7].end} />
                   )}
