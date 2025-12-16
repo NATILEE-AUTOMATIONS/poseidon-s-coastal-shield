@@ -967,7 +967,7 @@ export const ShinglesLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   const targetTabWidth = 22;
   const shingleHeight = 12;
   const exposure = 10; // Vertical exposure per course
-  const courseCount = 8;
+  const courseCount = 12; // Enough courses to reach the peak
   
   // Get X bounds at a Y position following roof slope
   const getLeftX = (y: number) => {
