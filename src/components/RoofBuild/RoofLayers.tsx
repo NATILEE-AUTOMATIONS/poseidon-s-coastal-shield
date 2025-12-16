@@ -1001,12 +1001,12 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
     'hsl(210 3% 18%)',   // lightest
   ];
   
-  // More random color selection using multiple prime multipliers
+  // Pseudo-random with position-based offset to break patterns
   const getShingleColor = (courseIndex: number, tabIndex: number) => {
-    // Use larger primes and XOR for better pseudo-randomness
-    const seed = ((courseIndex * 127) ^ (tabIndex * 311)) + (courseIndex ^ tabIndex) * 17;
-    const hash = Math.abs(((seed * 2654435761) ^ (seed >> 16)) % 1000);
-    const idx = hash % 4;
+    const base = (courseIndex * 7919 + tabIndex * 6271) ^ (courseIndex * tabIndex * 104729);
+    // Add offset based on odd/even positions to break horizontal streaks
+    const offset = (courseIndex % 2) * 2 + (tabIndex % 3);
+    const idx = Math.abs(base + offset) % 4;
     return shinglePalette[idx];
   };
   
@@ -1047,8 +1047,8 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
           const courseWidth = bottomRightX - bottomLeftX;
           
           const actualCourseWidth = bottomRightX - bottomLeftX;
-          // Mobile: much narrower tabs (10px) for square proportions, Desktop: 22px
-          const targetTabWidth = isMobile ? 10 : 22;
+          // Mobile: narrower tabs (14px) for more square proportions, Desktop: 22px
+          const targetTabWidth = isMobile ? 14 : 22;
           const tabsPerCourse = Math.max(4, Math.round(actualCourseWidth / targetTabWidth));
           const tabWidthRatio = 1 / tabsPerCourse;
           const offsetRatio = courseIdx % 2 === 1 ? tabWidthRatio / 2 : 0;
