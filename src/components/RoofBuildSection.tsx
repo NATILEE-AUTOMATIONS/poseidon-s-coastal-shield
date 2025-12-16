@@ -76,7 +76,7 @@ const RoofBuildSection: React.FC = () => {
     { start: starterStripEnd, end: starterStripEnd + layerStep * 3 }, // 6. Shingles (3x duration for 8 courses)
     // 7. Vents - starts exactly when shingles end
     { start: starterStripEnd + layerStep * 3, end: starterStripEnd + layerStep * 4.5 },
-    { start: starterStripEnd + layerStep * 5.5, end: starterStripEnd + layerStep * 6.5 }, // 8. Flashing
+    { start: starterStripEnd + layerStep * 4.7, end: starterStripEnd + layerStep * 5.7 }, // 8. Flashing
     { start: starterStripEnd + layerStep * 6.5, end: starterStripEnd + layerStep * 7.5 }, // 9. Ridge Vent & Cap
     { start: starterStripEnd + layerStep * 7.5, end: starterStripEnd + layerStep * 8.5 }, // 10. Complete Clean Up
   ];
