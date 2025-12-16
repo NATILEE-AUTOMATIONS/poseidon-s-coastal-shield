@@ -16,32 +16,32 @@ interface ImageGallery3DProps {
 
 // DESKTOP ONLY - This component handles the billboard drive-by effect
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
-  // Gallery background fade-in
-  const galleryBgStart = 0.85;
+  // Gallery background fade-in - pushed later to not overlap with roof animations
+  const galleryBgStart = 0.96;
   
   // Image 1 timing
-  const anim1Start = 0.88;
-  const anim1Duration = 0.05;
+  const anim1Start = 0.965;
+  const anim1Duration = 0.015;
   const anim1Progress = progress >= anim1Start 
     ? Math.min(1, (progress - anim1Start) / anim1Duration) 
     : 0;
   
   // Image 2 timing
-  const anim2Start = 0.91;
-  const anim2Duration = 0.04;
+  const anim2Start = 0.975;
+  const anim2Duration = 0.012;
   const anim2Progress = progress >= anim2Start 
     ? Math.min(1, (progress - anim2Start) / anim2Duration)
     : 0;
   
   // Image 3 timing
-  const anim3Start = 0.935;
-  const anim3Duration = 0.03;
+  const anim3Start = 0.985;
+  const anim3Duration = 0.01;
   const anim3Progress = progress >= anim3Start 
     ? Math.min(1, (progress - anim3Start) / anim3Duration)
     : 0;
     
   const galleryBgOpacity = progress >= galleryBgStart 
-    ? Math.min(1, (progress - galleryBgStart) / 0.05)
+    ? Math.min(1, (progress - galleryBgStart) / 0.02)
     : 0;
   
   // Don't render anything until background starts fading in
