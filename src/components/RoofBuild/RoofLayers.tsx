@@ -1148,11 +1148,11 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
   const pipeBootEased = isMobile ? easeOutSext(pipeBootProgress) : easeOutQuint(pipeBootProgress);
   const ventEased = isMobile ? easeOutSext(ventProgress) : easeOutQuint(ventProgress);
   
-  // Responsive positioning
+  // Responsive positioning - aligned at same height on roof
   const pipeBootX = isMobile ? 120 : 130;
-  const pipeBootBaseY = isMobile ? 130 : 135;
+  const pipeBootBaseY = isMobile ? 120 : 125;
   const ventX = isMobile ? 280 : 270;
-  const ventBaseY = isMobile ? 125 : 130;
+  const ventBaseY = isMobile ? 120 : 125;
   
   // Drop-in transforms - gentler on mobile
   const pipeBootY = (1 - pipeBootEased) * (isMobile ? -60 : -80);
