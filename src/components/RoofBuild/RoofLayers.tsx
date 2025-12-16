@@ -1135,19 +1135,17 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
   // Desktop only
   if (isMobile || progress < startProgress) return null;
   
-  // easeOutBack for satisfying bounce
-  const easeOutBack = (x: number): number => {
-    const c1 = 1.70158;
-    const c3 = c1 + 1;
-    return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+  // easeOutQuint for smooth solid landing (no bounce)
+  const easeOutQuint = (x: number): number => {
+    return 1 - Math.pow(1 - x, 5);
   };
   
   // Staggered animations - pipe boot first, then vent
   const pipeBootProgress = Math.max(0, Math.min(1, layerProgress * 2));
   const ventProgress = Math.max(0, Math.min(1, (layerProgress - 0.3) * 1.5));
   
-  const pipeBootEased = easeOutBack(pipeBootProgress);
-  const ventEased = easeOutBack(ventProgress);
+  const pipeBootEased = easeOutQuint(pipeBootProgress);
+  const ventEased = easeOutQuint(ventProgress);
   
   // Drop-in transforms
   const pipeBootY = (1 - pipeBootEased) * -80;
