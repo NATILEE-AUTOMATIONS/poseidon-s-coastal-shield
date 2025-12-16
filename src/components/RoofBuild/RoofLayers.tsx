@@ -918,21 +918,6 @@ export const FlashingLayer: React.FC<LayerProps> = () => null;
 export const ShinglesLayer: React.FC<LayerProps> = () => null;
 // Field Shingles - individual tabs cascade from bottom to top with flip-drop entrance
 export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
-  // Direct viewport detection - bypasses unreliable useIsMobile hook
-  const [isMobileView, setIsMobileView] = React.useState(
-    typeof window !== 'undefined' ? window.innerWidth < 768 : false
-  );
-  
-  React.useEffect(() => {
-    const checkMobile = () => setIsMobileView(window.innerWidth < 768);
-    checkMobile(); // Force immediate check
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // Skip shingles animation entirely on mobile
-  if (isMobileView) return null;
-
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
@@ -950,7 +935,7 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
   const roofHeight = shingleBottom - peakY;
   
   // Mobile: 5 courses for LARGE SQUARE shingles, Desktop: 15 courses
-  const courseCount = isMobileView ? 5 : 15;
+  const courseCount = 15;
   const courseHeight = roofHeight / courseCount;
   
   // Helper to get X at a given Y on the roof slope
@@ -1062,8 +1047,8 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
           const courseWidth = bottomRightX - bottomLeftX;
           
           const actualCourseWidth = bottomRightX - bottomLeftX;
-          // Mobile: 20px width to match 21px height = SQUARE, Desktop: 22px
-          const targetTabWidth = isMobileView ? 20 : 22;
+          // Desktop only - 22px tabs
+          const targetTabWidth = 22;
           const tabsPerCourse = Math.max(4, Math.round(actualCourseWidth / targetTabWidth));
           const tabWidthRatio = 1 / tabsPerCourse;
           const offsetRatio = courseIdx % 2 === 1 ? tabWidthRatio / 2 : 0;
@@ -1157,11 +1142,6 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
           </text>
         </g>
       )}
-      
-      {/* DEBUG: Remove after verification */}
-      <text x="200" y="180" textAnchor="middle" fill="red" fontSize="6" fontWeight="bold">
-        {isMobileView ? `MOBILE: ${courseCount} courses` : `DESKTOP: ${courseCount} courses`}
-      </text>
     </g>
   );
 };
