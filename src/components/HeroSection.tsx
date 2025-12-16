@@ -157,7 +157,7 @@ const HeroSection = () => {
               style={{ top: '520px' }}
             >
               <svg
-                viewBox="30 40 340 220"
+                viewBox="30 30 340 250"
                 className="w-[85vw]"
                 style={{
                   filter: 'drop-shadow(0 0 30px hsl(168 80% 45% / 0.25))',
