@@ -1293,16 +1293,16 @@ export const MobileVentsLayer: React.FC<LayerProps> = ({ progress, startProgress
     >
       {/* Simple pipe boot - moved toward center */}
       <g>
-        <ellipse cx="165" cy="140" rx="8" ry="3" fill="hsl(168 40% 30%)" stroke="hsl(168 70% 50%)" strokeWidth="1.5" />
-        <rect x="162" y="125" width="6" height="15" rx="1" fill="hsl(168 50% 40%)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
-        <ellipse cx="165" cy="125" rx="4" ry="1.5" fill="hsl(168 60% 50%)" stroke="hsl(168 80% 60%)" strokeWidth="1" />
+        <ellipse cx="175" cy="140" rx="8" ry="3" fill="hsl(168 40% 30%)" stroke="hsl(168 70% 50%)" strokeWidth="1.5" />
+        <rect x="172" y="125" width="6" height="15" rx="1" fill="hsl(168 50% 40%)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
+        <ellipse cx="175" cy="125" rx="4" ry="1.5" fill="hsl(168 60% 50%)" stroke="hsl(168 80% 60%)" strokeWidth="1" />
       </g>
       
       {/* Simple box vent - moved up to align with pipe and toward center */}
       <g>
-        <rect x="218" y="133" width="24" height="6" rx="1" fill="hsl(168 30% 25%)" stroke="hsl(168 70% 45%)" strokeWidth="1" />
-        <rect x="220" y="120" width="20" height="14" rx="2" fill="hsl(168 45% 40%)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
-        <path d="M219,120 L219,114 Q219,111 222,111 L238,111 Q241,111 241,114 L241,120 Z" fill="hsl(168 50% 45%)" stroke="hsl(168 85% 60%)" strokeWidth="1.5" />
+        <rect x="208" y="133" width="24" height="6" rx="1" fill="hsl(168 30% 25%)" stroke="hsl(168 70% 45%)" strokeWidth="1" />
+        <rect x="210" y="120" width="20" height="14" rx="2" fill="hsl(168 45% 40%)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
+        <path d="M209,120 L209,114 Q209,111 212,111 L228,111 Q231,111 231,114 L231,120 Z" fill="hsl(168 50% 45%)" stroke="hsl(168 85% 60%)" strokeWidth="1.5" />
       </g>
       
       {/* Text label - no fade, just visible/hidden */}
