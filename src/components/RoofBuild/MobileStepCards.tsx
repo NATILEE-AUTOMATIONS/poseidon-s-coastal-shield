@@ -14,98 +14,214 @@ const MobileStepCards: React.FC<MobileStepCardsProps> = ({ progress, layers }) =
   // 11 cards: intro + 10 layers
   const cardCount = 11;
   
-  // Calculate the center point for each card (when it should be facing forward)
-  const getCardCenter = (cardIndex: number): number => {
+  // Calculate timing windows for each card
+  const getCardWindow = (cardIndex: number) => {
     if (cardIndex === 0) {
-      // Intro card centered between 0 and first layer start
-      return (layers[0]?.start || 0.15) / 2;
+      // Intro card
+      const end = layers[0]?.start || 0.15;
+      return { start: 0, center: end / 2, end };
     }
     const layerIndex = cardIndex - 1;
     if (layerIndex < layers.length) {
-      // Center of the layer's duration
-      return (layers[layerIndex].start + layers[layerIndex].end) / 2;
+      const layer = layers[layerIndex];
+      return { 
+        start: layer.start, 
+        center: (layer.start + layer.end) / 2,
+        end: layer.end 
+      };
     }
-    return 1;
+    return { start: 1, center: 1, end: 1 };
   };
 
-  // Calculate continuous rotation based on scroll position
-  const getCardRotation = (cardIndex: number): { rotateY: number; opacity: number; zIndex: number } => {
-    const center = getCardCenter(cardIndex);
+  // Premium easing function for smooth deceleration
+  const easeOutQuart = (x: number): number => 1 - Math.pow(1 - x, 4);
+  const easeInQuart = (x: number): number => x * x * x * x;
+
+  // Calculate 3D transform state for each card
+  const getCardState = (cardIndex: number) => {
+    const window = getCardWindow(cardIndex);
+    const prevWindow = cardIndex > 0 ? getCardWindow(cardIndex - 1) : null;
+    const nextWindow = cardIndex < cardCount - 1 ? getCardWindow(cardIndex + 1) : null;
     
-    // How much scroll distance for a full 180° rotation (90° in, 90° out)
-    const rotationWindow = 0.12; // Wider window = slower rotation
+    // Transition zones
+    const enterStart = prevWindow ? prevWindow.center : window.start - 0.08;
+    const enterEnd = window.start + (window.end - window.start) * 0.15;
+    const exitStart = window.end - (window.end - window.start) * 0.15;
+    const exitEnd = nextWindow ? nextWindow.center : window.end + 0.08;
     
-    // Distance from center (-1 to 1 range within window)
-    const distanceFromCenter = (progress - center) / rotationWindow;
+    let rotateY = -120; // Hidden: rotated away to the right
+    let translateX = 80; // Off to the right
+    let translateZ = -200; // Pushed back
+    let opacity = 0;
+    let scale = 0.85;
     
-    // Clamp to -1...1 range
-    const clampedDistance = Math.max(-1, Math.min(1, distanceFromCenter));
+    if (progress < enterStart) {
+      // Before entering: hidden to the right
+      rotateY = -120;
+      translateX = 100;
+      translateZ = -250;
+      opacity = 0;
+      scale = 0.8;
+    } else if (progress >= enterStart && progress < enterEnd) {
+      // Entering: spin in from right with depth
+      const t = (progress - enterStart) / (enterEnd - enterStart);
+      const eased = easeOutQuart(t);
+      
+      rotateY = -120 + (120 * eased);
+      translateX = 100 * (1 - eased);
+      translateZ = -250 + (250 * eased);
+      opacity = eased;
+      scale = 0.8 + (0.2 * eased);
+    } else if (progress >= enterEnd && progress < exitStart) {
+      // Holding: fully visible, centered
+      rotateY = 0;
+      translateX = 0;
+      translateZ = 0;
+      opacity = 1;
+      scale = 1;
+    } else if (progress >= exitStart && progress < exitEnd) {
+      // Exiting: spin out to left with depth
+      const t = (progress - exitStart) / (exitEnd - exitStart);
+      const eased = easeInQuart(t);
+      
+      rotateY = 120 * eased;
+      translateX = -100 * eased;
+      translateZ = -250 * eased;
+      opacity = 1 - eased;
+      scale = 1 - (0.2 * eased);
+    } else {
+      // After exiting: hidden to the left
+      rotateY = 120;
+      translateX = -100;
+      translateZ = -250;
+      opacity = 0;
+      scale = 0.8;
+    }
     
-    // Convert to rotation: -1 = -90° (coming in), 0 = 0° (facing), 1 = 90° (going out)
-    const rotateY = clampedDistance * 90;
-    
-    // Opacity based on how close to center (facing forward = full opacity)
-    // Use cosine for smooth falloff
-    const normalizedAngle = Math.abs(rotateY) / 90; // 0 to 1
-    const opacity = Math.cos(normalizedAngle * Math.PI / 2); // 1 at center, 0 at edges
-    
-    // Z-index: cards closer to center should be on top
-    const zIndex = Math.round((1 - Math.abs(clampedDistance)) * 10);
-    
-    return { rotateY, opacity, zIndex };
+    return { rotateY, translateX, translateZ, opacity, scale };
   };
 
   return (
     <div 
-      className="relative w-full mt-6"
+      className="relative w-full mt-8"
       style={{
-        perspective: '800px',
+        perspective: '1200px',
         perspectiveOrigin: '50% 50%',
-        height: '140px'
+        height: '160px',
       }}
     >
+      {/* Ambient glow behind active card */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse 60% 40% at 50% 50%, hsl(168 70% 35% / 0.12), transparent 70%)',
+        }}
+      />
+      
       {Array.from({ length: cardCount }).map((_, index) => {
-        const { rotateY, opacity, zIndex } = getCardRotation(index);
+        const { rotateY, translateX, translateZ, opacity, scale } = getCardState(index);
         
-        // Skip rendering if too far rotated (optimization)
-        if (Math.abs(rotateY) > 88) return null;
+        // Skip rendering if completely hidden
+        if (opacity < 0.01) return null;
+        
+        // Dynamic shadow based on rotation
+        const shadowIntensity = 1 - Math.abs(rotateY) / 120;
+        const shadowOffsetX = rotateY * 0.3;
+        
+        // Edge glow intensity based on facing direction
+        const leftGlow = rotateY < 0 ? Math.abs(rotateY) / 120 : 0;
+        const rightGlow = rotateY > 0 ? rotateY / 120 : 0;
         
         return (
           <div
             key={index}
-            className="absolute inset-x-0 mx-auto"
+            className="absolute left-1/2 -ml-[44vw]"
             style={{
-              width: '85vw',
-              maxWidth: '340px',
-              height: '120px',
-              transform: `rotateY(${rotateY}deg)`,
+              width: '88vw',
+              maxWidth: '360px',
+              height: '140px',
+              transform: `
+                translateX(${translateX}px) 
+                translateZ(${translateZ}px) 
+                rotateY(${rotateY}deg)
+                scale(${scale})
+              `,
               opacity,
-              zIndex,
               transformStyle: 'preserve-3d',
               backfaceVisibility: 'hidden',
-              willChange: 'transform, opacity'
+              willChange: 'transform, opacity',
+              filter: `drop-shadow(${shadowOffsetX}px 8px ${20 + shadowIntensity * 20}px hsl(0 0% 0% / ${0.3 + shadowIntensity * 0.3}))`,
             }}
           >
-            {/* Card content - blank for now */}
+            {/* Card body */}
             <div 
-              className="w-full h-full rounded-xl"
+              className="relative w-full h-full rounded-2xl overflow-hidden"
               style={{
-                background: 'linear-gradient(135deg, hsl(180 20% 10% / 0.95), hsl(180 15% 6% / 0.98))',
-                border: '1px solid hsl(168 70% 45% / 0.3)',
+                background: `linear-gradient(
+                  135deg, 
+                  hsl(180 25% 12% / 0.98) 0%, 
+                  hsl(180 20% 8% / 0.99) 50%,
+                  hsl(180 15% 6% / 1) 100%
+                )`,
+                border: '1px solid hsl(168 60% 40% / 0.25)',
                 boxShadow: `
-                  0 0 20px hsl(168 70% 45% / 0.15),
-                  0 0 40px hsl(168 70% 45% / 0.08),
-                  0 8px 32px hsl(0 0% 0% / 0.4),
-                  inset 0 1px 0 hsl(168 70% 60% / 0.1)
+                  inset 0 1px 0 hsl(168 70% 60% / 0.15),
+                  inset 0 -1px 0 hsl(0 0% 0% / 0.3),
+                  0 0 30px hsl(168 70% 45% / ${0.1 * shadowIntensity}),
+                  0 0 60px hsl(168 70% 45% / ${0.05 * shadowIntensity})
                 `,
-                backdropFilter: 'blur(12px)'
               }}
             >
-              {/* Placeholder for future content */}
-              <div className="w-full h-full flex items-center justify-center">
+              {/* Left edge highlight (visible when rotating in) */}
+              <div 
+                className="absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl"
+                style={{
+                  background: `linear-gradient(
+                    180deg,
+                    hsl(168 80% 55% / ${0.6 * leftGlow}) 0%,
+                    hsl(168 70% 45% / ${0.3 * leftGlow}) 50%,
+                    hsl(168 80% 55% / ${0.6 * leftGlow}) 100%
+                  )`,
+                  boxShadow: leftGlow > 0.1 ? `0 0 20px hsl(168 80% 50% / ${0.4 * leftGlow})` : 'none',
+                }}
+              />
+              
+              {/* Right edge highlight (visible when rotating out) */}
+              <div 
+                className="absolute right-0 top-0 bottom-0 w-1 rounded-r-2xl"
+                style={{
+                  background: `linear-gradient(
+                    180deg,
+                    hsl(30 80% 55% / ${0.6 * rightGlow}) 0%,
+                    hsl(25 70% 45% / ${0.3 * rightGlow}) 50%,
+                    hsl(30 80% 55% / ${0.6 * rightGlow}) 100%
+                  )`,
+                  boxShadow: rightGlow > 0.1 ? `0 0 20px hsl(30 80% 50% / ${0.4 * rightGlow})` : 'none',
+                }}
+              />
+              
+              {/* Subtle top shine */}
+              <div 
+                className="absolute inset-x-4 top-0 h-px"
+                style={{
+                  background: `linear-gradient(90deg, 
+                    transparent 0%, 
+                    hsl(168 70% 60% / ${0.3 * shadowIntensity}) 30%, 
+                    hsl(168 70% 70% / ${0.5 * shadowIntensity}) 50%, 
+                    hsl(168 70% 60% / ${0.3 * shadowIntensity}) 70%, 
+                    transparent 100%
+                  )`,
+                }}
+              />
+              
+              {/* Content area - blank for now */}
+              <div className="w-full h-full flex items-center justify-center p-6">
                 <span 
-                  className="text-xs font-mono"
-                  style={{ color: 'hsl(168 70% 45% / 0.3)' }}
+                  className="text-sm font-mono tracking-widest"
+                  style={{ 
+                    color: `hsl(168 50% ${45 + shadowIntensity * 15}% / ${0.4 + shadowIntensity * 0.3})`,
+                    textShadow: shadowIntensity > 0.5 ? '0 0 20px hsl(168 70% 50% / 0.3)' : 'none',
+                  }}
                 >
                   {index === 0 ? 'INTRO' : `STEP ${index}`}
                 </span>
