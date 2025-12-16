@@ -224,6 +224,7 @@ const RoofBuildSection: React.FC = () => {
                   className="w-full roof-build-svg"
                   style={{
                     filter: 'drop-shadow(0 0 40px hsl(168 80% 45% / 0.15))',
+                    overflow: 'visible',
                   }}
                 >
                   {/* Pulsing roof outline hint during buffer period */}
