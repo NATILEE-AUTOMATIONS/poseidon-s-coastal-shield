@@ -256,14 +256,22 @@ const RoofBuildSection: React.FC = () => {
                   {!isMobile && (
                     <FieldShinglesLayer progress={progress} startProgress={layers[5].start} endProgress={layers[5].end} isMobile={isMobile} />
                   )}
-                  {/* 7. Pipe Boots & Vents */}
-                  <VentsLayer progress={progress} startProgress={layers[6].start} endProgress={layers[6].end} />
-                  {/* 8. Flashing */}
-                  <FlashingLayer progress={progress} startProgress={layers[7].start} endProgress={layers[7].end} />
-                  {/* 9. Ridge Vent & Cap */}
-                  <RidgeCapLayer progress={progress} startProgress={layers[8].start} endProgress={layers[8].end} />
-                  {/* 10. Complete Clean Up */}
-                  <CleanUpLayer progress={progress} startProgress={layers[9].start} endProgress={layers[9].end} />
+                  {/* 7. Pipe Boots & Vents - Desktop only */}
+                  {!isMobile && (
+                    <VentsLayer progress={progress} startProgress={layers[6].start} endProgress={layers[6].end} />
+                  )}
+                  {/* 8. Flashing - Desktop only */}
+                  {!isMobile && (
+                    <FlashingLayer progress={progress} startProgress={layers[7].start} endProgress={layers[7].end} />
+                  )}
+                  {/* 9. Ridge Vent & Cap - Desktop only */}
+                  {!isMobile && (
+                    <RidgeCapLayer progress={progress} startProgress={layers[8].start} endProgress={layers[8].end} />
+                  )}
+                  {/* 10. Complete Clean Up - Desktop only */}
+                  {!isMobile && (
+                    <CleanUpLayer progress={progress} startProgress={layers[9].start} endProgress={layers[9].end} />
+                  )}
                   
                   {/* 2. Drip Edge rendered after all layers to be on top */}
                   <DripEdgeEavesLayer progress={progress} startProgress={layers[1].start} endProgress={layers[1].end} isMobile={isMobile} />
