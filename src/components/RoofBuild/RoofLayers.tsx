@@ -1281,7 +1281,7 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
       {ventOpacity > 0 && (
         <g 
           style={{
-            transform: `translate(270px, ${120 + ventY}px) rotate(${ventRotate}deg)`,
+            transform: `translate(270px, ${145 + ventY}px) rotate(${ventRotate}deg)`,
             transformOrigin: '0 0',
             opacity: ventOpacity,
           }}
