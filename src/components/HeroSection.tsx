@@ -151,9 +151,9 @@ const HeroSection = () => {
             
             {/* Mobile-only static house - no animations */}
             {isMobile && (
-              <div className="mt-16 w-full flex justify-center">
+              <div className="mt-6 w-full flex justify-center">
                 <svg
-                  viewBox="100 80 200 150"
+                  viewBox="50 50 300 200"
                   className="w-full"
                   style={{
                     filter: 'drop-shadow(0 0 30px hsl(168 80% 45% / 0.25))',
