@@ -1143,8 +1143,10 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
   const pipeBootProgress = Math.max(0, Math.min(1, layerProgress * 2));
   const ventProgress = Math.max(0, Math.min(1, (layerProgress - 0.3) * 1.5));
   
-  const pipeBootEased = easeOutQuint(pipeBootProgress);
-  const ventEased = easeOutQuint(ventProgress);
+  // Smoother easing for mobile (easeOutSext - power of 6 for ultra-smooth)
+  const easeOutSext = (t: number) => 1 - Math.pow(1 - t, 6);
+  const pipeBootEased = isMobile ? easeOutSext(pipeBootProgress) : easeOutQuint(pipeBootProgress);
+  const ventEased = isMobile ? easeOutSext(ventProgress) : easeOutQuint(ventProgress);
   
   // Responsive positioning
   const pipeBootX = isMobile ? 120 : 130;
@@ -1152,18 +1154,22 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
   const ventX = isMobile ? 280 : 270;
   const ventBaseY = isMobile ? 135 : 140;
   
-  // Drop-in transforms
-  const pipeBootY = (1 - pipeBootEased) * -80;
-  const pipeBootRotate = (1 - pipeBootEased) * 15;
-  const pipeBootOpacity = Math.min(1, pipeBootProgress * 3);
+  // Drop-in transforms - gentler on mobile
+  const pipeBootY = (1 - pipeBootEased) * (isMobile ? -60 : -80);
+  const pipeBootRotate = (1 - pipeBootEased) * (isMobile ? 8 : 15);
+  const pipeBootOpacity = isMobile 
+    ? Math.min(1, pipeBootProgress * 2) // Slower fade-in on mobile
+    : Math.min(1, pipeBootProgress * 3);
   
-  const ventY = (1 - ventEased) * -80;
-  const ventRotate = (1 - ventEased) * -12;
-  const ventOpacity = Math.min(1, ventProgress * 3);
+  const ventY = (1 - ventEased) * (isMobile ? -60 : -80);
+  const ventRotate = (1 - ventEased) * (isMobile ? -6 : -12);
+  const ventOpacity = isMobile
+    ? Math.min(1, ventProgress * 2)
+    : Math.min(1, ventProgress * 3);
   
-  // Glow intensity pulses on landing
-  const pipeGlowIntensity = pipeBootProgress > 0.8 ? 1 + Math.sin((pipeBootProgress - 0.8) * 25) * 0.3 : 1;
-  const ventGlowIntensity = ventProgress > 0.8 ? 1 + Math.sin((ventProgress - 0.8) * 25) * 0.3 : 1;
+  // Glow intensity pulses on landing - gentler on mobile
+  const pipeGlowIntensity = pipeBootProgress > 0.8 ? 1 + Math.sin((pipeBootProgress - 0.8) * (isMobile ? 15 : 25)) * (isMobile ? 0.15 : 0.3) : 1;
+  const ventGlowIntensity = ventProgress > 0.8 ? 1 + Math.sin((ventProgress - 0.8) * (isMobile ? 15 : 25)) * (isMobile ? 0.15 : 0.3) : 1;
   
   // Text opacity: fade in after both elements land (desktop only)
   const textProgress = Math.max(0, Math.min(1, (layerProgress - 0.5) / 0.4));
