@@ -110,7 +110,7 @@ const HeroSection = () => {
             style={{ top: '380px' }}
           >
           <h2 
-              className="text-4xl md:text-5xl font-bold tracking-tight"
+              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight"
               style={{
                 color: 'hsl(30 95% 60%)',
                 textShadow: '0 0 15px hsl(30 95% 55% / 0.8), 0 0 30px hsl(30 95% 55% / 0.5)',
@@ -119,7 +119,7 @@ const HeroSection = () => {
               910 Roofing
             </h2>
             <h3 
-              className="text-3xl md:text-4xl font-bold mt-2"
+              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mt-2"
               style={{
                 color: 'hsl(168 70% 55%)',
                 textShadow: '0 0 15px hsl(168 70% 50% / 0.8), 0 0 30px hsl(168 70% 50% / 0.6), 0 0 45px hsl(168 70% 50% / 0.4)',
