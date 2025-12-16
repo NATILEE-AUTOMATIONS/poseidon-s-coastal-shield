@@ -13,9 +13,9 @@ const HeroSection = () => {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
       
-      // Line starts drawing after scrolling 20% of viewport, completes at 80%
-      const startScroll = windowHeight * 0.2;
-      const endScroll = windowHeight * 0.9;
+      // Lower threshold for mobile - line starts drawing almost immediately
+      const startScroll = windowHeight * 0.05;
+      const endScroll = windowHeight * 0.6;
       const progress = Math.max(0, Math.min(1, (scrollY - startScroll) / (endScroll - startScroll)));
       
       setLineProgress(progress);
@@ -27,8 +27,9 @@ const HeroSection = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const lineHeight = Math.min(lineProgress * 1.2, 1) * 300;
-  const textOpacity = lineProgress > 0.7 ? (lineProgress - 0.7) / 0.3 : 0;
+  // Make line taller on mobile for better visibility
+  const lineHeight = Math.min(lineProgress * 1.2, 1) * 350;
+  const textOpacity = lineProgress > 0.6 ? (lineProgress - 0.6) / 0.4 : 0;
 
   return (
     <section ref={sectionRef} className="relative min-h-[180vh] w-full overflow-hidden bg-gradient-mesh">
@@ -85,20 +86,20 @@ const HeroSection = () => {
         </div>
 
         {/* Scroll-triggered glowing line */}
-        <div className="mt-16 flex flex-col items-center">
+        <div className="mt-10 sm:mt-16 flex flex-col items-center">
           <div 
-            className="w-3 rounded-full"
+            className="w-4 sm:w-3 rounded-full"
             style={{
               height: `${lineHeight}px`,
               background: 'linear-gradient(to bottom, hsl(168 70% 45%), hsl(168 80% 55%))',
               boxShadow: `
-                0 0 15px hsl(168 70% 50% / 0.9),
-                0 0 30px hsl(168 70% 50% / 0.7),
-                0 0 50px hsl(168 70% 50% / 0.5),
-                0 0 80px hsl(168 70% 50% / 0.3)
+                0 0 20px hsl(168 70% 50% / 1),
+                0 0 40px hsl(168 70% 50% / 0.8),
+                0 0 60px hsl(168 70% 50% / 0.6),
+                0 0 100px hsl(168 70% 50% / 0.4)
               `,
-              opacity: lineProgress > 0.05 ? 1 : 0,
-              transition: 'opacity 0.3s ease-out',
+              opacity: lineProgress > 0.02 ? 1 : 0,
+              transition: 'opacity 0.2s ease-out',
             }}
           />
           
