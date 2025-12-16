@@ -113,10 +113,10 @@ const HeroSection = () => {
           
           {/* Text - fixed position with left-to-right light-up effect */}
           <div 
-            className="absolute text-center px-6 w-full"
+            className="absolute text-center px-6 w-full flex flex-col items-center"
             style={{ top: '355px' }}
           >
-            <div className="relative inline-block">
+            <div className="relative">
               {/* Base dim text */}
               <h2 
                 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight transition-opacity duration-300"
@@ -140,7 +140,7 @@ const HeroSection = () => {
                 910 Roofing
               </h2>
             </div>
-            <div className="relative inline-block mt-2">
+            <div className="relative mt-2">
               {/* Base dim text */}
               <h3 
                 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold transition-opacity duration-300"
