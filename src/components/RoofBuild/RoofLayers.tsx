@@ -1122,17 +1122,6 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                             fill={shingleColor}
                           />
                           
-                          {/* Subtle highlight at top */}
-                          <polygon
-                            points={`${tabTopLeftX},${topY} ${tabTopRightX},${topY} ${tabBottomRightX},${bottomY} ${tabBottomLeftX},${bottomY}`}
-                            fill="url(#shingleHighlight)"
-                          />
-                          
-                          {/* Shadow at bottom for depth */}
-                          <polygon
-                            points={`${tabTopLeftX},${topY} ${tabTopRightX},${topY} ${tabBottomRightX},${bottomY} ${tabBottomLeftX},${bottomY}`}
-                            fill="url(#shingleShadow)"
-                          />
                           
                           {/* Right edge divider - subtle separation */}
                           {clampedEnd < 1 && (
@@ -1150,34 +1139,30 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                       );
                     })}
                     
-                    {/* Course bottom shadow - dimensional overlap effect */}
+                    {/* Course bottom shadow - clean line */}
                     <line
                       x1={bottomLeftX + 1}
                       y1={bottomY + 0.5}
                       x2={bottomRightX - 1}
                       y2={bottomY + 0.5}
-                      stroke="hsl(25 12% 6%)"
-                      strokeWidth="2"
-                      opacity={0.55}
-                      style={{ filter: 'blur(0.4px)' }}
+                      stroke="hsl(210 8% 6%)"
+                      strokeWidth="1.5"
+                      opacity={0.5}
                     />
                   </g>
                 );
               })()}
               
-              {/* Course shadow line (appears when course is mostly complete) */}
+              {/* Course shadow line - clean, no blur */}
               {courseProgress > 0.7 && courseIdx > 0 && (
                 <line
                   x1={bottomLeftX + 2}
                   y1={bottomY}
                   x2={bottomRightX - 2}
                   y2={bottomY}
-                  stroke="hsl(220 20% 8%)"
-                  strokeWidth="2"
-                  opacity={0.4 * Math.min(1, (courseProgress - 0.7) / 0.3)}
-                  style={{
-                    filter: 'blur(1px)',
-                  }}
+                  stroke="hsl(210 10% 6%)"
+                  strokeWidth="1.5"
+                  opacity={0.35 * Math.min(1, (courseProgress - 0.7) / 0.3)}
                 />
               )}
             </g>
