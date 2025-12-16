@@ -1127,13 +1127,12 @@ export const ShinglesLayer: React.FC<LayerProps> = ({ progress, startProgress, e
 // NUCLEAR DELETE - FieldShinglesLayer removed entirely
 export const FieldShinglesLayer: React.FC<LayerProps> = () => null;
 
-// Pipe Boots & Vents - Desktop only with cinematic neon glow animation
+// Pipe Boots & Vents - with cinematic neon glow animation
 export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
-  // Desktop only
-  if (isMobile || progress < startProgress) return null;
+  if (progress < startProgress) return null;
   
   // easeOutQuint for smooth solid landing (no bounce)
   const easeOutQuint = (x: number): number => {
@@ -1146,6 +1145,12 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
   
   const pipeBootEased = easeOutQuint(pipeBootProgress);
   const ventEased = easeOutQuint(ventProgress);
+  
+  // Responsive positioning
+  const pipeBootX = isMobile ? 120 : 130;
+  const pipeBootBaseY = isMobile ? 130 : 135;
+  const ventX = isMobile ? 280 : 270;
+  const ventBaseY = isMobile ? 135 : 140;
   
   // Drop-in transforms
   const pipeBootY = (1 - pipeBootEased) * -80;
@@ -1160,9 +1165,8 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
   const pipeGlowIntensity = pipeBootProgress > 0.8 ? 1 + Math.sin((pipeBootProgress - 0.8) * 25) * 0.3 : 1;
   const ventGlowIntensity = ventProgress > 0.8 ? 1 + Math.sin((ventProgress - 0.8) * 25) * 0.3 : 1;
   
-  // Text opacity: fade in after both elements land
+  // Text opacity: fade in after both elements land (desktop only)
   const textProgress = Math.max(0, Math.min(1, (layerProgress - 0.5) / 0.4));
-  const textOpacity = textProgress;
   
   return (
     <g className="vents-layer">
@@ -1216,11 +1220,11 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
         </linearGradient>
       </defs>
       
-      {/* Pipe Boot - Left slope - positioned to clear chimney and text */}
+      {/* Pipe Boot - positioned to clear chimney and text */}
       {pipeBootOpacity > 0 && (
         <g 
           style={{
-            transform: `translate(130px, ${135 + pipeBootY}px) rotate(${pipeBootRotate}deg)`,
+            transform: `translate(${pipeBootX}px, ${pipeBootBaseY + pipeBootY}px) rotate(${pipeBootRotate}deg)`,
             transformOrigin: '0 0',
             opacity: pipeBootOpacity,
           }}
@@ -1277,11 +1281,11 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
         </g>
       )}
       
-      {/* Box Vent - Right slope - positioned lower to avoid text overlap */}
+      {/* Box Vent - Right slope */}
       {ventOpacity > 0 && (
         <g 
           style={{
-            transform: `translate(270px, ${140 + ventY}px) rotate(${ventRotate}deg)`,
+            transform: `translate(${ventX}px, ${ventBaseY + ventY}px) rotate(${ventRotate}deg)`,
             transformOrigin: '0 0',
             opacity: ventOpacity,
           }}
@@ -1354,8 +1358,8 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
         </g>
       )}
       
-      {/* Text label with wipe reveal synced to pipe boot descent */}
-      {pipeBootProgress > 0 && (
+      {/* Text label with wipe reveal synced to pipe boot descent - desktop only */}
+      {!isMobile && pipeBootProgress > 0 && (
         <g>
           <defs>
             {/* Clip path that follows pipe boot Y position */}
@@ -1364,7 +1368,7 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
                 x="100" 
                 y="70" 
                 width="200" 
-                height={Math.max(0, (135 + pipeBootY) - 70)}
+                height={Math.max(0, (pipeBootBaseY + pipeBootY) - 70)}
               />
             </clipPath>
           </defs>
