@@ -85,12 +85,11 @@ const HeroSection = () => {
         </div>
 
         {/* Line and text container - fixed height so text stays static */}
-        <div className="mt-10 sm:mt-16 flex flex-col items-center relative w-full" style={{ height: '420px', minHeight: '420px' }}>
+        <div className="mt-10 sm:mt-16 flex flex-col items-center relative w-full">
           {/* Scroll-triggered glowing line */}
           <div 
-            className="w-4 sm:w-3 rounded-full absolute left-1/2 -translate-x-1/2"
+            className="w-4 sm:w-3 rounded-full"
             style={{
-              top: 0,
               height: `${Math.min(lineHeight, 350)}px`,
               background: 'linear-gradient(to bottom, hsl(168 70% 45%), hsl(168 80% 55%))',
               boxShadow: `
@@ -104,11 +103,8 @@ const HeroSection = () => {
             }}
           />
           
-          {/* Text - STATIC position at fixed location */}
-          <div 
-            className="absolute left-1/2 -translate-x-1/2 text-center px-6 w-full"
-            style={{ top: '380px' }}
-          >
+          {/* Text - directly below the line */}
+          <div className="text-center px-6 w-full mt-8">
           <h2 
               className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight"
               style={{
