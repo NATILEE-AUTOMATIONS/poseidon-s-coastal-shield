@@ -1396,9 +1396,9 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         {/* Outer flashing collar - dark rectangle around vent base */}
         <rect
           x="-24"
-          y="8"
+          y="2"
           width="48"
-          height="10"
+          height="16"
           rx="1"
           fill={flashingDark}
           stroke={flashingEdge}
@@ -1408,9 +1408,9 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         {/* Inner ring for depth */}
         <rect
           x="-20"
-          y="9"
+          y="4"
           width="40"
-          height="7"
+          height="12"
           rx="0.5"
           fill={flashingMid}
           stroke={flashingEdge}
@@ -1420,9 +1420,9 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         {/* Top highlight edge */}
         <rect
           x="-18"
-          y="8"
+          y="2"
           width="36"
-          height="5"
+          height="6"
           rx="0.5"
           fill="none"
           stroke="hsl(220 15% 35%)"
