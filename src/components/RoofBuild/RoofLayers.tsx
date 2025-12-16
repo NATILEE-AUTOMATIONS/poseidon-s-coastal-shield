@@ -1220,7 +1220,7 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
       {pipeBootOpacity > 0 && (
         <g 
           style={{
-            transform: `translate(145px, ${135 + pipeBootY}px) rotate(${pipeBootRotate}deg)`,
+            transform: `translate(130px, ${135 + pipeBootY}px) rotate(${pipeBootRotate}deg)`,
             transformOrigin: '0 0',
             opacity: pipeBootOpacity,
           }}
