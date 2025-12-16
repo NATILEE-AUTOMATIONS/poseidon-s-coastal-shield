@@ -933,7 +933,7 @@ export const StarterStripLayer: React.FC<LayerProps> = ({ progress, startProgres
     </g>
   );
 };
-export const FlashingLayer: React.FC<LayerProps> = () => null;
+// FlashingLayer moved below VentsLayer
 
 // Shingles layer with stair-step installation animation (DESKTOP ONLY)
 export const ShinglesLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
@@ -1154,8 +1154,12 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
   // Subtle glow intensity - only animate on desktop for performance
   const glowIntensity = isMobile ? 1 : (easedProgress > 0.8 ? 1 + Math.sin((easedProgress - 0.8) * 15) * 0.15 : 1);
   
-  // Text just visible with no fade - enters with the other elements
-  const textOpacity = 1;
+  // Text fades out in second half of animation
+  const textOpacity = layerProgress < 0.5 
+    ? 1 
+    : layerProgress < 0.85 
+      ? 1 - ((layerProgress - 0.5) / 0.35)
+      : 0;
   
   // Round translateY to avoid subpixel rendering on mobile
   const smoothTranslateY = isMobile ? Math.round(translateY) : translateY;
@@ -1262,6 +1266,160 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
   );
 };
 
+// Flashing layer - step flashing, valley flashing, and wall flashing
+export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
+  const rawProgress = (progress - startProgress) / (endProgress - startProgress);
+  const layerProgress = Math.max(0, Math.min(1, rawProgress));
+  
+  if (progress < startProgress) return null;
+  
+  const easedProgress = easeOutQuint(layerProgress);
+  
+  // Drop-in animation
+  const translateY = -120 * (1 - easedProgress);
+  const opacity = 0.3 + (0.7 * easedProgress);
+  
+  // Text timing: fade in 10-30%, hold 30-55%, fade out 55-80%
+  const textOpacity = layerProgress < 0.1 
+    ? 0 
+    : layerProgress < 0.3 
+      ? (layerProgress - 0.1) / 0.2 
+      : layerProgress < 0.55 
+        ? 1 
+        : layerProgress < 0.80 
+          ? 1 - (layerProgress - 0.55) / 0.25 
+          : 0;
+  
+  // Flashing positions - around chimney and at valleys
+  const chimneyX = 95;
+  const peakY = 56;
+  
+  return (
+    <g 
+      className="flashing-layer"
+      style={{
+        transform: `translateY(${isMobile ? Math.round(translateY) : translateY}px)`,
+        opacity,
+        willChange: 'transform, opacity',
+      }}
+    >
+      <defs>
+        <linearGradient id="flashingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="hsl(210 8% 65%)" />
+          <stop offset="50%" stopColor="hsl(210 10% 55%)" />
+          <stop offset="100%" stopColor="hsl(210 6% 45%)" />
+        </linearGradient>
+        {!isMobile && (
+          <filter id="flashingGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="hsl(210 30% 70%)" floodOpacity="0.6" />
+          </filter>
+        )}
+        <filter id="flashingTextGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="hsl(0 0% 0%)" floodOpacity="0.9" />
+        </filter>
+      </defs>
+      
+      {/* Step flashing around chimney - left side */}
+      <g filter={isMobile ? undefined : "url(#flashingGlow)"}>
+        {/* Step flashing pieces going up the roof slope */}
+        {[0, 1, 2, 3].map((i) => (
+          <rect 
+            key={`step-${i}`}
+            x={chimneyX - 3} 
+            y={130 - (i * 12)} 
+            width="6" 
+            height="10" 
+            fill="url(#flashingGradient)"
+            stroke="hsl(210 20% 75%)"
+            strokeWidth="0.5"
+            style={{
+              opacity: Math.min(1, easedProgress * 1.5 - (i * 0.1)),
+            }}
+          />
+        ))}
+        
+        {/* Counter flashing at chimney base */}
+        <rect 
+          x={chimneyX - 8} 
+          y={138} 
+          width="16" 
+          height="4" 
+          fill="url(#flashingGradient)"
+          stroke="hsl(210 25% 80%)"
+          strokeWidth="1"
+        />
+      </g>
+      
+      {/* Valley flashing (at roof intersection if there was one - simulated with accent pieces) */}
+      <g filter={isMobile ? undefined : "url(#flashingGlow)"}>
+        {/* Peak cap flashing */}
+        <path 
+          d={`M185,${peakY + 2} L200,${peakY - 3} L215,${peakY + 2}`}
+          fill="none"
+          stroke="hsl(210 15% 70%)"
+          strokeWidth="3"
+          strokeLinecap="round"
+        />
+        
+        {/* Ridge line accent */}
+        <line 
+          x1="175" 
+          y1={peakY + 5} 
+          x2="225" 
+          y2={peakY + 5}
+          stroke="hsl(210 20% 65%)"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      </g>
+      
+      {/* Wall flashing - at house wall junction (simulated) */}
+      <g filter={isMobile ? undefined : "url(#flashingGlow)"}>
+        <line 
+          x1="42" 
+          y1="158" 
+          x2="100" 
+          y2="158"
+          stroke="hsl(210 15% 60%)"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+        <line 
+          x1="300" 
+          y1="158" 
+          x2="358" 
+          y2="158"
+          stroke="hsl(210 15% 60%)"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+      </g>
+      
+      {/* Text label */}
+      {textOpacity > 0 && (
+        <g style={{ opacity: textOpacity }}>
+          <text
+            x="200"
+            y="108"
+            textAnchor="middle"
+            fontSize={isMobile ? 14 : 13}
+            fontWeight="800"
+            fontFamily="system-ui, sans-serif"
+            letterSpacing="2"
+            fill="hsl(210 30% 85%)"
+            stroke="hsl(0 0% 0%)"
+            strokeWidth="3"
+            paintOrder="stroke fill"
+            filter="url(#flashingTextGlow)"
+          >
+            FLASHING
+          </text>
+        </g>
+      )}
+    </g>
+  );
+};
+
 export const RidgeCapLayer: React.FC<LayerProps> = () => null;
 export const CleanUpLayer: React.FC<LayerProps> = () => null;
 export const MobileShingleOverlay: React.FC<LayerProps> = () => null;
@@ -1277,8 +1435,14 @@ export const MobileVentsLayer: React.FC<LayerProps> = ({ progress, startProgress
   // Round to whole pixels for crisp rendering
   const translateY = Math.round(-120 * (1 - easedProgress));
   
-  // Text visible for middle portion - simplified opacity calc
-  const textOpacity = layerProgress > 0.05 && layerProgress < 0.95 ? 1 : 0;
+  // Text fades out in second half of animation (matches desktop)
+  const textOpacity = layerProgress < 0.05 
+    ? 0 
+    : layerProgress < 0.5 
+      ? 1 
+      : layerProgress < 0.85 
+        ? 1 - ((layerProgress - 0.5) / 0.35)
+        : 0;
   
   return (
     <g 
