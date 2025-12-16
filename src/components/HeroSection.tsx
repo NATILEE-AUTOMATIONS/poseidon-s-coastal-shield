@@ -191,7 +191,7 @@ const HeroSection = () => {
   const lineHeight = Math.min(lineProgress * 1.2, 1) * 350;
 
   return (
-    <section ref={sectionRef} className="relative w-full overflow-hidden bg-gradient-mesh" style={{ minHeight: isMobile ? '300vh' : '100vh' }}>
+    <section ref={sectionRef} className="relative w-full overflow-hidden bg-gradient-mesh" style={{ minHeight: isMobile ? '200vh' : '100vh' }}>
       {/* Subtle Grid Overlay */}
       <div className="absolute inset-0 bg-grid opacity-20" />
       
