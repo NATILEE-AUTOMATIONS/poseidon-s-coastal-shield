@@ -989,47 +989,47 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
             : 0
   );
   
-  // Generate shingle colors with realistic granule variation
+  // Generate realistic asphalt shingle colors - darker charcoal with subtle warm/cool variation
   const getShingleColor = (courseIndex: number, tabIndex: number) => {
     const seed = (courseIndex * 7 + tabIndex * 13) % 100;
     const seed2 = (courseIndex * 11 + tabIndex * 17) % 100;
-    // Vary between cool slate and warm charcoal for natural look
-    const baseH = 195 + (seed % 25); // 195-219 hue range
-    const baseS = 3 + (seed2 % 6); // 3-8% subtle saturation
-    const baseL = 16 + (seed % 12); // 16-27% lightness for depth
+    // Nearly neutral with very slight warm undertone for realism
+    const baseH = 20 + (seed % 30); // 20-50 warm neutral to cool gray
+    const baseS = 2 + (seed2 % 4); // 2-5% very subtle saturation
+    const baseL = 12 + (seed % 10); // 12-21% dark charcoal range
     return `hsl(${baseH} ${baseS}% ${baseL}%)`;
   };
   
-  // Secondary color for granule texture
+  // Secondary darker color for granule texture
   const getGranuleColor = (courseIndex: number, tabIndex: number) => {
     const seed = (courseIndex * 19 + tabIndex * 23) % 100;
-    const baseL = 12 + (seed % 8);
-    return `hsl(200 5% ${baseL}%)`;
+    const baseL = 8 + (seed % 6);
+    return `hsl(30 3% ${baseL}%)`;
   };
   
   return (
     <g className="field-shingles-layer">
       <defs>
-        {/* Highlight gradient - stronger for 3D pop */}
+        {/* Highlight gradient - subtle top edge lighting */}
         <linearGradient id="shingleHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(200 10% 38%)" stopOpacity="0.5" />
-          <stop offset="15%" stopColor="hsl(200 8% 28%)" stopOpacity="0.2" />
-          <stop offset="40%" stopColor="hsl(200 6% 22%)" stopOpacity="0" />
+          <stop offset="0%" stopColor="hsl(40 5% 30%)" stopOpacity="0.4" />
+          <stop offset="20%" stopColor="hsl(35 4% 22%)" stopOpacity="0.15" />
+          <stop offset="45%" stopColor="hsl(30 3% 18%)" stopOpacity="0" />
         </linearGradient>
         
         {/* Shadow gradient for realistic depth at bottom */}
         <linearGradient id="shingleShadow" x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stopColor="hsl(200 15% 4%)" stopOpacity="0.8" />
-          <stop offset="20%" stopColor="hsl(200 12% 8%)" stopOpacity="0.4" />
-          <stop offset="50%" stopColor="hsl(200 8% 10%)" stopOpacity="0" />
+          <stop offset="0%" stopColor="hsl(0 0% 2%)" stopOpacity="0.85" />
+          <stop offset="25%" stopColor="hsl(0 0% 5%)" stopOpacity="0.5" />
+          <stop offset="55%" stopColor="hsl(0 0% 8%)" stopOpacity="0" />
         </linearGradient>
         
-        {/* Granule texture pattern */}
-        <pattern id="granuleTexture" patternUnits="userSpaceOnUse" width="4" height="4">
-          <rect width="4" height="4" fill="transparent" />
-          <circle cx="1" cy="1" r="0.5" fill="hsl(200 5% 25%)" opacity="0.15" />
-          <circle cx="3" cy="3" r="0.4" fill="hsl(200 3% 15%)" opacity="0.12" />
-          <circle cx="2" cy="0.5" r="0.3" fill="hsl(200 4% 30%)" opacity="0.1" />
+        {/* Granule texture pattern - subtle rough surface */}
+        <pattern id="granuleTexture" patternUnits="userSpaceOnUse" width="3" height="3">
+          <rect width="3" height="3" fill="transparent" />
+          <circle cx="0.8" cy="0.8" r="0.4" fill="hsl(30 4% 22%)" opacity="0.2" />
+          <circle cx="2.2" cy="2" r="0.35" fill="hsl(25 3% 10%)" opacity="0.25" />
+          <circle cx="1.5" cy="0.4" r="0.25" fill="hsl(35 3% 26%)" opacity="0.15" />
         </pattern>
         
         {/* Clip to roof shape */}
@@ -1160,9 +1160,9 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                             y1={bottomY - courseHeight * 0.35}
                             x2={tabBottomRightX - 1}
                             y2={bottomY - courseHeight * 0.35}
-                            stroke="hsl(200 8% 12%)"
+                            stroke="hsl(30 4% 8%)"
                             strokeWidth="0.8"
-                            opacity={0.35}
+                            opacity={0.4}
                           />
                           
                           {/* Right edge divider line */}
@@ -1172,9 +1172,9 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                               y1={topY + 1}
                               x2={tabBottomRightX}
                               y2={bottomY - 1}
-                              stroke="hsl(200 15% 8%)"
+                              stroke="hsl(0 0% 5%)"
                               strokeWidth="1.2"
-                              opacity={0.5}
+                              opacity={0.6}
                             />
                           )}
                         </g>
@@ -1187,9 +1187,9 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                       y1={bottomY + 0.5}
                       x2={bottomRightX - 1}
                       y2={bottomY + 0.5}
-                      stroke="hsl(200 20% 4%)"
-                      strokeWidth="2"
-                      opacity={0.5}
+                      stroke="hsl(0 0% 2%)"
+                      strokeWidth="2.5"
+                      opacity={0.6}
                       style={{ filter: 'blur(0.5px)' }}
                     />
                   </g>
