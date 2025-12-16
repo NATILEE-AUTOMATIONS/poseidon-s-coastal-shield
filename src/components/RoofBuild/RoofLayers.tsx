@@ -937,8 +937,8 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
   const shingleBottom = eaveY;
   const roofHeight = shingleBottom - peakY;
   
-  // 12 courses of shingles for realistic thin proportions
-  const courseCount = 12;
+  // 15 courses for detailed architectural look
+  const courseCount = 15;
   const courseHeight = roofHeight / courseCount;
   
   // Helper to get X at a given Y on the roof slope
@@ -966,8 +966,8 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
   
   // Course animation - BOTTOM courses first (index 0 = bottom)
   const getCourseProgress = (courseIndex: number) => {
-    const staggerDelay = courseIndex * 0.06; // Faster stagger for more courses
-    const courseAnimDuration = 0.20;
+    const staggerDelay = courseIndex * 0.045; // Faster for 15 courses
+    const courseAnimDuration = 0.18;
     const courseStart = staggerDelay;
     const courseEnd = courseStart + courseAnimDuration;
     
@@ -989,44 +989,46 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
             : 0
   );
   
-  // Simple 3-color palette for clean, consistent look
+  // Architectural shingle palette - mix of grays, browns, tans like the reference
   const shinglePalette = [
-    'hsl(210 8% 18%)',   // Dark slate
-    'hsl(205 10% 22%)',  // Medium slate  
-    'hsl(215 7% 16%)',   // Deep slate
+    'hsl(220 6% 20%)',   // Dark charcoal gray
+    'hsl(210 8% 28%)',   // Medium slate gray
+    'hsl(200 5% 35%)',   // Light gray
+    'hsl(30 12% 22%)',   // Dark brown
+    'hsl(25 15% 30%)',   // Medium brown
+    'hsl(35 10% 38%)',   // Tan/beige
+    'hsl(15 8% 25%)',    // Warm dark
+    'hsl(40 8% 32%)',    // Light tan
   ];
   
-  // Deterministic but well-distributed color selection
+  // Randomized color selection for natural architectural look
   const getShingleColor = (courseIndex: number, tabIndex: number) => {
-    // Simple hash that distributes colors evenly
-    const hash = (courseIndex * 3 + tabIndex * 5 + Math.floor(tabIndex / 2)) % 3;
-    return shinglePalette[hash];
+    // Multiple hash functions for better distribution
+    const hash1 = (courseIndex * 17 + tabIndex * 31) % 8;
+    const hash2 = (tabIndex * 13 + courseIndex * 7 + Math.floor(tabIndex / 3)) % 8;
+    const hash3 = ((courseIndex + tabIndex) * 23 + courseIndex) % 8;
+    
+    // Blend between hashes for more variation
+    const finalHash = (hash1 + hash2 + hash3) % 8;
+    return shinglePalette[finalHash];
   };
   
   return (
     <g className="field-shingles-layer">
       <defs>
-        {/* Highlight gradient - cool blue-gray top edge */}
+        {/* Warm neutral highlight */}
         <linearGradient id="shingleHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(210 12% 35%)" stopOpacity="0.45" />
-          <stop offset="20%" stopColor="hsl(208 10% 28%)" stopOpacity="0.2" />
-          <stop offset="45%" stopColor="hsl(205 8% 22%)" stopOpacity="0" />
+          <stop offset="0%" stopColor="hsl(35 8% 40%)" stopOpacity="0.35" />
+          <stop offset="25%" stopColor="hsl(30 6% 30%)" stopOpacity="0.15" />
+          <stop offset="50%" stopColor="hsl(25 5% 25%)" stopOpacity="0" />
         </linearGradient>
         
-        {/* Shadow gradient for depth */}
+        {/* Deep shadow for dimensional look */}
         <linearGradient id="shingleShadow" x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stopColor="hsl(210 15% 4%)" stopOpacity="0.85" />
-          <stop offset="25%" stopColor="hsl(210 12% 8%)" stopOpacity="0.5" />
-          <stop offset="55%" stopColor="hsl(210 8% 12%)" stopOpacity="0" />
+          <stop offset="0%" stopColor="hsl(20 10% 5%)" stopOpacity="0.75" />
+          <stop offset="30%" stopColor="hsl(25 8% 10%)" stopOpacity="0.4" />
+          <stop offset="60%" stopColor="hsl(30 5% 15%)" stopOpacity="0" />
         </linearGradient>
-        
-        {/* Granule texture pattern - blue-gray tones */}
-        <pattern id="granuleTexture" patternUnits="userSpaceOnUse" width="3" height="3">
-          <rect width="3" height="3" fill="transparent" />
-          <circle cx="0.8" cy="0.8" r="0.4" fill="hsl(210 10% 28%)" opacity="0.2" />
-          <circle cx="2.2" cy="2" r="0.35" fill="hsl(205 8% 15%)" opacity="0.25" />
-          <circle cx="1.5" cy="0.4" r="0.25" fill="hsl(215 12% 32%)" opacity="0.15" />
-        </pattern>
         
         {/* Clip to roof shape */}
         <clipPath id="shinglesRoofClip">
@@ -1074,8 +1076,8 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
               {/* Individual shingle tabs with adaptive count for consistent proportions */}
               {(() => {
                 const actualCourseWidth = bottomRightX - bottomLeftX;
-                // More tabs for better texture - target ~28px per tab
-                const tabsPerCourse = Math.max(3, Math.round(actualCourseWidth / 28));
+                // Smaller tabs for detailed architectural look - target ~22px
+                const tabsPerCourse = Math.max(4, Math.round(actualCourseWidth / 22));
                 const tabWidthRatio = 1 / tabsPerCourse;
                 const offsetRatio = courseIdx % 2 === 1 ? tabWidthRatio / 2 : 0;
                 
@@ -1139,32 +1141,32 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                             fill="url(#shingleShadow)"
                           />
                           
-                          {/* Right edge divider - subtle */}
+                          {/* Right edge divider - subtle warm tone */}
                           {clampedEnd < 1 && (
                             <line
                               x1={tabTopRightX}
-                              y1={topY + 1}
+                              y1={topY + 0.5}
                               x2={tabBottomRightX}
-                              y2={bottomY - 1}
-                              stroke="hsl(210 10% 10%)"
-                              strokeWidth="0.8"
-                              opacity={0.4}
+                              y2={bottomY - 0.5}
+                              stroke="hsl(25 8% 12%)"
+                              strokeWidth="0.6"
+                              opacity={0.5}
                             />
                           )}
                         </g>
                       );
                     })}
                     
-                    {/* Course bottom shadow - deeper for overlap effect */}
+                    {/* Course bottom shadow - dimensional overlap effect */}
                     <line
                       x1={bottomLeftX + 1}
                       y1={bottomY + 0.5}
                       x2={bottomRightX - 1}
                       y2={bottomY + 0.5}
-                      stroke="hsl(210 15% 5%)"
-                      strokeWidth="2.5"
-                      opacity={0.6}
-                      style={{ filter: 'blur(0.5px)' }}
+                      stroke="hsl(25 12% 6%)"
+                      strokeWidth="2"
+                      opacity={0.55}
+                      style={{ filter: 'blur(0.4px)' }}
                     />
                   </g>
                 );
