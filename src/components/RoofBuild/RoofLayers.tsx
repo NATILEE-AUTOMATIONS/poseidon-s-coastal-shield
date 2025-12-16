@@ -934,9 +934,8 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
   const shingleBottom = eaveY;
   const roofHeight = shingleBottom - peakY;
   
-  // Mobile: fewer, larger courses for cleaner look on small screens
-  // Desktop: 15 courses for detailed architectural look
-  const courseCount = isMobile ? 8 : 15;
+  // 15 courses for detailed architectural look (same on all devices)
+  const courseCount = 15;
   const courseHeight = roofHeight / courseCount;
   
   // Helper to get X at a given Y on the roof slope
@@ -970,11 +969,10 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
     const maxDiagonal = courseCount + 12; // Approximate max diagonal
     const normalizedDiagonal = diagonalIdx / maxDiagonal;
     
-    // Mobile: faster animation to fit in shorter scroll window
-    // Desktop: more spread out for leisurely viewing
-    const spreadFactor = isMobile ? 0.5 : 0.7;
+    // Spread out animation for leisurely viewing (same on all devices)
+    const spreadFactor = 0.7;
     const shingleStart = normalizedDiagonal * spreadFactor;
-    const shingleDuration = isMobile ? 0.2 : 0.15;
+    const shingleDuration = 0.15;
     const shingleEnd = shingleStart + shingleDuration;
     
     if (layerProgress < shingleStart) return 0;
@@ -1049,9 +1047,8 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
           const courseWidth = bottomRightX - bottomLeftX;
           
           const actualCourseWidth = bottomRightX - bottomLeftX;
-          // Mobile: larger tabs (~35px) for cleaner look, Desktop: detailed (~22px)
-          const targetTabWidth = isMobile ? 35 : 22;
-          const tabsPerCourse = Math.max(3, Math.round(actualCourseWidth / targetTabWidth));
+          // Detailed 22px tabs (same on all devices)
+          const tabsPerCourse = Math.max(4, Math.round(actualCourseWidth / 22));
           const tabWidthRatio = 1 / tabsPerCourse;
           const offsetRatio = courseIdx % 2 === 1 ? tabWidthRatio / 2 : 0;
           
