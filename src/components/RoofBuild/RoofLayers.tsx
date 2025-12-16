@@ -1140,6 +1140,11 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
   // Same drop-in pattern as drip edge: starts at -150, ends at 0
   const translateY = -150 * (1 - easedProgress);
   
+  // Desktop: smooth fade-in and scale during first 30% of animation
+  const entranceProgress = Math.min(1, layerProgress * 3.33); // 0 to 1 over first 30%
+  const desktopOpacity = isMobile ? 1 : Math.min(1, entranceProgress * 1.5);
+  const desktopScale = isMobile ? 1 : 0.85 + (easedProgress * 0.15); // Scale from 0.85 to 1
+  
   // Responsive positioning
   const pipeBootX = isMobile ? 120 : 130;
   const pipeBootBaseY = isMobile ? 120 : 125;
@@ -1156,8 +1161,12 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
     <g 
       className="vents-layer"
       style={{
-        transform: `translate3d(0, ${translateY}px, 0)`,
-        willChange: 'transform',
+        transform: isMobile 
+          ? `translate3d(0, ${translateY}px, 0)` 
+          : `translate3d(0, ${translateY}px, 0) scale(${desktopScale})`,
+        opacity: desktopOpacity,
+        willChange: 'transform, opacity',
+        transformOrigin: '200px 120px',
       }}
     >
       <defs>
