@@ -1154,3 +1154,75 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
 export const VentsLayer: React.FC<LayerProps> = () => null;
 export const RidgeCapLayer: React.FC<LayerProps> = () => null;
 export const CleanUpLayer: React.FC<LayerProps> = () => null;
+
+// Mobile Shingle Overlay - covers shingles with a clean animated fill on mobile
+export const MobileShingleOverlay: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
+  // Only render on mobile
+  if (!isMobile) return null;
+  
+  const rawProgress = (progress - startProgress) / (endProgress - startProgress);
+  const layerProgress = Math.max(0, Math.min(1, rawProgress));
+  
+  if (progress < startProgress) return null;
+  
+  const easedProgress = easeOutQuint(layerProgress);
+  
+  // Roof geometry matching shingles area
+  const peakX = 200, peakY = 58;
+  const leftX = 44, leftY = 158;
+  const rightX = 356, rightY = 158;
+  
+  // Animate from bottom to top (covering shingles as they would appear)
+  const coverHeight = easedProgress;
+  
+  // Calculate the visible portion of roof based on progress
+  const currentLeftY = leftY - (leftY - peakY) * coverHeight;
+  const currentRightY = rightY - (rightY - peakY) * coverHeight;
+  const currentLeftX = leftX + (peakX - leftX) * coverHeight;
+  const currentRightX = rightX - (rightX - peakX) * coverHeight;
+  
+  return (
+    <g className="mobile-shingle-overlay">
+      <defs>
+        <linearGradient id="mobileShingleGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+          <stop offset="0%" stopColor="hsl(210 6% 13%)" />
+          <stop offset="50%" stopColor="hsl(210 5% 15%)" />
+          <stop offset="100%" stopColor="hsl(210 4% 17%)" />
+        </linearGradient>
+        <filter id="shingleOverlayGlow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="2" result="blur" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+      </defs>
+      
+      {/* Main roof fill that animates up */}
+      <polygon
+        points={`${leftX},${leftY} ${currentLeftX},${currentLeftY} ${currentRightX},${currentRightY} ${rightX},${rightY}`}
+        fill="url(#mobileShingleGradient)"
+        opacity={0.3 + easedProgress * 0.7}
+        filter="url(#shingleOverlayGlow)"
+      />
+      
+      {/* Subtle horizontal lines for texture */}
+      {Array.from({ length: Math.floor(coverHeight * 12) }).map((_, i) => {
+        const lineY = leftY - (i + 1) * ((leftY - peakY) / 12);
+        const lineProgress = (leftY - lineY) / (leftY - peakY);
+        const lineLeftX = leftX + (peakX - leftX) * lineProgress;
+        const lineRightX = rightX - (rightX - peakX) * lineProgress;
+        
+        return (
+          <line
+            key={i}
+            x1={lineLeftX + 2}
+            y1={lineY}
+            x2={lineRightX - 2}
+            y2={lineY}
+            stroke="hsl(210 8% 20%)"
+            strokeWidth="0.5"
+            opacity={0.4}
+          />
+        );
+      })}
+    </g>
+  );
+};
