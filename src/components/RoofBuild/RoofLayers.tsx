@@ -969,9 +969,11 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
     const maxDiagonal = courseCount + 12; // Approximate max diagonal
     const normalizedDiagonal = diagonalIdx / maxDiagonal;
     
-    // Stagger based on diagonal position
-    const shingleStart = normalizedDiagonal * 0.7;
-    const shingleDuration = 0.15;
+    // Mobile: faster animation to fit in shorter scroll window
+    // Desktop: more spread out for leisurely viewing
+    const spreadFactor = isMobile ? 0.5 : 0.7;
+    const shingleStart = normalizedDiagonal * spreadFactor;
+    const shingleDuration = isMobile ? 0.2 : 0.15;
     const shingleEnd = shingleStart + shingleDuration;
     
     if (layerProgress < shingleStart) return 0;
