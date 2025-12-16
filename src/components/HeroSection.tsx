@@ -84,11 +84,11 @@ const HeroSection = () => {
           </Button>
         </div>
 
-        {/* Line and text container - fixed height so text stays static */}
-        <div className="mt-10 sm:mt-16 flex flex-col items-center relative w-full">
+        {/* Line and text container */}
+        <div className="mt-10 sm:mt-16 flex flex-col items-center relative w-full" style={{ height: '400px' }}>
           {/* Scroll-triggered glowing line */}
           <div 
-            className="w-4 sm:w-3 rounded-full"
+            className="w-4 sm:w-3 rounded-full absolute top-0 left-1/2 -translate-x-1/2"
             style={{
               height: `${Math.min(lineHeight, 350)}px`,
               background: 'linear-gradient(to bottom, hsl(168 70% 45%), hsl(168 80% 55%))',
@@ -103,9 +103,9 @@ const HeroSection = () => {
             }}
           />
           
-          {/* Text - directly below the line */}
-          <div className="text-center px-6 w-full mt-2">
-          <h2 
+          {/* Text - fixed position */}
+          <div className="absolute text-center px-6 w-full" style={{ top: '355px' }}>
+            <h2 
               className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight"
               style={{
                 color: 'hsl(30 95% 60%)',
