@@ -1,11 +1,14 @@
 import { Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState, useRef } from "react";
+import HouseSVG from "./RoofBuild/HouseSVG";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const HeroSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [lineProgress, setLineProgress] = useState(0);
   const [textLit, setTextLit] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -93,7 +96,7 @@ const HeroSection = () => {
         </div>
 
         {/* Line and text container */}
-        <div className="mt-10 sm:mt-16 flex flex-col items-center relative w-full" style={{ height: '550px' }}>
+        <div className="mt-10 sm:mt-16 flex flex-col items-center relative w-full" style={{ height: isMobile ? '750px' : '550px' }}>
           {/* Scroll-triggered glowing line */}
           <div 
             className="w-4 sm:w-3 rounded-full absolute top-0 left-1/2 -translate-x-1/2"
@@ -145,6 +148,19 @@ const HeroSection = () => {
             >
               Done Right
             </h3>
+            
+            {/* Mobile-only static house - no animations */}
+            <div className="block sm:hidden mt-12 w-full px-4">
+              <svg
+                viewBox="0 0 400 280"
+                className="w-full max-w-[85vw] mx-auto"
+                style={{
+                  filter: 'drop-shadow(0 0 30px hsl(168 80% 45% / 0.25))',
+                }}
+              >
+                <HouseSVG doorAngle={0} lightBoost={0} />
+              </svg>
+            </div>
           </div>
         </div>
       </div>
