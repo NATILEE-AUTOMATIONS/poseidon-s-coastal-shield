@@ -85,11 +85,12 @@ const HeroSection = () => {
         </div>
 
         {/* Line and text container - fixed height so text stays static */}
-        <div className="mt-10 sm:mt-16 flex flex-col items-center relative" style={{ height: '500px' }}>
+        <div className="mt-10 sm:mt-16 flex flex-col items-center relative w-full" style={{ height: '500px', minHeight: '500px' }}>
           {/* Scroll-triggered glowing line */}
           <div 
-            className="w-4 sm:w-3 rounded-full absolute top-0"
+            className="w-4 sm:w-3 rounded-full absolute left-1/2 -translate-x-1/2"
             style={{
+              top: 0,
               height: `${Math.min(lineHeight, 350)}px`,
               background: 'linear-gradient(to bottom, hsl(168 70% 45%), hsl(168 80% 55%))',
               boxShadow: `
@@ -103,8 +104,11 @@ const HeroSection = () => {
             }}
           />
           
-          {/* Text - static position, line grows toward it */}
-          <div className="absolute text-center px-6" style={{ top: '380px' }}>
+          {/* Text - STATIC position at fixed location */}
+          <div 
+            className="absolute left-1/2 -translate-x-1/2 text-center px-6 w-full"
+            style={{ top: '380px' }}
+          >
             <h2 
               className="text-4xl md:text-5xl font-bold tracking-tight"
               style={{
