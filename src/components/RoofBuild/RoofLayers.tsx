@@ -961,10 +961,12 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
     return Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * ((2 * Math.PI) / 3)) + 1;
   };
   
-  // Course animation - BOTTOM courses first (index 0 = bottom)
+  // Course animation - animate in groups of 3-4 courses at a time
   const getCourseProgress = (courseIndex: number) => {
-    const staggerDelay = courseIndex * 0.045; // Faster for 15 courses
-    const courseAnimDuration = 0.18;
+    const groupSize = 4; // 4 courses per group
+    const groupIndex = Math.floor(courseIndex / groupSize);
+    const staggerDelay = groupIndex * 0.15; // Delay between groups
+    const courseAnimDuration = 0.25;
     const courseStart = staggerDelay;
     const courseEnd = courseStart + courseAnimDuration;
     
