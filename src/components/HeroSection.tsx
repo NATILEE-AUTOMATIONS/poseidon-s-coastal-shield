@@ -29,7 +29,6 @@ const HeroSection = () => {
 
   // Make line taller on mobile for better visibility
   const lineHeight = Math.min(lineProgress * 1.2, 1) * 350;
-  const textOpacity = lineProgress > 0.6 ? (lineProgress - 0.6) / 0.4 : 0;
 
   return (
     <section ref={sectionRef} className="relative min-h-[180vh] w-full overflow-hidden bg-gradient-mesh">
@@ -103,15 +102,8 @@ const HeroSection = () => {
             }}
           />
           
-          {/* Text that reveals after line draws */}
-          <div 
-            className="mt-12 text-center px-6"
-            style={{
-              opacity: textOpacity,
-              transform: `translateY(${20 * (1 - textOpacity)}px)`,
-              transition: 'transform 0.5s ease-out',
-            }}
-          >
+          {/* Text - always visible */}
+          <div className="mt-12 text-center px-6">
             <h2 
               className="text-4xl md:text-5xl font-bold tracking-tight"
               style={{
