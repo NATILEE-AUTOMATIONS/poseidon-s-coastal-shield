@@ -989,28 +989,19 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
             : 0
   );
   
-  // Architectural shingle palette - mix of grays, browns, tans like the reference
+  // Simple dark palette
   const shinglePalette = [
-    'hsl(220 6% 20%)',   // Dark charcoal gray
-    'hsl(210 8% 28%)',   // Medium slate gray
-    'hsl(200 5% 35%)',   // Light gray
-    'hsl(30 12% 22%)',   // Dark brown
-    'hsl(25 15% 30%)',   // Medium brown
-    'hsl(35 10% 38%)',   // Tan/beige
-    'hsl(15 8% 25%)',    // Warm dark
-    'hsl(40 8% 32%)',    // Light tan
+    'hsl(210 6% 12%)',   // darkest
+    'hsl(210 5% 16%)',   // dark
+    'hsl(210 4% 20%)',   // medium dark
+    'hsl(210 3% 24%)',   // medium
   ];
   
-  // Randomized color selection for natural architectural look
+  // Pseudo-random color selection using prime multipliers and XOR
   const getShingleColor = (courseIndex: number, tabIndex: number) => {
-    // Multiple hash functions for better distribution
-    const hash1 = (courseIndex * 17 + tabIndex * 31) % 8;
-    const hash2 = (tabIndex * 13 + courseIndex * 7 + Math.floor(tabIndex / 3)) % 8;
-    const hash3 = ((courseIndex + tabIndex) * 23 + courseIndex) % 8;
-    
-    // Blend between hashes for more variation
-    const finalHash = (hash1 + hash2 + hash3) % 8;
-    return shinglePalette[finalHash];
+    const seed = (courseIndex * 7919 + tabIndex * 6271) ^ (courseIndex * tabIndex * 104729 + tabIndex * 997);
+    const idx = Math.abs(seed) % 4;
+    return shinglePalette[idx];
   };
   
   return (
