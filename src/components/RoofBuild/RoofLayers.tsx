@@ -1404,7 +1404,7 @@ export const MobileVentsLayer: React.FC<LayerProps> = ({ progress, startProgress
   if (progress < startProgress) return null;
   
   const easedProgress = easeOutQuint(layerProgress);
-  const translateY = -150 * (1 - easedProgress);
+  const translateY = -120 * (1 - easedProgress);
   
   // Text visible for middle 1/3
   const textOpacity = layerProgress >= 0.33 && layerProgress <= 0.67 
@@ -1416,30 +1416,29 @@ export const MobileVentsLayer: React.FC<LayerProps> = ({ progress, startProgress
       className="mobile-vents-layer"
       style={{
         transform: `translateY(${translateY}px)`,
-        transformOrigin: '200px 125px',
       }}
     >
-      {/* Simple pipe boot */}
-      <g style={{ transform: 'translate(120px, 120px)' }}>
-        <ellipse cx="0" cy="8" rx="10" ry="3" fill="hsl(168 40% 30%)" stroke="hsl(168 70% 50%)" strokeWidth="1.5" />
-        <rect x="-3" y="-12" width="6" height="12" rx="1" fill="hsl(168 50% 40%)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
-        <ellipse cx="0" cy="-12" rx="4" ry="1.5" fill="hsl(168 60% 50%)" stroke="hsl(168 80% 60%)" strokeWidth="1" />
+      {/* Simple pipe boot - left side of roof, lower position */}
+      <g>
+        <ellipse cx="150" cy="140" rx="8" ry="3" fill="hsl(168 40% 30%)" stroke="hsl(168 70% 50%)" strokeWidth="1.5" />
+        <rect x="147" y="125" width="6" height="15" rx="1" fill="hsl(168 50% 40%)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
+        <ellipse cx="150" cy="125" rx="4" ry="1.5" fill="hsl(168 60% 50%)" stroke="hsl(168 80% 60%)" strokeWidth="1" />
       </g>
       
-      {/* Simple box vent */}
-      <g style={{ transform: 'translate(280px, 125px)' }}>
-        <rect x="-12" y="3" width="24" height="6" rx="1" fill="hsl(168 30% 25%)" stroke="hsl(168 70% 45%)" strokeWidth="1" />
-        <rect x="-10" y="-8" width="20" height="12" rx="2" fill="hsl(168 45% 40%)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
-        <path d="M-11,-8 L-11,-12 Q-11,-15 -8,-15 L8,-15 Q11,-15 11,-12 L11,-8 Z" fill="hsl(168 50% 45%)" stroke="hsl(168 85% 60%)" strokeWidth="1.5" />
+      {/* Simple box vent - right side of roof */}
+      <g>
+        <rect x="238" y="143" width="24" height="6" rx="1" fill="hsl(168 30% 25%)" stroke="hsl(168 70% 45%)" strokeWidth="1" />
+        <rect x="240" y="130" width="20" height="14" rx="2" fill="hsl(168 45% 40%)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
+        <path d="M239,130 L239,124 Q239,121 242,121 L258,121 Q261,121 261,124 L261,130 Z" fill="hsl(168 50% 45%)" stroke="hsl(168 85% 60%)" strokeWidth="1.5" />
       </g>
       
       {/* Text label */}
       {textOpacity > 0 && (
         <g style={{ opacity: textOpacity }}>
-          <text x="200" y="100" textAnchor="middle" fontSize="13" fontWeight="800" fontFamily="system-ui, sans-serif" letterSpacing="2" fill="hsl(168 90% 75%)" stroke="hsl(0 0% 0%)" strokeWidth="3" paintOrder="stroke fill">
+          <text x="200" y="100" textAnchor="middle" fontSize="12" fontWeight="800" fontFamily="system-ui, sans-serif" letterSpacing="2" fill="hsl(168 90% 75%)" stroke="hsl(0 0% 0%)" strokeWidth="3" paintOrder="stroke fill">
             PIPE BOOTS
           </text>
-          <text x="200" y="116" textAnchor="middle" fontSize="13" fontWeight="800" fontFamily="system-ui, sans-serif" letterSpacing="2" fill="hsl(30 90% 65%)" stroke="hsl(0 0% 0%)" strokeWidth="3" paintOrder="stroke fill">
+          <text x="200" y="114" textAnchor="middle" fontSize="12" fontWeight="800" fontFamily="system-ui, sans-serif" letterSpacing="2" fill="hsl(30 90% 65%)" stroke="hsl(0 0% 0%)" strokeWidth="3" paintOrder="stroke fill">
             & VENTS
           </text>
         </g>
