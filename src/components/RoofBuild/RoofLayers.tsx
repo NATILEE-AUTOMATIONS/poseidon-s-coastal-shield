@@ -1158,36 +1158,32 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
     <g 
       className="vents-layer"
       style={{
-        transform: `translateY(${translateY}px)`,
-        transformOrigin: '200px 125px',
+        transform: `translate3d(0, ${translateY}px, 0)`,
+        willChange: 'transform',
       }}
     >
       <defs>
-        <filter id="pipeBootGlow" x="-100%" y="-100%" width="300%" height="300%">
-          <feGaussianBlur stdDeviation="2" result="blur1" />
-          <feGaussianBlur stdDeviation="4" result="blur2" />
-          <feGaussianBlur stdDeviation="8" result="blur3" />
-          <feMerge>
-            <feMergeNode in="blur3" />
-            <feMergeNode in="blur2" />
-            <feMergeNode in="blur1" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-        <filter id="ventGlow" x="-100%" y="-100%" width="300%" height="300%">
-          <feGaussianBlur stdDeviation="2" result="blur1" />
-          <feGaussianBlur stdDeviation="5" result="blur2" />
-          <feGaussianBlur stdDeviation="10" result="blur3" />
-          <feMerge>
-            <feMergeNode in="blur3" />
-            <feMergeNode in="blur2" />
-            <feMergeNode in="blur1" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
+        {/* Simplified filters - no heavy blur on mobile for performance */}
+        {!isMobile && (
+          <>
+            <filter id="pipeBootGlow" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="3" result="blur1" />
+              <feMerge>
+                <feMergeNode in="blur1" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <filter id="ventGlow" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="3" result="blur1" />
+              <feMerge>
+                <feMergeNode in="blur1" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </>
+        )}
         <filter id="ventsTextGlowFilter" x="-50%" y="-50%" width="200%" height="200%">
-          <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="hsl(168 80% 50%)" floodOpacity="0.8" />
-          <feDropShadow dx="0" dy="0" stdDeviation="8" floodColor="hsl(168 70% 40%)" floodOpacity="0.5" />
+          <feDropShadow dx="0" dy="0" stdDeviation={isMobile ? "2" : "4"} floodColor="hsl(168 80% 50%)" floodOpacity="0.8" />
         </filter>
         
         <linearGradient id="pipeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -1223,7 +1219,7 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
       )}
       
       {/* Pipe Boot */}
-      <g style={{ transform: `translate(${pipeBootX}px, ${pipeBootBaseY}px)` }} filter="url(#pipeBootGlow)">
+      <g style={{ transform: `translate(${pipeBootX}px, ${pipeBootBaseY}px)` }} filter={isMobile ? undefined : "url(#pipeBootGlow)"}>
         <ellipse cx="0" cy="12" rx="12" ry="4" fill="url(#bootGradient)" stroke={`hsl(168 70% ${45 * glowIntensity}%)`} strokeWidth="1" />
         <path d="M-12,12 Q-10,0 0,-8 Q10,0 12,12" fill="url(#bootGradient)" stroke={`hsl(168 70% ${50 * glowIntensity}%)`} strokeWidth="1.5" />
         <rect x="-4" y="-20" width="8" height="14" rx="1" fill="url(#pipeGradient)" stroke={`hsl(168 80% ${55 * glowIntensity}%)`} strokeWidth="1.5" />
@@ -1232,7 +1228,7 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
       </g>
       
       {/* Box Vent */}
-      <g style={{ transform: `translate(${ventX}px, ${ventBaseY}px)` }} filter="url(#ventGlow)">
+      <g style={{ transform: `translate(${ventX}px, ${ventBaseY}px)` }} filter={isMobile ? undefined : "url(#ventGlow)"}>
         <rect x="-16" y="5" width="32" height="8" rx="1" fill="hsl(168 30% 25%)" stroke={`hsl(168 70% ${45 * glowIntensity}%)`} strokeWidth="1" />
         <rect x="-12" y="-12" width="24" height="18" rx="2" fill="url(#ventBodyGradient)" stroke={`hsl(168 80% ${55 * glowIntensity}%)`} strokeWidth="1.5" />
         <path d="M-14,-12 L-14,-18 Q-14,-22 -10,-22 L10,-22 Q14,-22 14,-18 L14,-12 Z" fill="url(#ventHoodGradient)" stroke={`hsl(168 85% ${60 * glowIntensity}%)`} strokeWidth="1.5" />
