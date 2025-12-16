@@ -150,17 +150,19 @@ const HeroSection = () => {
             </h3>
             
             {/* Mobile-only static house - no animations */}
-            <div className="block sm:hidden mt-12 w-full px-4">
-              <svg
-                viewBox="0 0 400 280"
-                className="w-full max-w-[85vw] mx-auto"
-                style={{
-                  filter: 'drop-shadow(0 0 30px hsl(168 80% 45% / 0.25))',
-                }}
-              >
-                <HouseSVG doorAngle={0} lightBoost={0} />
-              </svg>
-            </div>
+            {isMobile && (
+              <div className="mt-12 w-full px-4">
+                <svg
+                  viewBox="0 0 400 280"
+                  className="w-full max-w-[85vw] mx-auto"
+                  style={{
+                    filter: 'drop-shadow(0 0 30px hsl(168 80% 45% / 0.25))',
+                  }}
+                >
+                  <HouseSVG doorAngle={0} lightBoost={0} />
+                </svg>
+              </div>
+            )}
           </div>
         </div>
       </div>
