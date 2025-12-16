@@ -1064,120 +1064,57 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                 opacity: Math.min(1, courseProgress * 3),
               }}
             >
-              {/* Individual shingle tabs */}
-              {Array.from({ length: tabCount }).map((_, tabIdx) => {
-                // Tab entrance stagger within course
-                const tabDelay = tabIdx * 0.06;
-                const tabProgress = Math.max(0, Math.min(1, (courseProgress - tabDelay) / 0.5));
-                if (tabProgress <= 0) return null;
-                
-                const tabEased = easeOutBack(tabProgress);
-                
-                // Tab positions - calculate raw positions then clamp
-                const rawStart = tabIdx * tabWidth - tabOffset;
-                const rawEnd = (tabIdx + 1) * tabWidth - tabOffset;
-                
-                // Clamp to 0-1 range (roof bounds)
-                const clampedStart = Math.max(0, rawStart);
-                const clampedEnd = Math.min(1, rawEnd);
-                
-                // Skip if tab is completely outside roof bounds
-                if (clampedStart >= clampedEnd) return null;
-                
-                // Calculate tab corners
-                const tabTopLeftX = topLeftX + (topRightX - topLeftX) * clampedStart;
-                const tabTopRightX = topLeftX + (topRightX - topLeftX) * clampedEnd;
-                const tabBottomLeftX = bottomLeftX + courseWidth * clampedStart;
-                const tabBottomRightX = bottomLeftX + courseWidth * clampedEnd;
-                
-                const tabCenterX = (tabBottomLeftX + tabBottomRightX) / 2;
-                const tabCenterY = (topY + bottomY) / 2;
-                const tabActualWidth = tabBottomRightX - tabBottomLeftX;
-                
-                // Individual tab drop and rotation
-                const tabDrop = 15 * (1 - tabEased);
-                const tabRotation = (1 - tabEased) * (tabIdx % 2 === 0 ? -8 : 8);
-                
-                const shingleColor = getShingleColor(courseIdx, tabIdx);
-                
-                // Create architectural shingle shape with notched bottom edge
-                // Notch creates the classic 3-tab shingle look
-                const notchDepth = courseHeight * 0.35; // How deep the notch cuts up
-                const notchWidth = tabActualWidth * 0.12; // Width of the notch gap
-                const notchInset = tabActualWidth * 0.33; // Where notches start from edges
-                
-                // Calculate notch positions along bottom edge
-                const notch1Left = tabBottomLeftX + notchInset - notchWidth / 2;
-                const notch1Right = tabBottomLeftX + notchInset + notchWidth / 2;
-                const notch2Left = tabBottomRightX - notchInset - notchWidth / 2;
-                const notch2Right = tabBottomRightX - notchInset + notchWidth / 2;
-                const notchTopY = bottomY - notchDepth;
-                
-                // Path for architectural shingle shape
-                const shinglePath = `
-                  M ${tabTopLeftX} ${topY}
-                  L ${tabTopRightX} ${topY}
-                  L ${tabBottomRightX} ${bottomY}
-                  L ${notch2Right} ${bottomY}
-                  L ${notch2Right} ${notchTopY}
-                  L ${notch2Left} ${notchTopY}
-                  L ${notch2Left} ${bottomY}
-                  L ${notch1Right} ${bottomY}
-                  L ${notch1Right} ${notchTopY}
-                  L ${notch1Left} ${notchTopY}
-                  L ${notch1Left} ${bottomY}
-                  L ${tabBottomLeftX} ${bottomY}
-                  Z
-                `;
+              {/* Simple clean shingle course - one solid band per course */}
+              {(() => {
+                const shingleColor = getShingleColor(courseIdx, 0);
+                const courseEased = easeOutBack(Math.min(1, courseProgress * 1.2));
+                const courseDrop = 20 * (1 - courseEased);
                 
                 return (
                   <g 
-                    key={`tab-${courseIdx}-${tabIdx}`}
                     style={{
-                      transform: `translate(${tabCenterX}px, ${tabCenterY + tabDrop}px) rotate(${tabRotation}deg) translate(${-tabCenterX}px, ${-tabCenterY}px)`,
-                      opacity: tabProgress,
+                      transform: `translateY(${courseDrop}px)`,
+                      opacity: Math.min(1, courseProgress * 2.5),
                     }}
                   >
-                    {/* Base shingle with notched shape */}
-                    <path
-                      d={shinglePath}
+                    {/* Main shingle course band */}
+                    <polygon
+                      points={`${topLeftX},${topY} ${topRightX},${topY} ${bottomRightX},${bottomY} ${bottomLeftX},${bottomY}`}
                       fill={shingleColor}
                     />
                     
-                    {/* Dimensional highlight (top edge) */}
-                    <path
-                      d={shinglePath}
+                    {/* Highlight gradient overlay */}
+                    <polygon
+                      points={`${topLeftX},${topY} ${topRightX},${topY} ${bottomRightX},${bottomY} ${bottomLeftX},${bottomY}`}
                       fill="url(#shingleHighlight)"
                     />
                     
-                    {/* Shadow (bottom edge) */}
-                    <path
-                      d={shinglePath}
+                    {/* Shadow at bottom edge for depth */}
+                    <polygon
+                      points={`${topLeftX},${topY} ${topRightX},${topY} ${bottomRightX},${bottomY} ${bottomLeftX},${bottomY}`}
                       fill="url(#shingleShadow)"
                     />
                     
-                    {/* Tab section dividers - vertical lines between the 3 tabs */}
-                    <line
-                      x1={notch1Left + notchWidth / 2}
-                      y1={topY + 2}
-                      x2={notch1Left + notchWidth / 2}
-                      y2={notchTopY}
-                      stroke="hsl(200 10% 8%)"
-                      strokeWidth="0.8"
-                      opacity={0.5 * tabProgress}
-                    />
-                    <line
-                      x1={notch2Left + notchWidth / 2}
-                      y1={topY + 2}
-                      x2={notch2Left + notchWidth / 2}
-                      y2={notchTopY}
-                      stroke="hsl(200 10% 8%)"
-                      strokeWidth="0.8"
-                      opacity={0.5 * tabProgress}
-                    />
+                    {/* Subtle vertical divider lines for tab appearance */}
+                    {[0.25, 0.5, 0.75].map((ratio, i) => {
+                      const lineTopX = topLeftX + (topRightX - topLeftX) * ratio;
+                      const lineBottomX = bottomLeftX + courseWidth * ratio;
+                      return (
+                        <line
+                          key={i}
+                          x1={lineTopX}
+                          y1={topY + 1}
+                          x2={lineBottomX}
+                          y2={bottomY - 1}
+                          stroke="hsl(200 8% 12%)"
+                          strokeWidth="0.5"
+                          opacity={0.3}
+                        />
+                      );
+                    })}
                   </g>
                 );
-              })}
+              })()}
               
               {/* Course shadow line (appears when course is mostly complete) */}
               {courseProgress > 0.7 && courseIdx > 0 && (
