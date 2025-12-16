@@ -1151,21 +1151,24 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
   const ventX = isMobile ? 280 : 270;
   const ventBaseY = isMobile ? 125 : 130;
   
-  // Subtle glow intensity
-  const glowIntensity = easedProgress > 0.8 ? 1 + Math.sin((easedProgress - 0.8) * 15) * 0.15 : 1;
+  // Subtle glow intensity - only animate on desktop for performance
+  const glowIntensity = isMobile ? 1 : (easedProgress > 0.8 ? 1 + Math.sin((easedProgress - 0.8) * 15) * 0.15 : 1);
   
   // Text just visible with no fade - enters with the other elements
   const textOpacity = 1;
+  
+  // Round translateY to avoid subpixel rendering on mobile
+  const smoothTranslateY = isMobile ? Math.round(translateY) : translateY;
   
   return (
     <g 
       className="vents-layer"
       style={{
         transform: isMobile 
-          ? `translate3d(0, ${translateY}px, 0)` 
+          ? `translateY(${smoothTranslateY}px)` 
           : `translate3d(0, ${translateY}px, 0) scale(${desktopScale})`,
         opacity: desktopOpacity,
-        willChange: 'transform, opacity',
+        willChange: isMobile ? 'transform' : 'transform, opacity',
         transformOrigin: '200px 120px',
       }}
     >
@@ -1187,11 +1190,11 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
+            <filter id="ventsTextGlowFilter" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="hsl(168 80% 50%)" floodOpacity="0.8" />
+            </filter>
           </>
         )}
-        <filter id="ventsTextGlowFilter" x="-50%" y="-50%" width="200%" height="200%">
-          <feDropShadow dx="0" dy="0" stdDeviation={isMobile ? "2" : "4"} floodColor="hsl(168 80% 50%)" floodOpacity="0.8" />
-        </filter>
         
         <linearGradient id="pipeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="hsl(168 50% 35%)" />
@@ -1216,37 +1219,44 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
       {/* Text label - inside animated group so it follows the drop */}
       {textOpacity > 0 && (
         <g style={{ opacity: textOpacity }}>
-          <text x="200" y="100" textAnchor="middle" fontSize="13" fontWeight="800" fontFamily="system-ui, sans-serif" letterSpacing="2" fill="hsl(168 90% 75%)" stroke="hsl(0 0% 0%)" strokeWidth="3" paintOrder="stroke fill" filter="url(#ventsTextGlowFilter)">
+          <text x="200" y="100" textAnchor="middle" fontSize="13" fontWeight="800" fontFamily="system-ui, sans-serif" letterSpacing="2" fill="hsl(168 90% 75%)" stroke="hsl(0 0% 0%)" strokeWidth="3" paintOrder="stroke fill" filter={isMobile ? undefined : "url(#ventsTextGlowFilter)"}>
             PIPE BOOTS
           </text>
-          <text x="200" y="116" textAnchor="middle" fontSize="13" fontWeight="800" fontFamily="system-ui, sans-serif" letterSpacing="2" fill="hsl(30 90% 65%)" stroke="hsl(0 0% 0%)" strokeWidth="3" paintOrder="stroke fill" filter="url(#ventsTextGlowFilter)">
+          <text x="200" y="116" textAnchor="middle" fontSize="13" fontWeight="800" fontFamily="system-ui, sans-serif" letterSpacing="2" fill="hsl(30 90% 65%)" stroke="hsl(0 0% 0%)" strokeWidth="3" paintOrder="stroke fill" filter={isMobile ? undefined : "url(#ventsTextGlowFilter)"}>
             & VENTS
           </text>
         </g>
       )}
       
-      {/* Pipe Boot */}
+      {/* Pipe Boot - simplified on mobile */}
       <g style={{ transform: `translate(${pipeBootX}px, ${pipeBootBaseY}px)` }} filter={isMobile ? undefined : "url(#pipeBootGlow)"}>
-        <ellipse cx="0" cy="12" rx="12" ry="4" fill="url(#bootGradient)" stroke={`hsl(168 70% ${45 * glowIntensity}%)`} strokeWidth="1" />
-        <path d="M-12,12 Q-10,0 0,-8 Q10,0 12,12" fill="url(#bootGradient)" stroke={`hsl(168 70% ${50 * glowIntensity}%)`} strokeWidth="1.5" />
-        <rect x="-4" y="-20" width="8" height="14" rx="1" fill="url(#pipeGradient)" stroke={`hsl(168 80% ${55 * glowIntensity}%)`} strokeWidth="1.5" />
-        <ellipse cx="0" cy="-20" rx="5" ry="2" fill={`hsl(168 60% ${50 * glowIntensity}%)`} stroke={`hsl(168 80% ${60 * glowIntensity}%)`} strokeWidth="1" />
-        <ellipse cx="0" cy="-20" rx="3" ry="1.2" fill="none" stroke={`hsl(168 100% ${70 * glowIntensity}%)`} strokeWidth="0.5" opacity={0.8} />
+        <ellipse cx="0" cy="12" rx="12" ry="4" fill="url(#bootGradient)" stroke="hsl(168 70% 45%)" strokeWidth="1" />
+        <path d="M-12,12 Q-10,0 0,-8 Q10,0 12,12" fill="url(#bootGradient)" stroke="hsl(168 70% 50%)" strokeWidth="1.5" />
+        <rect x="-4" y="-20" width="8" height="14" rx="1" fill="url(#pipeGradient)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
+        <ellipse cx="0" cy="-20" rx="5" ry="2" fill="hsl(168 60% 50%)" stroke="hsl(168 80% 60%)" strokeWidth="1" />
+        {!isMobile && (
+          <ellipse cx="0" cy="-20" rx="3" ry="1.2" fill="none" stroke={`hsl(168 100% ${70 * glowIntensity}%)`} strokeWidth="0.5" opacity={0.8} />
+        )}
       </g>
       
-      {/* Box Vent */}
+      {/* Box Vent - simplified on mobile */}
       <g style={{ transform: `translate(${ventX}px, ${ventBaseY}px)` }} filter={isMobile ? undefined : "url(#ventGlow)"}>
-        <rect x="-16" y="5" width="32" height="8" rx="1" fill="hsl(168 30% 25%)" stroke={`hsl(168 70% ${45 * glowIntensity}%)`} strokeWidth="1" />
-        <rect x="-12" y="-12" width="24" height="18" rx="2" fill="url(#ventBodyGradient)" stroke={`hsl(168 80% ${55 * glowIntensity}%)`} strokeWidth="1.5" />
-        <path d="M-14,-12 L-14,-18 Q-14,-22 -10,-22 L10,-22 Q14,-22 14,-18 L14,-12 Z" fill="url(#ventHoodGradient)" stroke={`hsl(168 85% ${60 * glowIntensity}%)`} strokeWidth="1.5" />
-        <rect x="-10" y="-8" width="20" height="10" rx="1" fill="hsl(0 0% 5%)" stroke={`hsl(168 60% ${40 * glowIntensity}%)`} strokeWidth="0.5" />
-        {[-6, -2, 2, 6].map((x, i) => (
-          <line key={i} x1={x} y1="-7" x2={x} y2="1" stroke={`hsl(168 50% ${35 * glowIntensity}%)`} strokeWidth="0.5" />
-        ))}
-        {[-5, -1, 3].map((y, i) => (
-          <line key={i} x1="-9" y1={y - 3} x2="9" y2={y - 3} stroke={`hsl(168 50% ${35 * glowIntensity}%)`} strokeWidth="0.5" />
-        ))}
-        <line x1="-13" y1="-22" x2="13" y2="-22" stroke={`hsl(168 100% ${70 * glowIntensity}%)`} strokeWidth="1" opacity={0.9} />
+        <rect x="-16" y="5" width="32" height="8" rx="1" fill="hsl(168 30% 25%)" stroke="hsl(168 70% 45%)" strokeWidth="1" />
+        <rect x="-12" y="-12" width="24" height="18" rx="2" fill="url(#ventBodyGradient)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
+        <path d="M-14,-12 L-14,-18 Q-14,-22 -10,-22 L10,-22 Q14,-22 14,-18 L14,-12 Z" fill="url(#ventHoodGradient)" stroke="hsl(168 85% 60%)" strokeWidth="1.5" />
+        <rect x="-10" y="-8" width="20" height="10" rx="1" fill="hsl(0 0% 5%)" stroke="hsl(168 60% 40%)" strokeWidth="0.5" />
+        {/* Mesh lines - desktop only for performance */}
+        {!isMobile && (
+          <>
+            {[-6, -2, 2, 6].map((x, i) => (
+              <line key={i} x1={x} y1="-7" x2={x} y2="1" stroke={`hsl(168 50% ${35 * glowIntensity}%)`} strokeWidth="0.5" />
+            ))}
+            {[-5, -1, 3].map((y, i) => (
+              <line key={i} x1="-9" y1={y - 3} x2="9" y2={y - 3} stroke={`hsl(168 50% ${35 * glowIntensity}%)`} strokeWidth="0.5" />
+            ))}
+            <line x1="-13" y1="-22" x2="13" y2="-22" stroke={`hsl(168 100% ${70 * glowIntensity}%)`} strokeWidth="1" opacity={0.9} />
+          </>
+        )}
       </g>
     </g>
   );
