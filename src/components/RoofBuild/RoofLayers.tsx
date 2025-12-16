@@ -989,23 +989,27 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
             : 0
   );
   
-  // Slate blue-gray architectural shingle colors
+  // Slate blue-gray shingles with randomized pattern to avoid alignment
   const getShingleColor = (courseIndex: number, tabIndex: number) => {
-    const seed = (courseIndex * 7 + tabIndex * 13) % 100;
-    const seed2 = (courseIndex * 11 + tabIndex * 17) % 100;
-    const seed3 = (courseIndex * 3 + tabIndex * 19) % 100;
-    // Cool slate blue-gray tones
-    const baseH = 200 + (seed % 20); // 200-220 blue-gray range
-    const baseS = 8 + (seed2 % 8); // 8-15% saturation for color depth
-    const baseL = 14 + (seed3 % 12); // 14-25% lightness
+    // Use prime multipliers and add course-based offset to break patterns
+    const primes = [7, 11, 13, 17, 19, 23, 29, 31, 37, 41];
+    const coursePrime = primes[courseIndex % primes.length];
+    const seed = (courseIndex * 31 + tabIndex * coursePrime + courseIndex * tabIndex) % 100;
+    const seed2 = (courseIndex * 17 + tabIndex * 43 + Math.floor(courseIndex / 2) * 13) % 100;
+    const seed3 = (tabIndex * 29 + courseIndex * 53 + (courseIndex + tabIndex) * 7) % 100;
+    
+    // Cool slate blue-gray tones with good variation
+    const baseH = 195 + (seed % 25); // 195-220 blue-gray range
+    const baseS = 6 + (seed2 % 10); // 6-15% saturation
+    const baseL = 12 + (seed3 % 14); // 12-25% lightness
     return `hsl(${baseH} ${baseS}% ${baseL}%)`;
   };
   
-  // Accent highlights for dimensional look
+  // Accent highlights
   const getGranuleAccent = (courseIndex: number, tabIndex: number) => {
-    const seed = (courseIndex * 23 + tabIndex * 29) % 100;
-    const baseL = 20 + (seed % 12);
-    return `hsl(210 10% ${baseL}%)`;
+    const seed = (courseIndex * 37 + tabIndex * 47 + courseIndex * tabIndex * 3) % 100;
+    const baseL = 18 + (seed % 14);
+    return `hsl(208 12% ${baseL}%)`;
   };
   
   return (
