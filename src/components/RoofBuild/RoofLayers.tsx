@@ -930,6 +930,9 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Skip shingles animation entirely on mobile
+  if (isMobileView) return null;
+
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
