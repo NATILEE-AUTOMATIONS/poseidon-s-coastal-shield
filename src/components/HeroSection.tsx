@@ -154,7 +154,7 @@ const HeroSection = () => {
           {isMobile && (
             <div 
               className="absolute left-0 right-0 flex justify-center"
-              style={{ top: '520px' }}
+              style={{ top: '560px' }}
             >
               <svg
                 viewBox="30 30 340 250"
