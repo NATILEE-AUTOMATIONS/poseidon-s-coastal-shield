@@ -216,7 +216,7 @@ const RoofBuildSection: React.FC = () => {
                   backfaceVisibility: 'hidden', // Prevent flicker
                 }}
               >
-              <div className="w-full max-w-2xl">
+              <div className="w-full max-w-2xl svg-container" style={{ containerType: 'inline-size' }}>
                 <svg
                   viewBox="0 0 400 280"
                   className="w-full"
