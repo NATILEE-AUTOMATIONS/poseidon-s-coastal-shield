@@ -1066,8 +1066,7 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
             >
               {/* Individual shingle tabs with brick-like stagger pattern */}
               {(() => {
-                const tabsPerCourse = 6;
-                const gapWidth = 1.5; // Visible gap between shingles
+                const tabsPerCourse = 8;
                 const tabWidthRatio = 1 / tabsPerCourse;
                 const offsetRatio = courseIdx % 2 === 1 ? tabWidthRatio / 2 : 0;
                 
@@ -1081,7 +1080,14 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                       opacity: Math.min(1, courseProgress * 2.5),
                     }}
                   >
-                    {Array.from({ length: tabsPerCourse + 1 }).map((_, tabIdx) => {
+                    {/* First: solid background course to prevent gaps */}
+                    <polygon
+                      points={`${topLeftX},${topY} ${topRightX},${topY} ${bottomRightX},${bottomY} ${bottomLeftX},${bottomY}`}
+                      fill={getShingleColor(courseIdx, 0)}
+                    />
+                    
+                    {/* Then: individual tabs on top for texture */}
+                    {Array.from({ length: tabsPerCourse + 2 }).map((_, tabIdx) => {
                       // Calculate tab boundaries with offset
                       const rawStart = tabIdx * tabWidthRatio - offsetRatio;
                       const rawEnd = (tabIdx + 1) * tabWidthRatio - offsetRatio;
@@ -1092,31 +1098,16 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                       
                       if (clampedStart >= clampedEnd) return null;
                       
-                      // Add gap to right side (except for rightmost tab)
-                      const gapAdjust = clampedEnd < 1 ? gapWidth : 0;
-                      
-                      // Calculate corner positions
+                      // Calculate corner positions - no gaps, full coverage
                       const tabTopLeftX = topLeftX + (topRightX - topLeftX) * clampedStart;
-                      const tabTopRightX = topLeftX + (topRightX - topLeftX) * clampedEnd - gapAdjust * 0.5;
+                      const tabTopRightX = topLeftX + (topRightX - topLeftX) * clampedEnd;
                       const tabBottomLeftX = bottomLeftX + courseWidth * clampedStart;
-                      const tabBottomRightX = bottomLeftX + courseWidth * clampedEnd - gapAdjust;
+                      const tabBottomRightX = bottomLeftX + courseWidth * clampedEnd;
                       
                       const shingleColor = getShingleColor(courseIdx, tabIdx);
                       
-                      // Stagger entrance animation per tab
-                      const tabDelay = tabIdx * 0.08;
-                      const tabProgress = Math.max(0, Math.min(1, (courseProgress - tabDelay) / 0.6));
-                      const tabEased = easeOutBack(tabProgress);
-                      const tabDrop = 12 * (1 - tabEased);
-                      
                       return (
-                        <g 
-                          key={`tab-${tabIdx}`}
-                          style={{
-                            transform: `translateY(${tabDrop}px)`,
-                            opacity: tabProgress,
-                          }}
-                        >
+                        <g key={`tab-${tabIdx}`}>
                           {/* Base shingle rectangle */}
                           <polygon
                             points={`${tabTopLeftX},${topY} ${tabTopRightX},${topY} ${tabBottomRightX},${bottomY} ${tabBottomLeftX},${bottomY}`}
@@ -1135,19 +1126,32 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                             fill="url(#shingleShadow)"
                           />
                           
-                          {/* Bottom edge shadow line for depth */}
-                          <line
-                            x1={tabBottomLeftX + 1}
-                            y1={bottomY - 0.5}
-                            x2={tabBottomRightX - 1}
-                            y2={bottomY - 0.5}
-                            stroke="hsl(200 15% 8%)"
-                            strokeWidth="1.5"
-                            opacity={0.5}
-                          />
+                          {/* Right edge divider line for shingle definition */}
+                          {clampedEnd < 1 && (
+                            <line
+                              x1={tabTopRightX}
+                              y1={topY + 1}
+                              x2={tabBottomRightX}
+                              y2={bottomY - 1}
+                              stroke="hsl(200 12% 10%)"
+                              strokeWidth="1"
+                              opacity={0.6}
+                            />
+                          )}
                         </g>
                       );
                     })}
+                    
+                    {/* Course bottom shadow line for depth between rows */}
+                    <line
+                      x1={bottomLeftX + 2}
+                      y1={bottomY}
+                      x2={bottomRightX - 2}
+                      y2={bottomY}
+                      stroke="hsl(200 15% 6%)"
+                      strokeWidth="1.5"
+                      opacity={0.4}
+                    />
                   </g>
                 );
               })()}
