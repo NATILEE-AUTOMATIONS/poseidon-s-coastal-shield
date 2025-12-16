@@ -918,46 +918,8 @@ export const FlashingLayer: React.FC<LayerProps> = () => null;
 export const ShinglesLayer: React.FC<LayerProps> = () => null;
 // Field Shingles - individual tabs cascade from bottom to top with flip-drop entrance
 export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
-  // Mobile-first: default to hiding shingles, only show when confirmed large screen
-  const [shouldRender, setShouldRender] = React.useState(false);
-
-  React.useEffect(() => {
-    const checkSize = () => {
-      // Method 1: Check for touch-primary device (catches real mobile)
-      const isTouchDevice = 
-        'ontouchstart' in window || 
-        navigator.maxTouchPoints > 0 ||
-        window.matchMedia('(hover: none)').matches ||
-        window.matchMedia('(pointer: coarse)').matches;
-      
-      // Method 2: Check viewport width
-      const isLargeScreen = window.innerWidth >= 768;
-      
-      // Method 3: Check if we're in a scaled container (Lovable preview)
-      const svgElement = document.querySelector('.roof-build-svg');
-      const visuallySmall = svgElement ? 
-        svgElement.getBoundingClientRect().width < 500 : false;
-      
-      // Only show shingles on non-touch, large screens that aren't visually scaled small
-      setShouldRender(isLargeScreen && !isTouchDevice && !visuallySmall);
-    };
-
-    checkSize();
-    window.addEventListener('resize', checkSize);
-    
-    // Also observe visual size changes
-    const observer = new ResizeObserver(checkSize);
-    const svgEl = document.querySelector('.roof-build-svg');
-    if (svgEl) observer.observe(svgEl);
-    
-    return () => {
-      window.removeEventListener('resize', checkSize);
-      observer.disconnect();
-    };
-  }, [isMobile]);
-
-  // Don't render anything on mobile - return null, not an empty <g>
-  if (!shouldRender || isMobile) return null;
+  // If isMobile prop is true, don't render
+  if (isMobile) return null;
 
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
