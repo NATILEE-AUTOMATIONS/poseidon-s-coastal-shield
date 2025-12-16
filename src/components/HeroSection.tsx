@@ -84,30 +84,9 @@ const HeroSection = () => {
           </Button>
         </div>
 
-        {/* Static text - positioned independently */}
-        <div className="mt-10 sm:mt-16 text-center px-6">
-          <h2 
-            className="text-4xl md:text-5xl font-bold tracking-tight"
-            style={{
-              color: 'hsl(45 100% 95%)',
-              textShadow: '0 0 10px hsl(168 70% 50% / 0.4), 0 0 20px hsl(168 70% 50% / 0.3)',
-            }}
-          >
-            910
-          </h2>
-          <h3 
-            className="text-3xl md:text-4xl font-bold mt-2"
-            style={{
-              color: 'hsl(168 70% 55%)',
-              textShadow: '0 0 15px hsl(168 70% 50% / 0.8), 0 0 30px hsl(168 70% 50% / 0.6), 0 0 45px hsl(168 70% 50% / 0.4)',
-            }}
-          >
-            Roofing Done Right
-          </h3>
-        </div>
-
-        {/* Scroll-triggered glowing line - grows downward from text */}
-        <div className="mt-8 flex flex-col items-center">
+        {/* Line and text container */}
+        <div className="mt-10 sm:mt-16 flex flex-col items-center relative" style={{ height: '450px' }}>
+          {/* Scroll-triggered glowing line */}
           <div 
             className="w-4 sm:w-3 rounded-full"
             style={{
@@ -123,6 +102,28 @@ const HeroSection = () => {
               transition: 'opacity 0.2s ease-out',
             }}
           />
+          
+          {/* Static text - fixed at bottom of container */}
+          <div className="absolute bottom-0 text-center px-6">
+            <h2 
+              className="text-4xl md:text-5xl font-bold tracking-tight"
+              style={{
+                color: 'hsl(45 100% 95%)',
+                textShadow: '0 0 10px hsl(168 70% 50% / 0.4), 0 0 20px hsl(168 70% 50% / 0.3)',
+              }}
+            >
+              910
+            </h2>
+            <h3 
+              className="text-3xl md:text-4xl font-bold mt-2"
+              style={{
+                color: 'hsl(168 70% 55%)',
+                textShadow: '0 0 15px hsl(168 70% 50% / 0.8), 0 0 30px hsl(168 70% 50% / 0.6), 0 0 45px hsl(168 70% 50% / 0.4)',
+              }}
+            >
+              Roofing Done Right
+            </h3>
+          </div>
         </div>
       </div>
 
