@@ -1291,18 +1291,18 @@ export const MobileVentsLayer: React.FC<LayerProps> = ({ progress, startProgress
         contain: 'layout style paint',
       } as React.CSSProperties}
     >
-      {/* Simple pipe boot - slightly right of desktop position */}
+      {/* Simple pipe boot - symmetrical position, clear of chimney */}
       <g>
-        <ellipse cx="150" cy="140" rx="8" ry="3" fill="hsl(168 40% 30%)" stroke="hsl(168 70% 50%)" strokeWidth="1.5" />
-        <rect x="147" y="125" width="6" height="15" rx="1" fill="hsl(168 50% 40%)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
-        <ellipse cx="150" cy="125" rx="4" ry="1.5" fill="hsl(168 60% 50%)" stroke="hsl(168 80% 60%)" strokeWidth="1" />
+        <ellipse cx="165" cy="138" rx="8" ry="3" fill="hsl(168 40% 30%)" stroke="hsl(168 70% 50%)" strokeWidth="1.5" />
+        <rect x="162" y="123" width="6" height="15" rx="1" fill="hsl(168 50% 40%)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
+        <ellipse cx="165" cy="123" rx="4" ry="1.5" fill="hsl(168 60% 50%)" stroke="hsl(168 80% 60%)" strokeWidth="1" />
       </g>
       
-      {/* Simple box vent - matching desktop position x=270, aligned with pipe */}
+      {/* Simple box vent - symmetrical with pipe (both 35px from center) */}
       <g>
-        <rect x="258" y="133" width="24" height="6" rx="1" fill="hsl(168 30% 25%)" stroke="hsl(168 70% 45%)" strokeWidth="1" />
-        <rect x="260" y="120" width="20" height="14" rx="2" fill="hsl(168 45% 40%)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
-        <path d="M259,120 L259,114 Q259,111 262,111 L278,111 Q281,111 281,114 L281,120 Z" fill="hsl(168 50% 45%)" stroke="hsl(168 85% 60%)" strokeWidth="1.5" />
+        <rect x="223" y="131" width="24" height="6" rx="1" fill="hsl(168 30% 25%)" stroke="hsl(168 70% 45%)" strokeWidth="1" />
+        <rect x="225" y="118" width="20" height="14" rx="2" fill="hsl(168 45% 40%)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
+        <path d="M224,118 L224,112 Q224,109 227,109 L243,109 Q246,109 246,112 L246,118 Z" fill="hsl(168 50% 45%)" stroke="hsl(168 85% 60%)" strokeWidth="1.5" />
       </g>
       
       {/* Text label - no fade, just visible/hidden */}
