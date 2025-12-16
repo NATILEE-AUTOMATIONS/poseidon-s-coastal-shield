@@ -5,6 +5,7 @@ import { useEffect, useState, useRef } from "react";
 const HeroSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [lineProgress, setLineProgress] = useState(0);
+  const [textLit, setTextLit] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,13 +20,20 @@ const HeroSection = () => {
       const progress = Math.max(0, Math.min(1, (scrollY - startScroll) / (endScroll - startScroll)));
       
       setLineProgress(progress);
+      
+      // Trigger text ignition when line is near complete
+      if (progress >= 0.85 && !textLit) {
+        setTextLit(true);
+      } else if (progress < 0.8 && textLit) {
+        setTextLit(false);
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [textLit]);
 
   // Make line taller on mobile for better visibility
   const lineHeight = Math.min(lineProgress * 1.2, 1) * 350;
@@ -103,7 +111,7 @@ const HeroSection = () => {
             }}
           />
           
-          {/* Text - fixed position */}
+          {/* Text - fixed position with neon ignition effect */}
           <div 
             className="absolute text-center px-6 w-full"
             style={{ top: '355px' }}
@@ -111,8 +119,13 @@ const HeroSection = () => {
             <h2 
               className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight"
               style={{
-                color: 'hsl(30 95% 60%)',
-                textShadow: '0 0 15px hsl(30 95% 55% / 0.8), 0 0 30px hsl(30 95% 55% / 0.5)',
+                color: textLit ? 'hsl(30 95% 60%)' : 'hsl(30 95% 35%)',
+                textShadow: textLit 
+                  ? '0 0 15px hsl(30 95% 55% / 0.8), 0 0 30px hsl(30 95% 55% / 0.5)' 
+                  : '0 0 5px hsl(30 95% 40% / 0.2)',
+                filter: textLit ? 'blur(0px)' : 'blur(2px)',
+                opacity: textLit ? 1 : 0.4,
+                transition: 'all 600ms cubic-bezier(0.4, 0, 0.2, 1)',
               }}
             >
               910 Roofing
@@ -120,8 +133,14 @@ const HeroSection = () => {
             <h3 
               className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mt-2"
               style={{
-                color: 'hsl(168 70% 55%)',
-                textShadow: '0 0 15px hsl(168 70% 50% / 0.8), 0 0 30px hsl(168 70% 50% / 0.6), 0 0 45px hsl(168 70% 50% / 0.4)',
+                color: textLit ? 'hsl(168 70% 55%)' : 'hsl(168 70% 30%)',
+                textShadow: textLit 
+                  ? '0 0 15px hsl(168 70% 50% / 0.8), 0 0 30px hsl(168 70% 50% / 0.6), 0 0 45px hsl(168 70% 50% / 0.4)' 
+                  : '0 0 5px hsl(168 70% 35% / 0.2)',
+                filter: textLit ? 'blur(0px)' : 'blur(2px)',
+                opacity: textLit ? 1 : 0.4,
+                transition: 'all 600ms cubic-bezier(0.4, 0, 0.2, 1)',
+                transitionDelay: textLit ? '150ms' : '0ms',
               }}
             >
               Done Right
