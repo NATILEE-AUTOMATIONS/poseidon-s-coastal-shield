@@ -85,7 +85,7 @@ const HeroSection = () => {
         </div>
 
         {/* Line and text container - fixed height so text stays static */}
-        <div className="mt-10 sm:mt-16 flex flex-col items-center relative w-full" style={{ height: '500px', minHeight: '500px' }}>
+        <div className="mt-10 sm:mt-16 flex flex-col items-center relative w-full" style={{ height: '420px', minHeight: '420px' }}>
           {/* Scroll-triggered glowing line */}
           <div 
             className="w-4 sm:w-3 rounded-full absolute left-1/2 -translate-x-1/2"
