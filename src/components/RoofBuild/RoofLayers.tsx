@@ -1064,9 +1064,13 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                 opacity: Math.min(1, courseProgress * 3),
               }}
             >
-              {/* Simple clean shingle course - one solid band per course */}
+              {/* Individual shingle tabs with brick-like stagger pattern */}
               {(() => {
-                const shingleColor = getShingleColor(courseIdx, 0);
+                const tabsPerCourse = 6;
+                const gapWidth = 1.5; // Visible gap between shingles
+                const tabWidthRatio = 1 / tabsPerCourse;
+                const offsetRatio = courseIdx % 2 === 1 ? tabWidthRatio / 2 : 0;
+                
                 const courseEased = easeOutBack(Math.min(1, courseProgress * 1.2));
                 const courseDrop = 20 * (1 - courseEased);
                 
@@ -1077,39 +1081,71 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                       opacity: Math.min(1, courseProgress * 2.5),
                     }}
                   >
-                    {/* Main shingle course band */}
-                    <polygon
-                      points={`${topLeftX},${topY} ${topRightX},${topY} ${bottomRightX},${bottomY} ${bottomLeftX},${bottomY}`}
-                      fill={shingleColor}
-                    />
-                    
-                    {/* Highlight gradient overlay */}
-                    <polygon
-                      points={`${topLeftX},${topY} ${topRightX},${topY} ${bottomRightX},${bottomY} ${bottomLeftX},${bottomY}`}
-                      fill="url(#shingleHighlight)"
-                    />
-                    
-                    {/* Shadow at bottom edge for depth */}
-                    <polygon
-                      points={`${topLeftX},${topY} ${topRightX},${topY} ${bottomRightX},${bottomY} ${bottomLeftX},${bottomY}`}
-                      fill="url(#shingleShadow)"
-                    />
-                    
-                    {/* Subtle vertical divider lines for tab appearance */}
-                    {[0.25, 0.5, 0.75].map((ratio, i) => {
-                      const lineTopX = topLeftX + (topRightX - topLeftX) * ratio;
-                      const lineBottomX = bottomLeftX + courseWidth * ratio;
+                    {Array.from({ length: tabsPerCourse + 1 }).map((_, tabIdx) => {
+                      // Calculate tab boundaries with offset
+                      const rawStart = tabIdx * tabWidthRatio - offsetRatio;
+                      const rawEnd = (tabIdx + 1) * tabWidthRatio - offsetRatio;
+                      
+                      // Clamp to roof bounds
+                      const clampedStart = Math.max(0, rawStart);
+                      const clampedEnd = Math.min(1, rawEnd);
+                      
+                      if (clampedStart >= clampedEnd) return null;
+                      
+                      // Add gap to right side (except for rightmost tab)
+                      const gapAdjust = clampedEnd < 1 ? gapWidth : 0;
+                      
+                      // Calculate corner positions
+                      const tabTopLeftX = topLeftX + (topRightX - topLeftX) * clampedStart;
+                      const tabTopRightX = topLeftX + (topRightX - topLeftX) * clampedEnd - gapAdjust * 0.5;
+                      const tabBottomLeftX = bottomLeftX + courseWidth * clampedStart;
+                      const tabBottomRightX = bottomLeftX + courseWidth * clampedEnd - gapAdjust;
+                      
+                      const shingleColor = getShingleColor(courseIdx, tabIdx);
+                      
+                      // Stagger entrance animation per tab
+                      const tabDelay = tabIdx * 0.08;
+                      const tabProgress = Math.max(0, Math.min(1, (courseProgress - tabDelay) / 0.6));
+                      const tabEased = easeOutBack(tabProgress);
+                      const tabDrop = 12 * (1 - tabEased);
+                      
                       return (
-                        <line
-                          key={i}
-                          x1={lineTopX}
-                          y1={topY + 1}
-                          x2={lineBottomX}
-                          y2={bottomY - 1}
-                          stroke="hsl(200 8% 12%)"
-                          strokeWidth="0.5"
-                          opacity={0.3}
-                        />
+                        <g 
+                          key={`tab-${tabIdx}`}
+                          style={{
+                            transform: `translateY(${tabDrop}px)`,
+                            opacity: tabProgress,
+                          }}
+                        >
+                          {/* Base shingle rectangle */}
+                          <polygon
+                            points={`${tabTopLeftX},${topY} ${tabTopRightX},${topY} ${tabBottomRightX},${bottomY} ${tabBottomLeftX},${bottomY}`}
+                            fill={shingleColor}
+                          />
+                          
+                          {/* Highlight overlay */}
+                          <polygon
+                            points={`${tabTopLeftX},${topY} ${tabTopRightX},${topY} ${tabBottomRightX},${bottomY} ${tabBottomLeftX},${bottomY}`}
+                            fill="url(#shingleHighlight)"
+                          />
+                          
+                          {/* Shadow overlay */}
+                          <polygon
+                            points={`${tabTopLeftX},${topY} ${tabTopRightX},${topY} ${tabBottomRightX},${bottomY} ${tabBottomLeftX},${bottomY}`}
+                            fill="url(#shingleShadow)"
+                          />
+                          
+                          {/* Bottom edge shadow line for depth */}
+                          <line
+                            x1={tabBottomLeftX + 1}
+                            y1={bottomY - 0.5}
+                            x2={tabBottomRightX - 1}
+                            y2={bottomY - 0.5}
+                            stroke="hsl(200 15% 8%)"
+                            strokeWidth="1.5"
+                            opacity={0.5}
+                          />
+                        </g>
                       );
                     })}
                   </g>
