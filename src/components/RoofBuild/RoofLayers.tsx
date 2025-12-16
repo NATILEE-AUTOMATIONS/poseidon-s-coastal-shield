@@ -1358,8 +1358,8 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
         </g>
       )}
       
-      {/* Text label with wipe reveal synced to pipe boot descent - desktop only */}
-      {!isMobile && pipeBootProgress > 0 && (
+      {/* Text label with wipe reveal synced to pipe boot descent */}
+      {pipeBootProgress > 0 && (
         <g>
           <defs>
             {/* Clip path that follows pipe boot Y position */}
