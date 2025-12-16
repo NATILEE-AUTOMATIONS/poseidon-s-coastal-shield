@@ -923,18 +923,38 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
 
   React.useEffect(() => {
     const checkSize = () => {
-      // Check actual window width - this is the most reliable method
+      // Method 1: Check for touch-primary device (catches real mobile)
+      const isTouchDevice = 
+        'ontouchstart' in window || 
+        navigator.maxTouchPoints > 0 ||
+        window.matchMedia('(hover: none)').matches ||
+        window.matchMedia('(pointer: coarse)').matches;
+      
+      // Method 2: Check viewport width
       const isLargeScreen = window.innerWidth >= 768;
-      setShouldRender(isLargeScreen);
+      
+      // Method 3: Check if we're in a scaled container (Lovable preview)
+      const svgElement = document.querySelector('.roof-build-svg');
+      const visuallySmall = svgElement ? 
+        svgElement.getBoundingClientRect().width < 500 : false;
+      
+      // Only show shingles on non-touch, large screens that aren't visually scaled small
+      setShouldRender(isLargeScreen && !isTouchDevice && !visuallySmall);
     };
 
-    // Check immediately
     checkSize();
-
-    // Listen for resize
     window.addEventListener('resize', checkSize);
-    return () => window.removeEventListener('resize', checkSize);
-  }, []);
+    
+    // Also observe visual size changes
+    const observer = new ResizeObserver(checkSize);
+    const svgEl = document.querySelector('.roof-build-svg');
+    if (svgEl) observer.observe(svgEl);
+    
+    return () => {
+      window.removeEventListener('resize', checkSize);
+      observer.disconnect();
+    };
+  }, [isMobile]);
 
   // Don't render anything on mobile - return null, not an empty <g>
   if (!shouldRender || isMobile) return null;

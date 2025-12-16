@@ -219,7 +219,7 @@ const RoofBuildSection: React.FC = () => {
               <div className="w-full max-w-2xl svg-container" style={{ containerType: 'inline-size' }}>
                 <svg
                   viewBox="0 0 400 280"
-                  className="w-full"
+                  className="w-full roof-build-svg"
                   style={{
                     filter: 'drop-shadow(0 0 40px hsl(168 80% 45% / 0.15))',
                   }}
