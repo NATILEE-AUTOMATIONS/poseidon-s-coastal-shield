@@ -1134,19 +1134,14 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
   
   if (progress < startProgress) return null;
   
-  // easeOutQuint for smooth solid landing (no bounce)
+  // Simple easeOutQuint for smooth drop-in (like drip edge)
   const easeOutQuint = (x: number): number => {
     return 1 - Math.pow(1 - x, 5);
   };
   
-  // Staggered animations - pipe boot first, then vent
-  const pipeBootProgress = Math.max(0, Math.min(1, layerProgress * 2));
-  const ventProgress = Math.max(0, Math.min(1, (layerProgress - 0.3) * 1.5));
-  
-  // Smoother easing for mobile (easeOutSext - power of 6 for ultra-smooth)
-  const easeOutSext = (t: number) => 1 - Math.pow(1 - t, 6);
-  const pipeBootEased = isMobile ? easeOutSext(pipeBootProgress) : easeOutQuint(pipeBootProgress);
-  const ventEased = isMobile ? easeOutSext(ventProgress) : easeOutQuint(ventProgress);
+  // Both drop in together - simple like drip edge
+  const dropProgress = Math.max(0, Math.min(1, layerProgress * 1.5));
+  const dropEased = easeOutQuint(dropProgress);
   
   // Responsive positioning - aligned at same height on roof
   const pipeBootX = isMobile ? 120 : 130;
@@ -1154,25 +1149,17 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
   const ventX = isMobile ? 280 : 270;
   const ventBaseY = isMobile ? 125 : 130;
   
-  // Drop-in transforms - gentler on mobile
-  const pipeBootY = (1 - pipeBootEased) * (isMobile ? -60 : -80);
-  const pipeBootRotate = (1 - pipeBootEased) * (isMobile ? 8 : 15);
-  const pipeBootOpacity = isMobile 
-    ? Math.min(1, pipeBootProgress * 2) // Slower fade-in on mobile
-    : Math.min(1, pipeBootProgress * 3);
+  // Simple drop-in from above (no rotation)
+  const dropY = (1 - dropEased) * (isMobile ? -100 : -120);
+  const dropOpacity = Math.min(1, dropProgress * 2.5);
   
-  const ventY = (1 - ventEased) * (isMobile ? -60 : -80);
-  const ventRotate = (1 - ventEased) * (isMobile ? -6 : -12);
-  const ventOpacity = isMobile
-    ? Math.min(1, ventProgress * 2)
-    : Math.min(1, ventProgress * 3);
+  // Subtle glow intensity
+  const glowIntensity = dropProgress > 0.8 ? 1 + Math.sin((dropProgress - 0.8) * 15) * 0.15 : 1;
   
-  // Glow intensity pulses on landing - gentler on mobile
-  const pipeGlowIntensity = pipeBootProgress > 0.8 ? 1 + Math.sin((pipeBootProgress - 0.8) * (isMobile ? 15 : 25)) * (isMobile ? 0.15 : 0.3) : 1;
-  const ventGlowIntensity = ventProgress > 0.8 ? 1 + Math.sin((ventProgress - 0.8) * (isMobile ? 15 : 25)) * (isMobile ? 0.15 : 0.3) : 1;
-  
-  // Text opacity: fade in after both elements land (desktop only)
-  const textProgress = Math.max(0, Math.min(1, (layerProgress - 0.5) / 0.4));
+  // Text visible for 1/3 of animation time (middle third: 0.33 to 0.67)
+  const textOpacity = layerProgress >= 0.33 && layerProgress <= 0.67 
+    ? Math.min(1, (layerProgress - 0.33) * 6) * (layerProgress <= 0.5 ? 1 : Math.max(0, 1 - (layerProgress - 0.5) * 6))
+    : 0;
   
   return (
     <g className="vents-layer">
@@ -1227,12 +1214,12 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
       </defs>
       
       {/* Pipe Boot - positioned to clear chimney and text */}
-      {pipeBootOpacity > 0 && (
+      {dropOpacity > 0 && (
         <g 
           style={{
-            transform: `translate(${pipeBootX}px, ${pipeBootBaseY + pipeBootY}px) rotate(${pipeBootRotate}deg)`,
+            transform: `translate(${pipeBootX}px, ${pipeBootBaseY + dropY}px)`,
             transformOrigin: '0 0',
-            opacity: pipeBootOpacity,
+            opacity: dropOpacity,
           }}
           filter="url(#pipeBootGlow)"
         >
@@ -1243,13 +1230,13 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
             rx="12" 
             ry="4" 
             fill="url(#bootGradient)"
-            stroke={`hsl(168 70% ${45 * pipeGlowIntensity}%)`}
+            stroke={`hsl(168 70% ${45 * glowIntensity}%)`}
             strokeWidth="1"
           />
           <path 
             d="M-12,12 Q-10,0 0,-8 Q10,0 12,12" 
             fill="url(#bootGradient)"
-            stroke={`hsl(168 70% ${50 * pipeGlowIntensity}%)`}
+            stroke={`hsl(168 70% ${50 * glowIntensity}%)`}
             strokeWidth="1.5"
           />
           {/* Pipe extending from boot */}
@@ -1260,7 +1247,7 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
             height="14" 
             rx="1"
             fill="url(#pipeGradient)"
-            stroke={`hsl(168 80% ${55 * pipeGlowIntensity}%)`}
+            stroke={`hsl(168 80% ${55 * glowIntensity}%)`}
             strokeWidth="1.5"
           />
           {/* Pipe cap */}
@@ -1269,8 +1256,8 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
             cy="-20" 
             rx="5" 
             ry="2" 
-            fill={`hsl(168 60% ${50 * pipeGlowIntensity}%)`}
-            stroke={`hsl(168 80% ${60 * pipeGlowIntensity}%)`}
+            fill={`hsl(168 60% ${50 * glowIntensity}%)`}
+            stroke={`hsl(168 80% ${60 * glowIntensity}%)`}
             strokeWidth="1"
           />
           {/* Inner glow ring */}
@@ -1280,7 +1267,7 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
             rx="3" 
             ry="1.2" 
             fill="none"
-            stroke={`hsl(168 100% ${70 * pipeGlowIntensity}%)`}
+            stroke={`hsl(168 100% ${70 * glowIntensity}%)`}
             strokeWidth="0.5"
             opacity={0.8}
           />
@@ -1288,12 +1275,12 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
       )}
       
       {/* Box Vent - Right slope */}
-      {ventOpacity > 0 && (
+      {dropOpacity > 0 && (
         <g 
           style={{
-            transform: `translate(${ventX}px, ${ventBaseY + ventY}px) rotate(${ventRotate}deg)`,
+            transform: `translate(${ventX}px, ${ventBaseY + dropY}px)`,
             transformOrigin: '0 0',
-            opacity: ventOpacity,
+            opacity: dropOpacity,
           }}
           filter="url(#ventGlow)"
         >
@@ -1305,7 +1292,7 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
             height="8" 
             rx="1"
             fill="hsl(168 30% 25%)"
-            stroke={`hsl(168 70% ${45 * ventGlowIntensity}%)`}
+            stroke={`hsl(168 70% ${45 * glowIntensity}%)`}
             strokeWidth="1"
           />
           {/* Vent body */}
@@ -1316,14 +1303,14 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
             height="18" 
             rx="2"
             fill="url(#ventBodyGradient)"
-            stroke={`hsl(168 80% ${55 * ventGlowIntensity}%)`}
+            stroke={`hsl(168 80% ${55 * glowIntensity}%)`}
             strokeWidth="1.5"
           />
           {/* Vent hood/cap */}
           <path 
             d="M-14,-12 L-14,-18 Q-14,-22 -10,-22 L10,-22 Q14,-22 14,-18 L14,-12 Z" 
             fill="url(#ventHoodGradient)"
-            stroke={`hsl(168 85% ${60 * ventGlowIntensity}%)`}
+            stroke={`hsl(168 85% ${60 * glowIntensity}%)`}
             strokeWidth="1.5"
           />
           {/* Vent opening (mesh effect) */}
@@ -1334,7 +1321,7 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
             height="10" 
             rx="1"
             fill="hsl(0 0% 5%)"
-            stroke={`hsl(168 60% ${40 * ventGlowIntensity}%)`}
+            stroke={`hsl(168 60% ${40 * glowIntensity}%)`}
             strokeWidth="0.5"
           />
           {/* Mesh lines */}
@@ -1342,7 +1329,7 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
             <line 
               key={i}
               x1={x} y1="-7" x2={x} y2="1"
-              stroke={`hsl(168 50% ${35 * ventGlowIntensity}%)`}
+              stroke={`hsl(168 50% ${35 * glowIntensity}%)`}
               strokeWidth="0.5"
             />
           ))}
@@ -1350,41 +1337,31 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
             <line 
               key={i}
               x1="-9" y1={y - 3} x2="9" y2={y - 3}
-              stroke={`hsl(168 50% ${35 * ventGlowIntensity}%)`}
+              stroke={`hsl(168 50% ${35 * glowIntensity}%)`}
               strokeWidth="0.5"
             />
           ))}
           {/* Glow accent on hood edge */}
           <line 
             x1="-13" y1="-22" x2="13" y2="-22"
-            stroke={`hsl(168 100% ${70 * ventGlowIntensity}%)`}
+            stroke={`hsl(168 100% ${70 * glowIntensity}%)`}
             strokeWidth="1"
             opacity={0.9}
           />
         </g>
       )}
       
-      {/* Text label with wipe reveal synced to pipe boot descent */}
-      {pipeBootProgress > 0 && (
-        <g>
+      {/* Text label - visible for middle 1/3 of animation */}
+      {textOpacity > 0 && (
+        <g style={{ opacity: textOpacity }}>
           <defs>
-            {/* Clip path that follows pipe boot Y position */}
-            <clipPath id="ventsTextWipeClip">
-              <rect 
-                x="100" 
-                y="70" 
-                width="200" 
-                height={Math.max(0, (pipeBootBaseY + pipeBootY) - 70)}
-              />
-            </clipPath>
+            <filter id="ventsTextGlowFilter" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="hsl(168 80% 50%)" floodOpacity="0.8" />
+              <feDropShadow dx="0" dy="0" stdDeviation="8" floodColor="hsl(168 70% 40%)" floodOpacity="0.5" />
+            </filter>
           </defs>
           
-          <g 
-            clipPath="url(#ventsTextWipeClip)"
-            style={{
-              opacity: layerProgress < 0.95 ? 1 : Math.max(0, 1 - (layerProgress - 0.95) / 0.05),
-            }}
-          >
+          <g>
             <text
               x="200"
               y="100"
@@ -1397,7 +1374,7 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
               stroke="hsl(0 0% 0%)"
               strokeWidth="3"
               paintOrder="stroke fill"
-              filter="url(#ventsTextGlow)"
+              filter="url(#ventsTextGlowFilter)"
             >
               PIPE BOOTS
             </text>
@@ -1413,7 +1390,7 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
               stroke="hsl(0 0% 0%)"
               strokeWidth="3"
               paintOrder="stroke fill"
-              filter="url(#ventsTextGlow)"
+              filter="url(#ventsTextGlowFilter)"
             >
               & VENTS
             </text>
