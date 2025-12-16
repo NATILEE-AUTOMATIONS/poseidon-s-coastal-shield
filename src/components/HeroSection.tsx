@@ -153,7 +153,7 @@ const HeroSection = () => {
             {isMobile && (
               <div className="mt-20 w-full flex justify-center">
                 <svg
-                  viewBox="30 40 340 230"
+                  viewBox="40 50 320 210"
                   className="w-[100vw]"
                   style={{
                     filter: 'drop-shadow(0 0 30px hsl(168 80% 45% / 0.25))',
