@@ -1149,9 +1149,9 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
   // Subtle glow intensity
   const glowIntensity = easedProgress > 0.8 ? 1 + Math.sin((easedProgress - 0.8) * 15) * 0.15 : 1;
   
-  // Text visible for middle 1/3 of animation
-  const textOpacity = layerProgress >= 0.33 && layerProgress <= 0.67 
-    ? Math.min(1, (layerProgress - 0.33) * 6) * (layerProgress <= 0.5 ? 1 : Math.max(0, 1 - (layerProgress - 0.5) * 6))
+  // Text visible for most of animation (15% to 85%)
+  const textOpacity = layerProgress >= 0.15 && layerProgress <= 0.85 
+    ? Math.min(1, (layerProgress - 0.15) * 5) * (layerProgress <= 0.75 ? 1 : Math.max(0, 1 - (layerProgress - 0.75) * 10))
     : 0;
   
   return (
