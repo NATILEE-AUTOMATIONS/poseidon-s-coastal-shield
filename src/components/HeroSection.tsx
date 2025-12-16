@@ -104,7 +104,7 @@ const HeroSection = () => {
           />
           
           {/* Text - directly below the line */}
-          <div className="text-center px-6 w-full mt-8">
+          <div className="text-center px-6 w-full mt-2">
           <h2 
               className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight"
               style={{
