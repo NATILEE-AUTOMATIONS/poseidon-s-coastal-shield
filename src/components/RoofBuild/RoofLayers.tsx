@@ -934,7 +934,162 @@ export const StarterStripLayer: React.FC<LayerProps> = ({ progress, startProgres
   );
 };
 export const FlashingLayer: React.FC<LayerProps> = () => null;
-export const ShinglesLayer: React.FC<LayerProps> = () => null;
+
+// Shingles layer with stair-step installation animation (DESKTOP ONLY)
+export const ShinglesLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
+  const rawProgress = (progress - startProgress) / (endProgress - startProgress);
+  const layerProgress = Math.max(0, Math.min(1, rawProgress));
+  
+  if (progress < startProgress || isMobile) return null;
+  
+  // Roof geometry
+  const peakX = 200;
+  const peakY = 56;
+  const leftEaveX = 42;
+  const rightEaveX = 358;
+  const eaveY = 159;
+  
+  // Shingle color palette - dark tones with slight variation
+  const shingleColors = [
+    'hsl(210 5% 12%)',
+    'hsl(210 4% 14%)',
+    'hsl(210 4% 16%)',
+    'hsl(210 3% 18%)',
+  ];
+  
+  // Get color using prime multiplier hash for randomization
+  const getShingleColor = (courseIdx: number, tabIdx: number) => {
+    const hash = (courseIdx * 7 + tabIdx * 13) % shingleColors.length;
+    return shingleColors[hash];
+  };
+  
+  // Shingle dimensions
+  const targetTabWidth = 22;
+  const shingleHeight = 12;
+  const exposure = 10; // Vertical exposure per course
+  const courseCount = 8;
+  
+  // Get X bounds at a Y position following roof slope
+  const getLeftX = (y: number) => {
+    const slope = (leftEaveX - peakX) / (eaveY - peakY);
+    return peakX + slope * (y - peakY);
+  };
+  const getRightX = (y: number) => {
+    const slope = (rightEaveX - peakX) / (eaveY - peakY);
+    return peakX + slope * (y - peakY);
+  };
+  
+  // easeOutBack for satisfying overshoot
+  const easeOutBack = (x: number): number => {
+    const c1 = 1.70158;
+    const c3 = c1 + 1;
+    return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+  };
+  
+  // Generate courses from bottom (eave) to top (peak)
+  const courses: Array<{
+    courseIdx: number;
+    bottomY: number;
+    topY: number;
+    tabs: Array<{ x: number; width: number; tabIdx: number }>;
+  }> = [];
+  
+  for (let i = 0; i < courseCount; i++) {
+    const bottomY = eaveY - (i * exposure);
+    const topY = bottomY - shingleHeight;
+    
+    if (topY < peakY) continue;
+    
+    const leftX = getLeftX(bottomY);
+    const rightX = getRightX(bottomY);
+    const courseWidth = rightX - leftX;
+    
+    // Calculate tabs for this course
+    const tabCount = Math.max(2, Math.round(courseWidth / targetTabWidth));
+    const actualTabWidth = courseWidth / tabCount;
+    
+    const tabs: Array<{ x: number; width: number; tabIdx: number }> = [];
+    for (let t = 0; t < tabCount; t++) {
+      tabs.push({
+        x: leftX + (t * actualTabWidth),
+        width: actualTabWidth,
+        tabIdx: t,
+      });
+    }
+    
+    courses.push({ courseIdx: i, bottomY, topY, tabs });
+  }
+  
+  // Calculate max diagonal index for normalization
+  const maxDiagonalIdx = courses.reduce((max, course) => {
+    const courseMax = course.courseIdx + course.tabs.length - 1;
+    return Math.max(max, courseMax);
+  }, 0);
+  
+  return (
+    <g className="shingles-layer">
+      <defs>
+        <clipPath id="roofClipShingles">
+          <polygon points={`${peakX},${peakY} ${leftEaveX},${eaveY} ${rightEaveX},${eaveY}`} />
+        </clipPath>
+      </defs>
+      
+      <g clipPath="url(#roofClipShingles)">
+        {courses.map((course) => (
+          <g key={`course-${course.courseIdx}`}>
+            {course.tabs.map((tab) => {
+              // Diagonal index for stair-step animation
+              const diagonalIdx = course.courseIdx + tab.tabIdx;
+              const normalizedDiagonal = diagonalIdx / maxDiagonalIdx;
+              
+              // Stagger animation based on diagonal position
+              const spreadFactor = 0.7;
+              const tabProgress = Math.max(0, Math.min(1, 
+                (layerProgress - normalizedDiagonal * spreadFactor) / (1 - spreadFactor)
+              ));
+              
+              if (tabProgress <= 0) return null;
+              
+              const easedProgress = easeOutBack(tabProgress);
+              const translateY = (1 - easedProgress) * -30;
+              const opacity = Math.min(1, tabProgress * 2);
+              
+              // Calculate trapezoid points (wider at bottom due to roof slope)
+              const topLeftX = getLeftX(course.topY);
+              const topRightX = getRightX(course.topY);
+              const topCourseWidth = topRightX - topLeftX;
+              const bottomCourseWidth = getRightX(course.bottomY) - getLeftX(course.bottomY);
+              
+              const topTabWidth = topCourseWidth / course.tabs.length;
+              const bottomTabWidth = bottomCourseWidth / course.tabs.length;
+              
+              const tl = topLeftX + (tab.tabIdx * topTabWidth);
+              const tr = tl + topTabWidth;
+              const bl = getLeftX(course.bottomY) + (tab.tabIdx * bottomTabWidth);
+              const br = bl + bottomTabWidth;
+              
+              return (
+                <polygon
+                  key={`tab-${course.courseIdx}-${tab.tabIdx}`}
+                  points={`${tl},${course.topY} ${tr},${course.topY} ${br},${course.bottomY} ${bl},${course.bottomY}`}
+                  fill={getShingleColor(course.courseIdx, tab.tabIdx)}
+                  stroke="hsl(210 5% 8%)"
+                  strokeWidth="0.5"
+                  style={{
+                    transform: `translateY(${translateY}px)`,
+                    opacity,
+                    transition: 'transform 0.15s ease-out, opacity 0.15s ease-out',
+                  }}
+                />
+              );
+            })}
+          </g>
+        ))}
+      </g>
+    </g>
+  );
+};
+
 // NUCLEAR DELETE - FieldShinglesLayer removed entirely
 export const FieldShinglesLayer: React.FC<LayerProps> = () => null;
 // NUCLEAR DELETE - VentsLayer removed entirely
