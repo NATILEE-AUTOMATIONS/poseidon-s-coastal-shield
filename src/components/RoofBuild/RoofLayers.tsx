@@ -940,7 +940,7 @@ export const ShinglesLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
-  if (progress < startProgress || isMobile) return null;
+  if (progress < startProgress) return null;
   
   // Roof geometry
   const peakX = 200;
