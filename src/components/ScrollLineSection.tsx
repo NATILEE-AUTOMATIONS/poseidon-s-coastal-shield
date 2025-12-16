@@ -32,9 +32,6 @@ const ScrollLineSection: React.FC = () => {
   
   // Text opacity - fades in after line is 60% drawn
   const textOpacity = lineProgress > 0.6 ? (lineProgress - 0.6) / 0.4 : 0;
-  
-  // Glowing dot at the end of the line
-  const showDot = lineProgress > 0.05 && lineProgress < 0.9;
 
   return (
     <section 
@@ -43,38 +40,22 @@ const ScrollLineSection: React.FC = () => {
     >
       {/* Glowing line container */}
       <div className="relative flex flex-col items-center">
-        {/* The animated line */}
+        {/* The animated line - thick and glowing */}
         <div 
-          className="relative w-1 rounded-full"
+          className="relative w-3 rounded-full"
           style={{
             height: `${lineHeight}px`,
             background: 'linear-gradient(to bottom, hsl(168 70% 45%), hsl(168 80% 55%))',
             boxShadow: `
-              0 0 10px hsl(168 70% 50% / 0.8),
-              0 0 20px hsl(168 70% 50% / 0.6),
-              0 0 40px hsl(168 70% 50% / 0.4),
-              0 0 60px hsl(168 70% 50% / 0.2)
+              0 0 15px hsl(168 70% 50% / 0.9),
+              0 0 30px hsl(168 70% 50% / 0.7),
+              0 0 50px hsl(168 70% 50% / 0.5),
+              0 0 80px hsl(168 70% 50% / 0.3)
             `,
             opacity: lineProgress > 0.05 ? 1 : 0,
             transition: 'opacity 0.3s ease-out',
           }}
         />
-        
-        {/* Glowing dot at the tip */}
-        {showDot && (
-          <div 
-            className="absolute w-3 h-3 rounded-full"
-            style={{
-              top: `${lineHeight - 6}px`,
-              background: 'hsl(168 80% 60%)',
-              boxShadow: `
-                0 0 8px hsl(168 80% 60%),
-                0 0 16px hsl(168 80% 60% / 0.8),
-                0 0 24px hsl(168 80% 60% / 0.6)
-              `,
-            }}
-          />
-        )}
       </div>
       
       {/* Text that reveals after line draws */}
