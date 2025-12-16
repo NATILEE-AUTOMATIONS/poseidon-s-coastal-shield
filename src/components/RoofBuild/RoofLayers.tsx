@@ -989,22 +989,24 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
             : 0
   );
   
-  // Generate realistic asphalt shingle colors - darker charcoal with subtle warm/cool variation
+  // Generate realistic asphalt shingle colors with more variation
   const getShingleColor = (courseIndex: number, tabIndex: number) => {
     const seed = (courseIndex * 7 + tabIndex * 13) % 100;
     const seed2 = (courseIndex * 11 + tabIndex * 17) % 100;
-    // Nearly neutral with very slight warm undertone for realism
-    const baseH = 20 + (seed % 30); // 20-50 warm neutral to cool gray
-    const baseS = 2 + (seed2 % 4); // 2-5% very subtle saturation
-    const baseL = 12 + (seed % 10); // 12-21% dark charcoal range
+    const seed3 = (courseIndex * 3 + tabIndex * 19) % 100;
+    // Mix of warm and cool neutrals for architectural shingle look
+    const baseH = 15 + (seed % 40); // 15-55 range for variety
+    const baseS = 3 + (seed2 % 5); // 3-7% saturation
+    // More contrast: some tabs darker, some lighter
+    const baseL = 10 + (seed3 % 14); // 10-23% for better contrast
     return `hsl(${baseH} ${baseS}% ${baseL}%)`;
   };
   
-  // Secondary darker color for granule texture
-  const getGranuleColor = (courseIndex: number, tabIndex: number) => {
-    const seed = (courseIndex * 19 + tabIndex * 23) % 100;
-    const baseL = 8 + (seed % 6);
-    return `hsl(30 3% ${baseL}%)`;
+  // Accent color for occasional lighter granules
+  const getGranuleAccent = (courseIndex: number, tabIndex: number) => {
+    const seed = (courseIndex * 23 + tabIndex * 29) % 100;
+    const baseL = 18 + (seed % 10);
+    return `hsl(35 5% ${baseL}%)`;
   };
   
   return (
@@ -1078,14 +1080,16 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
               {/* Individual shingle tabs with adaptive count for consistent proportions */}
               {(() => {
                 const actualCourseWidth = bottomRightX - bottomLeftX;
-                // Adaptive tab count - fewer tabs for narrower upper courses
-                // Target ~40px per tab width, minimum 2 tabs
-                const tabsPerCourse = Math.max(2, Math.round(actualCourseWidth / 40));
+                // More tabs for better texture - target ~28px per tab
+                const tabsPerCourse = Math.max(3, Math.round(actualCourseWidth / 28));
                 const tabWidthRatio = 1 / tabsPerCourse;
                 const offsetRatio = courseIdx % 2 === 1 ? tabWidthRatio / 2 : 0;
                 
                 const courseEased = easeOutBack(Math.min(1, courseProgress * 1.2));
-                const courseDrop = 20 * (1 - courseEased);
+                const courseDrop = 15 * (1 - courseEased);
+                
+                // Slight darkening toward bottom of roof for depth
+                const depthDarken = (courseIdx / courseCount) * 3;
                 
                 return (
                   <g 
@@ -1119,7 +1123,7 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                       const tabBottomRightX = bottomLeftX + courseWidth * clampedEnd;
                       
                       const shingleColor = getShingleColor(courseIdx, tabIdx);
-                      const granuleColor = getGranuleColor(courseIdx, tabIdx);
+                      const granuleAccent = getGranuleAccent(courseIdx, tabIdx);
                       const tabCenterX = (tabBottomLeftX + tabBottomRightX) / 2;
                       const tabCenterY = (topY + bottomY) / 2;
                       
