@@ -1266,7 +1266,7 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
   );
 };
 
-// Flashing layer - step flashing, valley flashing, and wall flashing
+// Flashing layer - simple collars around chimney, pipe boot, and vent
 export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
@@ -1276,23 +1276,31 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   const easedProgress = easeOutQuint(layerProgress);
   
   // Drop-in animation
-  const translateY = -120 * (1 - easedProgress);
+  const translateY = -100 * (1 - easedProgress);
   const opacity = 0.3 + (0.7 * easedProgress);
   
-  // Text timing: fade in 10-30%, hold 30-55%, fade out 55-80%
+  // Text timing: fade in 10-30%, hold 30-60%, fade out 60-85%
   const textOpacity = layerProgress < 0.1 
     ? 0 
     : layerProgress < 0.3 
       ? (layerProgress - 0.1) / 0.2 
-      : layerProgress < 0.55 
+      : layerProgress < 0.60 
         ? 1 
-        : layerProgress < 0.80 
-          ? 1 - (layerProgress - 0.55) / 0.25 
+        : layerProgress < 0.85 
+          ? 1 - (layerProgress - 0.60) / 0.25 
           : 0;
   
-  // Flashing positions - around chimney and at valleys
-  const chimneyX = 95;
-  const peakY = 56;
+  // Positions matching VentsLayer
+  const pipeBootX = isMobile ? 120 : 130;
+  const pipeBootBaseY = isMobile ? 120 : 125;
+  const ventX = isMobile ? 280 : 270;
+  const ventBaseY = isMobile ? 125 : 130;
+  
+  // Chimney flashing position (chimney bottom edge follows roof slope)
+  const chimneyLeftX = 88;
+  const chimneyRightX = 122;
+  const chimneyBottomLeftY = 130;
+  const chimneyBottomRightY = 117;
   
   return (
     <g 
@@ -1304,94 +1312,105 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
       }}
     >
       <defs>
-        <linearGradient id="flashingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="hsl(210 8% 65%)" />
-          <stop offset="50%" stopColor="hsl(210 10% 55%)" />
-          <stop offset="100%" stopColor="hsl(210 6% 45%)" />
+        <linearGradient id="flashingMetalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="hsl(210 15% 70%)" />
+          <stop offset="50%" stopColor="hsl(210 12% 55%)" />
+          <stop offset="100%" stopColor="hsl(210 10% 45%)" />
         </linearGradient>
         {!isMobile && (
           <filter id="flashingGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="hsl(210 30% 70%)" floodOpacity="0.6" />
+            <feDropShadow dx="0" dy="0" stdDeviation="2" floodColor="hsl(210 40% 80%)" floodOpacity="0.5" />
           </filter>
         )}
-        <filter id="flashingTextGlow" x="-50%" y="-50%" width="200%" height="200%">
-          <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="hsl(0 0% 0%)" floodOpacity="0.9" />
-        </filter>
       </defs>
       
-      {/* Step flashing around chimney - left side */}
+      {/* Chimney step flashing - L-shaped pieces along the roof slope */}
       <g filter={isMobile ? undefined : "url(#flashingGlow)"}>
-        {/* Step flashing pieces going up the roof slope */}
-        {[0, 1, 2, 3].map((i) => (
-          <rect 
-            key={`step-${i}`}
-            x={chimneyX - 3} 
-            y={130 - (i * 12)} 
-            width="6" 
-            height="10" 
-            fill="url(#flashingGradient)"
-            stroke="hsl(210 20% 75%)"
-            strokeWidth="0.5"
-            style={{
-              opacity: Math.min(1, easedProgress * 1.5 - (i * 0.1)),
-            }}
-          />
-        ))}
-        
-        {/* Counter flashing at chimney base */}
-        <rect 
-          x={chimneyX - 8} 
-          y={138} 
-          width="16" 
-          height="4" 
-          fill="url(#flashingGradient)"
-          stroke="hsl(210 25% 80%)"
+        {/* Step flashing on left (uphill) side of chimney */}
+        <path 
+          d={`M${chimneyLeftX - 2},${chimneyBottomLeftY} 
+              L${chimneyLeftX - 2},${chimneyBottomLeftY - 25} 
+              L${chimneyLeftX + 4},${chimneyBottomLeftY - 27} 
+              L${chimneyLeftX + 4},${chimneyBottomLeftY - 2} Z`}
+          fill="url(#flashingMetalGrad)"
+          stroke="hsl(210 30% 80%)"
+          strokeWidth="1"
+        />
+        {/* Counter flashing at chimney bottom */}
+        <path 
+          d={`M${chimneyLeftX - 4},${chimneyBottomLeftY + 2} 
+              L${chimneyRightX + 4},${chimneyBottomRightY + 2}
+              L${chimneyRightX + 4},${chimneyBottomRightY - 3}
+              L${chimneyLeftX - 4},${chimneyBottomLeftY - 3} Z`}
+          fill="url(#flashingMetalGrad)"
+          stroke="hsl(210 30% 80%)"
+          strokeWidth="1"
+        />
+        {/* Step flashing on right (downhill) side of chimney */}
+        <path 
+          d={`M${chimneyRightX + 2},${chimneyBottomRightY} 
+              L${chimneyRightX + 2},${chimneyBottomRightY - 20} 
+              L${chimneyRightX - 4},${chimneyBottomRightY - 22} 
+              L${chimneyRightX - 4},${chimneyBottomRightY - 2} Z`}
+          fill="url(#flashingMetalGrad)"
+          stroke="hsl(210 30% 80%)"
           strokeWidth="1"
         />
       </g>
       
-      {/* Valley flashing (at roof intersection if there was one - simulated with accent pieces) */}
-      <g filter={isMobile ? undefined : "url(#flashingGlow)"}>
-        {/* Peak cap flashing */}
-        <path 
-          d={`M185,${peakY + 2} L200,${peakY - 3} L215,${peakY + 2}`}
-          fill="none"
-          stroke="hsl(210 15% 70%)"
-          strokeWidth="3"
-          strokeLinecap="round"
+      {/* Pipe boot flashing collar */}
+      <g 
+        style={{ transform: `translate(${pipeBootX}px, ${pipeBootBaseY}px)` }}
+        filter={isMobile ? undefined : "url(#flashingGlow)"}
+      >
+        {/* Base collar around pipe boot */}
+        <ellipse 
+          cx="0" 
+          cy="14" 
+          rx="15" 
+          ry="5" 
+          fill="url(#flashingMetalGrad)"
+          stroke="hsl(210 30% 80%)"
+          strokeWidth="1"
         />
-        
-        {/* Ridge line accent */}
-        <line 
-          x1="175" 
-          y1={peakY + 5} 
-          x2="225" 
-          y2={peakY + 5}
+        {/* Inner lip */}
+        <ellipse 
+          cx="0" 
+          cy="13" 
+          rx="13" 
+          ry="4" 
+          fill="none"
           stroke="hsl(210 20% 65%)"
-          strokeWidth="2"
-          strokeLinecap="round"
+          strokeWidth="1.5"
         />
       </g>
       
-      {/* Wall flashing - at house wall junction (simulated) */}
-      <g filter={isMobile ? undefined : "url(#flashingGlow)"}>
-        <line 
-          x1="42" 
-          y1="158" 
-          x2="100" 
-          y2="158"
-          stroke="hsl(210 15% 60%)"
-          strokeWidth="2.5"
-          strokeLinecap="round"
+      {/* Vent flashing collar */}
+      <g 
+        style={{ transform: `translate(${ventX}px, ${ventBaseY}px)` }}
+        filter={isMobile ? undefined : "url(#flashingGlow)"}
+      >
+        {/* Base collar around vent */}
+        <rect 
+          x="-20" 
+          y="10" 
+          width="40" 
+          height="5" 
+          rx="1"
+          fill="url(#flashingMetalGrad)"
+          stroke="hsl(210 30% 80%)"
+          strokeWidth="1"
         />
-        <line 
-          x1="300" 
-          y1="158" 
-          x2="358" 
-          y2="158"
-          stroke="hsl(210 15% 60%)"
-          strokeWidth="2.5"
-          strokeLinecap="round"
+        {/* Side flanges */}
+        <rect 
+          x="-22" 
+          y="8" 
+          width="44" 
+          height="3" 
+          rx="0.5"
+          fill="hsl(210 12% 60%)"
+          stroke="hsl(210 25% 75%)"
+          strokeWidth="0.75"
         />
       </g>
       
@@ -1410,7 +1429,9 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
             stroke="hsl(0 0% 0%)"
             strokeWidth="3"
             paintOrder="stroke fill"
-            filter="url(#flashingTextGlow)"
+            style={{
+              filter: 'drop-shadow(0 0 4px hsl(0 0% 0%))',
+            }}
           >
             FLASHING
           </text>
