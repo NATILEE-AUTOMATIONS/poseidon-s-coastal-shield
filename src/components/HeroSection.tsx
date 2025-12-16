@@ -5,7 +5,6 @@ import { useEffect, useState, useRef } from "react";
 const HeroSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [lineProgress, setLineProgress] = useState(0);
-  const [textLit, setTextLit] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,20 +19,13 @@ const HeroSection = () => {
       const progress = Math.max(0, Math.min(1, (scrollY - startScroll) / (endScroll - startScroll)));
       
       setLineProgress(progress);
-      
-      // Trigger text light-up when line is near complete
-      if (progress >= 0.85 && !textLit) {
-        setTextLit(true);
-      } else if (progress < 0.8 && textLit) {
-        setTextLit(false);
-      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [textLit]);
+  }, []);
 
   // Make line taller on mobile for better visibility
   const lineHeight = Math.min(lineProgress * 1.2, 1) * 350;
@@ -111,60 +103,29 @@ const HeroSection = () => {
             }}
           />
           
-          {/* Text - fixed position with left-to-right light-up effect */}
+          {/* Text - fixed position */}
           <div 
-            className="absolute text-center px-6 w-full flex flex-col items-center"
+            className="absolute text-center px-6 w-full"
             style={{ top: '355px' }}
           >
-            <div className="relative">
-              {/* Base dim text */}
-              <h2 
-                className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight transition-opacity duration-300"
-                style={{
-                  color: 'hsl(30 95% 60%)',
-                  textShadow: '0 0 10px hsl(30 95% 55% / 0.5), 0 0 20px hsl(30 95% 55% / 0.3)',
-                  opacity: textLit ? 0 : 0.7,
-                }}
-              >
-                910 Roofing
-              </h2>
-              {/* Lit text with clip-path sweep */}
-              <h2 
-                className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight absolute inset-0 transition-all duration-700 ease-out"
-                style={{
-                  color: 'hsl(30 95% 60%)',
-                  textShadow: '0 0 15px hsl(30 95% 55% / 0.9), 0 0 30px hsl(30 95% 55% / 0.6), 0 0 50px hsl(30 95% 55% / 0.3)',
-                  clipPath: textLit ? 'inset(0 0 0 0)' : 'inset(0 100% 0 0)',
-                }}
-              >
-                910 Roofing
-              </h2>
-            </div>
-            <div className="relative mt-2">
-              {/* Base dim text */}
-              <h3 
-                className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold transition-opacity duration-300"
-                style={{
-                  color: 'hsl(168 70% 55%)',
-                  textShadow: '0 0 10px hsl(168 70% 50% / 0.5), 0 0 20px hsl(168 70% 50% / 0.3)',
-                  opacity: textLit ? 0 : 0.7,
-                }}
-              >
-                Done Right
-              </h3>
-              {/* Lit text with clip-path sweep */}
-              <h3 
-                className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold absolute inset-0 transition-all duration-700 ease-out"
-                style={{
-                  color: 'hsl(168 70% 55%)',
-                  textShadow: '0 0 15px hsl(168 70% 50% / 0.9), 0 0 30px hsl(168 70% 50% / 0.6), 0 0 50px hsl(168 70% 50% / 0.4)',
-                  clipPath: textLit ? 'inset(0 0 0 0)' : 'inset(0 100% 0 0)',
-                  transitionDelay: textLit ? '0.2s' : '0s',
-                }}
-              >
-                Done Right
-              </h3>
-            </div>
+            <h2 
+              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight"
+              style={{
+                color: 'hsl(30 95% 60%)',
+                textShadow: '0 0 15px hsl(30 95% 55% / 0.8), 0 0 30px hsl(30 95% 55% / 0.5)',
+              }}
+            >
+              910 Roofing
+            </h2>
+            <h3 
+              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mt-2"
+              style={{
+                color: 'hsl(168 70% 55%)',
+                textShadow: '0 0 15px hsl(168 70% 50% / 0.8), 0 0 30px hsl(168 70% 50% / 0.6), 0 0 45px hsl(168 70% 50% / 0.4)',
+              }}
+            >
+              Done Right
+            </h3>
           </div>
         </div>
       </div>
