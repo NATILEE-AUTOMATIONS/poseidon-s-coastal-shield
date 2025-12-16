@@ -997,10 +997,12 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
     'hsl(210 3% 24%)',   // medium
   ];
   
-  // Pseudo-random color selection using prime multipliers and XOR
+  // Pseudo-random with position-based offset to break patterns
   const getShingleColor = (courseIndex: number, tabIndex: number) => {
-    const seed = (courseIndex * 7919 + tabIndex * 6271) ^ (courseIndex * tabIndex * 104729 + tabIndex * 997);
-    const idx = Math.abs(seed) % 4;
+    const base = (courseIndex * 7919 + tabIndex * 6271) ^ (courseIndex * tabIndex * 104729);
+    // Add offset based on odd/even positions to break horizontal streaks
+    const offset = (courseIndex % 2) * 2 + (tabIndex % 3);
+    const idx = Math.abs(base + offset) % 4;
     return shinglePalette[idx];
   };
   
