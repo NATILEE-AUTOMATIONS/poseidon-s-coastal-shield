@@ -617,7 +617,14 @@
   animation: light-particle-float 3s ease-out infinite;
 }
 
-/* Hide shingles on mobile - CSS media query is bulletproof */
+/* Hide shingles when container is small - works in Lovable preview */
+@container (max-width: 500px) {
+  .field-shingles-layer {
+    display: none !important;
+  }
+}
+
+/* Fallback media query for real mobile devices */
 @media (max-width: 767px) {
   .field-shingles-layer {
     display: none !important;
