@@ -1324,34 +1324,32 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         )}
       </defs>
       
-      {/* Chimney step flashing - L-shaped pieces along the roof slope */}
+      {/* Chimney flashing - wraps around the angled bottom of chimney */}
+      {/* Chimney body: M88 50 L122 50 L122 117 L88 130 Z */}
       <g filter={isMobile ? undefined : "url(#flashingGlow)"}>
-        {/* Step flashing on left (uphill) side of chimney */}
+        {/* Base flashing strip that follows the angled chimney bottom */}
         <path 
-          d={`M${chimneyLeftX - 2},${chimneyBottomLeftY} 
-              L${chimneyLeftX - 2},${chimneyBottomLeftY - 25} 
-              L${chimneyLeftX + 4},${chimneyBottomLeftY - 27} 
-              L${chimneyLeftX + 4},${chimneyBottomLeftY - 2} Z`}
+          d={`M84,133 L84,127 L124,114 L126,120 L86,133 Z`}
           fill="url(#flashingMetalGrad)"
           stroke="hsl(210 30% 80%)"
           strokeWidth="1"
         />
-        {/* Counter flashing at chimney bottom */}
-        <path 
-          d={`M${chimneyLeftX - 4},${chimneyBottomLeftY + 2} 
-              L${chimneyRightX + 4},${chimneyBottomRightY + 2}
-              L${chimneyRightX + 4},${chimneyBottomRightY - 3}
-              L${chimneyLeftX - 4},${chimneyBottomLeftY - 3} Z`}
+        {/* Left side step flashing (vertical strip on uphill side) */}
+        <rect 
+          x="84" 
+          y="105" 
+          width="6" 
+          height="28"
           fill="url(#flashingMetalGrad)"
           stroke="hsl(210 30% 80%)"
           strokeWidth="1"
         />
-        {/* Step flashing on right (downhill) side of chimney */}
-        <path 
-          d={`M${chimneyRightX + 2},${chimneyBottomRightY} 
-              L${chimneyRightX + 2},${chimneyBottomRightY - 20} 
-              L${chimneyRightX - 4},${chimneyBottomRightY - 22} 
-              L${chimneyRightX - 4},${chimneyBottomRightY - 2} Z`}
+        {/* Right side step flashing (vertical strip on downhill side) */}
+        <rect 
+          x="120" 
+          y="97" 
+          width="6" 
+          height="23"
           fill="url(#flashingMetalGrad)"
           stroke="hsl(210 30% 80%)"
           strokeWidth="1"
