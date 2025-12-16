@@ -9,6 +9,7 @@ import {
   UnderlaymentLayer,
   StarterStripLayer,
   FieldShinglesLayer,
+  MobileShingleOverlay,
   VentsLayer,
   FlashingLayer,
   RidgeCapLayer,
@@ -252,10 +253,12 @@ const RoofBuildSection: React.FC = () => {
                   <UnderlaymentLayer progress={progress} startProgress={layers[3].start} endProgress={layers[3].end} />
                   {/* 5. Starter Strip */}
                   <StarterStripLayer progress={progress} startProgress={layers[4].start} endProgress={layers[4].end} isMobile={isMobile} />
-                  {/* 6. Shingles - Desktop only */}
+                  {/* 6. Shingles - Desktop only, Mobile gets overlay */}
                   {!isMobile && (
                     <FieldShinglesLayer progress={progress} startProgress={layers[5].start} endProgress={layers[5].end} isMobile={isMobile} />
                   )}
+                  {/* Mobile shingle overlay - covers any shingle bleed-through */}
+                  <MobileShingleOverlay progress={progress} startProgress={layers[5].start} endProgress={layers[5].end} isMobile={isMobile} />
                   {/* 7. Pipe Boots & Vents - Desktop only */}
                   {!isMobile && (
                     <VentsLayer progress={progress} startProgress={layers[6].start} endProgress={layers[6].end} />
