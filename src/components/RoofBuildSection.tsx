@@ -73,14 +73,14 @@ const RoofBuildSection: React.FC = () => {
     { start: iceWaterEnd, end: underlaymentEnd },              // 4. Underlayment
     { start: underlaymentEnd, end: starterStripEnd },          // 5. Starter Strip (2x)
     { start: starterStripEnd, end: starterStripEnd + layerStep * 3 }, // 6. Shingles (3x duration for 8 courses)
-    { start: starterStripEnd + layerStep * 3, end: starterStripEnd + layerStep * 4 }, // 7. Vents
-    { start: starterStripEnd + layerStep * 4, end: starterStripEnd + layerStep * 5 }, // 8. Flashing
-    { start: starterStripEnd + layerStep * 5, end: starterStripEnd + layerStep * 6 }, // 9. Ridge Vent & Cap
-    { start: starterStripEnd + layerStep * 6, end: starterStripEnd + layerStep * 7 }, // 10. Complete Clean Up
+    { start: starterStripEnd + layerStep * 4.5, end: starterStripEnd + layerStep * 5.5 }, // 7. Vents (1.5x gap after shingles)
+    { start: starterStripEnd + layerStep * 5.5, end: starterStripEnd + layerStep * 6.5 }, // 8. Flashing
+    { start: starterStripEnd + layerStep * 6.5, end: starterStripEnd + layerStep * 7.5 }, // 9. Ridge Vent & Cap
+    { start: starterStripEnd + layerStep * 7.5, end: starterStripEnd + layerStep * 8.5 }, // 10. Complete Clean Up
   ];
   
   // Calculate when all active layers end
-  const roofLayersEnd = starterStripEnd + layerStep * 7 + 0.05;
+  const roofLayersEnd = starterStripEnd + layerStep * 8.5 + 0.05;
 
   // Show hint during buffer period (before animation starts)
   const showScrollHint = progress < layerStart;
