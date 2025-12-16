@@ -1312,48 +1312,162 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
       }}
     >
       <defs>
+        {/* Realistic metal flashing gradient */}
         <linearGradient id="flashingMetalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="hsl(210 15% 70%)" />
-          <stop offset="50%" stopColor="hsl(210 12% 55%)" />
-          <stop offset="100%" stopColor="hsl(210 10% 45%)" />
+          <stop offset="0%" stopColor="hsl(210 20% 75%)" />
+          <stop offset="30%" stopColor="hsl(210 15% 60%)" />
+          <stop offset="70%" stopColor="hsl(210 18% 50%)" />
+          <stop offset="100%" stopColor="hsl(210 12% 40%)" />
+        </linearGradient>
+        <linearGradient id="flashingHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(210 30% 85%)" />
+          <stop offset="100%" stopColor="hsl(210 20% 55%)" />
+        </linearGradient>
+        <linearGradient id="flashingShadow" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="hsl(210 15% 35%)" />
+          <stop offset="100%" stopColor="hsl(210 20% 55%)" />
         </linearGradient>
         {!isMobile && (
           <filter id="flashingGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="0" dy="0" stdDeviation="2" floodColor="hsl(210 40% 80%)" floodOpacity="0.5" />
+            <feDropShadow dx="0" dy="1" stdDeviation="1.5" floodColor="hsl(210 50% 70%)" floodOpacity="0.4" />
           </filter>
         )}
       </defs>
       
-      {/* Chimney flashing - realistic step flashing that hugs the chimney */}
-      {/* Chimney body is: M88 50 L122 50 L122 117 L88 130 Z */}
+      {/* ========= CHIMNEY FLASHING - Realistic Step Flashing ========= */}
+      {/* Chimney: M88 50 L122 50 L122 117 L88 130 Z */}
       <g filter={isMobile ? undefined : "url(#flashingGlow)"}>
-        {/* Counter flashing - runs along the angled bottom edge */}
-        <path 
-          d="M85 132 L85 128 L125 115 L125 119 Z"
+        
+        {/* LEFT SIDE - Step flashing pieces going up the roof slope */}
+        {/* Each step is an L-shaped piece that tucks under shingles */}
+        {[0, 1, 2, 3, 4].map((i) => {
+          const stepHeight = 10;
+          const baseY = 128 - (i * stepHeight);
+          const roofSlope = 0.38; // Approximate slope
+          const xOffset = i * stepHeight * roofSlope;
+          return (
+            <g key={`left-step-${i}`}>
+              {/* Vertical leg (against chimney) */}
+              <path
+                d={`M${86 - xOffset} ${baseY} 
+                    L${86 - xOffset} ${baseY - stepHeight - 2}
+                    L${89 - xOffset} ${baseY - stepHeight - 2}
+                    L${89 - xOffset} ${baseY} Z`}
+                fill="url(#flashingHighlight)"
+                stroke="hsl(210 25% 45%)"
+                strokeWidth="0.5"
+              />
+              {/* Horizontal leg (on roof) */}
+              <path
+                d={`M${86 - xOffset} ${baseY}
+                    L${76 - xOffset} ${baseY + 3}
+                    L${76 - xOffset} ${baseY + 1}
+                    L${86 - xOffset} ${baseY - 2} Z`}
+                fill="url(#flashingMetalGrad)"
+                stroke="hsl(210 25% 45%)"
+                strokeWidth="0.5"
+              />
+            </g>
+          );
+        })}
+        
+        {/* LEFT SIDE - Counter flashing (tucks into mortar joints) */}
+        {[0, 1, 2, 3].map((i) => {
+          const stepHeight = 12;
+          const baseY = 125 - (i * stepHeight);
+          return (
+            <rect
+              key={`left-counter-${i}`}
+              x="88"
+              y={baseY - 4}
+              width="4"
+              height="6"
+              fill="url(#flashingShadow)"
+              stroke="hsl(210 30% 50%)"
+              strokeWidth="0.3"
+            />
+          );
+        })}
+        
+        {/* RIGHT SIDE - Step flashing pieces */}
+        {[0, 1, 2, 3].map((i) => {
+          const stepHeight = 8;
+          const baseY = 115 - (i * stepHeight);
+          const roofSlope = 0.38;
+          const xOffset = i * stepHeight * roofSlope;
+          return (
+            <g key={`right-step-${i}`}>
+              {/* Vertical leg */}
+              <path
+                d={`M${123 + xOffset} ${baseY}
+                    L${123 + xOffset} ${baseY - stepHeight - 2}
+                    L${120 + xOffset} ${baseY - stepHeight - 2}
+                    L${120 + xOffset} ${baseY} Z`}
+                fill="url(#flashingHighlight)"
+                stroke="hsl(210 25% 45%)"
+                strokeWidth="0.5"
+              />
+              {/* Horizontal leg */}
+              <path
+                d={`M${123 + xOffset} ${baseY}
+                    L${133 + xOffset} ${baseY + 3}
+                    L${133 + xOffset} ${baseY + 1}
+                    L${123 + xOffset} ${baseY - 2} Z`}
+                fill="url(#flashingMetalGrad)"
+                stroke="hsl(210 25% 45%)"
+                strokeWidth="0.5"
+              />
+            </g>
+          );
+        })}
+        
+        {/* RIGHT SIDE - Counter flashing */}
+        {[0, 1, 2].map((i) => {
+          const stepHeight = 10;
+          const baseY = 112 - (i * stepHeight);
+          return (
+            <rect
+              key={`right-counter-${i}`}
+              x="118"
+              y={baseY - 3}
+              width="4"
+              height="5"
+              fill="url(#flashingShadow)"
+              stroke="hsl(210 30% 50%)"
+              strokeWidth="0.3"
+            />
+          );
+        })}
+        
+        {/* BOTTOM APRON - Main waterproofing at chimney base */}
+        <path
+          d="M82 133 L82 127 L88 127 L88 130 L122 117 L122 113 L128 113 L128 120 L88 133 Z"
           fill="url(#flashingMetalGrad)"
-          stroke="hsl(210 35% 75%)"
-          strokeWidth="1.5"
+          stroke="hsl(210 30% 55%)"
+          strokeWidth="1"
           strokeLinejoin="round"
         />
         
-        {/* Left side apron flashing - wraps around uphill corner */}
-        <path 
-          d="M82 132 L82 108 L88 108 L88 128 Z"
-          fill="url(#flashingMetalGrad)"
-          stroke="hsl(210 35% 75%)"
-          strokeWidth="1"
+        {/* Apron top edge highlight */}
+        <path
+          d="M82 127 L88 127 L88 130 L122 117 L122 113 L128 113"
+          fill="none"
+          stroke="hsl(210 40% 80%)"
+          strokeWidth="1.5"
+          strokeLinecap="round"
         />
         
-        {/* Right side apron flashing - wraps around downhill corner */}
-        <path 
-          d="M122 98 L128 98 L128 119 L122 117 Z"
-          fill="url(#flashingMetalGrad)"
-          stroke="hsl(210 35% 75%)"
-          strokeWidth="1"
+        {/* Apron drip edge (bottom lip) */}
+        <path
+          d="M80 135 L80 133 L128 120 L130 122 Z"
+          fill="hsl(210 15% 50%)"
+          stroke="hsl(210 20% 40%)"
+          strokeWidth="0.5"
         />
         
-        {/* Top edge highlight for depth */}
-        <line x1="85" y1="128" x2="125" y2="115" stroke="hsl(210 50% 85%)" strokeWidth="1" />
+        {/* Corner caps for clean finish */}
+        <rect x="82" y="125" width="8" height="4" rx="0.5" fill="hsl(210 20% 60%)" stroke="hsl(210 25% 45%)" strokeWidth="0.5" />
+        <rect x="120" y="111" width="8" height="4" rx="0.5" fill="hsl(210 20% 60%)" stroke="hsl(210 25% 45%)" strokeWidth="0.5" />
       </g>
       
       {/* Pipe boot flashing collar */}
