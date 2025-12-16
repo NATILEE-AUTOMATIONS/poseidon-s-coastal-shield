@@ -144,11 +144,103 @@ const MobileDeckingLayer: React.FC<{ progress: number }> = ({ progress }) => {
   );
 };
 
+// Mobile Drip Edge Layer Component
+const MobileDripEdgeLayer: React.FC<{ progress: number }> = ({ progress }) => {
+  const easedProgress = easeOutQuint(progress);
+  const translateY = -150 * (1 - easedProgress);
+  
+  // Bar Y position for text wipe sync
+  const barY = 160 + translateY;
+  
+  // Text wipe synced to bar position
+  const textTop = 85;
+  const textBottom = 130;
+  const textHeight = textBottom - textTop;
+  const clipHeight = Math.max(0, Math.min(textHeight, barY - textTop));
+  
+  // Text fade out after 70%
+  const textOpacity = progress < 0.70 ? 1 : progress > 0.90 ? 0 : 1 - (progress - 0.70) / 0.20;
+  
+  if (progress <= 0) return null;
+  
+  return (
+    <>
+      {/* Animated drip edge line */}
+      <g 
+        className="drip-edge-layer"
+        style={{
+          transform: `translateY(${translateY}px)`,
+          transformOrigin: '200px 159px',
+        }}
+      >
+        <line 
+          x1="35" y1="160" 
+          x2="365" y2="160" 
+          stroke="hsl(25 95% 55%)"
+          strokeWidth="4"
+          strokeLinecap="round"
+          style={{
+            filter: `drop-shadow(0 0 ${6 + easedProgress * 10}px hsl(25 95% 55% / 0.8)) drop-shadow(0 0 ${3 + easedProgress * 5}px hsl(30 100% 60% / 0.6))`,
+          }}
+        />
+      </g>
+      
+      {/* Wipe-reveal text label */}
+      {clipHeight > 0 && textOpacity > 0 && (
+        <g style={{ 
+          filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))',
+          opacity: textOpacity,
+        }}>
+          <defs>
+            <clipPath id="mobileDripEdgeTextWipe">
+              <rect x="100" y={textTop} width="200" height={clipHeight} />
+            </clipPath>
+          </defs>
+          
+          <g clipPath="url(#mobileDripEdgeTextWipe)">
+            <text
+              x="200"
+              y="103"
+              textAnchor="middle"
+              fill="hsl(45 100% 95%)"
+              fontSize="15"
+              fontWeight="800"
+              fontFamily="system-ui, -apple-system, sans-serif"
+              letterSpacing="3"
+              stroke="hsl(0 0% 5%)"
+              strokeWidth="2.5"
+              paintOrder="stroke fill"
+            >
+              REPLACE
+            </text>
+            <text
+              x="200"
+              y="124"
+              textAnchor="middle"
+              fill="hsl(25 100% 75%)"
+              fontSize="15"
+              fontWeight="800"
+              fontFamily="system-ui, -apple-system, sans-serif"
+              letterSpacing="2"
+              stroke="hsl(0 0% 5%)"
+              strokeWidth="2.5"
+              paintOrder="stroke fill"
+            >
+              DRIP EDGE
+            </text>
+          </g>
+        </g>
+      )}
+    </>
+  );
+};
+
 const HeroSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [lineProgress, setLineProgress] = useState(0);
   const [textLit, setTextLit] = useState(false);
   const [deckingProgress, setDeckingProgress] = useState(0);
+  const [dripEdgeProgress, setDripEdgeProgress] = useState(0);
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -175,9 +267,15 @@ const HeroSection = () => {
       // Mobile decking animation: starts after text lights up, extended scroll range
       if (isMobile) {
         const deckingStart = windowHeight * 0.7;
-        const deckingEnd = windowHeight * 1.8; // Extended range for slower animation
+        const deckingEnd = windowHeight * 1.4;
         const deckProgress = Math.max(0, Math.min(1, (scrollY - deckingStart) / (deckingEnd - deckingStart)));
         setDeckingProgress(deckProgress);
+        
+        // Drip edge animation: starts after decking completes
+        const dripStart = windowHeight * 1.4;
+        const dripEnd = windowHeight * 2.1;
+        const dripProgress = Math.max(0, Math.min(1, (scrollY - dripStart) / (dripEnd - dripStart)));
+        setDripEdgeProgress(dripProgress);
       }
     };
 
@@ -191,7 +289,7 @@ const HeroSection = () => {
   const lineHeight = Math.min(lineProgress * 1.2, 1) * 350;
 
   return (
-    <section ref={sectionRef} className="relative w-full overflow-hidden bg-gradient-mesh" style={{ minHeight: isMobile ? '200vh' : '100vh' }}>
+    <section ref={sectionRef} className="relative w-full overflow-hidden bg-gradient-mesh" style={{ minHeight: isMobile ? '250vh' : '100vh' }}>
       {/* Subtle Grid Overlay */}
       <div className="absolute inset-0 bg-grid opacity-20" />
       
@@ -314,6 +412,7 @@ const HeroSection = () => {
               >
                 <HouseSVG doorAngle={0} lightBoost={0} />
                 <MobileDeckingLayer progress={deckingProgress} />
+                <MobileDripEdgeLayer progress={dripEdgeProgress} />
               </svg>
             </div>
           )}
