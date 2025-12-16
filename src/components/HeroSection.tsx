@@ -21,10 +21,10 @@ const HeroSection = () => {
       
       setLineProgress(progress);
       
-      // Trigger text light-up when line is 100% complete
-      if (progress >= 0.99 && !textLit) {
+      // Trigger text light-up when line is near complete
+      if (progress >= 0.85 && !textLit) {
         setTextLit(true);
-      } else if (progress < 0.95 && textLit) {
+      } else if (progress < 0.8 && textLit) {
         setTextLit(false);
       }
     };
