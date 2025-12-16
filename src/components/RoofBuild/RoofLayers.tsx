@@ -934,8 +934,8 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
   const shingleBottom = eaveY;
   const roofHeight = shingleBottom - peakY;
   
-  // 15 courses for detailed architectural look (same on all devices)
-  const courseCount = 15;
+  // Mobile: fewer courses (10) for taller/squarer shingles, Desktop: 15 courses
+  const courseCount = isMobile ? 10 : 15;
   const courseHeight = roofHeight / courseCount;
   
   // Helper to get X at a given Y on the roof slope
@@ -1047,8 +1047,8 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
           const courseWidth = bottomRightX - bottomLeftX;
           
           const actualCourseWidth = bottomRightX - bottomLeftX;
-          // Mobile: narrower tabs (14px) for more square proportions, Desktop: 22px
-          const targetTabWidth = isMobile ? 10 : 22;
+          // Mobile: ~11px width to match ~10.5px height = square, Desktop: 22px
+          const targetTabWidth = isMobile ? 11 : 22;
           const tabsPerCourse = Math.max(4, Math.round(actualCourseWidth / targetTabWidth));
           const tabWidthRatio = 1 / tabsPerCourse;
           const offsetRatio = courseIdx % 2 === 1 ? tabWidthRatio / 2 : 0;
