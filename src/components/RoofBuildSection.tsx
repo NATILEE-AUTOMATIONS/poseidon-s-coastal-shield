@@ -11,7 +11,6 @@ import {
   StarterStripLayer,
   ShinglesLayer,
   VentsLayer,
-  MobileVentsLayer,
   FlashingLayer,
   RidgeCapLayer,
   CleanUpLayer,
@@ -259,11 +258,7 @@ const RoofBuildSection: React.FC = () => {
                   {/* 6. Shingles */}
                   <ShinglesLayer progress={progress} startProgress={layers[5].start} endProgress={layers[5].end} isMobile={isMobile} />
                   {/* 7. Pipe Boots & Vents */}
-                  {isMobile ? (
-                    <MobileVentsLayer progress={progress} startProgress={layers[6].start} endProgress={layers[6].end} isMobile={isMobile} />
-                  ) : (
-                    <VentsLayer progress={progress} startProgress={layers[6].start} endProgress={layers[6].end} isMobile={isMobile} />
-                  )}
+                  <VentsLayer progress={progress} startProgress={layers[6].start} endProgress={layers[6].end} isMobile={isMobile} />
                   {/* 8. Flashing - Desktop only */}
                   {!isMobile && (
                     <FlashingLayer progress={progress} startProgress={layers[7].start} endProgress={layers[7].end} />
