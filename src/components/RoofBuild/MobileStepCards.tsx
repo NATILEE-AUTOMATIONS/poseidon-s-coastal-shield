@@ -14,99 +14,61 @@ const MobileStepCards: React.FC<MobileStepCardsProps> = ({ progress, layers }) =
   // 11 cards: intro + 10 layers
   const cardCount = 11;
   
-  // Calculate timing for each card
-  const getCardTiming = (cardIndex: number) => {
+  // Calculate the center point for each card (when it should be facing forward)
+  const getCardCenter = (cardIndex: number): number => {
     if (cardIndex === 0) {
-      // Intro card: visible from 0% to first layer start
-      return { start: 0, end: layers[0]?.start || 0.15 };
+      // Intro card centered between 0 and first layer start
+      return (layers[0]?.start || 0.15) / 2;
     }
-    // Layer cards: synced with their layer
     const layerIndex = cardIndex - 1;
     if (layerIndex < layers.length) {
-      return { start: layers[layerIndex].start, end: layers[layerIndex].end };
+      // Center of the layer's duration
+      return (layers[layerIndex].start + layers[layerIndex].end) / 2;
     }
-    return { start: 1, end: 1 };
+    return 1;
   };
 
-  // Calculate card animation state
-  const getCardState = (cardIndex: number) => {
-    const timing = getCardTiming(cardIndex);
-    const nextTiming = cardIndex < cardCount - 1 ? getCardTiming(cardIndex + 1) : { start: 1, end: 1 };
+  // Calculate continuous rotation based on scroll position
+  const getCardRotation = (cardIndex: number): { rotateY: number; opacity: number; zIndex: number } => {
+    const center = getCardCenter(cardIndex);
     
-    // Transition duration as percentage of scroll
-    const transitionDuration = 0.04;
+    // How much scroll distance for a full 180° rotation (90° in, 90° out)
+    const rotationWindow = 0.12; // Wider window = slower rotation
     
-    // Calculate phases
-    const enterStart = timing.start - transitionDuration;
-    const enterEnd = timing.start;
-    const exitStart = nextTiming.start - transitionDuration;
-    const exitEnd = nextTiming.start;
+    // Distance from center (-1 to 1 range within window)
+    const distanceFromCenter = (progress - center) / rotationWindow;
     
-    let rotateY = -90; // Default: hidden to the right
-    let opacity = 0;
-    let translateX = 50; // Start from right
+    // Clamp to -1...1 range
+    const clampedDistance = Math.max(-1, Math.min(1, distanceFromCenter));
     
-    if (progress < enterStart) {
-      // Before entering: hidden to the right
-      rotateY = -90;
-      opacity = 0;
-      translateX = 50;
-    } else if (progress >= enterStart && progress < enterEnd) {
-      // Entering: spin in from right
-      const enterProgress = (progress - enterStart) / transitionDuration;
-      const eased = easeOutBack(enterProgress);
-      rotateY = -90 + (90 * eased);
-      opacity = enterProgress;
-      translateX = 50 * (1 - eased);
-    } else if (progress >= enterEnd && progress < exitStart) {
-      // Holding: fully visible
-      rotateY = 0;
-      opacity = 1;
-      translateX = 0;
-    } else if (progress >= exitStart && progress < exitEnd) {
-      // Exiting: spin out to left
-      const exitProgress = (progress - exitStart) / transitionDuration;
-      const eased = easeInBack(exitProgress);
-      rotateY = 90 * eased;
-      opacity = 1 - exitProgress;
-      translateX = -50 * eased;
-    } else {
-      // After exiting: hidden to the left
-      rotateY = 90;
-      opacity = 0;
-      translateX = -50;
-    }
+    // Convert to rotation: -1 = -90° (coming in), 0 = 0° (facing), 1 = 90° (going out)
+    const rotateY = clampedDistance * 90;
     
-    return { rotateY, opacity, translateX };
-  };
-
-  // Easing functions
-  const easeOutBack = (x: number): number => {
-    const c1 = 1.70158;
-    const c3 = c1 + 1;
-    return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
-  };
-
-  const easeInBack = (x: number): number => {
-    const c1 = 1.70158;
-    const c3 = c1 + 1;
-    return c3 * x * x * x - c1 * x * x;
+    // Opacity based on how close to center (facing forward = full opacity)
+    // Use cosine for smooth falloff
+    const normalizedAngle = Math.abs(rotateY) / 90; // 0 to 1
+    const opacity = Math.cos(normalizedAngle * Math.PI / 2); // 1 at center, 0 at edges
+    
+    // Z-index: cards closer to center should be on top
+    const zIndex = Math.round((1 - Math.abs(clampedDistance)) * 10);
+    
+    return { rotateY, opacity, zIndex };
   };
 
   return (
     <div 
       className="relative w-full mt-6"
       style={{
-        perspective: '1000px',
+        perspective: '800px',
         perspectiveOrigin: '50% 50%',
         height: '140px'
       }}
     >
       {Array.from({ length: cardCount }).map((_, index) => {
-        const { rotateY, opacity, translateX } = getCardState(index);
+        const { rotateY, opacity, zIndex } = getCardRotation(index);
         
-        // Skip rendering if completely hidden
-        if (opacity < 0.01) return null;
+        // Skip rendering if too far rotated (optimization)
+        if (Math.abs(rotateY) > 88) return null;
         
         return (
           <div
@@ -116,8 +78,9 @@ const MobileStepCards: React.FC<MobileStepCardsProps> = ({ progress, layers }) =
               width: '85vw',
               maxWidth: '340px',
               height: '120px',
-              transform: `translateX(${translateX}px) rotateY(${rotateY}deg)`,
+              transform: `rotateY(${rotateY}deg)`,
               opacity,
+              zIndex,
               transformStyle: 'preserve-3d',
               backfaceVisibility: 'hidden',
               willChange: 'transform, opacity'
