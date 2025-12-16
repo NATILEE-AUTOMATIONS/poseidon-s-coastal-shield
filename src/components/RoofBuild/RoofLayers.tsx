@@ -1216,11 +1216,11 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
         </linearGradient>
       </defs>
       
-      {/* Pipe Boot - Right slope - positioned to avoid chimney and text */}
+      {/* Pipe Boot - Left slope - positioned to clear chimney and text */}
       {pipeBootOpacity > 0 && (
         <g 
           style={{
-            transform: `translate(290px, ${135 + pipeBootY}px) rotate(${-pipeBootRotate}deg)`,
+            transform: `translate(145px, ${135 + pipeBootY}px) rotate(${pipeBootRotate}deg)`,
             transformOrigin: '0 0',
             opacity: pipeBootOpacity,
           }}
