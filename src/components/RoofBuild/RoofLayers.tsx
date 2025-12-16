@@ -989,37 +989,48 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
             : 0
   );
   
-  // Generate shingle colors with subtle variation - charcoal/slate palette
+  // Generate shingle colors with realistic granule variation
   const getShingleColor = (courseIndex: number, tabIndex: number) => {
     const seed = (courseIndex * 7 + tabIndex * 13) % 100;
-    const baseL = 18 + (seed % 10); // 18-27% lightness variation
-    const baseS = 4 + (seed % 5); // 4-8% saturation (desaturated for charcoal)
-    const baseH = 200 + (seed % 20); // 200-219 hue range (cool slate tones)
+    const seed2 = (courseIndex * 11 + tabIndex * 17) % 100;
+    // Vary between cool slate and warm charcoal for natural look
+    const baseH = 195 + (seed % 25); // 195-219 hue range
+    const baseS = 3 + (seed2 % 6); // 3-8% subtle saturation
+    const baseL = 16 + (seed % 12); // 16-27% lightness for depth
     return `hsl(${baseH} ${baseS}% ${baseL}%)`;
+  };
+  
+  // Secondary color for granule texture
+  const getGranuleColor = (courseIndex: number, tabIndex: number) => {
+    const seed = (courseIndex * 19 + tabIndex * 23) % 100;
+    const baseL = 12 + (seed % 8);
+    return `hsl(200 5% ${baseL}%)`;
   };
   
   return (
     <g className="field-shingles-layer">
       <defs>
-        {/* Architectural shingle gradient with dimensional look - charcoal slate */}
-        <linearGradient id="shingleDimensional" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(210 6% 24%)" />
-          <stop offset="25%" stopColor="hsl(205 5% 20%)" />
-          <stop offset="75%" stopColor="hsl(200 4% 16%)" />
-          <stop offset="100%" stopColor="hsl(195 3% 12%)" />
-        </linearGradient>
-        
-        {/* Highlight gradient for 3D effect */}
+        {/* Highlight gradient - stronger for 3D pop */}
         <linearGradient id="shingleHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(210 8% 32%)" stopOpacity="0.4" />
-          <stop offset="30%" stopColor="hsl(205 6% 22%)" stopOpacity="0" />
+          <stop offset="0%" stopColor="hsl(200 10% 38%)" stopOpacity="0.5" />
+          <stop offset="15%" stopColor="hsl(200 8% 28%)" stopOpacity="0.2" />
+          <stop offset="40%" stopColor="hsl(200 6% 22%)" stopOpacity="0" />
         </linearGradient>
         
-        {/* Shadow gradient for depth */}
+        {/* Shadow gradient for realistic depth at bottom */}
         <linearGradient id="shingleShadow" x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stopColor="hsl(200 10% 6%)" stopOpacity="0.6" />
-          <stop offset="40%" stopColor="hsl(205 8% 10%)" stopOpacity="0" />
+          <stop offset="0%" stopColor="hsl(200 15% 4%)" stopOpacity="0.8" />
+          <stop offset="20%" stopColor="hsl(200 12% 8%)" stopOpacity="0.4" />
+          <stop offset="50%" stopColor="hsl(200 8% 10%)" stopOpacity="0" />
         </linearGradient>
+        
+        {/* Granule texture pattern */}
+        <pattern id="granuleTexture" patternUnits="userSpaceOnUse" width="4" height="4">
+          <rect width="4" height="4" fill="transparent" />
+          <circle cx="1" cy="1" r="0.5" fill="hsl(200 5% 25%)" opacity="0.15" />
+          <circle cx="3" cy="3" r="0.4" fill="hsl(200 3% 15%)" opacity="0.12" />
+          <circle cx="2" cy="0.5" r="0.3" fill="hsl(200 4% 30%)" opacity="0.1" />
+        </pattern>
         
         {/* Clip to roof shape */}
         <clipPath id="shinglesRoofClip">
@@ -1108,6 +1119,14 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                       const tabBottomRightX = bottomLeftX + courseWidth * clampedEnd;
                       
                       const shingleColor = getShingleColor(courseIdx, tabIdx);
+                      const granuleColor = getGranuleColor(courseIdx, tabIdx);
+                      const tabCenterX = (tabBottomLeftX + tabBottomRightX) / 2;
+                      const tabCenterY = (topY + bottomY) / 2;
+                      
+                      // Exposure line position (visible bottom portion of shingle)
+                      const exposureY = topY + (bottomY - topY) * 0.6;
+                      const expLeftX = topLeftX + (topRightX - topLeftX) * clampedStart + (bottomLeftX - topLeftX) * 0.6 * clampedStart / (clampedEnd - clampedStart || 1);
+                      const expRightX = topLeftX + (topRightX - topLeftX) * clampedEnd + (bottomRightX - topRightX) * 0.6;
                       
                       return (
                         <g key={`tab-${tabIdx}`}>
@@ -1117,43 +1136,61 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                             fill={shingleColor}
                           />
                           
-                          {/* Highlight overlay */}
+                          {/* Granule texture overlay */}
+                          <polygon
+                            points={`${tabTopLeftX},${topY} ${tabTopRightX},${topY} ${tabBottomRightX},${bottomY} ${tabBottomLeftX},${bottomY}`}
+                            fill="url(#granuleTexture)"
+                          />
+                          
+                          {/* Highlight overlay for 3D */}
                           <polygon
                             points={`${tabTopLeftX},${topY} ${tabTopRightX},${topY} ${tabBottomRightX},${bottomY} ${tabBottomLeftX},${bottomY}`}
                             fill="url(#shingleHighlight)"
                           />
                           
-                          {/* Shadow overlay */}
+                          {/* Shadow overlay at bottom */}
                           <polygon
                             points={`${tabTopLeftX},${topY} ${tabTopRightX},${topY} ${tabBottomRightX},${bottomY} ${tabBottomLeftX},${bottomY}`}
                             fill="url(#shingleShadow)"
                           />
                           
-                          {/* Right edge divider line for shingle definition */}
+                          {/* Exposure line - where shingle overlaps the one below */}
+                          <line
+                            x1={tabBottomLeftX + 1}
+                            y1={bottomY - courseHeight * 0.35}
+                            x2={tabBottomRightX - 1}
+                            y2={bottomY - courseHeight * 0.35}
+                            stroke="hsl(200 8% 12%)"
+                            strokeWidth="0.8"
+                            opacity={0.35}
+                          />
+                          
+                          {/* Right edge divider line */}
                           {clampedEnd < 1 && (
                             <line
                               x1={tabTopRightX}
                               y1={topY + 1}
                               x2={tabBottomRightX}
                               y2={bottomY - 1}
-                              stroke="hsl(200 12% 10%)"
-                              strokeWidth="1"
-                              opacity={0.6}
+                              stroke="hsl(200 15% 8%)"
+                              strokeWidth="1.2"
+                              opacity={0.5}
                             />
                           )}
                         </g>
                       );
                     })}
                     
-                    {/* Course bottom shadow line for depth between rows */}
+                    {/* Course bottom shadow - deeper for overlap effect */}
                     <line
-                      x1={bottomLeftX + 2}
-                      y1={bottomY}
-                      x2={bottomRightX - 2}
-                      y2={bottomY}
-                      stroke="hsl(200 15% 6%)"
-                      strokeWidth="1.5"
-                      opacity={0.4}
+                      x1={bottomLeftX + 1}
+                      y1={bottomY + 0.5}
+                      x2={bottomRightX - 1}
+                      y2={bottomY + 0.5}
+                      stroke="hsl(200 20% 4%)"
+                      strokeWidth="2"
+                      opacity={0.5}
+                      style={{ filter: 'blur(0.5px)' }}
                     />
                   </g>
                 );
