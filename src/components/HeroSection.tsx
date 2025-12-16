@@ -1,9 +1,37 @@
 import { Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState, useRef } from "react";
 
 const HeroSection = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [lineProgress, setLineProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!sectionRef.current) return;
+      
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      
+      // Line starts drawing after scrolling 20% of viewport, completes at 80%
+      const startScroll = windowHeight * 0.2;
+      const endScroll = windowHeight * 0.9;
+      const progress = Math.max(0, Math.min(1, (scrollY - startScroll) / (endScroll - startScroll)));
+      
+      setLineProgress(progress);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const lineHeight = Math.min(lineProgress * 1.2, 1) * 300;
+  const textOpacity = lineProgress > 0.7 ? (lineProgress - 0.7) / 0.3 : 0;
+
   return (
-    <section className="relative min-h-screen w-full overflow-hidden bg-gradient-mesh">
+    <section ref={sectionRef} className="relative min-h-[180vh] w-full overflow-hidden bg-gradient-mesh">
       {/* Subtle Grid Overlay */}
       <div className="absolute inset-0 bg-grid opacity-20" />
       
@@ -16,7 +44,7 @@ const HeroSection = () => {
       </div>
 
       {/* Hero Content - Added padding-top to account for fixed navbar */}
-      <div className="relative z-10 flex flex-col items-center justify-center pt-36 sm:pt-32 lg:pt-40 pb-20 px-6 text-center">
+      <div className="relative z-10 flex flex-col items-center justify-start pt-36 sm:pt-32 lg:pt-40 pb-20 px-6 text-center">
         
         {/* Pill Badge */}
         <div 
@@ -54,6 +82,54 @@ const HeroSection = () => {
           >
             Free Assessment
           </Button>
+        </div>
+
+        {/* Scroll-triggered glowing line */}
+        <div className="mt-16 flex flex-col items-center">
+          <div 
+            className="w-3 rounded-full"
+            style={{
+              height: `${lineHeight}px`,
+              background: 'linear-gradient(to bottom, hsl(168 70% 45%), hsl(168 80% 55%))',
+              boxShadow: `
+                0 0 15px hsl(168 70% 50% / 0.9),
+                0 0 30px hsl(168 70% 50% / 0.7),
+                0 0 50px hsl(168 70% 50% / 0.5),
+                0 0 80px hsl(168 70% 50% / 0.3)
+              `,
+              opacity: lineProgress > 0.05 ? 1 : 0,
+              transition: 'opacity 0.3s ease-out',
+            }}
+          />
+          
+          {/* Text that reveals after line draws */}
+          <div 
+            className="mt-12 text-center px-6"
+            style={{
+              opacity: textOpacity,
+              transform: `translateY(${20 * (1 - textOpacity)}px)`,
+              transition: 'transform 0.5s ease-out',
+            }}
+          >
+            <h2 
+              className="text-4xl md:text-5xl font-bold tracking-tight"
+              style={{
+                color: 'hsl(45 100% 95%)',
+                textShadow: '0 0 10px hsl(168 70% 50% / 0.4), 0 0 20px hsl(168 70% 50% / 0.3)',
+              }}
+            >
+              910
+            </h2>
+            <h3 
+              className="text-3xl md:text-4xl font-bold mt-2"
+              style={{
+                color: 'hsl(168 70% 55%)',
+                textShadow: '0 0 15px hsl(168 70% 50% / 0.8), 0 0 30px hsl(168 70% 50% / 0.6), 0 0 45px hsl(168 70% 50% / 0.4)',
+              }}
+            >
+              Roofing Done Right
+            </h3>
+          </div>
         </div>
       </div>
 

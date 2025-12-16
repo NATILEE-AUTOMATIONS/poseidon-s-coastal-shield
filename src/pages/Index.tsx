@@ -1,7 +1,6 @@
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import RoofBuildSection from "@/components/RoofBuildSection";
-import ScrollLineSection from "@/components/ScrollLineSection";
 import { ScrollProvider } from "@/context/ScrollContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -13,7 +12,6 @@ const Index = () => {
       <main className="min-h-screen bg-background">
         <Navbar />
         <HeroSection />
-        <ScrollLineSection />
         {!isMobile && <RoofBuildSection />}
       </main>
     </ScrollProvider>
