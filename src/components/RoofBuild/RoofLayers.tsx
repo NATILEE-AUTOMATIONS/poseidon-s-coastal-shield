@@ -1134,16 +1134,16 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                             fill="url(#shingleShadow)"
                           />
                           
-                          {/* Right edge divider - subtle warm tone */}
+                          {/* Right edge divider - dark gap line for clear separation */}
                           {clampedEnd < 1 && (
                             <line
                               x1={tabTopRightX}
-                              y1={topY + 0.5}
+                              y1={topY + 0.3}
                               x2={tabBottomRightX}
-                              y2={bottomY - 0.5}
-                              stroke="hsl(25 8% 12%)"
-                              strokeWidth="0.6"
-                              opacity={0.5}
+                              y2={bottomY - 0.3}
+                              stroke="hsl(210 10% 5%)"
+                              strokeWidth="1.2"
+                              opacity={0.9}
                             />
                           )}
                         </g>
