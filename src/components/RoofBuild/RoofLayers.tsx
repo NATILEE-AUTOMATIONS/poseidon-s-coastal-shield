@@ -1266,14 +1266,16 @@ export const VentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endP
   );
 };
 
-// Chimney Flashing - renders BEHIND pipe/vents
+// Chimney Flashing - renders BEHIND pipe/vents (drops first)
 export const ChimneyFlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
   if (progress < startProgress) return null;
   
-  const easedProgress = easeOutQuint(layerProgress);
+  // Chimney drops first (no delay)
+  const chimneyProgress = Math.max(0, Math.min(1, layerProgress * 1.5));
+  const easedProgress = easeOutQuint(chimneyProgress);
   const translateY = -80 * (1 - easedProgress);
   const opacity = 0.4 + (0.6 * easedProgress);
   
@@ -1310,16 +1312,25 @@ export const ChimneyFlashingLayer: React.FC<LayerProps> = ({ progress, startProg
   );
 };
 
-// Pipe/Vent Flashing - renders ON TOP of pipe/vents
+// Pipe/Vent Flashing - renders ON TOP of pipe/vents (staggered drops)
 export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
   if (progress < startProgress) return null;
   
-  const easedProgress = easeOutQuint(layerProgress);
-  const translateY = -80 * (1 - easedProgress);
-  const opacity = 0.4 + (0.6 * easedProgress);
+  // Staggered timing: pipe starts at 15% progress, vent at 30%
+  const pipeDelay = 0.15;
+  const ventDelay = 0.30;
+  
+  const pipeProgress = Math.max(0, Math.min(1, (layerProgress - pipeDelay) / (1 - pipeDelay) * 1.3));
+  const ventProgress = Math.max(0, Math.min(1, (layerProgress - ventDelay) / (1 - ventDelay) * 1.3));
+  
+  const pipeTY = -80 * (1 - easeOutQuint(pipeProgress));
+  const pipeOpacity = pipeProgress > 0 ? 0.4 + (0.6 * easeOutQuint(pipeProgress)) : 0;
+  
+  const ventTY = -80 * (1 - easeOutQuint(ventProgress));
+  const ventOpacity = ventProgress > 0 ? 0.4 + (0.6 * easeOutQuint(ventProgress)) : 0;
   
   const textOpacity = layerProgress < 0.15 ? 0 
     : layerProgress < 0.35 ? (layerProgress - 0.15) / 0.2 
@@ -1337,17 +1348,15 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   const ventBaseY = isMobile ? 125 : 130;
   
   return (
-    <g 
-      className="flashing-layer"
-      style={{
-        transform: `translateY(${isMobile ? Math.round(translateY) : translateY}px)`,
-        opacity,
-        willChange: 'transform, opacity',
-      }}
-    >
+    <g className="flashing-layer">
       {/* ========= PIPE BOOT FLASHING ========= */}
-      {/* Pipe boot positioned at (pipeBootX, pipeBootBaseY) with base ellipse at cy=12 */}
-      <g style={{ transform: `translate(${pipeBootX}px, ${pipeBootBaseY}px)` }}>
+      <g 
+        style={{ 
+          transform: `translate(${pipeBootX}px, ${pipeBootBaseY + (isMobile ? Math.round(pipeTY) : pipeTY)}px)`,
+          opacity: pipeOpacity,
+          willChange: 'transform, opacity',
+        }}
+      >
         {/* Outer flashing collar - dark ring around pipe base */}
         <ellipse
           cx="0"
@@ -1391,8 +1400,13 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
       </g>
       
       {/* ========= VENT FLASHING ========= */}
-      {/* Box vent positioned at (ventX, ventBaseY) with base rect at y=5 */}
-      <g style={{ transform: `translate(${ventX}px, ${ventBaseY}px)` }}>
+      <g 
+        style={{ 
+          transform: `translate(${ventX}px, ${ventBaseY + (isMobile ? Math.round(ventTY) : ventTY)}px)`,
+          opacity: ventOpacity,
+          willChange: 'transform, opacity',
+        }}
+      >
         {/* Outer flashing collar - dark rectangle around vent base */}
         <rect
           x="-24"
