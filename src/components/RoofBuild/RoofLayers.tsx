@@ -1266,7 +1266,7 @@ export const RidgeCapLayer: React.FC<LayerProps> = () => null;
 export const CleanUpLayer: React.FC<LayerProps> = () => null;
 export const MobileShingleOverlay: React.FC<LayerProps> = () => null;
 
-// Simple mobile-only vents layer - drops in like drip edge
+// Simple mobile-only vents layer - GPU-accelerated for maximum smoothness
 export const MobileVentsLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress }) => {
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
@@ -1274,19 +1274,22 @@ export const MobileVentsLayer: React.FC<LayerProps> = ({ progress, startProgress
   if (progress < startProgress) return null;
   
   const easedProgress = easeOutQuint(layerProgress);
-  const translateY = -120 * (1 - easedProgress);
+  // Round to whole pixels for crisp rendering
+  const translateY = Math.round(-120 * (1 - easedProgress));
   
-  // Text visible for middle 1/3
-  const textOpacity = layerProgress >= 0.33 && layerProgress <= 0.67 
-    ? Math.min(1, (layerProgress - 0.33) * 6) * (layerProgress <= 0.5 ? 1 : Math.max(0, 1 - (layerProgress - 0.5) * 6))
-    : 0;
+  // Text visible for middle portion - simplified opacity calc
+  const textOpacity = layerProgress > 0.05 && layerProgress < 0.95 ? 1 : 0;
   
   return (
     <g 
       className="mobile-vents-layer"
       style={{
-        transform: `translateY(${translateY}px)`,
-      }}
+        // Use translate3d for GPU acceleration
+        transform: `translate3d(0, ${translateY}px, 0)`,
+        willChange: 'transform',
+        backfaceVisibility: 'hidden',
+        contain: 'layout style paint',
+      } as React.CSSProperties}
     >
       {/* Simple pipe boot - left side of roof, lower position */}
       <g>
@@ -1302,9 +1305,9 @@ export const MobileVentsLayer: React.FC<LayerProps> = ({ progress, startProgress
         <path d="M239,130 L239,124 Q239,121 242,121 L258,121 Q261,121 261,124 L261,130 Z" fill="hsl(168 50% 45%)" stroke="hsl(168 85% 60%)" strokeWidth="1.5" />
       </g>
       
-      {/* Text label */}
+      {/* Text label - no fade, just visible/hidden */}
       {textOpacity > 0 && (
-        <g style={{ opacity: textOpacity }}>
+        <g>
           <text x="200" y="100" textAnchor="middle" fontSize="12" fontWeight="800" fontFamily="system-ui, sans-serif" letterSpacing="2" fill="hsl(168 90% 75%)" stroke="hsl(0 0% 0%)" strokeWidth="3" paintOrder="stroke fill">
             PIPE BOOTS
           </text>
