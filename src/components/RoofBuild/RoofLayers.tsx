@@ -1295,6 +1295,10 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   const flashingMid = "hsl(220 8% 25%)";
   const flashingEdge = "hsl(220 12% 30%)";
   
+  // Pipe boot position (matching VentsLayer)
+  const pipeBootX = isMobile ? 120 : 130;
+  const pipeBootBaseY = isMobile ? 120 : 125;
+  
   return (
     <g 
       className="flashing-layer"
@@ -1356,7 +1360,51 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         />
       </g>
       
-      {/* Text label */}
+      {/* ========= PIPE BOOT FLASHING ========= */}
+      {/* Pipe boot positioned at (pipeBootX, pipeBootBaseY) with base ellipse at cy=12 */}
+      <g style={{ transform: `translate(${pipeBootX}px, ${pipeBootBaseY}px)` }}>
+        {/* Outer flashing collar - dark ring around pipe base */}
+        <ellipse
+          cx="0"
+          cy="14"
+          rx="18"
+          ry="6"
+          fill={flashingDark}
+          stroke={flashingEdge}
+          strokeWidth="1"
+        />
+        
+        {/* Inner ring for depth */}
+        <ellipse
+          cx="0"
+          cy="13"
+          rx="15"
+          ry="5"
+          fill={flashingMid}
+          stroke={flashingEdge}
+          strokeWidth="0.5"
+        />
+        
+        {/* Top highlight edge */}
+        <ellipse
+          cx="0"
+          cy="12"
+          rx="14"
+          ry="4.5"
+          fill="none"
+          stroke="hsl(220 15% 35%)"
+          strokeWidth="1"
+        />
+        
+        {/* Front apron extending down the roof */}
+        <path
+          d="M-18 14 Q-18 20 -12 22 L12 22 Q18 20 18 14 L16 16 Q14 19 10 20 L-10 20 Q-14 19 -16 16 Z"
+          fill={flashingDark}
+          stroke={flashingEdge}
+          strokeWidth="0.5"
+        />
+      </g>
+      
       {textOpacity > 0 && (
         <g style={{ opacity: textOpacity }}>
           <text
