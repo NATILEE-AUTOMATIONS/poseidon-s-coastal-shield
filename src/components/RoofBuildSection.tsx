@@ -74,7 +74,9 @@ const RoofBuildSection: React.FC = () => {
     { start: iceWaterEnd, end: underlaymentEnd },              // 4. Underlayment
     { start: underlaymentEnd, end: starterStripEnd },          // 5. Starter Strip (2x)
     { start: starterStripEnd, end: starterStripEnd + layerStep * 3 }, // 6. Shingles (3x duration for 8 courses)
-    { start: starterStripEnd + layerStep * 4.5, end: starterStripEnd + layerStep * 5.5 }, // 7. Vents (1.5x gap after shingles)
+    // 7. Vents - mobile: right after starter strip, desktop: after shingles gap
+    { start: isMobile ? starterStripEnd + layerStep * 0.5 : starterStripEnd + layerStep * 4.5, 
+      end: isMobile ? starterStripEnd + layerStep * 2 : starterStripEnd + layerStep * 5.5 },
     { start: starterStripEnd + layerStep * 5.5, end: starterStripEnd + layerStep * 6.5 }, // 8. Flashing
     { start: starterStripEnd + layerStep * 6.5, end: starterStripEnd + layerStep * 7.5 }, // 9. Ridge Vent & Cap
     { start: starterStripEnd + layerStep * 7.5, end: starterStripEnd + layerStep * 8.5 }, // 10. Complete Clean Up
