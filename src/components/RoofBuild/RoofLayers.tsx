@@ -1064,13 +1064,14 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                 opacity: Math.min(1, courseProgress * 3),
               }}
             >
-              {/* Individual shingle tabs with consistent rectangular shape */}
+              {/* Individual shingle tabs with adaptive count for consistent proportions */}
               {(() => {
-                // Use fixed pixel width for consistent shingle proportions
-                const fixedTabWidth = 42; // Fixed width in SVG units
                 const actualCourseWidth = bottomRightX - bottomLeftX;
-                const tabsNeeded = Math.ceil(actualCourseWidth / fixedTabWidth) + 1;
-                const offsetPixels = courseIdx % 2 === 1 ? fixedTabWidth / 2 : 0;
+                // Adaptive tab count - fewer tabs for narrower upper courses
+                // Target ~40px per tab width, minimum 2 tabs
+                const tabsPerCourse = Math.max(2, Math.round(actualCourseWidth / 40));
+                const tabWidthRatio = 1 / tabsPerCourse;
+                const offsetRatio = courseIdx % 2 === 1 ? tabWidthRatio / 2 : 0;
                 
                 const courseEased = easeOutBack(Math.min(1, courseProgress * 1.2));
                 const courseDrop = 20 * (1 - courseEased);
@@ -1088,30 +1089,23 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                       fill={getShingleColor(courseIdx, 0)}
                     />
                     
-                    {/* Then: individual tabs on top for texture - using fixed width */}
-                    {Array.from({ length: tabsNeeded }).map((_, tabIdx) => {
-                      // Calculate absolute pixel positions
-                      const tabStartPx = bottomLeftX - offsetPixels + (tabIdx * fixedTabWidth);
-                      const tabEndPx = tabStartPx + fixedTabWidth;
+                    {/* Then: individual tabs on top for texture */}
+                    {Array.from({ length: tabsPerCourse + 2 }).map((_, tabIdx) => {
+                      // Calculate tab boundaries with offset
+                      const rawStart = tabIdx * tabWidthRatio - offsetRatio;
+                      const rawEnd = (tabIdx + 1) * tabWidthRatio - offsetRatio;
                       
-                      // Skip if completely outside course bounds
-                      if (tabEndPx < bottomLeftX || tabStartPx > bottomRightX) return null;
+                      // Clamp to roof bounds
+                      const clampedStart = Math.max(0, rawStart);
+                      const clampedEnd = Math.min(1, rawEnd);
                       
-                      // Clamp to course bounds
-                      const clampedStartPx = Math.max(bottomLeftX, tabStartPx);
-                      const clampedEndPx = Math.min(bottomRightX, tabEndPx);
+                      if (clampedStart >= clampedEnd) return null;
                       
-                      if (clampedStartPx >= clampedEndPx) return null;
-                      
-                      // Convert to 0-1 ratio for calculating top edge positions
-                      const startRatio = (clampedStartPx - bottomLeftX) / actualCourseWidth;
-                      const endRatio = (clampedEndPx - bottomLeftX) / actualCourseWidth;
-                      
-                      // Calculate all four corners
-                      const tabTopLeftX = topLeftX + (topRightX - topLeftX) * startRatio;
-                      const tabTopRightX = topLeftX + (topRightX - topLeftX) * endRatio;
-                      const tabBottomLeftX = clampedStartPx;
-                      const tabBottomRightX = clampedEndPx;
+                      // Calculate corner positions - no gaps, full coverage
+                      const tabTopLeftX = topLeftX + (topRightX - topLeftX) * clampedStart;
+                      const tabTopRightX = topLeftX + (topRightX - topLeftX) * clampedEnd;
+                      const tabBottomLeftX = bottomLeftX + courseWidth * clampedStart;
+                      const tabBottomRightX = bottomLeftX + courseWidth * clampedEnd;
                       
                       const shingleColor = getShingleColor(courseIdx, tabIdx);
                       
@@ -1136,7 +1130,7 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                           />
                           
                           {/* Right edge divider line for shingle definition */}
-                          {clampedEndPx < bottomRightX && (
+                          {clampedEnd < 1 && (
                             <line
                               x1={tabTopRightX}
                               y1={topY + 1}
