@@ -31,7 +31,7 @@ const HeroSection = () => {
   const lineHeight = Math.min(lineProgress * 1.2, 1) * 350;
 
   return (
-    <section ref={sectionRef} className="relative min-h-[180vh] w-full overflow-hidden bg-gradient-mesh">
+    <section ref={sectionRef} className="relative w-full overflow-hidden bg-gradient-mesh">
       {/* Subtle Grid Overlay */}
       <div className="absolute inset-0 bg-grid opacity-20" />
       
@@ -44,7 +44,7 @@ const HeroSection = () => {
       </div>
 
       {/* Hero Content - Added padding-top to account for fixed navbar */}
-      <div className="relative z-10 flex flex-col items-center justify-start pt-36 sm:pt-32 lg:pt-40 pb-20 px-6 text-center">
+      <div className="relative z-10 flex flex-col items-center justify-start pt-36 sm:pt-32 lg:pt-40 pb-4 px-6 text-center">
         
         {/* Pill Badge */}
         <div 
