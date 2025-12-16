@@ -1026,6 +1026,13 @@ export const ShinglesLayer: React.FC<LayerProps> = ({ progress, startProgress, e
     return Math.max(max, courseMax);
   }, 0);
   
+  // Text opacity: fade in 10-40%, hold 40-70%, fade out 70-95%
+  const textOpacity = layerProgress < 0.1 ? 0 
+    : layerProgress < 0.4 ? (layerProgress - 0.1) / 0.3
+    : layerProgress < 0.7 ? 1
+    : layerProgress < 0.95 ? 1 - (layerProgress - 0.7) / 0.25
+    : 0;
+
   return (
     <g className="shingles-layer">
       <defs>
@@ -1086,6 +1093,36 @@ export const ShinglesLayer: React.FC<LayerProps> = ({ progress, startProgress, e
           </g>
         ))}
       </g>
+      
+      {/* SHINGLES text label */}
+      {textOpacity > 0 && (
+        <g 
+          style={{ opacity: textOpacity }}
+          filter="url(#textGlow)"
+        >
+          <defs>
+            <filter id="shinglesTextGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="0" dy="0" stdDeviation="2" floodColor="hsl(0 0% 0%)" floodOpacity="0.8" />
+            </filter>
+          </defs>
+          <text
+            x={peakX}
+            y={110}
+            textAnchor="middle"
+            fontSize="15"
+            fontWeight="700"
+            fontFamily="system-ui, sans-serif"
+            letterSpacing="2"
+            fill="hsl(168 90% 75%)"
+            stroke="hsl(0 0% 5%)"
+            strokeWidth="2.5"
+            paintOrder="stroke fill"
+            filter="url(#shinglesTextGlow)"
+          >
+            SHINGLES
+          </text>
+        </g>
+      )}
     </g>
   );
 };
