@@ -4,10 +4,151 @@ import { useEffect, useState, useRef } from "react";
 import HouseSVG from "./RoofBuild/HouseSVG";
 import { useIsMobile } from "@/hooks/use-mobile";
 
+// Easing function for smooth animation
+const easeOutQuint = (x: number): number => 1 - Math.pow(1 - x, 5);
+
+// Mobile Decking Layer Component
+const MobileDeckingLayer: React.FC<{ progress: number }> = ({ progress }) => {
+  // Animation runs from 0% to 100% progress
+  const easedProgress = easeOutQuint(progress);
+  const translateY = -100 * (1 - easedProgress);
+  const opacity = 0.2 + (0.8 * easedProgress);
+  
+  // Label timing: fade in 20-40%, hold 40-70%, fade out 70-90%
+  const labelOpacity = progress < 0.2 
+    ? 0 
+    : progress < 0.4 
+      ? (progress - 0.2) / 0.2 
+      : progress < 0.7 
+        ? 1 
+        : progress < 0.9 
+          ? 1 - (progress - 0.7) / 0.2 
+          : 0;
+  
+  if (progress <= 0) return null;
+  
+  return (
+    <g 
+      className="decking-layer"
+      style={{
+        transform: `translateY(${translateY}px)`,
+        transformOrigin: '200px 107px',
+        opacity,
+        filter: `drop-shadow(0 ${3 + easedProgress * 5}px ${6 + easedProgress * 10}px hsl(30 25% 12% / ${0.3 + easedProgress * 0.2}))`,
+      }}
+    >
+      <defs>
+        <clipPath id="mobileLeftSlopeClip">
+          <polygon points="42,159 200,56 200,159" />
+        </clipPath>
+        <clipPath id="mobileRightSlopeClip">
+          <polygon points="200,56 358,159 200,159" />
+        </clipPath>
+        <linearGradient id="mobilePlyLeft" x1="0%" y1="0%" x2="80%" y2="100%">
+          <stop offset="0%" stopColor="hsl(32 40% 62%)" />
+          <stop offset="40%" stopColor="hsl(30 35% 55%)" />
+          <stop offset="100%" stopColor="hsl(28 30% 45%)" />
+        </linearGradient>
+        <linearGradient id="mobilePlyRight" x1="100%" y1="0%" x2="20%" y2="100%">
+          <stop offset="0%" stopColor="hsl(34 38% 60%)" />
+          <stop offset="40%" stopColor="hsl(32 32% 52%)" />
+          <stop offset="100%" stopColor="hsl(29 28% 42%)" />
+        </linearGradient>
+        <pattern id="mobileGrainPattern" patternUnits="userSpaceOnUse" width="60" height="8">
+          <line x1="0" y1="2" x2="60" y2="2" stroke="hsl(30 20% 40%)" strokeWidth="0.5" opacity="0.15" />
+          <line x1="0" y1="5" x2="60" y2="5" stroke="hsl(30 20% 35%)" strokeWidth="0.3" opacity="0.1" />
+        </pattern>
+      </defs>
+      
+      {/* LEFT SLOPE */}
+      <g clipPath="url(#mobileLeftSlopeClip)">
+        <polygon points="42,159 200,56 200,159" fill="url(#mobilePlyLeft)" />
+        <polygon points="42,159 200,56 200,159" fill="url(#mobileGrainPattern)" />
+        <line x1="42" y1="115" x2="200" y2="115" stroke="hsl(28 30% 20%)" strokeWidth="1.4" />
+        <line x1="42" y1="116.2" x2="200" y2="116.2" stroke="hsl(35 35% 58%)" strokeWidth="0.5" opacity="0.5" />
+        <line x1="42" y1="80" x2="200" y2="80" stroke="hsl(28 30% 20%)" strokeWidth="1.4" />
+        <line x1="42" y1="81.2" x2="200" y2="81.2" stroke="hsl(35 35% 58%)" strokeWidth="0.5" opacity="0.5" />
+        <line x1="100" y1="159" x2="100" y2="115" stroke="hsl(28 28% 22%)" strokeWidth="0.9" opacity="0.75" />
+        <line x1="160" y1="159" x2="160" y2="115" stroke="hsl(28 28% 22%)" strokeWidth="0.9" opacity="0.75" />
+        <line x1="80" y1="115" x2="80" y2="80" stroke="hsl(28 28% 22%)" strokeWidth="0.9" opacity="0.75" />
+        <line x1="140" y1="115" x2="140" y2="80" stroke="hsl(28 28% 22%)" strokeWidth="0.9" opacity="0.75" />
+      </g>
+      
+      {/* RIGHT SLOPE */}
+      <g clipPath="url(#mobileRightSlopeClip)">
+        <polygon points="200,56 358,159 200,159" fill="url(#mobilePlyRight)" />
+        <polygon points="200,56 358,159 200,159" fill="url(#mobileGrainPattern)" />
+        <line x1="200" y1="115" x2="358" y2="115" stroke="hsl(28 30% 20%)" strokeWidth="1.4" />
+        <line x1="200" y1="116.2" x2="358" y2="116.2" stroke="hsl(35 35% 58%)" strokeWidth="0.5" opacity="0.5" />
+        <line x1="200" y1="80" x2="358" y2="80" stroke="hsl(28 30% 20%)" strokeWidth="1.4" />
+        <line x1="200" y1="81.2" x2="358" y2="81.2" stroke="hsl(35 35% 58%)" strokeWidth="0.5" opacity="0.5" />
+        <line x1="240" y1="159" x2="240" y2="115" stroke="hsl(28 28% 22%)" strokeWidth="0.9" opacity="0.75" />
+        <line x1="300" y1="159" x2="300" y2="115" stroke="hsl(28 28% 22%)" strokeWidth="0.9" opacity="0.75" />
+        <line x1="260" y1="115" x2="260" y2="80" stroke="hsl(28 28% 22%)" strokeWidth="0.9" opacity="0.75" />
+        <line x1="320" y1="115" x2="320" y2="80" stroke="hsl(28 28% 22%)" strokeWidth="0.9" opacity="0.75" />
+      </g>
+      
+      {/* Ridge line */}
+      <line x1="200" y1="56" x2="200" y2="159" stroke="hsl(25 30% 18%)" strokeWidth="2.2" />
+      
+      {/* Teal edge accent glow */}
+      <path 
+        d="M42 159 L200 56 L358 159" 
+        fill="none"
+        stroke="hsl(168 75% 50%)" 
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity={0.5 + easedProgress * 0.4}
+        style={{
+          filter: `drop-shadow(0 0 ${10 + easedProgress * 12}px hsl(168 75% 55% / 0.8))`,
+        }}
+      />
+      
+      {/* "REPLACE DECKING" label */}
+      <g style={{ opacity: labelOpacity, transition: 'opacity 0.15s ease-out' }}>
+        <text
+          x="200"
+          y="103"
+          textAnchor="middle"
+          fill="hsl(45 100% 95%)"
+          fontSize="15"
+          fontWeight="800"
+          fontFamily="system-ui, -apple-system, sans-serif"
+          letterSpacing="3"
+          stroke="hsl(0 0% 5%)"
+          strokeWidth="2.5"
+          paintOrder="stroke fill"
+          style={{ filter: 'drop-shadow(0 0 6px hsl(0 0% 0%)) drop-shadow(0 0 12px hsl(0 0% 0% / 0.8))' }}
+        >
+          REPLACE
+        </text>
+        <text
+          x="200"
+          y="124"
+          textAnchor="middle"
+          fill="hsl(35 100% 90%)"
+          fontSize="15"
+          fontWeight="800"
+          fontFamily="system-ui, -apple-system, sans-serif"
+          letterSpacing="3.5"
+          stroke="hsl(0 0% 5%)"
+          strokeWidth="2.5"
+          paintOrder="stroke fill"
+          style={{ filter: 'drop-shadow(0 0 6px hsl(0 0% 0%)) drop-shadow(0 0 12px hsl(0 0% 0% / 0.8))' }}
+        >
+          DECKING
+        </text>
+      </g>
+    </g>
+  );
+};
+
 const HeroSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [lineProgress, setLineProgress] = useState(0);
   const [textLit, setTextLit] = useState(false);
+  const [deckingProgress, setDeckingProgress] = useState(0);
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -30,19 +171,27 @@ const HeroSection = () => {
       } else if (progress < 0.8 && textLit) {
         setTextLit(false);
       }
+      
+      // Mobile decking animation: starts after text lights up, extended scroll range
+      if (isMobile) {
+        const deckingStart = windowHeight * 0.7;
+        const deckingEnd = windowHeight * 1.8; // Extended range for slower animation
+        const deckProgress = Math.max(0, Math.min(1, (scrollY - deckingStart) / (deckingEnd - deckingStart)));
+        setDeckingProgress(deckProgress);
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [textLit]);
+  }, [textLit, isMobile]);
 
   // Make line taller on mobile for better visibility
   const lineHeight = Math.min(lineProgress * 1.2, 1) * 350;
 
   return (
-    <section ref={sectionRef} className="relative w-full overflow-hidden bg-gradient-mesh">
+    <section ref={sectionRef} className="relative w-full overflow-hidden bg-gradient-mesh" style={{ minHeight: isMobile ? '200vh' : '100vh' }}>
       {/* Subtle Grid Overlay */}
       <div className="absolute inset-0 bg-grid opacity-20" />
       
@@ -150,7 +299,7 @@ const HeroSection = () => {
             </h3>
           </div>
           
-          {/* Mobile-only static house - no padding, full width */}
+          {/* Mobile-only animated house with decking layer */}
           {isMobile && (
             <div 
               className="absolute left-0 right-0 flex justify-center"
@@ -164,6 +313,7 @@ const HeroSection = () => {
                 }}
               >
                 <HouseSVG doorAngle={0} lightBoost={0} />
+                <MobileDeckingLayer progress={deckingProgress} />
               </svg>
             </div>
           )}
