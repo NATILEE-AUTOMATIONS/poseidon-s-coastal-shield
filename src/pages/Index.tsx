@@ -13,7 +13,7 @@ const Index = () => {
       <main className="min-h-screen bg-background">
         <Navbar />
         <HeroSection />
-        {isMobile && <ScrollLineSection />}
+        <ScrollLineSection />
         {!isMobile && <RoofBuildSection />}
       </main>
     </ScrollProvider>
