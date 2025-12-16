@@ -1092,12 +1092,43 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                 
                 const tabCenterX = (tabBottomLeftX + tabBottomRightX) / 2;
                 const tabCenterY = (topY + bottomY) / 2;
+                const tabActualWidth = tabBottomRightX - tabBottomLeftX;
                 
                 // Individual tab drop and rotation
                 const tabDrop = 15 * (1 - tabEased);
                 const tabRotation = (1 - tabEased) * (tabIdx % 2 === 0 ? -8 : 8);
                 
                 const shingleColor = getShingleColor(courseIdx, tabIdx);
+                
+                // Create architectural shingle shape with notched bottom edge
+                // Notch creates the classic 3-tab shingle look
+                const notchDepth = courseHeight * 0.35; // How deep the notch cuts up
+                const notchWidth = tabActualWidth * 0.12; // Width of the notch gap
+                const notchInset = tabActualWidth * 0.33; // Where notches start from edges
+                
+                // Calculate notch positions along bottom edge
+                const notch1Left = tabBottomLeftX + notchInset - notchWidth / 2;
+                const notch1Right = tabBottomLeftX + notchInset + notchWidth / 2;
+                const notch2Left = tabBottomRightX - notchInset - notchWidth / 2;
+                const notch2Right = tabBottomRightX - notchInset + notchWidth / 2;
+                const notchTopY = bottomY - notchDepth;
+                
+                // Path for architectural shingle shape
+                const shinglePath = `
+                  M ${tabTopLeftX} ${topY}
+                  L ${tabTopRightX} ${topY}
+                  L ${tabBottomRightX} ${bottomY}
+                  L ${notch2Right} ${bottomY}
+                  L ${notch2Right} ${notchTopY}
+                  L ${notch2Left} ${notchTopY}
+                  L ${notch2Left} ${bottomY}
+                  L ${notch1Right} ${bottomY}
+                  L ${notch1Right} ${notchTopY}
+                  L ${notch1Left} ${notchTopY}
+                  L ${notch1Left} ${bottomY}
+                  L ${tabBottomLeftX} ${bottomY}
+                  Z
+                `;
                 
                 return (
                   <g 
@@ -1107,63 +1138,43 @@ export const FieldShinglesLayer: React.FC<LayerProps> = ({ progress, startProgre
                       opacity: tabProgress,
                     }}
                   >
-                    {/* Base shingle */}
-                    <polygon
-                      points={`${tabTopLeftX},${topY} ${tabTopRightX},${topY} ${tabBottomRightX},${bottomY} ${tabBottomLeftX},${bottomY}`}
+                    {/* Base shingle with notched shape */}
+                    <path
+                      d={shinglePath}
                       fill={shingleColor}
                     />
                     
                     {/* Dimensional highlight (top edge) */}
-                    <polygon
-                      points={`${tabTopLeftX},${topY} ${tabTopRightX},${topY} ${tabBottomRightX},${bottomY} ${tabBottomLeftX},${bottomY}`}
+                    <path
+                      d={shinglePath}
                       fill="url(#shingleHighlight)"
                     />
                     
                     {/* Shadow (bottom edge) */}
-                    <polygon
-                      points={`${tabTopLeftX},${topY} ${tabTopRightX},${topY} ${tabBottomRightX},${bottomY} ${tabBottomLeftX},${bottomY}`}
+                    <path
+                      d={shinglePath}
                       fill="url(#shingleShadow)"
                     />
                     
-                    {/* Tab divider line (right edge) */}
-                    {tabIdx < tabCount - 1 && clampedEnd < 1 && (
-                      <line
-                        x1={tabTopRightX}
-                        y1={topY + 1}
-                        x2={tabBottomRightX}
-                        y2={bottomY - 1}
-                        stroke="hsl(220 15% 10%)"
-                        strokeWidth="1"
-                        opacity={0.7 * tabProgress}
-                      />
-                    )}
-                    
-                    {/* Granule texture dots */}
-                    {tabProgress >= 0.8 && (
-                      <>
-                        <circle 
-                          cx={tabCenterX - 3} 
-                          cy={tabCenterY - 2} 
-                          r="1" 
-                          fill="hsl(220 8% 28%)" 
-                          opacity="0.3"
-                        />
-                        <circle 
-                          cx={tabCenterX + 4} 
-                          cy={tabCenterY + 1} 
-                          r="0.8" 
-                          fill="hsl(220 10% 15%)" 
-                          opacity="0.4"
-                        />
-                        <circle 
-                          cx={tabCenterX - 1} 
-                          cy={tabCenterY + 3} 
-                          r="0.6" 
-                          fill="hsl(220 6% 30%)" 
-                          opacity="0.25"
-                        />
-                      </>
-                    )}
+                    {/* Tab section dividers - vertical lines between the 3 tabs */}
+                    <line
+                      x1={notch1Left + notchWidth / 2}
+                      y1={topY + 2}
+                      x2={notch1Left + notchWidth / 2}
+                      y2={notchTopY}
+                      stroke="hsl(200 10% 8%)"
+                      strokeWidth="0.8"
+                      opacity={0.5 * tabProgress}
+                    />
+                    <line
+                      x1={notch2Left + notchWidth / 2}
+                      y1={topY + 2}
+                      x2={notch2Left + notchWidth / 2}
+                      y2={notchTopY}
+                      stroke="hsl(200 10% 8%)"
+                      strokeWidth="0.8"
+                      opacity={0.5 * tabProgress}
+                    />
                   </g>
                 );
               })}
