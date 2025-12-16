@@ -250,7 +250,7 @@ const RoofBuildSection: React.FC = () => {
                   {/* 3. Ice & Water Shield */}
                   <IceWaterShieldLayer progress={progress} startProgress={layers[2].start} endProgress={layers[2].end} isMobile={isMobile} />
                   {/* 4. Underlayment */}
-                  <UnderlaymentLayer progress={progress} startProgress={layers[3].start} endProgress={layers[3].end} />
+                  <UnderlaymentLayer progress={progress} startProgress={layers[3].start} endProgress={layers[3].end} isMobile={isMobile} />
                   {/* 5. Starter Strip */}
                   <StarterStripLayer progress={progress} startProgress={layers[4].start} endProgress={layers[4].end} isMobile={isMobile} />
                   {/* 6. Shingles - REMOVED (keeping code for future re-addition)
