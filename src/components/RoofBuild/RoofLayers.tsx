@@ -1293,9 +1293,9 @@ export const MobileVentsLayer: React.FC<LayerProps> = ({ progress, startProgress
     >
       {/* Simple pipe boot - slightly right of desktop position */}
       <g>
-        <ellipse cx="140" cy="140" rx="8" ry="3" fill="hsl(168 40% 30%)" stroke="hsl(168 70% 50%)" strokeWidth="1.5" />
-        <rect x="137" y="125" width="6" height="15" rx="1" fill="hsl(168 50% 40%)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
-        <ellipse cx="140" cy="125" rx="4" ry="1.5" fill="hsl(168 60% 50%)" stroke="hsl(168 80% 60%)" strokeWidth="1" />
+        <ellipse cx="150" cy="140" rx="8" ry="3" fill="hsl(168 40% 30%)" stroke="hsl(168 70% 50%)" strokeWidth="1.5" />
+        <rect x="147" y="125" width="6" height="15" rx="1" fill="hsl(168 50% 40%)" stroke="hsl(168 80% 55%)" strokeWidth="1.5" />
+        <ellipse cx="150" cy="125" rx="4" ry="1.5" fill="hsl(168 60% 50%)" stroke="hsl(168 80% 60%)" strokeWidth="1" />
       </g>
       
       {/* Simple box vent - matching desktop position x=270, aligned with pipe */}
