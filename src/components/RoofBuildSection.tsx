@@ -34,60 +34,67 @@ const RoofBuildSection: React.FC = () => {
 
   // Layer timing - delayed start on mobile (15-85%) so card is visible first
   // Mobile: spread across 70% of scroll for leisurely viewing, ends before sign
-  // Desktop: Roof layers: 8-60%, Door: 60-72%, Zoom: 72-88%, Gallery: 88%+
+  // Desktop: Roof layers: 8-55%, Dumpster: 55-62%, Door: 65-77%, Zoom: 77-93%, Gallery: 93%+
   const roofProgress = Math.min(1, progress / (isMobile ? 0.90 : 0.60));
   
-  // Mobile layers spread from 15% to 85%, desktop from 8% to 60%
+  // Mobile layers spread from 15% to 85%, desktop from 8% to 55%
   const mobileLayerStart = 0.15; // Start later so card is visible
   const desktopLayerStart = 0.08;
   const mobileLayerStep = 0.055; // Reduced from 0.075 so animations fit before sign
-  const desktopLayerStep = 0.052; // Each layer gets 5.2% of scroll
+  const desktopLayerStep = 0.035; // Compressed to fit all layers within 55%
   const layerStep = isMobile ? mobileLayerStep : desktopLayerStep;
   const layerStart = isMobile ? mobileLayerStart : desktopLayerStart;
   
-  // Decking - reduced multipliers to fit all layers within 60% scroll
-  const deckingMultiplier = isMobile ? 2 : 2.5;
+  // Decking - reduced multipliers to fit all layers
+  const deckingMultiplier = isMobile ? 2 : 2;
   const deckingEnd = layerStart + (layerStep * deckingMultiplier);
   
   // Drip edge
-  const dripEdgeMultiplier = isMobile ? 1.5 : 2;
+  const dripEdgeMultiplier = isMobile ? 1.5 : 1.5;
   const dripEdgeEnd = deckingEnd + (layerStep * dripEdgeMultiplier);
   
   // Ice & water shield
-  const iceWaterMultiplier = isMobile ? 1.5 : 2;
+  const iceWaterMultiplier = isMobile ? 1.5 : 1.5;
   const iceWaterEnd = dripEdgeEnd + (layerStep * iceWaterMultiplier);
   
   // Underlayment
-  const underlaymentMultiplier = isMobile ? 2 : 2;
+  const underlaymentMultiplier = isMobile ? 2 : 1.5;
   const underlaymentEnd = iceWaterEnd + (layerStep * underlaymentMultiplier);
   
-  // Starter strip gets 2x multiplier
-  const starterStripMultiplier = isMobile ? 1.5 : 2;
+  // Starter strip
+  const starterStripMultiplier = isMobile ? 1.5 : 1.5;
   const starterStripEnd = underlaymentEnd + (layerStep * starterStripMultiplier);
   
-  // Ridge cap - starts after flashing on both mobile and desktop
-  const flashingEnd = starterStripEnd + layerStep * 5.3;
+  // Shingles, Vents, Flashing
+  const shinglesEnd = starterStripEnd + layerStep * 2;
+  const ventsEnd = shinglesEnd + layerStep * 1.5;
+  const flashingEnd = ventsEnd + layerStep * 1.5;
+  
+  // Ridge cap - shorter duration
   const ridgeCapStart = flashingEnd;
   const ridgeCapEnd = isMobile 
-    ? flashingEnd + layerStep * 1.5  // Shorter duration on mobile
-    : flashingEnd + layerStep * 0.9;
+    ? flashingEnd + layerStep * 1.5
+    : flashingEnd + layerStep * 1;
+    
+  // Dumpster timing - starts right after ridge cap, desktop only
+  const dumpsterStart = ridgeCapEnd;
+  const dumpsterEnd = ridgeCapEnd + layerStep * 2;
     
   const layers = [
     { start: layerStart, end: deckingEnd },                    // 1. Decking
     { start: deckingEnd, end: dripEdgeEnd },                   // 2. Drip Edge
     { start: dripEdgeEnd, end: iceWaterEnd },                  // 3. Ice & Water
     { start: iceWaterEnd, end: underlaymentEnd },              // 4. Underlayment
-    { start: underlaymentEnd, end: starterStripEnd },          // 5. Starter Strip (2x)
-    { start: starterStripEnd, end: starterStripEnd + layerStep * 3 }, // 6. Shingles (3x duration for 8 courses)
-    // 7. Vents - starts exactly when shingles end
-    { start: starterStripEnd + layerStep * 3, end: starterStripEnd + layerStep * 4.5 },
-    { start: starterStripEnd + layerStep * 4.5, end: flashingEnd }, // 8. Flashing
-    { start: ridgeCapStart, end: ridgeCapEnd }, // 9. Ridge Vent & Cap
-    { start: starterStripEnd + layerStep * 7.5, end: starterStripEnd + layerStep * 8.5 }, // 10. Complete Clean Up
+    { start: underlaymentEnd, end: starterStripEnd },          // 5. Starter Strip
+    { start: starterStripEnd, end: shinglesEnd },              // 6. Shingles
+    { start: shinglesEnd, end: ventsEnd },                     // 7. Vents
+    { start: ventsEnd, end: flashingEnd },                     // 8. Flashing
+    { start: ridgeCapStart, end: ridgeCapEnd },                // 9. Ridge Vent & Cap
+    { start: dumpsterStart, end: dumpsterEnd },                // 10. Complete Clean Up - Dumpster
   ];
   
-  // Calculate when all active layers end
-  const roofLayersEnd = starterStripEnd + layerStep * 8.5 + 0.05;
+  // Calculate when all active layers end (dumpster is desktop only, so use ridgeCapEnd for mobile)
+  const roofLayersEnd = isMobile ? ridgeCapEnd + 0.05 : dumpsterEnd + 0.05;
 
   // Show hint during buffer period (before animation starts)
   const showScrollHint = progress < layerStart;
