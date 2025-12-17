@@ -1505,6 +1505,38 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   const leftX = 172;
   const rightX = 228;
   
+  // Shingle colors matching the roof
+  const shingleColors = [
+    'hsl(210 5% 12%)',
+    'hsl(210 4% 14%)',
+    'hsl(210 4% 16%)',
+    'hsl(210 3% 18%)',
+  ];
+  
+  // Create overlapping ridge cap shingle rectangles along the peak
+  const ridgeCapShingles = [];
+  const shingleWidth = 12;
+  const shingleHeight = 10;
+  const startX = leftX + 5;
+  const endX = rightX - 5;
+  const numShingles = Math.floor((endX - startX) / (shingleWidth - 2));
+  
+  for (let i = 0; i < numShingles; i++) {
+    const x = startX + i * (shingleWidth - 2);
+    const color = shingleColors[(i * 7) % shingleColors.length];
+    ridgeCapShingles.push(
+      <rect
+        key={i}
+        x={x}
+        y={peakY + 4}
+        width={shingleWidth}
+        height={shingleHeight}
+        fill={color}
+        rx={1}
+      />
+    );
+  }
+  
   return (
     <g 
       className="ridge-cap-layer"
@@ -1514,11 +1546,14 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         opacity,
       }}
     >
-      {/* Ridge cap triangle - solid shingle color to match roof */}
+      {/* Base triangle */}
       <polygon
         points={`${peakX},${peakY} ${leftX},${bottomY} ${rightX},${bottomY}`}
-        fill="hsl(210 5% 12%)"
+        fill="hsl(210 4% 10%)"
       />
+      
+      {/* Overlapping ridge cap shingles */}
+      {ridgeCapShingles}
       
       {/* Text label */}
       {textOpacity > 0 && (
