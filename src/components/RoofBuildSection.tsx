@@ -289,10 +289,7 @@ const RoofBuildSection: React.FC = () => {
                   <FlashingLayer progress={progress} startProgress={layers[7].start} endProgress={layers[7].end} isMobile={isMobile} />
                   {/* 9. Ridge Vent & Cap */}
                   <RidgeCapLayer progress={progress} startProgress={layers[8].start} endProgress={layers[8].end} isMobile={isMobile} />
-                  {/* 10. Complete Clean Up - Dumpster (mobile only - desktop dumpster is in truck SVG) */}
-                  {isMobile && (
-                    <DumpsterLayer progress={progress} startProgress={layers[9].start} endProgress={layers[9].end} isMobile={isMobile} />
-                  )}
+                  {/* 10. Complete Clean Up - Dumpster is now in truck overlay SVG for both mobile and desktop */}
                   {/* 2. Drip Edge rendered after all layers to be on top */}
                   <DripEdgeEavesLayer progress={progress} startProgress={layers[1].start} endProgress={layers[1].end} isMobile={isMobile} />
                   
@@ -413,30 +410,28 @@ const RoofBuildSection: React.FC = () => {
               </div>
             </div>
 
-            {/* 11. Truck hauls dumpster away (Desktop only) - rendered OUTSIDE house container with z-20 to appear above labels (z-10) */}
-            {!isMobile && (
-              <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-                <div className="relative w-full max-w-3xl aspect-[4/3]">
-                  <svg
-                    viewBox="0 0 400 280"
-                    className="absolute inset-0 w-full h-full"
-                    style={{ overflow: 'visible' }}
-                  >
-                    {/* Dumpster rendered in same SVG as truck for alignment */}
-                    {progress < layers[10]?.start + (layers[10]?.end - layers[10]?.start) * 0.45 && (
-                      <DumpsterLayer progress={progress} startProgress={layers[9].start} endProgress={layers[9].end} isMobile={false} />
-                    )}
-                    <TruckLayer 
-                      progress={progress} 
-                      startProgress={layers[10].start} 
-                      endProgress={layers[10].end} 
-                      isMobile={isMobile}
-                      dumpsterProgress={dumpsterAnimProgress}
-                    />
-                  </svg>
-                </div>
+            {/* 11. Truck hauls dumpster away - rendered OUTSIDE house container with z-20 to appear above labels (z-10) */}
+            <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+              <div className={`relative w-full ${isMobile ? 'max-w-[85vw]' : 'max-w-3xl'} aspect-[4/3]`}>
+                <svg
+                  viewBox="0 0 400 280"
+                  className="absolute inset-0 w-full h-full"
+                  style={{ overflow: 'visible' }}
+                >
+                  {/* Dumpster rendered in same SVG as truck for alignment */}
+                  {progress < layers[10]?.start + (layers[10]?.end - layers[10]?.start) * (isMobile ? 0.35 : 0.45) && (
+                    <DumpsterLayer progress={progress} startProgress={layers[9].start} endProgress={layers[9].end} isMobile={isMobile} />
+                  )}
+                  <TruckLayer 
+                    progress={progress} 
+                    startProgress={layers[10].start} 
+                    endProgress={layers[10].end} 
+                    isMobile={isMobile}
+                    dumpsterProgress={dumpsterAnimProgress}
+                  />
+                </svg>
               </div>
-            )}
+            </div>
 
           </div>
 
