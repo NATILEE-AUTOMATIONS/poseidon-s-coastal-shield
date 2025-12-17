@@ -1497,13 +1497,13 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         ? 1 - (layerProgress - 0.55) / 0.25 
         : 0;
   
-  // Peak at (200, 56), roof slopes down at ~0.652 ratio
-  // Make larger on mobile for visibility
+  // Peak at (200, 58), roof slopes down at ~0.652 ratio
+  // Shortened height, calculated to align with roof slope
   const peakX = 200;
   const peakY = 58;
-  const bottomY = isMobile ? 95 : 76;  // Taller on mobile
-  const leftX = isMobile ? 145 : 172;   // Wider on mobile
-  const rightX = isMobile ? 255 : 228;  // Wider on mobile
+  const bottomY = isMobile ? 75 : 68;  // Shortened
+  const leftX = isMobile ? 174 : 185;   // Adjusted to match slope
+  const rightX = isMobile ? 226 : 215;  // Adjusted to match slope
   
   // Shingle colors matching the roof
   const shingleColors = [
