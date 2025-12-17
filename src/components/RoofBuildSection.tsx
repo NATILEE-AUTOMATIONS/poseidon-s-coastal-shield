@@ -271,9 +271,9 @@ const RoofBuildSection: React.FC = () => {
                   <FlashingLayer progress={progress} startProgress={layers[7].start} endProgress={layers[7].end} isMobile={isMobile} />
                   {/* 9. Ridge Vent & Cap */}
                   <RidgeCapLayer progress={progress} startProgress={layers[8].start} endProgress={layers[8].end} isMobile={isMobile} />
-                  {/* 10. Complete Clean Up - Desktop only */}
+                  {/* 10. Complete Clean Up - Dumpster animation (Desktop only) */}
                   {!isMobile && (
-                    <CleanUpLayer progress={progress} startProgress={layers[9].start} endProgress={layers[9].end} />
+                    <Dumpster progress={progress} startProgress={ridgeCapEnd} endProgress={ridgeCapEnd + layerStep * 2} />
                   )}
                   
                   {/* 2. Drip Edge rendered after all layers to be on top */}
@@ -282,9 +282,6 @@ const RoofBuildSection: React.FC = () => {
                 </svg>
               </div>
             </div>
-
-            {/* Dumpster - desktop only, appears during Complete Clean Up step */}
-            {!isMobile && <Dumpster progress={progress} startProgress={layers[9].start} endProgress={layers[9].end} />}
 
             {/* Material labels - left side (positioned as overlay) */}
             <div
