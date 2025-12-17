@@ -66,9 +66,12 @@ const RoofBuildSection: React.FC = () => {
   const starterStripMultiplier = isMobile ? 1.5 : 2;
   const starterStripEnd = underlaymentEnd + (layerStep * starterStripMultiplier);
   
-  // Ridge cap - desktop only now
-  const ridgeCapStart = starterStripEnd + layerStep * 5.3;
-  const ridgeCapEnd = starterStripEnd + layerStep * 6.2;
+  // Ridge cap - starts after flashing on both mobile and desktop
+  const flashingEnd = starterStripEnd + layerStep * 5.3;
+  const ridgeCapStart = flashingEnd;
+  const ridgeCapEnd = isMobile 
+    ? flashingEnd + layerStep * 1.5  // Shorter duration on mobile
+    : flashingEnd + layerStep * 0.9;
     
   const layers = [
     { start: layerStart, end: deckingEnd },                    // 1. Decking
@@ -79,8 +82,8 @@ const RoofBuildSection: React.FC = () => {
     { start: starterStripEnd, end: starterStripEnd + layerStep * 3 }, // 6. Shingles (3x duration for 8 courses)
     // 7. Vents - starts exactly when shingles end
     { start: starterStripEnd + layerStep * 3, end: starterStripEnd + layerStep * 4.5 },
-    { start: starterStripEnd + layerStep * 4.5, end: starterStripEnd + layerStep * 5.3 }, // 8. Flashing
-    { start: ridgeCapStart, end: ridgeCapEnd }, // 9. Ridge Vent & Cap (desktop only)
+    { start: starterStripEnd + layerStep * 4.5, end: flashingEnd }, // 8. Flashing
+    { start: ridgeCapStart, end: ridgeCapEnd }, // 9. Ridge Vent & Cap
     { start: starterStripEnd + layerStep * 7.5, end: starterStripEnd + layerStep * 8.5 }, // 10. Complete Clean Up
   ];
   
@@ -267,10 +270,8 @@ const RoofBuildSection: React.FC = () => {
                   <VentsLayer progress={progress} startProgress={layers[6].start} endProgress={layers[6].end} isMobile={isMobile} />
                   {/* 8b. Pipe/Vent Flashing - renders ON TOP of vents */}
                   <FlashingLayer progress={progress} startProgress={layers[7].start} endProgress={layers[7].end} isMobile={isMobile} />
-                  {/* 9. Ridge Vent & Cap - Desktop only */}
-                  {!isMobile && (
-                    <RidgeCapLayer progress={progress} startProgress={layers[8].start} endProgress={layers[8].end} isMobile={isMobile} />
-                  )}
+                  {/* 9. Ridge Vent & Cap */}
+                  <RidgeCapLayer progress={progress} startProgress={layers[8].start} endProgress={layers[8].end} isMobile={isMobile} />
                   {/* 10. Complete Clean Up - Desktop only */}
                   {!isMobile && (
                     <CleanUpLayer progress={progress} startProgress={layers[9].start} endProgress={layers[9].end} />
