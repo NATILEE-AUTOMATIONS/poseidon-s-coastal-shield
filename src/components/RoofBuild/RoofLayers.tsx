@@ -1841,9 +1841,9 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
         <rect x={-75} y={8} width={40} height={18} rx={1} fill="url(#truckBodyGradient)" stroke="hsl(168 50% 35%)" strokeWidth="1" />
         <rect x={-73} y={10} width={36} height={14} fill="hsl(210 10% 10%)" /> {/* Bed interior */}
         
-        {/* Simple cab body - shorter and taller */}
+        {/* Simple cab body - taller with longer hood */}
         <path 
-          d="M-35 4 L-35 26 L5 26 L5 10 L-2 10 L-8 0 L-32 0 L-35 4 Z" 
+          d="M-35 4 L-35 26 L12 26 L12 12 L2 12 L-5 2 L-32 2 L-35 4 Z" 
           fill="url(#truckBodyGradient)" 
           stroke="hsl(210 8% 28%)"
           strokeWidth="0.8"
@@ -1851,23 +1851,23 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
         
         {/* Window - taller */}
         <path 
-          d="M-30 2 L-10 2 L-4 10 L-32 10 Z" 
+          d="M-30 4 L-8 4 L-2 12 L-32 12 Z" 
           fill="url(#truckWindowGradient)"
           stroke="hsl(210 10% 32%)"
           strokeWidth="0.5"
         />
         
         {/* Door handle */}
-        <rect x={-24} y={14} width={4} height={1.2} rx={0.3} fill="hsl(210 8% 40%)" />
+        <rect x={-24} y={16} width={4} height={1.2} rx={0.3} fill="hsl(210 8% 40%)" />
         
         {/* Headlight */}
-        <circle cx={2} cy={16} r={2} fill="hsl(45 90% 75%)" style={{ filter: 'drop-shadow(0 0 2px hsl(45 100% 70% / 0.6))' }} />
+        <circle cx={9} cy={16} r={2} fill="hsl(45 90% 75%)" style={{ filter: 'drop-shadow(0 0 2px hsl(45 100% 70% / 0.6))' }} />
         
         {/* Grille */}
-        <rect x={0} y={19} width={5} height={6} rx={0.3} fill="hsl(210 8% 18%)" stroke="hsl(210 8% 30%)" strokeWidth="0.4" />
+        <rect x={7} y={19} width={5} height={6} rx={0.3} fill="hsl(210 8% 18%)" stroke="hsl(210 8% 30%)" strokeWidth="0.4" />
         
         {/* Bumper */}
-        <rect x={-2} y={25} width={8} height={2} rx={0.3} fill="hsl(210 8% 32%)" />
+        <rect x={5} y={25} width={8} height={2} rx={0.3} fill="hsl(210 8% 32%)" />
         
         {/* Hitch */}
         <rect x={-80} y={25} width={6} height={3} rx={0.5} fill="hsl(30 70% 45%)" stroke="hsl(30 85% 55%)" strokeWidth="0.6" style={{ filter: 'drop-shadow(0 0 3px hsl(30 90% 50% / 0.5))' }} />
@@ -1875,9 +1875,9 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
         {/* Tail light */}
         <rect x={-76} y={14} width={2} height={3} rx={0.5} fill="hsl(0 75% 50%)" />
         
-        {/* Front wheel */}
-        <circle cx={5} cy={28} r={6} fill="hsl(210 8% 12%)" stroke="hsl(210 6% 30%)" strokeWidth="0.8" />
-        <circle cx={5} cy={28} r={3} fill="hsl(210 6% 25%)" />
+        {/* Front wheel - positioned under hood */}
+        <circle cx={-5} cy={28} r={6} fill="hsl(210 8% 12%)" stroke="hsl(210 6% 30%)" strokeWidth="0.8" />
+        <circle cx={-5} cy={28} r={3} fill="hsl(210 6% 25%)" />
         
         {/* Rear wheel */}
         <circle cx={-55} cy={28} r={6} fill="hsl(210 8% 12%)" stroke="hsl(210 6% 30%)" strokeWidth="0.8" />
