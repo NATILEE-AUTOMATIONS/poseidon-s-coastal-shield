@@ -1801,6 +1801,8 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
           ))}
           <circle cx={168} cy={272} r={4} fill="hsl(210 10% 15%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
           <circle cx={232} cy={272} r={4} fill="hsl(210 10% 15%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
+          {/* Orange hitch */}
+          <rect x={240} y={258} width={8} height={6} rx={1} fill="hsl(30 80% 40%)" stroke="hsl(30 90% 55%)" strokeWidth="1" />
         </g>
       )}
       
