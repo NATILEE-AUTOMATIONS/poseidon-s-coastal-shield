@@ -1514,20 +1514,10 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         opacity,
       }}
     >
-      <defs>
-        {/* Ridge cap gradient - layered shingle look */}
-        <linearGradient id="ridgeCapGradient" x1="50%" y1="0%" x2="50%" y2="100%">
-          <stop offset="0%" stopColor="hsl(210 6% 18%)" />
-          <stop offset="35%" stopColor="hsl(210 5% 14%)" />
-          <stop offset="70%" stopColor="hsl(210 4% 12%)" />
-          <stop offset="100%" stopColor="hsl(210 5% 15%)" />
-        </linearGradient>
-      </defs>
-      
-      {/* Ridge cap triangle with shingle gradient */}
+      {/* Ridge cap triangle - solid shingle color to match roof */}
       <polygon
         points={`${peakX},${peakY} ${leftX},${bottomY} ${rightX},${bottomY}`}
-        fill="url(#ridgeCapGradient)"
+        fill="hsl(210 5% 12%)"
       />
       
       {/* Text label */}
