@@ -68,10 +68,10 @@ const RoofBuildSection: React.FC = () => {
   
   // 10 layers total - adjusted for mobile to fit ridge cap earlier
   const ridgeCapStart = isMobile 
-    ? starterStripEnd + layerStep * 3.5  // Earlier on mobile
+    ? 0.50  // Much earlier on mobile - starts at 50% scroll
     : starterStripEnd + layerStep * 5.3;
   const ridgeCapEnd = isMobile
-    ? starterStripEnd + layerStep * 4.5  // Earlier on mobile
+    ? 0.65  // Ends at 65% scroll on mobile
     : starterStripEnd + layerStep * 6.2;
     
   const layers = [
