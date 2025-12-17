@@ -14,6 +14,7 @@ import {
   ChimneyFlashingLayer,
   FlashingLayer,
   RidgeCapLayer,
+  DumpsterLayer,
   CleanUpLayer,
   materialInfo,
 } from './RoofBuild/RoofLayers';
@@ -270,6 +271,10 @@ const RoofBuildSection: React.FC = () => {
                   <FlashingLayer progress={progress} startProgress={layers[7].start} endProgress={layers[7].end} isMobile={isMobile} />
                   {/* 9. Ridge Vent & Cap */}
                   <RidgeCapLayer progress={progress} startProgress={layers[8].start} endProgress={layers[8].end} isMobile={isMobile} />
+                  {/* 10. Complete Clean Up - Dumpster (Desktop only) */}
+                  {!isMobile && (
+                    <DumpsterLayer progress={progress} startProgress={layers[9].start} endProgress={layers[9].end} isMobile={isMobile} />
+                  )}
                   {/* 2. Drip Edge rendered after all layers to be on top */}
                   <DripEdgeEavesLayer progress={progress} startProgress={layers[1].start} endProgress={layers[1].end} isMobile={isMobile} />
                   
