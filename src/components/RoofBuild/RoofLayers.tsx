@@ -1615,15 +1615,17 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         ? 1 - (layerProgress - 0.70) / 0.20 
         : 0;
   
-  // Position: right-center of front yard
-  const dumpsterX = 275;
-  const dumpsterY = 260;
+  // Position: center of front yard, scaled up 2x
+  const dumpsterX = 200;
+  const dumpsterY = 230;
+  const scale = 2; // Scale factor for bigger dumpster
   
   return (
     <g 
       className="dumpster-layer"
       style={{
-        transform: `translateY(${translateY}px)`,
+        transform: `translateY(${translateY}px) scale(${scale})`,
+        transformOrigin: `${dumpsterX}px ${dumpsterY + 20}px`,
         opacity,
       }}
     >
