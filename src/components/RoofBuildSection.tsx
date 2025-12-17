@@ -376,12 +376,6 @@ const RoofBuildSection: React.FC = () => {
                   const exitProgress = getLabelExitProgress(index);
                   const isExiting = progress >= 0.92;
                   
-                  // Hide "Complete Clean Up" (index 9) when truck animation starts
-                  const isTruckActive = progress >= layers[10]?.start;
-                  if (actualIndex === 9 && isTruckActive) {
-                    return null;
-                  }
-                  
                   // During exit: slide right and fade out (positive X)
                   // Before exit: normal lock-in animation (active OR locked shows full)
                   const isActive = activeMaterials[actualIndex] || lockedMaterials[actualIndex];
