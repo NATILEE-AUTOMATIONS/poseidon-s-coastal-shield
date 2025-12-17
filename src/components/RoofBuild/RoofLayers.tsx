@@ -1710,7 +1710,7 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   );
 };
 
-// Truck animation - backs up, hitches dumpster, drives away (Desktop only)
+// Truck animation - backs up, hitches dumpster, drives away
 export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = ({ 
   progress, 
   startProgress, 
@@ -1718,8 +1718,6 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   isMobile,
   dumpsterProgress 
 }) => {
-  if (isMobile) return null;
-  
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
@@ -1729,38 +1727,49 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   // 0-40%: Truck backs in from right to hitch point (touch)
   // 40-100%: Drive away together immediately after touch
   
-  // Calculate exact hitch position:
-  // Dumpster hitch is at x=280 after scaling (200 + 40*2)
-  // Truck hitch is at x=-78 relative to origin, with scale 3 = -234 offset
-  // So truckX - 234 = 280, therefore truckX = 514
-  // Add small gap so they visually connect at touch point
-  const hitchedPosition = 540; // Truck stays further right until touch
-  const startPosition = 700;   // Start off-screen right  
-  const endPosition = 1200;    // Drive away fully off-screen right
+  // Mobile-adjusted positions (smaller viewport)
+  const hitchedPosition = isMobile ? 340 : 540;
+  const startPosition = isMobile ? 480 : 700;
+  const endPosition = isMobile ? 700 : 1200;
+  const truckY = isMobile ? 200 : 195;
+  const scale = isMobile ? 2 : 3;
   
-  const truckY = 195; // Lowered truck
-  const scale = 3;
+  // Mobile: slower, more deliberate easing (power of 6)
+  const easeOutSext = (x: number) => 1 - Math.pow(1 - x, 6);
   
   let truckX: number;
   let dumpsterOffset = 0;
   
-  if (layerProgress <= 0.40) {
+  // Mobile uses longer back-in phase (0-50%) for more deliberate feel
+  const backPhaseEnd = isMobile ? 0.50 : 0.40;
+  
+  if (layerProgress <= backPhaseEnd) {
     // Backing in from right until touch
-    const backProgress = layerProgress / 0.40;
-    const eased = easeOutQuint(backProgress);
+    const backProgress = layerProgress / backPhaseEnd;
+    const eased = isMobile ? easeOutSext(backProgress) : easeOutQuint(backProgress);
     truckX = startPosition - (startPosition - hitchedPosition) * eased;
   } else {
     // Driving away together immediately after touch
-    const driveProgress = (layerProgress - 0.40) / 0.60;
+    const driveProgress = (layerProgress - backPhaseEnd) / (1 - backPhaseEnd);
+    // Mobile: gentler drive away easing
     const easeInQuad = (x: number) => x * x;
-    const eased = easeInQuad(driveProgress);
+    const easeInCubic = (x: number) => x * x * x;
+    const eased = isMobile ? easeInCubic(driveProgress) : easeInQuad(driveProgress);
     truckX = hitchedPosition + (endPosition - hitchedPosition) * eased;
     // Dumpster moves with truck
     dumpsterOffset = (truckX - hitchedPosition);
   }
   
-  const opacity = layerProgress < 0.05 ? layerProgress / 0.05 : 1;
-  const isDrivingAway = layerProgress > 0.40;
+  // Mobile: slower fade-in
+  const opacity = layerProgress < (isMobile ? 0.08 : 0.05) 
+    ? layerProgress / (isMobile ? 0.08 : 0.05) 
+    : 1;
+  const isDrivingAway = layerProgress > backPhaseEnd;
+  
+  // Mobile dumpster scale values
+  const dumpsterScaleX = isMobile ? 1.6 : 2;
+  const dumpsterScaleY = isMobile ? 2.2 : 2.4;
+  const dumpsterOriginY = isMobile ? 265 : 270;
   
   return (
     <g className="truck-layer" style={{ opacity }}>
@@ -1768,8 +1777,8 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
       {isDrivingAway && dumpsterProgress >= 1 && (
         <g 
           style={{
-            transform: `translateX(${dumpsterOffset}px) scale(2, 2.4)`,
-            transformOrigin: '200px 270px',
+            transform: `translateX(${dumpsterOffset}px) scale(${dumpsterScaleX}, ${dumpsterScaleY})`,
+            transformOrigin: `200px ${dumpsterOriginY}px`,
           }}
         >
           {/* Ground shadow */}
