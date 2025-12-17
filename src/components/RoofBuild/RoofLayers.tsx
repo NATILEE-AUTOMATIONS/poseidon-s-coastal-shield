@@ -1727,11 +1727,11 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   // 0-40%: Truck backs in from right to hitch point (touch)
   // 40-100%: Drive away together immediately after touch
   
-  // Mobile-adjusted positions (smaller viewport, lower truck to match dumpster level)
-  const hitchedPosition = isMobile ? 355 : 540; // Adjusted for hitch alignment
-  const startPosition = isMobile ? 500 : 700;
-  const endPosition = isMobile ? 750 : 1200;
-  const truckY = isMobile ? 222 : 195; // Lowered on mobile to match dumpster
+  // Mobile-adjusted positions (smaller viewport)
+  const hitchedPosition = isMobile ? 340 : 540;
+  const startPosition = isMobile ? 480 : 700;
+  const endPosition = isMobile ? 700 : 1200;
+  const truckY = isMobile ? 200 : 195;
   const scale = isMobile ? 2 : 3;
   
   // Mobile: slower, more deliberate easing (power of 6)
