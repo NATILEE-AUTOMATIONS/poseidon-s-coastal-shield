@@ -1632,6 +1632,17 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         </linearGradient>
       </defs>
       
+      {/* Solid silhouette mask - blocks all content behind dumpster */}
+      <path 
+        d={`M${dumpsterX - 48} ${dumpsterY - 4} 
+            L${dumpsterX + 48} ${dumpsterY - 4} 
+            L${dumpsterX + 52} ${dumpsterY + 22} 
+            L${dumpsterX + 36} ${dumpsterY + 28} 
+            L${dumpsterX - 36} ${dumpsterY + 28} 
+            L${dumpsterX - 52} ${dumpsterY + 22} Z`}
+        fill="hsl(180 15% 6%)"
+      />
+      
       {/* Ground shadow */}
       <ellipse 
         cx={dumpsterX} 
@@ -1792,6 +1803,11 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
               <stop offset="100%" stopColor="hsl(210 8% 10%)" />
             </linearGradient>
           </defs>
+          {/* Solid silhouette mask for moving dumpster */}
+          <path 
+            d="M152 244 L248 244 L252 272 L236 278 L164 278 L148 272 Z"
+            fill="hsl(180 15% 6%)"
+          />
           <ellipse cx={200} cy={272} rx={48} ry={6} fill="hsl(0 0% 0% / 0.4)" style={{ filter: 'blur(4px)' }} />
           <path d="M155 250 L160 270 L240 270 L245 250 Z" fill="url(#dumpsterBodyGradientMoving)" stroke="hsl(168 60% 35%)" strokeWidth="1.5" />
           <path d="M160 252 L164 266 L236 266 L240 252 Z" fill="hsl(210 10% 8%)" />
@@ -1833,6 +1849,12 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
             <stop offset="100%" stopColor="hsl(210 10% 25%)" />
           </linearGradient>
         </defs>
+        
+        {/* Solid silhouette mask - blocks all content behind truck */}
+        <path 
+          d="M-82 22 L-82 8 L-35 8 L-35 -4 L-14 -4 L-8 8 L2 8 L2 36 L-82 36 Z"
+          fill="hsl(180 15% 6%)"
+        />
         
         {/* Ground shadow */}
         <ellipse cx={-30} cy={32} rx={45} ry={4} fill="hsl(0 0% 0% / 0.5)" style={{ filter: 'blur(3px)' }} />
