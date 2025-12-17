@@ -1598,26 +1598,16 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   
   if (progress < startProgress) return null;
   
-  // easeOutBack for satisfying "pop up" feel
-  const easeOutBack = (x: number) => 1 + 2.70158 * Math.pow(x - 1, 3) + 1.70158 * Math.pow(x - 1, 2);
-  const easedProgress = easeOutBack(layerProgress);
+  // easeOutQuint for smooth, solid landing (no bounce)
+  const easedProgress = easeOutQuint(layerProgress);
   
   // Rise from below (translateY from 80 to 0)
   const translateY = 80 * (1 - easedProgress);
   const opacity = Math.min(1, easedProgress * 2.5);
   
-  // Text label timing
-  const textOpacity = layerProgress < 0.20 
-    ? layerProgress / 0.20 
-    : layerProgress < 0.70 
-      ? 1 
-      : layerProgress < 0.90 
-        ? 1 - (layerProgress - 0.70) / 0.20 
-        : 0;
-  
-  // Position: center of front yard, scaled up 2x
+  // Position: center of front yard, lowered and scaled up 2x
   const dumpsterX = 200;
-  const dumpsterY = 230;
+  const dumpsterY = 255; // Lowered
   const scale = 2; // Scale factor for bigger dumpster
   
   return (
