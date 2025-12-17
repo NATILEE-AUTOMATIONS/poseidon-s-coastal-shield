@@ -1834,6 +1834,9 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
           </linearGradient>
         </defs>
         
+        {/* Solid background behind truck to cover any text */}
+        <rect x={-82} y={-5} width={90} height={45} fill="hsl(180 15% 6%)" />
+        
         {/* Ground shadow */}
         <ellipse cx={-30} cy={32} rx={45} ry={4} fill="hsl(0 0% 0% / 0.5)" style={{ filter: 'blur(3px)' }} />
         
