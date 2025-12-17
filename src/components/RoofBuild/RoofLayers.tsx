@@ -1619,18 +1619,14 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         opacity,
       }}
     >
-      <defs>
-        {/* Dark gradient for container body */}
-        <linearGradient id="dumpsterBodyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(210 10% 18%)" />
-          <stop offset="100%" stopColor="hsl(210 8% 10%)" />
-        </linearGradient>
-        {/* Interior shadow gradient */}
-        <linearGradient id="dumpsterInteriorGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(210 10% 8%)" />
-          <stop offset="100%" stopColor="hsl(210 8% 5%)" />
-        </linearGradient>
-      </defs>
+      {/* Solid base to block content behind */}
+      <rect 
+        x={dumpsterX - 50} 
+        y={dumpsterY - 5} 
+        width={105} 
+        height={35} 
+        fill="hsl(180 15% 6%)" 
+      />
       
       {/* Ground shadow */}
       <ellipse 
@@ -1638,14 +1634,13 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         cy={dumpsterY + 22} 
         rx={48} 
         ry={6} 
-        fill="hsl(0 0% 0% / 0.4)"
-        style={{ filter: 'blur(4px)' }}
+        fill="hsl(0 0% 5%)"
       />
       
-      {/* Main container body - trapezoid shape */}
+      {/* Main container body - solid fill */}
       <path 
         d={`M${dumpsterX - 45} ${dumpsterY} L${dumpsterX - 40} ${dumpsterY + 20} L${dumpsterX + 40} ${dumpsterY + 20} L${dumpsterX + 45} ${dumpsterY} Z`}
-        fill="url(#dumpsterBodyGradient)"
+        fill="hsl(210 10% 14%)"
         stroke="hsl(168 60% 35%)"
         strokeWidth="1.5"
       />
@@ -1653,7 +1648,7 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
       {/* Interior depression */}
       <path 
         d={`M${dumpsterX - 40} ${dumpsterY + 2} L${dumpsterX - 36} ${dumpsterY + 16} L${dumpsterX + 36} ${dumpsterY + 16} L${dumpsterX + 40} ${dumpsterY + 2} Z`}
-        fill="url(#dumpsterInteriorGradient)"
+        fill="hsl(210 10% 8%)"
       />
       
       {/* Top rails - orange accent */}
@@ -1664,16 +1659,14 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         height={4} 
         rx={1}
         fill="hsl(30 85% 45%)"
-        style={{ filter: 'drop-shadow(0 0 4px hsl(30 90% 50% / 0.6))' }}
       />
       
-      {/* Teal neon edge highlights */}
+      {/* Teal edge highlights */}
       <path 
         d={`M${dumpsterX - 45} ${dumpsterY} L${dumpsterX - 40} ${dumpsterY + 20} L${dumpsterX + 40} ${dumpsterY + 20} L${dumpsterX + 45} ${dumpsterY}`}
         stroke="hsl(168 80% 50%)"
         strokeWidth="2"
         fill="none"
-        style={{ filter: 'drop-shadow(0 0 6px hsl(168 80% 50% / 0.7)) drop-shadow(0 0 12px hsl(168 80% 50% / 0.4))' }}
       />
       
       {/* Vertical support ribs */}
@@ -1707,7 +1700,7 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         strokeWidth="1.5"
       />
       
-      {/* Hook/hitch point - lowered to match truck hitch level */}
+      {/* Hitch */}
       <rect 
         x={dumpsterX + 40} 
         y={dumpsterY + 21} 
@@ -1717,7 +1710,6 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         fill="hsl(30 70% 45%)"
         stroke="hsl(30 85% 55%)"
         strokeWidth="0.8"
-        style={{ filter: 'drop-shadow(0 0 3px hsl(30 90% 50% / 0.5))' }}
       />
       
     </g>
@@ -1786,24 +1778,33 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
             transformOrigin: '200px 270px',
           }}
         >
-          <defs>
-            <linearGradient id="dumpsterBodyGradientMoving" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="hsl(210 10% 18%)" />
-              <stop offset="100%" stopColor="hsl(210 8% 10%)" />
-            </linearGradient>
-          </defs>
-          <ellipse cx={200} cy={272} rx={48} ry={6} fill="hsl(0 0% 0% / 0.4)" style={{ filter: 'blur(4px)' }} />
-          <path d="M155 250 L160 270 L240 270 L245 250 Z" fill="url(#dumpsterBodyGradientMoving)" stroke="hsl(168 60% 35%)" strokeWidth="1.5" />
+          {/* Solid base to block content behind */}
+          <rect x={150} y={244} width={100} height={34} fill="hsl(180 15% 6%)" />
+          
+          {/* Ground shadow */}
+          <ellipse cx={200} cy={272} rx={48} ry={6} fill="hsl(0 0% 5%)" />
+          
+          {/* Main body - solid fill */}
+          <path d="M155 250 L160 270 L240 270 L245 250 Z" fill="hsl(210 10% 14%)" stroke="hsl(168 60% 35%)" strokeWidth="1.5" />
           <path d="M160 252 L164 266 L236 266 L240 252 Z" fill="hsl(210 10% 8%)" />
-          <rect x={154} y={247} width={92} height={4} rx={1} fill="hsl(30 85% 45%)" style={{ filter: 'drop-shadow(0 0 4px hsl(30 90% 50% / 0.6))' }} />
-          <path d="M155 250 L160 270 L240 270 L245 250" stroke="hsl(168 80% 50%)" strokeWidth="2" fill="none" style={{ filter: 'drop-shadow(0 0 6px hsl(168 80% 50% / 0.7))' }} />
+          
+          {/* Top rails */}
+          <rect x={154} y={247} width={92} height={4} rx={1} fill="hsl(30 85% 45%)" />
+          
+          {/* Teal edge */}
+          <path d="M155 250 L160 270 L240 270 L245 250" stroke="hsl(168 80% 50%)" strokeWidth="2" fill="none" />
+          
+          {/* Ribs */}
           {[-30, -10, 10, 30].map((offset, i) => (
             <line key={i} x1={200 + offset} y1={251} x2={200 + offset * 0.9} y2={269} stroke="hsl(168 50% 40%)" strokeWidth="1.5" />
           ))}
+          
+          {/* Wheels */}
           <circle cx={168} cy={272} r={4} fill="hsl(210 10% 15%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
           <circle cx={232} cy={272} r={4} fill="hsl(210 10% 15%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
-          {/* Orange hitch - lowered to match truck hitch level */}
-          <rect x={240} y={271} width={9} height={2} rx={0.5} fill="hsl(30 70% 45%)" stroke="hsl(30 85% 55%)" strokeWidth="0.8" style={{ filter: 'drop-shadow(0 0 3px hsl(30 90% 50% / 0.5))' }} />
+          
+          {/* Hitch */}
+          <rect x={240} y={271} width={9} height={2} rx={0.5} fill="hsl(30 70% 45%)" stroke="hsl(30 85% 55%)" strokeWidth="0.8" />
         </g>
       )}
       
@@ -1814,45 +1815,28 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
           transformOrigin: '0 0',
         }}
       >
-        <defs>
-          {/* Truck body gradient - dark metallic */}
-          <linearGradient id="truckBodyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="hsl(210 15% 22%)" />
-            <stop offset="50%" stopColor="hsl(210 12% 16%)" />
-            <stop offset="100%" stopColor="hsl(210 10% 12%)" />
-          </linearGradient>
-          {/* Window gradient - fully opaque */}
-          <linearGradient id="truckWindowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="hsl(200 30% 18%)" />
-            <stop offset="100%" stopColor="hsl(200 25% 12%)" />
-          </linearGradient>
-          {/* Chrome/metal gradient */}
-          <linearGradient id="truckChromeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="hsl(210 10% 45%)" />
-            <stop offset="50%" stopColor="hsl(210 8% 35%)" />
-            <stop offset="100%" stopColor="hsl(210 10% 25%)" />
-          </linearGradient>
-        </defs>
+        {/* Solid base shape to block anything behind */}
+        <rect x={-82} y={-4} width={90} height={40} fill="hsl(180 15% 6%)" />
         
         {/* Ground shadow */}
-        <ellipse cx={-30} cy={32} rx={45} ry={4} fill="hsl(0 0% 0% / 0.5)" style={{ filter: 'blur(3px)' }} />
+        <ellipse cx={-30} cy={32} rx={45} ry={4} fill="hsl(0 0% 5%)" />
         
-        {/* Truck bed */}
-        <rect x={-75} y={8} width={40} height={18} rx={1} fill="url(#truckBodyGradient)" stroke="hsl(168 50% 35%)" strokeWidth="1" />
-        <rect x={-73} y={10} width={36} height={14} fill="hsl(210 10% 10%)" /> {/* Bed interior */}
+        {/* Truck bed - solid fill */}
+        <rect x={-75} y={8} width={40} height={18} rx={1} fill="hsl(210 12% 16%)" stroke="hsl(168 50% 35%)" strokeWidth="1" />
+        <rect x={-73} y={10} width={36} height={14} fill="hsl(210 10% 10%)" />
         
-        {/* Cab body - shorter length, taller, matching bed colors */}
+        {/* Cab body - solid fill */}
         <path 
           d="M-35 0 L-35 26 L0 26 L0 10 L-8 10 L-14 -2 L-33 -2 L-35 0 Z" 
-          fill="url(#truckBodyGradient)" 
+          fill="hsl(210 12% 16%)" 
           stroke="hsl(168 50% 35%)"
           strokeWidth="1"
         />
         
-        {/* Window */}
+        {/* Window - solid dark fill */}
         <path 
           d="M-31 0 L-16 0 L-10 10 L-33 10 Z" 
-          fill="url(#truckWindowGradient)"
+          fill="hsl(200 25% 12%)"
           stroke="hsl(168 50% 35%)"
           strokeWidth="0.5"
         />
@@ -1861,7 +1845,7 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
         <rect x={-26} y={14} width={4} height={1.2} rx={0.3} fill="hsl(168 40% 40%)" />
         
         {/* Headlight */}
-        <circle cx={-3} cy={14} r={2} fill="hsl(45 90% 75%)" style={{ filter: 'drop-shadow(0 0 2px hsl(45 100% 70% / 0.6))' }} />
+        <circle cx={-3} cy={14} r={2} fill="hsl(45 90% 75%)" />
         
         {/* Grille */}
         <rect x={-5} y={17} width={5} height={8} rx={0.3} fill="hsl(210 8% 12%)" stroke="hsl(168 50% 35%)" strokeWidth="0.5" />
@@ -1870,7 +1854,7 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
         <rect x={-6} y={25} width={7} height={2} rx={0.3} fill="hsl(210 8% 25%)" stroke="hsl(168 50% 35%)" strokeWidth="0.4" />
         
         {/* Hitch */}
-        <rect x={-80} y={25} width={6} height={3} rx={0.5} fill="hsl(30 70% 45%)" stroke="hsl(30 85% 55%)" strokeWidth="0.6" style={{ filter: 'drop-shadow(0 0 3px hsl(30 90% 50% / 0.5))' }} />
+        <rect x={-80} y={25} width={6} height={3} rx={0.5} fill="hsl(30 70% 45%)" stroke="hsl(30 85% 55%)" strokeWidth="0.6" />
         
         {/* Tail light */}
         <rect x={-76} y={14} width={2} height={3} rx={0.5} fill="hsl(0 75% 50%)" />
