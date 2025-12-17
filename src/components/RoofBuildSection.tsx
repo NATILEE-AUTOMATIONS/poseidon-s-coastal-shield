@@ -283,8 +283,8 @@ const RoofBuildSection: React.FC = () => {
               </div>
             </div>
 
-            {/* Dumpster - desktop only, appears as user scrolls */}
-            {!isMobile && <Dumpster progress={progress} />}
+            {/* Dumpster - desktop only, appears during Complete Clean Up step */}
+            {!isMobile && <Dumpster progress={progress} startProgress={layers[9].start} endProgress={layers[9].end} />}
 
             {/* Material labels - left side (positioned as overlay) */}
             <div
