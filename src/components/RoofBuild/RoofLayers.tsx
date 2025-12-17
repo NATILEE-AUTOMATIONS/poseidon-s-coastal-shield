@@ -1738,52 +1738,48 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   
   if (progress < startProgress) return null;
   
-  // Animation phases:
-  // 0-40%: Truck backs in from right
-  // 40-50%: Hitch moment (pause)
-  // 50-100%: Drive away with dumpster
+  // Simpler animation phases:
+  // 0-35%: Truck backs in from right to hitch point
+  // 35-45%: Brief pause at hitch
+  // 45-100%: Drive away together to the right
   
-  const backingPhase = Math.min(1, layerProgress / 0.4);
-  const hitchPhase = layerProgress >= 0.4 && layerProgress <= 0.5;
-  const driveAwayPhase = layerProgress > 0.5 ? (layerProgress - 0.5) / 0.5 : 0;
-  
-  // Truck position
-  const startX = 450; // Start off-screen right
-  const hitchX = 248; // Position when hitched to dumpster
-  const endX = 500; // Drive away off-screen
+  const hitchedPosition = 290; // X position when hitched (right of dumpster)
+  const startPosition = 550;   // Start off-screen right  
+  const endPosition = 600;     // Drive away off-screen right
   
   let truckX: number;
-  if (layerProgress <= 0.4) {
-    // Backing in - easeOutQuint for smooth deceleration
-    const eased = easeOutQuint(backingPhase);
-    truckX = startX - (startX - hitchX) * eased;
-  } else if (layerProgress <= 0.5) {
+  let dumpsterOffset = 0;
+  
+  if (layerProgress <= 0.35) {
+    // Backing in from right
+    const backProgress = layerProgress / 0.35;
+    const eased = easeOutQuint(backProgress);
+    truckX = startPosition - (startPosition - hitchedPosition) * eased;
+  } else if (layerProgress <= 0.45) {
     // Hitched - stay in place
-    truckX = hitchX;
+    truckX = hitchedPosition;
   } else {
-    // Driving away - easeInQuad for acceleration
+    // Driving away together
+    const driveProgress = (layerProgress - 0.45) / 0.55;
     const easeInQuad = (x: number) => x * x;
-    const eased = easeInQuad(driveAwayPhase);
-    truckX = hitchX + (endX - hitchX) * eased;
+    const eased = easeInQuad(driveProgress);
+    truckX = hitchedPosition + (endPosition - hitchedPosition) * eased;
+    // Dumpster moves with truck
+    dumpsterOffset = (truckX - hitchedPosition);
   }
   
-  // Dumpster follows truck when driving away
-  const dumpsterFollows = layerProgress > 0.5;
-  const dumpsterX = dumpsterFollows ? truckX - 48 : 200;
-  
-  const truckY = 222;
+  const truckY = 235; // Align with dumpster ground level
   const opacity = layerProgress < 0.05 ? layerProgress / 0.05 : 1;
-  
-  // Scale for truck
-  const scale = 1.8;
+  const scale = 1.6;
+  const isDrivingAway = layerProgress > 0.45;
   
   return (
     <g className="truck-layer" style={{ opacity }}>
       {/* Dumpster that moves with truck after hitch */}
-      {dumpsterFollows && dumpsterProgress >= 1 && (
+      {isDrivingAway && dumpsterProgress >= 1 && (
         <g 
           style={{
-            transform: `translate(${dumpsterX - 200}px, 0) scale(2, 2.4)`,
+            transform: `translateX(${dumpsterOffset}px) scale(2, 2.4)`,
             transformOrigin: '200px 270px',
           }}
         >
@@ -1794,10 +1790,10 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
             </linearGradient>
           </defs>
           <ellipse cx={200} cy={272} rx={48} ry={6} fill="hsl(0 0% 0% / 0.4)" style={{ filter: 'blur(4px)' }} />
-          <path d={`M155 250 L160 270 L240 270 L245 250 Z`} fill="url(#dumpsterBodyGradientMoving)" stroke="hsl(168 60% 35%)" strokeWidth="1.5" />
-          <path d={`M160 252 L164 266 L236 266 L240 252 Z`} fill="hsl(210 10% 8%)" />
+          <path d="M155 250 L160 270 L240 270 L245 250 Z" fill="url(#dumpsterBodyGradientMoving)" stroke="hsl(168 60% 35%)" strokeWidth="1.5" />
+          <path d="M160 252 L164 266 L236 266 L240 252 Z" fill="hsl(210 10% 8%)" />
           <rect x={154} y={247} width={92} height={4} rx={1} fill="hsl(30 85% 45%)" style={{ filter: 'drop-shadow(0 0 4px hsl(30 90% 50% / 0.6))' }} />
-          <path d={`M155 250 L160 270 L240 270 L245 250`} stroke="hsl(168 80% 50%)" strokeWidth="2" fill="none" style={{ filter: 'drop-shadow(0 0 6px hsl(168 80% 50% / 0.7))' }} />
+          <path d="M155 250 L160 270 L240 270 L245 250" stroke="hsl(168 80% 50%)" strokeWidth="2" fill="none" style={{ filter: 'drop-shadow(0 0 6px hsl(168 80% 50% / 0.7))' }} />
           {[-30, -10, 10, 30].map((offset, i) => (
             <line key={i} x1={200 + offset} y1={251} x2={200 + offset * 0.9} y2={269} stroke="hsl(168 50% 40%)" strokeWidth="1.5" />
           ))}
@@ -1806,7 +1802,7 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
         </g>
       )}
       
-      {/* F-150 Style Truck */}
+      {/* F-150 Style Truck - positioned so back of truck connects to dumpster */}
       <g 
         style={{
           transform: `translate(${truckX}px, ${truckY}px) scale(${scale})`,
