@@ -371,10 +371,16 @@ const RoofBuildSection: React.FC = () => {
             >
               <div className="space-y-5">
                 {materialInfo.slice(5, 10).map((material, index) => {
-                  // Right side shows 6-9 (indices 5-8)
+                  // Right side shows 6-10 (indices 5-9)
                   const actualIndex = index + 5;
                   const exitProgress = getLabelExitProgress(index);
                   const isExiting = progress >= 0.92;
+                  
+                  // Hide "Complete Clean Up" (index 9) when truck animation starts
+                  const isTruckActive = progress >= layers[10]?.start;
+                  if (actualIndex === 9 && isTruckActive) {
+                    return null;
+                  }
                   
                   // During exit: slide right and fade out (positive X)
                   // Before exit: normal lock-in animation (active OR locked shows full)
