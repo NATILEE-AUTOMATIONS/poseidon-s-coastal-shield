@@ -1727,46 +1727,6 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         strokeWidth="1"
       />
       
-      {/* Text label */}
-      {textOpacity > 0 && (
-        <g 
-          style={{ 
-            opacity: textOpacity,
-            filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))',
-          }}
-        >
-          <text
-            x={dumpsterX}
-            y={dumpsterY - 20}
-            textAnchor="middle"
-            fill="hsl(168 90% 75%)"
-            fontSize="13"
-            fontWeight="800"
-            fontFamily="system-ui, -apple-system, sans-serif"
-            letterSpacing="2"
-            stroke="hsl(0 0% 5%)"
-            strokeWidth="2.5"
-            paintOrder="stroke fill"
-          >
-            COMPLETE
-          </text>
-          <text
-            x={dumpsterX}
-            y={dumpsterY - 5}
-            textAnchor="middle"
-            fill="hsl(30 95% 70%)"
-            fontSize="13"
-            fontWeight="800"
-            fontFamily="system-ui, -apple-system, sans-serif"
-            letterSpacing="2.5"
-            stroke="hsl(0 0% 5%)"
-            strokeWidth="2.5"
-            paintOrder="stroke fill"
-          >
-            CLEAN UP
-          </text>
-        </g>
-      )}
     </g>
   );
 };
