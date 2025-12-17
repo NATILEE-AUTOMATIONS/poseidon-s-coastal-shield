@@ -1498,7 +1498,6 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         : 0;
   
   // Peak at (200, 56), roof slopes down at ~0.652 ratio
-  // Triangle sized to cover top ~1 shingle row (about 18px down from peak)
   const peakX = 200;
   const peakY = 58;
   const bottomY = 76;
@@ -1513,27 +1512,40 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
     'hsl(210 3% 18%)',
   ];
   
-  // Create overlapping ridge cap shingle rectangles along the peak
+  // Ridge cap shingles - overlapping pieces straddling the peak
   const ridgeCapShingles = [];
-  const shingleWidth = 12;
-  const shingleHeight = 10;
-  const startX = leftX + 5;
-  const endX = rightX - 5;
-  const numShingles = Math.floor((endX - startX) / (shingleWidth - 2));
+  const shingleWidth = 14;
+  const overlap = 4;
+  const numShingles = 6;
+  const totalWidth = rightX - leftX;
+  const spacing = (totalWidth - shingleWidth) / (numShingles - 1);
   
   for (let i = 0; i < numShingles; i++) {
-    const x = startX + i * (shingleWidth - 2);
+    const centerX = leftX + i * spacing + shingleWidth / 2;
     const color = shingleColors[(i * 7) % shingleColors.length];
+    const colorDark = shingleColors[(i * 7 + 2) % shingleColors.length];
+    
+    // Each ridge cap is two angled pieces meeting at the peak
+    // Left side of cap (angled down-left)
+    const leftPiecePoints = `
+      ${centerX - shingleWidth/2},${peakY + 2}
+      ${centerX + shingleWidth/2 - overlap},${peakY + 2}
+      ${centerX + shingleWidth/2 - overlap - 6},${peakY + 14}
+      ${centerX - shingleWidth/2 - 6},${peakY + 14}
+    `;
+    // Right side of cap (angled down-right)
+    const rightPiecePoints = `
+      ${centerX - shingleWidth/2 + overlap},${peakY + 2}
+      ${centerX + shingleWidth/2},${peakY + 2}
+      ${centerX + shingleWidth/2 + 6},${peakY + 14}
+      ${centerX - shingleWidth/2 + overlap + 6},${peakY + 14}
+    `;
+    
     ridgeCapShingles.push(
-      <rect
-        key={i}
-        x={x}
-        y={peakY + 4}
-        width={shingleWidth}
-        height={shingleHeight}
-        fill={color}
-        rx={1}
-      />
+      <g key={i}>
+        <polygon points={leftPiecePoints} fill={colorDark} />
+        <polygon points={rightPiecePoints} fill={color} />
+      </g>
     );
   }
   
@@ -1546,14 +1558,16 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         opacity,
       }}
     >
-      {/* Base triangle */}
-      <polygon
-        points={`${peakX},${peakY} ${leftX},${bottomY} ${rightX},${bottomY}`}
-        fill="hsl(210 4% 10%)"
-      />
+      <defs>
+        <clipPath id="ridgeCapClip">
+          <polygon points={`${peakX},${peakY} ${leftX},${bottomY} ${rightX},${bottomY}`} />
+        </clipPath>
+      </defs>
       
-      {/* Overlapping ridge cap shingles */}
-      {ridgeCapShingles}
+      {/* Clipped ridge cap shingles */}
+      <g clipPath="url(#ridgeCapClip)">
+        {ridgeCapShingles}
+      </g>
       
       {/* Text label */}
       {textOpacity > 0 && (
