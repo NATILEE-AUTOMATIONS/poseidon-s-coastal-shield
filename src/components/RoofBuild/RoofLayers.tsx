@@ -1498,13 +1498,12 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         : 0;
   
   // Peak at (200, 56), roof slopes down at ~0.652 ratio
-  // Triangle sized to cover top ~2 shingle rows (about 35px down from peak)
-  // At y=91: left x ≈ 145, right x ≈ 255
+  // Triangle sized to cover top ~1 shingle row (about 18px down from peak)
   const peakX = 200;
   const peakY = 58;
-  const bottomY = 93;
-  const leftX = 143;
-  const rightX = 257;
+  const bottomY = 76;
+  const leftX = 172;
+  const rightX = 228;
   
   return (
     <g 
