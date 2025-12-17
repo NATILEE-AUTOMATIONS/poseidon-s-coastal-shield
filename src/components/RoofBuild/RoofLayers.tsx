@@ -1723,6 +1723,187 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   );
 };
 
+// Truck animation - backs up, hitches dumpster, drives away (Desktop only)
+export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = ({ 
+  progress, 
+  startProgress, 
+  endProgress, 
+  isMobile,
+  dumpsterProgress 
+}) => {
+  if (isMobile) return null;
+  
+  const rawProgress = (progress - startProgress) / (endProgress - startProgress);
+  const layerProgress = Math.max(0, Math.min(1, rawProgress));
+  
+  if (progress < startProgress) return null;
+  
+  // Animation phases:
+  // 0-40%: Truck backs in from right
+  // 40-50%: Hitch moment (pause)
+  // 50-100%: Drive away with dumpster
+  
+  const backingPhase = Math.min(1, layerProgress / 0.4);
+  const hitchPhase = layerProgress >= 0.4 && layerProgress <= 0.5;
+  const driveAwayPhase = layerProgress > 0.5 ? (layerProgress - 0.5) / 0.5 : 0;
+  
+  // Truck position
+  const startX = 450; // Start off-screen right
+  const hitchX = 248; // Position when hitched to dumpster
+  const endX = 500; // Drive away off-screen
+  
+  let truckX: number;
+  if (layerProgress <= 0.4) {
+    // Backing in - easeOutQuint for smooth deceleration
+    const eased = easeOutQuint(backingPhase);
+    truckX = startX - (startX - hitchX) * eased;
+  } else if (layerProgress <= 0.5) {
+    // Hitched - stay in place
+    truckX = hitchX;
+  } else {
+    // Driving away - easeInQuad for acceleration
+    const easeInQuad = (x: number) => x * x;
+    const eased = easeInQuad(driveAwayPhase);
+    truckX = hitchX + (endX - hitchX) * eased;
+  }
+  
+  // Dumpster follows truck when driving away
+  const dumpsterFollows = layerProgress > 0.5;
+  const dumpsterX = dumpsterFollows ? truckX - 48 : 200;
+  
+  const truckY = 222;
+  const opacity = layerProgress < 0.05 ? layerProgress / 0.05 : 1;
+  
+  // Scale for truck
+  const scale = 1.8;
+  
+  return (
+    <g className="truck-layer" style={{ opacity }}>
+      {/* Dumpster that moves with truck after hitch */}
+      {dumpsterFollows && dumpsterProgress >= 1 && (
+        <g 
+          style={{
+            transform: `translate(${dumpsterX - 200}px, 0) scale(2, 2.4)`,
+            transformOrigin: '200px 270px',
+          }}
+        >
+          <defs>
+            <linearGradient id="dumpsterBodyGradientMoving" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="hsl(210 10% 18%)" />
+              <stop offset="100%" stopColor="hsl(210 8% 10%)" />
+            </linearGradient>
+          </defs>
+          <ellipse cx={200} cy={272} rx={48} ry={6} fill="hsl(0 0% 0% / 0.4)" style={{ filter: 'blur(4px)' }} />
+          <path d={`M155 250 L160 270 L240 270 L245 250 Z`} fill="url(#dumpsterBodyGradientMoving)" stroke="hsl(168 60% 35%)" strokeWidth="1.5" />
+          <path d={`M160 252 L164 266 L236 266 L240 252 Z`} fill="hsl(210 10% 8%)" />
+          <rect x={154} y={247} width={92} height={4} rx={1} fill="hsl(30 85% 45%)" style={{ filter: 'drop-shadow(0 0 4px hsl(30 90% 50% / 0.6))' }} />
+          <path d={`M155 250 L160 270 L240 270 L245 250`} stroke="hsl(168 80% 50%)" strokeWidth="2" fill="none" style={{ filter: 'drop-shadow(0 0 6px hsl(168 80% 50% / 0.7))' }} />
+          {[-30, -10, 10, 30].map((offset, i) => (
+            <line key={i} x1={200 + offset} y1={251} x2={200 + offset * 0.9} y2={269} stroke="hsl(168 50% 40%)" strokeWidth="1.5" />
+          ))}
+          <circle cx={168} cy={272} r={4} fill="hsl(210 10% 15%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
+          <circle cx={232} cy={272} r={4} fill="hsl(210 10% 15%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
+        </g>
+      )}
+      
+      {/* F-150 Style Truck */}
+      <g 
+        style={{
+          transform: `translate(${truckX}px, ${truckY}px) scale(${scale})`,
+          transformOrigin: '0 0',
+        }}
+      >
+        <defs>
+          {/* Truck body gradient - dark metallic */}
+          <linearGradient id="truckBodyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="hsl(210 15% 22%)" />
+            <stop offset="50%" stopColor="hsl(210 12% 16%)" />
+            <stop offset="100%" stopColor="hsl(210 10% 12%)" />
+          </linearGradient>
+          {/* Window gradient */}
+          <linearGradient id="truckWindowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="hsl(200 50% 25%)" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="hsl(200 40% 15%)" stopOpacity="0.9" />
+          </linearGradient>
+          {/* Chrome/metal gradient */}
+          <linearGradient id="truckChromeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="hsl(210 10% 45%)" />
+            <stop offset="50%" stopColor="hsl(210 8% 35%)" />
+            <stop offset="100%" stopColor="hsl(210 10% 25%)" />
+          </linearGradient>
+        </defs>
+        
+        {/* Ground shadow */}
+        <ellipse cx={-30} cy={32} rx={45} ry={4} fill="hsl(0 0% 0% / 0.5)" style={{ filter: 'blur(3px)' }} />
+        
+        {/* Truck bed */}
+        <rect x={-75} y={8} width={40} height={18} rx={1} fill="url(#truckBodyGradient)" stroke="hsl(168 50% 35%)" strokeWidth="1" />
+        <rect x={-73} y={10} width={36} height={14} fill="hsl(210 10% 10%)" /> {/* Bed interior */}
+        
+        {/* Cab body */}
+        <path 
+          d="M-35 8 L-35 26 L15 26 L15 12 L5 12 L0 4 L-25 4 L-30 8 Z" 
+          fill="url(#truckBodyGradient)" 
+          stroke="hsl(168 60% 40%)"
+          strokeWidth="1.2"
+        />
+        
+        {/* Cab roof */}
+        <path 
+          d="M-28 4 L-2 4 L3 10 L-30 10 Z" 
+          fill="hsl(210 12% 18%)" 
+          stroke="hsl(168 50% 35%)"
+          strokeWidth="0.8"
+        />
+        
+        {/* Windows */}
+        <path 
+          d="M-26 6 L-4 6 L0 10 L-28 10 Z" 
+          fill="url(#truckWindowGradient)"
+          stroke="hsl(168 70% 50%)"
+          strokeWidth="0.8"
+          style={{ filter: 'drop-shadow(0 0 3px hsl(168 80% 50% / 0.5))' }}
+        />
+        
+        {/* Door line */}
+        <line x1={-12} y1={10} x2={-12} y2={24} stroke="hsl(168 40% 30%)" strokeWidth="0.8" />
+        
+        {/* Door handle */}
+        <rect x={-18} y={16} width={4} height={1.5} rx={0.5} fill="url(#truckChromeGradient)" />
+        
+        {/* Headlight */}
+        <rect x={12} y={14} width={3} height={6} rx={1} fill="hsl(45 90% 70%)" style={{ filter: 'drop-shadow(0 0 4px hsl(45 100% 60% / 0.8))' }} />
+        
+        {/* Grille */}
+        <rect x={12} y={20} width={4} height={6} rx={0.5} fill="url(#truckChromeGradient)" stroke="hsl(168 50% 40%)" strokeWidth="0.5" />
+        {[0, 2, 4].map((y, i) => (
+          <line key={i} x1={12.5} y1={21 + y} x2={15.5} y2={21 + y} stroke="hsl(210 10% 20%)" strokeWidth="0.5" />
+        ))}
+        
+        {/* Bumper */}
+        <rect x={14} y={26} width={4} height={3} rx={0.5} fill="url(#truckChromeGradient)" stroke="hsl(168 40% 35%)" strokeWidth="0.5" />
+        
+        {/* Hitch */}
+        <rect x={-78} y={22} width={6} height={4} rx={1} fill="hsl(30 70% 35%)" stroke="hsl(30 80% 50%)" strokeWidth="0.8" />
+        
+        {/* Tail light */}
+        <rect x={-76} y={12} width={2} height={4} rx={0.5} fill="hsl(0 80% 50%)" style={{ filter: 'drop-shadow(0 0 3px hsl(0 90% 50% / 0.7))' }} />
+        
+        {/* Front wheel */}
+        <circle cx={5} cy={28} r={6} fill="hsl(210 10% 12%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
+        <circle cx={5} cy={28} r={3} fill="hsl(210 8% 20%)" stroke="hsl(168 40% 35%)" strokeWidth="0.8" />
+        
+        {/* Rear wheel */}
+        <circle cx={-55} cy={28} r={6} fill="hsl(210 10% 12%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
+        <circle cx={-55} cy={28} r={3} fill="hsl(210 8% 20%)" stroke="hsl(168 40% 35%)" strokeWidth="0.8" />
+        
+        {/* Teal neon underglow */}
+        <line x1={-70} y1={30} x2={10} y2={30} stroke="hsl(168 80% 50%)" strokeWidth="1" style={{ filter: 'drop-shadow(0 0 6px hsl(168 90% 50% / 0.8)) drop-shadow(0 0 12px hsl(168 80% 50% / 0.5))' }} />
+      </g>
+    </g>
+  );
+};
+
 export const CleanUpLayer: React.FC<LayerProps> = () => null;
 export const MobileShingleOverlay: React.FC<LayerProps> = () => null;
 
