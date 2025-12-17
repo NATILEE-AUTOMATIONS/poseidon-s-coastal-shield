@@ -1512,42 +1512,9 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
     'hsl(210 3% 18%)',
   ];
   
-  // Ridge cap shingles - overlapping pieces straddling the peak
-  const ridgeCapShingles = [];
-  const shingleWidth = 14;
-  const overlap = 4;
-  const numShingles = 6;
-  const totalWidth = rightX - leftX;
-  const spacing = (totalWidth - shingleWidth) / (numShingles - 1);
-  
-  for (let i = 0; i < numShingles; i++) {
-    const centerX = leftX + i * spacing + shingleWidth / 2;
-    const color = shingleColors[(i * 7) % shingleColors.length];
-    const colorDark = shingleColors[(i * 7 + 2) % shingleColors.length];
-    
-    // Each ridge cap is two angled pieces meeting at the peak
-    // Left side of cap (angled down-left)
-    const leftPiecePoints = `
-      ${centerX - shingleWidth/2},${peakY + 2}
-      ${centerX + shingleWidth/2 - overlap},${peakY + 2}
-      ${centerX + shingleWidth/2 - overlap - 6},${peakY + 14}
-      ${centerX - shingleWidth/2 - 6},${peakY + 14}
-    `;
-    // Right side of cap (angled down-right)
-    const rightPiecePoints = `
-      ${centerX - shingleWidth/2 + overlap},${peakY + 2}
-      ${centerX + shingleWidth/2},${peakY + 2}
-      ${centerX + shingleWidth/2 + 6},${peakY + 14}
-      ${centerX - shingleWidth/2 + overlap + 6},${peakY + 14}
-    `;
-    
-    ridgeCapShingles.push(
-      <g key={i}>
-        <polygon points={leftPiecePoints} fill={colorDark} />
-        <polygon points={rightPiecePoints} fill={color} />
-      </g>
-    );
-  }
+  // Horizontal stripe lines
+  const stripeHeight = 4;
+  const numStripes = Math.ceil((bottomY - peakY) / stripeHeight);
   
   return (
     <g 
@@ -1564,9 +1531,18 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         </clipPath>
       </defs>
       
-      {/* Clipped ridge cap shingles */}
+      {/* Horizontal stripes clipped to triangle */}
       <g clipPath="url(#ridgeCapClip)">
-        {ridgeCapShingles}
+        {Array.from({ length: numStripes }).map((_, i) => (
+          <rect
+            key={i}
+            x={leftX - 10}
+            y={peakY + i * stripeHeight}
+            width={(rightX - leftX) + 20}
+            height={stripeHeight}
+            fill={shingleColors[i % shingleColors.length]}
+          />
+        ))}
       </g>
       
       {/* Text label */}
