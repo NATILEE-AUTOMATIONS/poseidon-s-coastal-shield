@@ -1886,8 +1886,8 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
         {/* Bumper */}
         <rect x={14} y={26} width={4} height={3} rx={0.5} fill="url(#truckChromeGradient)" stroke="hsl(168 40% 35%)" strokeWidth="0.5" />
         
-        {/* Simple hitch receiver - clean design */}
-        <rect x={-80} y={26} width={6} height={3} rx={0.5} fill="hsl(30 70% 45%)" stroke="hsl(30 85% 55%)" strokeWidth="0.6" style={{ filter: 'drop-shadow(0 0 3px hsl(30 90% 50% / 0.5))' }} />
+        {/* Simple hitch receiver - raised to connect with dumpster */}
+        <rect x={-80} y={16} width={6} height={3} rx={0.5} fill="hsl(30 70% 45%)" stroke="hsl(30 85% 55%)" strokeWidth="0.6" style={{ filter: 'drop-shadow(0 0 3px hsl(30 90% 50% / 0.5))' }} />
         
         {/* Tail light */}
         <rect x={-76} y={12} width={2} height={4} rx={0.5} fill="hsl(0 80% 50%)" style={{ filter: 'drop-shadow(0 0 3px hsl(0 90% 50% / 0.7))' }} />
