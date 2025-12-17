@@ -1707,16 +1707,16 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         strokeWidth="1.5"
       />
       
-      {/* Hook/hitch point on front - lowered to wheel level */}
+      {/* Hook/hitch point - same size as truck hitch (6x3) */}
       <rect 
         x={dumpsterX + 40} 
-        y={dumpsterY + 18} 
-        width={8} 
-        height={6} 
-        rx={1}
-        fill="hsl(30 80% 40%)"
-        stroke="hsl(30 90% 55%)"
-        strokeWidth="1"
+        y={dumpsterY + 19} 
+        width={6} 
+        height={3} 
+        rx={0.5}
+        fill="hsl(30 70% 45%)"
+        stroke="hsl(30 85% 55%)"
+        strokeWidth="0.6"
       />
       
     </g>
@@ -1747,7 +1747,7 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   // Truck hitch is at x=-78 relative to origin, with scale 3 = -234 offset
   // So truckX - 234 = 280, therefore truckX = 514
   // Add small gap so they visually connect at touch point
-  const hitchedPosition = 520; // Slightly separated so they touch at connection
+  const hitchedPosition = 516; // Touch point - starts hauling immediately
   const startPosition = 700;   // Start off-screen right  
   const endPosition = 800;     // Drive away off-screen right
   
@@ -1801,8 +1801,8 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
           ))}
           <circle cx={168} cy={272} r={4} fill="hsl(210 10% 15%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
           <circle cx={232} cy={272} r={4} fill="hsl(210 10% 15%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
-          {/* Orange hitch - matches stationary dumpster position */}
-          <rect x={240} y={268} width={8} height={6} rx={1} fill="hsl(30 80% 40%)" stroke="hsl(30 90% 55%)" strokeWidth="1" />
+          {/* Orange hitch - same size as truck hitch (6x3) */}
+          <rect x={240} y={269} width={6} height={3} rx={0.5} fill="hsl(30 70% 45%)" stroke="hsl(30 85% 55%)" strokeWidth="0.6" />
         </g>
       )}
       
