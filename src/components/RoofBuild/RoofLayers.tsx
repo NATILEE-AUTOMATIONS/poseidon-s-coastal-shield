@@ -1605,16 +1605,17 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   const translateY = 80 * (1 - easedProgress);
   const opacity = Math.min(1, easedProgress * 2.5);
   
-  // Position: center of front yard, lowered and scaled up 2x
+  // Position: center of front yard, scaled up (40% taller)
   const dumpsterX = 200;
-  const dumpsterY = 255; // Lowered
-  const scale = 2; // Scale factor for bigger dumpster
+  const dumpsterY = 250;
+  const scaleX = 2;
+  const scaleY = 2.8; // 40% taller
   
   return (
     <g 
       className="dumpster-layer"
       style={{
-        transform: `translateY(${translateY}px) scale(${scale})`,
+        transform: `translateY(${translateY}px) scale(${scaleX}, ${scaleY})`,
         transformOrigin: `${dumpsterX}px ${dumpsterY + 20}px`,
         opacity,
       }}
