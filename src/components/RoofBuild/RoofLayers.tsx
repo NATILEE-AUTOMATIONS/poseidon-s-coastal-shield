@@ -1607,11 +1607,11 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   // Mobile: slower fade-in (1.5x multiplier vs 2.5x)
   const opacity = Math.min(1, easedProgress * (isMobile ? 1.5 : 2.5));
   
-  // Position: center of front yard, scaled up
-  const dumpsterX = 200;
+  // Position: center of front yard, scaled up (mobile: shifted left)
+  const dumpsterX = isMobile ? 160 : 200;
   const dumpsterY = 250;
-  const scaleX = isMobile ? 2.2 : 2;
-  const scaleY = isMobile ? 3.2 : 2.4; // Taller on mobile
+  const scaleX = isMobile ? 1.6 : 2;
+  const scaleY = isMobile ? 2.2 : 2.4;
   
   return (
     <g 
@@ -1727,10 +1727,10 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   // 0-40%: Truck backs in from right to hitch point (touch)
   // 40-100%: Drive away together immediately after touch
   
-  // Mobile-adjusted positions (smaller viewport)
-  const hitchedPosition = isMobile ? 340 : 540;
-  const startPosition = isMobile ? 480 : 700;
-  const endPosition = isMobile ? 700 : 1200;
+  // Mobile-adjusted positions (smaller viewport, dumpster shifted left to x=160)
+  const hitchedPosition = isMobile ? 260 : 540;
+  const startPosition = isMobile ? 400 : 700;
+  const endPosition = isMobile ? -150 : 1200;
   const truckY = isMobile ? 200 : 195;
   const scale = isMobile ? 2 : 3;
   
@@ -1766,9 +1766,10 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
     : 1;
   const isDrivingAway = layerProgress > backPhaseEnd;
   
-  // Mobile dumpster scale values
+  // Mobile dumpster scale values (must match DumpsterLayer scales)
   const dumpsterScaleX = isMobile ? 1.6 : 2;
   const dumpsterScaleY = isMobile ? 2.2 : 2.4;
+  const dumpsterOriginX = isMobile ? 160 : 200;
   const dumpsterOriginY = isMobile ? 265 : 270;
   
   return (
@@ -1778,7 +1779,7 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
         <g 
           style={{
             transform: `translateX(${dumpsterOffset}px) scale(${dumpsterScaleX}, ${dumpsterScaleY})`,
-            transformOrigin: `200px ${dumpsterOriginY}px`,
+            transformOrigin: `${dumpsterOriginX}px ${dumpsterOriginY}px`,
           }}
         >
           {/* Ground shadow */}
