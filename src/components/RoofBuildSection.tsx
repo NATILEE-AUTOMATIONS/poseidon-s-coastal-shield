@@ -66,7 +66,14 @@ const RoofBuildSection: React.FC = () => {
   const starterStripMultiplier = isMobile ? 1.5 : 2;
   const starterStripEnd = underlaymentEnd + (layerStep * starterStripMultiplier);
   
-  // 10 layers total
+  // 10 layers total - adjusted for mobile to fit ridge cap earlier
+  const ridgeCapStart = isMobile 
+    ? starterStripEnd + layerStep * 3.5  // Earlier on mobile
+    : starterStripEnd + layerStep * 5.3;
+  const ridgeCapEnd = isMobile
+    ? starterStripEnd + layerStep * 4.5  // Earlier on mobile
+    : starterStripEnd + layerStep * 6.2;
+    
   const layers = [
     { start: layerStart, end: deckingEnd },                    // 1. Decking
     { start: deckingEnd, end: dripEdgeEnd },                   // 2. Drip Edge
@@ -77,7 +84,7 @@ const RoofBuildSection: React.FC = () => {
     // 7. Vents - starts exactly when shingles end
     { start: starterStripEnd + layerStep * 3, end: starterStripEnd + layerStep * 4.5 },
     { start: starterStripEnd + layerStep * 4.5, end: starterStripEnd + layerStep * 5.3 }, // 8. Flashing
-    { start: starterStripEnd + layerStep * 5.3, end: starterStripEnd + layerStep * 6.2 }, // 9. Ridge Vent & Cap (right after flashing, before labels exit at 0.92)
+    { start: ridgeCapStart, end: ridgeCapEnd }, // 9. Ridge Vent & Cap
     { start: starterStripEnd + layerStep * 7.5, end: starterStripEnd + layerStep * 8.5 }, // 10. Complete Clean Up
   ];
   
