@@ -1478,7 +1478,7 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
 };
 
 // Ridge Vent & Cap - small shingle-colored triangle covering top 2 rows
-export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress }) => {
+export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
