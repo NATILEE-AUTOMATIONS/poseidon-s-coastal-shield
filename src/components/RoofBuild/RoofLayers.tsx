@@ -1886,15 +1886,8 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
         {/* Bumper */}
         <rect x={14} y={26} width={4} height={3} rx={0.5} fill="url(#truckChromeGradient)" stroke="hsl(168 40% 35%)" strokeWidth="0.5" />
         
-        {/* Hitch arm - extends down to connect to dumpster */}
-        <g>
-          {/* Vertical arm */}
-          <rect x={-80} y={24} width={4} height={12} rx={0.5} fill="hsl(30 70% 40%)" stroke="hsl(30 85% 55%)" strokeWidth="0.8" />
-          {/* Horizontal connector */}
-          <rect x={-82} y={34} width={8} height={3} rx={0.5} fill="hsl(30 75% 45%)" stroke="hsl(30 90% 60%)" strokeWidth="0.8" style={{ filter: 'drop-shadow(0 0 4px hsl(30 90% 50% / 0.6))' }} />
-          {/* Ball hitch */}
-          <circle cx={-78} cy={38} r={2} fill="hsl(30 80% 50%)" stroke="hsl(30 95% 65%)" strokeWidth="0.6" style={{ filter: 'drop-shadow(0 0 3px hsl(30 90% 55% / 0.8))' }} />
-        </g>
+        {/* Simple hitch receiver - clean design */}
+        <rect x={-80} y={26} width={6} height={3} rx={0.5} fill="hsl(30 70% 45%)" stroke="hsl(30 85% 55%)" strokeWidth="0.6" style={{ filter: 'drop-shadow(0 0 3px hsl(30 90% 50% / 0.5))' }} />
         
         {/* Tail light */}
         <rect x={-76} y={12} width={2} height={4} rx={0.5} fill="hsl(0 80% 50%)" style={{ filter: 'drop-shadow(0 0 3px hsl(0 90% 50% / 0.7))' }} />
