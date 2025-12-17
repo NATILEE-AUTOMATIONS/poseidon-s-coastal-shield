@@ -1841,75 +1841,47 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
         <rect x={-75} y={8} width={40} height={18} rx={1} fill="url(#truckBodyGradient)" stroke="hsl(168 50% 35%)" strokeWidth="1" />
         <rect x={-73} y={10} width={36} height={14} fill="hsl(210 10% 10%)" /> {/* Bed interior */}
         
-        {/* Classic F-250 style cab - boxy shape */}
+        {/* Simple cab body */}
         <path 
-          d="M-35 6 L-35 26 L12 26 L12 8 L2 8 L-4 2 L-32 2 L-35 6 Z" 
+          d="M-35 8 L-35 26 L15 26 L15 12 L5 12 L0 4 L-30 4 L-35 8 Z" 
           fill="url(#truckBodyGradient)" 
-          stroke="hsl(210 8% 30%)"
+          stroke="hsl(210 8% 28%)"
           strokeWidth="0.8"
         />
         
-        {/* Roof - flat with slight curve like classic Ford */}
-        <rect x={-32} y={1} width={29} height={2} rx={0.5} fill="url(#truckBodyGradient)" stroke="hsl(210 8% 28%)" strokeWidth="0.5" />
-        
-        {/* Orange roof marker light */}
-        <rect x={-18} y={0} width={4} height={1.5} rx={0.5} fill="hsl(25 90% 55%)" style={{ filter: 'drop-shadow(0 0 2px hsl(25 100% 50% / 0.8))' }} />
-        
-        {/* Windshield - slanted like classic truck */}
+        {/* Window */}
         <path 
-          d="M-3 4 L10 10 L10 7 L-3 4 Z" 
+          d="M-28 6 L-4 6 L2 12 L-32 12 Z" 
           fill="url(#truckWindowGradient)"
-          stroke="hsl(210 10% 35%)"
+          stroke="hsl(210 10% 32%)"
           strokeWidth="0.5"
         />
         
-        {/* Large rectangular side window */}
-        <rect x={-30} y={4} width={24} height={8} rx={0.5} fill="url(#truckWindowGradient)" stroke="hsl(210 10% 35%)" strokeWidth="0.5" />
+        {/* Door handle */}
+        <rect x={-20} y={16} width={4} height={1.2} rx={0.3} fill="hsl(210 8% 40%)" />
         
-        {/* Vent window triangle */}
-        <path d="M-6 4 L-6 12 L-3 8 Z" fill="url(#truckWindowGradient)" stroke="hsl(210 10% 35%)" strokeWidth="0.4" />
+        {/* Headlight */}
+        <circle cx={12} cy={16} r={2} fill="hsl(45 90% 75%)" style={{ filter: 'drop-shadow(0 0 2px hsl(45 100% 70% / 0.6))' }} />
         
-        {/* Door seam */}
-        <line x1={-15} y1={3} x2={-15} y2={24} stroke="hsl(210 8% 25%)" strokeWidth="0.6" />
+        {/* Grille */}
+        <rect x={10} y={19} width={5} height={6} rx={0.3} fill="hsl(210 8% 18%)" stroke="hsl(210 8% 30%)" strokeWidth="0.4" />
         
-        {/* Door handle - chrome style */}
-        <rect x={-22} y={14} width={5} height={1.5} rx={0.3} fill="url(#truckChromeGradient)" />
+        {/* Bumper */}
+        <rect x={8} y={25} width={8} height={2} rx={0.3} fill="hsl(210 8% 32%)" />
         
-        {/* Side mirror */}
-        <rect x={-6} y={6} width={1.5} height={3} rx={0.3} fill="hsl(210 8% 25%)" />
-        <rect x={-5} y={7} width={2} height={2} rx={0.2} fill="url(#truckChromeGradient)" />
-        
-        {/* Classic round headlight */}
-        <circle cx={10} cy={14} r={2.5} fill="hsl(45 95% 80%)" stroke="url(#truckChromeGradient)" strokeWidth="0.6" style={{ filter: 'drop-shadow(0 0 3px hsl(45 100% 70% / 0.8))' }} />
-        <circle cx={10} cy={14} r={1.2} fill="hsl(45 100% 90%)" />
-        
-        {/* Classic Ford grille - horizontal bars */}
-        <rect x={6} y={17} width={6} height={8} rx={0.3} fill="hsl(210 8% 15%)" stroke="url(#truckChromeGradient)" strokeWidth="0.5" />
-        {[0, 2, 4, 6].map((y, i) => (
-          <line key={i} x1={6.5} y1={18 + y} x2={11.5} y2={18 + y} stroke="url(#truckChromeGradient)" strokeWidth="0.6" />
-        ))}
-        
-        {/* Chrome front bumper */}
-        <rect x={4} y={25} width={10} height={2.5} rx={0.3} fill="url(#truckChromeGradient)" stroke="hsl(210 10% 40%)" strokeWidth="0.4" />
-        
-        {/* Front fender flare */}
-        <path d="M0 26 Q6 20 14 26" fill="none" stroke="hsl(210 8% 22%)" strokeWidth="1.2" />
-        
-        {/* Simple hitch receiver */}
+        {/* Hitch */}
         <rect x={-80} y={25} width={6} height={3} rx={0.5} fill="hsl(30 70% 45%)" stroke="hsl(30 85% 55%)" strokeWidth="0.6" style={{ filter: 'drop-shadow(0 0 3px hsl(30 90% 50% / 0.5))' }} />
         
         {/* Tail light */}
-        <rect x={-76} y={12} width={2} height={4} rx={0.5} fill="hsl(0 80% 50%)" style={{ filter: 'drop-shadow(0 0 3px hsl(0 90% 50% / 0.7))' }} />
+        <rect x={-76} y={14} width={2} height={3} rx={0.5} fill="hsl(0 75% 50%)" />
         
-        {/* Front wheel - chrome rim style */}
-        <circle cx={5} cy={28} r={6} fill="hsl(210 8% 15%)" stroke="hsl(210 6% 35%)" strokeWidth="0.8" />
-        <circle cx={5} cy={28} r={4} fill="hsl(210 6% 45%)" stroke="hsl(210 8% 55%)" strokeWidth="0.5" />
-        <circle cx={5} cy={28} r={2} fill="hsl(210 8% 50%)" />
+        {/* Front wheel */}
+        <circle cx={5} cy={28} r={6} fill="hsl(210 8% 12%)" stroke="hsl(210 6% 30%)" strokeWidth="0.8" />
+        <circle cx={5} cy={28} r={3} fill="hsl(210 6% 25%)" />
         
-        {/* Rear wheel - chrome rim style */}
-        <circle cx={-55} cy={28} r={6} fill="hsl(210 8% 15%)" stroke="hsl(210 6% 35%)" strokeWidth="0.8" />
-        <circle cx={-55} cy={28} r={4} fill="hsl(210 6% 45%)" stroke="hsl(210 8% 55%)" strokeWidth="0.5" />
-        <circle cx={-55} cy={28} r={2} fill="hsl(210 8% 50%)" />
+        {/* Rear wheel */}
+        <circle cx={-55} cy={28} r={6} fill="hsl(210 8% 12%)" stroke="hsl(210 6% 30%)" strokeWidth="0.8" />
+        <circle cx={-55} cy={28} r={3} fill="hsl(210 6% 25%)" />
       </g>
     </g>
   );
