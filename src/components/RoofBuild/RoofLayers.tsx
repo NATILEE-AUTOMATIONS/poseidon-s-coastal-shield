@@ -1477,8 +1477,93 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   );
 };
 
-// Ridge Vent & Cap - disabled
-export const RidgeCapLayer: React.FC<LayerProps> = () => null;
+// Ridge Vent & Cap - small shingle-colored triangle covering top 2 rows
+export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress }) => {
+  const rawProgress = (progress - startProgress) / (endProgress - startProgress);
+  const layerProgress = Math.max(0, Math.min(1, rawProgress));
+  
+  if (progress < startProgress) return null;
+  
+  const easedProgress = easeOutQuint(layerProgress);
+  const translateY = -40 * (1 - easedProgress);
+  const opacity = easedProgress;
+  
+  // Text label timing
+  const textOpacity = layerProgress < 0.15 
+    ? layerProgress / 0.15 
+    : layerProgress < 0.55 
+      ? 1 
+      : layerProgress < 0.80 
+        ? 1 - (layerProgress - 0.55) / 0.25 
+        : 0;
+  
+  // Peak at (200, 56), roof slopes down at ~0.652 ratio
+  // Triangle sized to cover top ~2 shingle rows (about 35px down from peak)
+  // At y=91: left x ≈ 145, right x ≈ 255
+  const peakX = 200;
+  const peakY = 58;
+  const bottomY = 93;
+  const leftX = 143;
+  const rightX = 257;
+  
+  return (
+    <g 
+      className="ridge-cap-layer"
+      style={{
+        transform: `translateY(${translateY}px)`,
+        transformOrigin: `${peakX}px ${peakY}px`,
+        opacity,
+      }}
+    >
+      {/* Shingle-colored ridge cap triangle */}
+      <polygon
+        points={`${peakX},${peakY} ${leftX},${bottomY} ${rightX},${bottomY}`}
+        fill="hsl(210 5% 14%)"
+      />
+      
+      {/* Text label */}
+      {textOpacity > 0 && (
+        <g 
+          style={{ 
+            opacity: textOpacity,
+            filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))',
+          }}
+        >
+          <text
+            x={peakX}
+            y={bottomY + 25}
+            textAnchor="middle"
+            fill="hsl(168 90% 75%)"
+            fontSize="14"
+            fontWeight="800"
+            fontFamily="system-ui, -apple-system, sans-serif"
+            letterSpacing="2.5"
+            stroke="hsl(0 0% 5%)"
+            strokeWidth="2.5"
+            paintOrder="stroke fill"
+          >
+            RIDGE VENT
+          </text>
+          <text
+            x={peakX}
+            y={bottomY + 42}
+            textAnchor="middle"
+            fill="hsl(30 95% 70%)"
+            fontSize="14"
+            fontWeight="800"
+            fontFamily="system-ui, -apple-system, sans-serif"
+            letterSpacing="3"
+            stroke="hsl(0 0% 5%)"
+            strokeWidth="2.5"
+            paintOrder="stroke fill"
+          >
+            & CAP
+          </text>
+        </g>
+      )}
+    </g>
+  );
+};
 export const CleanUpLayer: React.FC<LayerProps> = () => null;
 export const MobileShingleOverlay: React.FC<LayerProps> = () => null;
 
