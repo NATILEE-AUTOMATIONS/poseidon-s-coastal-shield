@@ -1743,16 +1743,16 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   // 35-45%: Brief pause at hitch
   // 45-100%: Drive away together to the right
   
-  // Positions - truck's orange hitch connects to dumpster's orange hitch
-  // Dumpster hitch is at approximately x=280 after scaling
-  // Truck hitch is at x=-78 relative to truck origin, so with scale 3: truckX + (-78 * 3) = 280
-  // Therefore truckX = 280 + 234 = 514... but we need to account for visual alignment
-  const hitchedPosition = 450; // Truck stops so its back hitch meets dumpster hitch
-  const startPosition = 650;   // Start off-screen right  
-  const endPosition = 750;     // Drive away off-screen right
+  // Calculate exact hitch position:
+  // Dumpster hitch is at x=280 after scaling (200 + 40*2)
+  // Truck hitch is at x=-78 relative to origin, with scale 3 = -234 offset
+  // So truckX - 234 = 280, therefore truckX = 514
+  const hitchedPosition = 514; // Exact alignment with dumpster hitch
+  const startPosition = 700;   // Start off-screen right  
+  const endPosition = 800;     // Drive away off-screen right
   
-  const truckY = 220;
-  const scale = 3; // Much bigger truck
+  const truckY = 175; // Adjusted to align hitches vertically
+  const scale = 3;
   
   let truckX: number;
   let dumpsterOffset = 0;
