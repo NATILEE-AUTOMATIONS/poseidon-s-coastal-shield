@@ -1707,16 +1707,17 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         strokeWidth="1.5"
       />
       
-      {/* Hook/hitch point - same size as truck hitch (6x3) */}
+      {/* Hook/hitch point - larger to match truck visually after scaling */}
       <rect 
         x={dumpsterX + 40} 
-        y={dumpsterY + 19} 
-        width={6} 
-        height={3} 
+        y={dumpsterY + 18} 
+        width={9} 
+        height={4} 
         rx={0.5}
         fill="hsl(30 70% 45%)"
         stroke="hsl(30 85% 55%)"
-        strokeWidth="0.6"
+        strokeWidth="0.8"
+        style={{ filter: 'drop-shadow(0 0 3px hsl(30 90% 50% / 0.5))' }}
       />
       
     </g>
@@ -1801,8 +1802,8 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
           ))}
           <circle cx={168} cy={272} r={4} fill="hsl(210 10% 15%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
           <circle cx={232} cy={272} r={4} fill="hsl(210 10% 15%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
-          {/* Orange hitch - same size as truck hitch (6x3) */}
-          <rect x={240} y={269} width={6} height={3} rx={0.5} fill="hsl(30 70% 45%)" stroke="hsl(30 85% 55%)" strokeWidth="0.6" />
+          {/* Orange hitch - larger to match truck visually */}
+          <rect x={240} y={268} width={9} height={4} rx={0.5} fill="hsl(30 70% 45%)" stroke="hsl(30 85% 55%)" strokeWidth="0.8" style={{ filter: 'drop-shadow(0 0 3px hsl(30 90% 50% / 0.5))' }} />
         </g>
       )}
       
