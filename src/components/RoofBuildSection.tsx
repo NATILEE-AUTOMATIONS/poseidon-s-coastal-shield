@@ -33,6 +33,13 @@ const RoofBuildSection: React.FC = () => {
   const { setZoomProgress } = useScrollContext();
   const isMobile = useIsMobile();
 
+  // DEBUG: Log key values for mobile ridge cap debugging
+  console.log('[RoofBuild DEBUG]', {
+    isMobile,
+    progress: progress.toFixed(3),
+    windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'SSR',
+  });
+
   // Layer timing - delayed start on mobile (15-85%) so card is visible first
   // Mobile: spread across 70% of scroll for leisurely viewing, ends before sign
   // Desktop: Roof layers: 8-60%, Door: 60-72%, Zoom: 72-88%, Gallery: 88%+
@@ -68,11 +75,20 @@ const RoofBuildSection: React.FC = () => {
   
   // 10 layers total - adjusted for mobile to fit ridge cap earlier
   const ridgeCapStart = isMobile 
-    ? 0.50  // Much earlier on mobile - starts at 50% scroll
+    ? 0.25  // Start VERY early on mobile - at 25% scroll
     : starterStripEnd + layerStep * 5.3;
   const ridgeCapEnd = isMobile
-    ? 0.65  // Ends at 65% scroll on mobile
+    ? 0.60  // End at 60% scroll on mobile for long visibility
     : starterStripEnd + layerStep * 6.2;
+  
+  // DEBUG: Log ridge cap timing
+  console.log('[RidgeCap DEBUG]', {
+    isMobile,
+    ridgeCapStart,
+    ridgeCapEnd,
+    progress: progress.toFixed(3),
+    shouldRender: progress >= ridgeCapStart,
+  });
     
   const layers = [
     { start: layerStart, end: deckingEnd },                    // 1. Decking
@@ -203,6 +219,20 @@ const RoofBuildSection: React.FC = () => {
 
       {/* Desktop Gallery - needs to be above sticky container */}
       {!isMobile && <ImageGallery3D progress={progress} />}
+
+      {/* DEBUG PANEL - shows on mobile to confirm values */}
+      {isMobile && (
+        <div 
+          className="fixed top-20 left-2 z-[9999] bg-black/90 text-white p-2 text-xs rounded border border-red-500"
+          style={{ fontSize: '10px' }}
+        >
+          <div>isMobile: {String(isMobile)}</div>
+          <div>progress: {progress.toFixed(3)}</div>
+          <div>ridgeCapStart: {layers[8].start.toFixed(3)}</div>
+          <div>ridgeCapEnd: {layers[8].end.toFixed(3)}</div>
+          <div>shouldRender: {String(progress >= layers[8].start)}</div>
+        </div>
+      )}
 
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
