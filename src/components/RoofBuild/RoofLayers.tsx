@@ -1597,12 +1597,15 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   
   if (progress < startProgress) return null;
   
-  // easeOutQuint for smooth, solid landing (no bounce)
-  const easedProgress = easeOutQuint(layerProgress);
+  // Mobile: slower, more deliberate easing (power of 6 for ultra-smooth)
+  // Desktop: standard easeOutQuint
+  const easeOutSext = (x: number) => 1 - Math.pow(1 - x, 6);
+  const easedProgress = isMobile ? easeOutSext(layerProgress) : easeOutQuint(layerProgress);
   
-  // Rise from below (translateY from 80 to 0)
-  const translateY = 80 * (1 - easedProgress);
-  const opacity = Math.min(1, easedProgress * 2.5);
+  // Rise from below - mobile rises from further down for more dramatic entrance
+  const translateY = (isMobile ? 120 : 80) * (1 - easedProgress);
+  // Mobile: slower fade-in (1.5x multiplier vs 2.5x)
+  const opacity = Math.min(1, easedProgress * (isMobile ? 1.5 : 2.5));
   
   // Position: center of front yard, scaled up
   const dumpsterX = 200;
