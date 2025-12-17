@@ -241,7 +241,7 @@ const RoofBuildSection: React.FC = () => {
                   backfaceVisibility: 'hidden', // Prevent flicker
                 }}
               >
-              <div className="w-full max-w-2xl svg-container" style={{ containerType: 'inline-size' }}>
+              <div className="w-full max-w-2xl svg-container relative z-20" style={{ containerType: 'inline-size' }}>
                 <svg
                   viewBox="0 0 400 280"
                   className="w-full roof-build-svg"
@@ -311,7 +311,7 @@ const RoofBuildSection: React.FC = () => {
 
             {/* Material labels - left side (positioned as overlay) */}
             <div
-              className="absolute left-0 lg:left-4 top-1/2 -translate-y-1/2 pr-4 hidden lg:block w-56"
+              className="absolute left-0 lg:left-4 top-1/2 -translate-y-1/2 pr-4 hidden lg:block w-56 z-10"
             >
               <div className="space-y-5">
                 {materialInfo.slice(0, 5).map((material, index) => {
@@ -367,7 +367,7 @@ const RoofBuildSection: React.FC = () => {
 
             {/* Material labels - right side (positioned as overlay) */}
             <div 
-              className="absolute right-0 lg:right-4 top-1/2 -translate-y-1/2 pl-4 hidden lg:block w-56"
+              className="absolute right-0 lg:right-4 top-1/2 -translate-y-1/2 pl-4 hidden lg:block w-56 z-10"
             >
               <div className="space-y-5">
                 {materialInfo.slice(5, 10).map((material, index) => {
