@@ -21,8 +21,7 @@ import {
 
 import { useScrollContext } from '@/context/ScrollContext';
 import ImageGallery3D from './RoofBuild/ImageGallery3D';
-
-
+import Dumpster from './RoofBuild/Dumpster';
 
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -284,6 +283,8 @@ const RoofBuildSection: React.FC = () => {
               </div>
             </div>
 
+            {/* Dumpster - desktop only, appears as user scrolls */}
+            {!isMobile && <Dumpster progress={progress} />}
 
             {/* Material labels - left side (positioned as overlay) */}
             <div
