@@ -1841,33 +1841,33 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
         <rect x={-75} y={8} width={40} height={18} rx={1} fill="url(#truckBodyGradient)" stroke="hsl(168 50% 35%)" strokeWidth="1" />
         <rect x={-73} y={10} width={36} height={14} fill="hsl(210 10% 10%)" /> {/* Bed interior */}
         
-        {/* Simple cab body */}
+        {/* Simple cab body - shorter and taller */}
         <path 
-          d="M-35 8 L-35 26 L15 26 L15 12 L5 12 L0 4 L-30 4 L-35 8 Z" 
+          d="M-35 4 L-35 26 L5 26 L5 10 L-2 10 L-8 0 L-32 0 L-35 4 Z" 
           fill="url(#truckBodyGradient)" 
           stroke="hsl(210 8% 28%)"
           strokeWidth="0.8"
         />
         
-        {/* Window */}
+        {/* Window - taller */}
         <path 
-          d="M-28 6 L-4 6 L2 12 L-32 12 Z" 
+          d="M-30 2 L-10 2 L-4 10 L-32 10 Z" 
           fill="url(#truckWindowGradient)"
           stroke="hsl(210 10% 32%)"
           strokeWidth="0.5"
         />
         
         {/* Door handle */}
-        <rect x={-20} y={16} width={4} height={1.2} rx={0.3} fill="hsl(210 8% 40%)" />
+        <rect x={-24} y={14} width={4} height={1.2} rx={0.3} fill="hsl(210 8% 40%)" />
         
         {/* Headlight */}
-        <circle cx={12} cy={16} r={2} fill="hsl(45 90% 75%)" style={{ filter: 'drop-shadow(0 0 2px hsl(45 100% 70% / 0.6))' }} />
+        <circle cx={2} cy={16} r={2} fill="hsl(45 90% 75%)" style={{ filter: 'drop-shadow(0 0 2px hsl(45 100% 70% / 0.6))' }} />
         
         {/* Grille */}
-        <rect x={10} y={19} width={5} height={6} rx={0.3} fill="hsl(210 8% 18%)" stroke="hsl(210 8% 30%)" strokeWidth="0.4" />
+        <rect x={0} y={19} width={5} height={6} rx={0.3} fill="hsl(210 8% 18%)" stroke="hsl(210 8% 30%)" strokeWidth="0.4" />
         
         {/* Bumper */}
-        <rect x={8} y={25} width={8} height={2} rx={0.3} fill="hsl(210 8% 32%)" />
+        <rect x={-2} y={25} width={8} height={2} rx={0.3} fill="hsl(210 8% 32%)" />
         
         {/* Hitch */}
         <rect x={-80} y={25} width={6} height={3} rx={0.5} fill="hsl(30 70% 45%)" stroke="hsl(30 85% 55%)" strokeWidth="0.6" style={{ filter: 'drop-shadow(0 0 3px hsl(30 90% 50% / 0.5))' }} />
