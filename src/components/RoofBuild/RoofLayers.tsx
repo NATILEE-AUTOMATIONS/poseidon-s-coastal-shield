@@ -1843,25 +1843,25 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
         <rect x={-75} y={8} width={40} height={18} rx={1} fill="url(#truckBodyGradient)" stroke="hsl(168 50% 35%)" strokeWidth="1" />
         <rect x={-73} y={10} width={36} height={14} fill="hsl(210 10% 10%)" /> {/* Bed interior */}
         
-        {/* Cab body */}
+        {/* Cab body - same color as bed */}
         <path 
-          d="M-35 8 L-35 26 L15 26 L15 12 L5 12 L0 4 L-25 4 L-30 8 Z" 
+          d="M-35 6 L-35 26 L15 26 L15 10 L5 10 L-2 0 L-28 0 L-35 6 Z" 
           fill="url(#truckBodyGradient)" 
           stroke="hsl(168 60% 40%)"
           strokeWidth="1.2"
         />
         
-        {/* Cab roof */}
+        {/* Cab roof - matching bed color */}
         <path 
-          d="M-28 4 L-2 4 L3 10 L-30 10 Z" 
-          fill="hsl(210 12% 18%)" 
+          d="M-32 0 L-4 0 L2 8 L-35 8 Z" 
+          fill="url(#truckBodyGradient)" 
           stroke="hsl(168 50% 35%)"
           strokeWidth="0.8"
         />
         
-        {/* Windows */}
+        {/* Windows - taller */}
         <path 
-          d="M-26 6 L-4 6 L0 10 L-28 10 Z" 
+          d="M-30 2 L-6 2 L0 10 L-33 10 Z" 
           fill="url(#truckWindowGradient)"
           stroke="hsl(168 70% 50%)"
           strokeWidth="0.8"
