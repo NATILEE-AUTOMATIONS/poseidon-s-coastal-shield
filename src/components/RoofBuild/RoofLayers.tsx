@@ -1619,15 +1619,6 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         opacity,
       }}
     >
-      {/* Solid base to block content behind */}
-      <rect 
-        x={dumpsterX - 50} 
-        y={dumpsterY - 5} 
-        width={105} 
-        height={35} 
-        fill="hsl(180 15% 6%)" 
-      />
-      
       {/* Ground shadow */}
       <ellipse 
         cx={dumpsterX} 
@@ -1778,9 +1769,6 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
             transformOrigin: '200px 270px',
           }}
         >
-          {/* Solid base to block content behind */}
-          <rect x={150} y={244} width={100} height={34} fill="hsl(180 15% 6%)" />
-          
           {/* Ground shadow */}
           <ellipse cx={200} cy={272} rx={48} ry={6} fill="hsl(0 0% 5%)" />
           
@@ -1815,9 +1803,6 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
           transformOrigin: '0 0',
         }}
       >
-        {/* Solid base shape to block anything behind */}
-        <rect x={-82} y={-4} width={90} height={40} fill="hsl(180 15% 6%)" />
-        
         {/* Ground shadow */}
         <ellipse cx={-30} cy={32} rx={45} ry={4} fill="hsl(0 0% 5%)" />
         
