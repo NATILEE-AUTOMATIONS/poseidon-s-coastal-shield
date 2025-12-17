@@ -1513,7 +1513,7 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   ];
   
   // Horizontal stripe lines
-  const stripeHeight = 4;
+  const stripeHeight = 8;
   const numStripes = Math.ceil((bottomY - peakY) / stripeHeight);
   
   return (
