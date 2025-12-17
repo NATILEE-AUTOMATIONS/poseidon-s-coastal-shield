@@ -296,23 +296,6 @@ const RoofBuildSection: React.FC = () => {
                   <DripEdgeEavesLayer progress={progress} startProgress={layers[1].start} endProgress={layers[1].end} isMobile={isMobile} />
                   
                 </svg>
-                
-                {/* 11. Truck hauls dumpster away (Desktop only) - rendered outside SVG with high z-index */}
-                {!isMobile && (
-                  <svg
-                    viewBox="0 0 400 280"
-                    className="absolute inset-0 w-full h-full z-30 pointer-events-none"
-                    style={{ overflow: 'visible' }}
-                  >
-                    <TruckLayer 
-                      progress={progress} 
-                      startProgress={layers[10].start} 
-                      endProgress={layers[10].end} 
-                      isMobile={isMobile}
-                      dumpsterProgress={dumpsterAnimProgress}
-                    />
-                  </svg>
-                )}
               </div>
             </div>
 
@@ -428,6 +411,27 @@ const RoofBuildSection: React.FC = () => {
                 })}
               </div>
             </div>
+
+            {/* 11. Truck hauls dumpster away (Desktop only) - rendered OUTSIDE house container with z-20 to appear above labels (z-10) */}
+            {!isMobile && (
+              <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+                <div className="relative w-full max-w-3xl aspect-[4/3]">
+                  <svg
+                    viewBox="0 0 400 280"
+                    className="absolute inset-0 w-full h-full"
+                    style={{ overflow: 'visible' }}
+                  >
+                    <TruckLayer 
+                      progress={progress} 
+                      startProgress={layers[10].start} 
+                      endProgress={layers[10].end} 
+                      isMobile={isMobile}
+                      dumpsterProgress={dumpsterAnimProgress}
+                    />
+                  </svg>
+                </div>
+              </div>
+            )}
 
           </div>
 
