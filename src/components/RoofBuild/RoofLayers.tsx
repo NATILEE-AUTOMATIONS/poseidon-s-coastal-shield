@@ -1477,7 +1477,7 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   );
 };
 
-// Ridge Vent & Cap - The crowning piece of the roof
+// Ridge Vent & Cap - clean, minimal design matching theme
 export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress }) => {
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
@@ -1485,34 +1485,23 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   if (progress < startProgress) return null;
   
   const easedProgress = easeOutQuint(layerProgress);
-  
-  // Drop in from above
   const translateY = -80 * (1 - easedProgress);
-  const opacity = 0.15 + (0.85 * easedProgress);
+  const opacity = 0.2 + (0.8 * easedProgress);
   
-  // Text timing: fade in 15-35%, hold 35-60%, fade out 60-85%
-  const textOpacity = layerProgress < 0.15 
-    ? 0 
-    : layerProgress < 0.35 
-      ? (layerProgress - 0.15) / 0.2 
-      : layerProgress < 0.60 
-        ? 1 
-        : layerProgress < 0.85 
-          ? 1 - (layerProgress - 0.60) / 0.25 
-          : 0;
+  // Text label timing
+  const textOpacity = layerProgress < 0.1 
+    ? layerProgress / 0.1 
+    : layerProgress < 0.55 
+      ? 1 
+      : layerProgress < 0.80 
+        ? 1 - (layerProgress - 0.55) / 0.25 
+        : 0;
   
   // Roof peak coordinates
   const peakX = 200;
   const peakY = 56;
-  const leftEnd = 65;
-  const rightEnd = 335;
-  
-  // Ridge cap shingle segments
-  const capSegments = 12;
-  const segmentWidth = (rightEnd - leftEnd) / capSegments;
-  
-  // Glow intensity pulses subtly as it settles
-  const glowIntensity = 0.6 + (0.4 * easedProgress) + (layerProgress > 0.8 ? Math.sin(layerProgress * Math.PI * 4) * 0.1 : 0);
+  const leftEnd = 52;
+  const rightEnd = 348;
   
   return (
     <g 
@@ -1523,133 +1512,37 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         opacity,
       }}
     >
-      <defs>
-        {/* Ridge vent gradient - dark metal look */}
-        <linearGradient id="ridgeVentGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(180 15% 18%)" />
-          <stop offset="40%" stopColor="hsl(180 10% 12%)" />
-          <stop offset="100%" stopColor="hsl(180 8% 8%)" />
-        </linearGradient>
-        
-        {/* Ridge cap shingle gradient */}
-        <linearGradient id="ridgeCapGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(210 8% 22%)" />
-          <stop offset="50%" stopColor="hsl(210 6% 16%)" />
-          <stop offset="100%" stopColor="hsl(210 5% 12%)" />
-        </linearGradient>
-        
-        {/* Teal accent glow */}
-        <filter id="ridgeGlow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="3" result="blur" />
-          <feFlood floodColor="hsl(168 80% 55%)" floodOpacity={glowIntensity * 0.7} />
-          <feComposite in2="blur" operator="in" />
-          <feMerge>
-            <feMergeNode />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
+      {/* Simple ridge cap - dark strip along the peak */}
+      <path
+        d={`M ${leftEnd} ${peakY + 3} L ${peakX} ${peakY - 5} L ${rightEnd} ${peakY + 3}`}
+        fill="none"
+        stroke="hsl(210 8% 14%)"
+        strokeWidth="14"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
       
-      {/* Ridge vent base - ventilation strip along the peak */}
-      <g style={{ filter: 'url(#ridgeGlow)' }}>
-        {/* Main vent body - sits at peak */}
-        <rect 
-          x={leftEnd + 15} 
-          y={peakY - 4} 
-          width={rightEnd - leftEnd - 30} 
-          height="8" 
-          rx="1"
-          fill="url(#ridgeVentGrad)"
-          stroke="hsl(168 60% 40%)"
-          strokeWidth="0.5"
-        />
-        
-        {/* Ventilation slots */}
-        {Array.from({ length: 18 }).map((_, i) => {
-          const slotX = leftEnd + 25 + i * ((rightEnd - leftEnd - 50) / 18);
-          return (
-            <rect
-              key={`slot-${i}`}
-              x={slotX}
-              y={peakY - 2}
-              width="8"
-              height="4"
-              rx="0.5"
-              fill="hsl(180 20% 5%)"
-              opacity={0.8}
-            />
-          );
-        })}
-      </g>
+      {/* Ridge cap top edge - slightly lighter */}
+      <path
+        d={`M ${leftEnd + 5} ${peakY + 1} L ${peakX} ${peakY - 7} L ${rightEnd - 5} ${peakY + 1}`}
+        fill="none"
+        stroke="hsl(210 6% 18%)"
+        strokeWidth="8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
       
-      {/* Ridge cap shingles - overlapping segments covering the vent */}
-      <g>
-        {Array.from({ length: capSegments }).map((_, i) => {
-          const segX = leftEnd + i * segmentWidth;
-          // Stagger animation for each segment
-          const segDelay = i * 0.04;
-          const segProgress = Math.max(0, Math.min(1, (layerProgress - segDelay) / 0.6));
-          const segEased = easeOutQuint(segProgress);
-          const segOpacity = 0.3 + (0.7 * segEased);
-          
-          // Alternating slight color variation
-          const colorVar = i % 2 === 0 ? '16%' : '14%';
-          
-          return (
-            <g 
-              key={`cap-${i}`}
-              style={{ 
-                opacity: segOpacity,
-                transform: `translateY(${-15 * (1 - segEased)}px)`,
-              }}
-            >
-              {/* Cap shingle - bent over the ridge */}
-              <path
-                d={`
-                  M ${segX} ${peakY + 6}
-                  L ${segX + segmentWidth * 0.9} ${peakY + 6}
-                  L ${segX + segmentWidth * 0.95} ${peakY - 1}
-                  L ${segX + segmentWidth * 0.85} ${peakY - 8}
-                  L ${segX + segmentWidth * 0.05} ${peakY - 8}
-                  L ${segX - segmentWidth * 0.05} ${peakY - 1}
-                  Z
-                `}
-                fill={`hsl(210 6% ${colorVar})`}
-                stroke="hsl(168 50% 35%)"
-                strokeWidth="0.4"
-                style={{
-                  filter: i === capSegments - 1 
-                    ? `drop-shadow(0 0 ${6 + segEased * 8}px hsl(168 70% 50% / ${0.4 * glowIntensity}))`
-                    : undefined,
-                }}
-              />
-              {/* Shingle texture line */}
-              <line
-                x1={segX + segmentWidth * 0.1}
-                y1={peakY - 2}
-                x2={segX + segmentWidth * 0.8}
-                y2={peakY - 2}
-                stroke="hsl(210 4% 20%)"
-                strokeWidth="0.5"
-                opacity={0.5}
-              />
-            </g>
-          );
-        })}
-      </g>
-      
-      {/* Leading edge glow accent */}
-      <line
-        x1={leftEnd + 10}
-        y1={peakY}
-        x2={rightEnd - 10}
-        y2={peakY}
-        stroke="hsl(168 80% 55%)"
+      {/* Subtle teal accent line at peak */}
+      <path
+        d={`M ${leftEnd + 15} ${peakY - 2} L ${peakX} ${peakY - 10} L ${rightEnd - 15} ${peakY - 2}`}
+        fill="none"
+        stroke="hsl(168 70% 45%)"
         strokeWidth="1.5"
         strokeLinecap="round"
+        strokeLinejoin="round"
         style={{
-          filter: `drop-shadow(0 0 ${8 + easedProgress * 12}px hsl(168 80% 55% / ${0.6 * glowIntensity}))`,
-          opacity: 0.7 + (0.3 * easedProgress),
+          filter: `drop-shadow(0 0 ${6 + easedProgress * 10}px hsl(168 80% 50% / ${0.5 + easedProgress * 0.3}))`,
+          opacity: 0.6 + (0.4 * easedProgress),
         }}
       />
       
@@ -1663,7 +1556,7 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         >
           <text
             x={peakX}
-            y={peakY + 45}
+            y={peakY + 40}
             textAnchor="middle"
             fill="hsl(168 90% 75%)"
             fontSize="14"
@@ -1678,7 +1571,7 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
           </text>
           <text
             x={peakX}
-            y={peakY + 62}
+            y={peakY + 57}
             textAnchor="middle"
             fill="hsl(30 95% 70%)"
             fontSize="14"
