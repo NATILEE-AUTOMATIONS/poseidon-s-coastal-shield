@@ -1607,11 +1607,11 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   // Mobile: slower fade-in (1.5x multiplier vs 2.5x)
   const opacity = Math.min(1, easedProgress * (isMobile ? 1.5 : 2.5));
   
-  // Position: center of front yard, scaled up (mobile: shifted left)
-  const dumpsterX = isMobile ? 160 : 200;
+  // Position: center of front yard, scaled up - SAME position for mobile/desktop for consistency
+  const dumpsterX = 200;
   const dumpsterY = 250;
-  const scaleX = isMobile ? 1.6 : 2;
-  const scaleY = isMobile ? 2.2 : 2.4;
+  const scaleX = isMobile ? 1.8 : 2;
+  const scaleY = isMobile ? 2.0 : 2.4;
   
   return (
     <g 
@@ -1727,12 +1727,12 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   // 0-40%: Truck backs in from right to hitch point (touch)
   // 40-100%: Drive away together immediately after touch
   
-  // Mobile-adjusted positions (smaller viewport, dumpster shifted left to x=160)
-  const hitchedPosition = isMobile ? 260 : 540;
-  const startPosition = isMobile ? 400 : 700;
-  const endPosition = isMobile ? -150 : 1200;
-  const truckY = isMobile ? 200 : 195;
-  const scale = isMobile ? 2 : 3;
+  // Mobile-adjusted positions (smaller viewport)
+  const hitchedPosition = isMobile ? 300 : 540;
+  const startPosition = isMobile ? 420 : 700;
+  const endPosition = isMobile ? -200 : 1200;
+  const truckY = isMobile ? 205 : 195;
+  const scale = isMobile ? 1.8 : 3;
   
   // Mobile: slower, more deliberate easing (power of 6)
   const easeOutSext = (x: number) => 1 - Math.pow(1 - x, 6);
@@ -1766,11 +1766,11 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
     : 1;
   const isDrivingAway = layerProgress > backPhaseEnd;
   
-  // Mobile dumpster scale values (must match DumpsterLayer scales)
-  const dumpsterScaleX = isMobile ? 1.6 : 2;
-  const dumpsterScaleY = isMobile ? 2.2 : 2.4;
-  const dumpsterOriginX = isMobile ? 160 : 200;
-  const dumpsterOriginY = isMobile ? 265 : 270;
+  // Mobile dumpster scale values (MUST match DumpsterLayer exactly)
+  const dumpsterScaleX = isMobile ? 1.8 : 2;
+  const dumpsterScaleY = isMobile ? 2.0 : 2.4;
+  const dumpsterOriginX = 200;
+  const dumpsterOriginY = 270;
   
   return (
     <g className="truck-layer" style={{ opacity }}>
