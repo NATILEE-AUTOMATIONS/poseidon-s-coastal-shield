@@ -1589,6 +1589,188 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
     </g>
   );
 };
+// 10. Dumpster - rises from below ground (Desktop only)
+export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
+  if (isMobile) return null;
+  
+  const rawProgress = (progress - startProgress) / (endProgress - startProgress);
+  const layerProgress = Math.max(0, Math.min(1, rawProgress));
+  
+  if (progress < startProgress) return null;
+  
+  // easeOutBack for satisfying "pop up" feel
+  const easeOutBack = (x: number) => 1 + 2.70158 * Math.pow(x - 1, 3) + 1.70158 * Math.pow(x - 1, 2);
+  const easedProgress = easeOutBack(layerProgress);
+  
+  // Rise from below (translateY from 80 to 0)
+  const translateY = 80 * (1 - easedProgress);
+  const opacity = Math.min(1, easedProgress * 2.5);
+  
+  // Text label timing
+  const textOpacity = layerProgress < 0.20 
+    ? layerProgress / 0.20 
+    : layerProgress < 0.70 
+      ? 1 
+      : layerProgress < 0.90 
+        ? 1 - (layerProgress - 0.70) / 0.20 
+        : 0;
+  
+  // Position: right-center of front yard
+  const dumpsterX = 275;
+  const dumpsterY = 260;
+  
+  return (
+    <g 
+      className="dumpster-layer"
+      style={{
+        transform: `translateY(${translateY}px)`,
+        opacity,
+      }}
+    >
+      <defs>
+        {/* Dark gradient for container body */}
+        <linearGradient id="dumpsterBodyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(210 10% 18%)" />
+          <stop offset="100%" stopColor="hsl(210 8% 10%)" />
+        </linearGradient>
+        {/* Interior shadow gradient */}
+        <linearGradient id="dumpsterInteriorGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(210 10% 8%)" />
+          <stop offset="100%" stopColor="hsl(210 8% 5%)" />
+        </linearGradient>
+      </defs>
+      
+      {/* Ground shadow */}
+      <ellipse 
+        cx={dumpsterX} 
+        cy={dumpsterY + 22} 
+        rx={48} 
+        ry={6} 
+        fill="hsl(0 0% 0% / 0.4)"
+        style={{ filter: 'blur(4px)' }}
+      />
+      
+      {/* Main container body - trapezoid shape */}
+      <path 
+        d={`M${dumpsterX - 45} ${dumpsterY} L${dumpsterX - 40} ${dumpsterY + 20} L${dumpsterX + 40} ${dumpsterY + 20} L${dumpsterX + 45} ${dumpsterY} Z`}
+        fill="url(#dumpsterBodyGradient)"
+        stroke="hsl(168 60% 35%)"
+        strokeWidth="1.5"
+      />
+      
+      {/* Interior depression */}
+      <path 
+        d={`M${dumpsterX - 40} ${dumpsterY + 2} L${dumpsterX - 36} ${dumpsterY + 16} L${dumpsterX + 36} ${dumpsterY + 16} L${dumpsterX + 40} ${dumpsterY + 2} Z`}
+        fill="url(#dumpsterInteriorGradient)"
+      />
+      
+      {/* Top rails - orange accent */}
+      <rect 
+        x={dumpsterX - 46} 
+        y={dumpsterY - 3} 
+        width={92} 
+        height={4} 
+        rx={1}
+        fill="hsl(30 85% 45%)"
+        style={{ filter: 'drop-shadow(0 0 4px hsl(30 90% 50% / 0.6))' }}
+      />
+      
+      {/* Teal neon edge highlights */}
+      <path 
+        d={`M${dumpsterX - 45} ${dumpsterY} L${dumpsterX - 40} ${dumpsterY + 20} L${dumpsterX + 40} ${dumpsterY + 20} L${dumpsterX + 45} ${dumpsterY}`}
+        stroke="hsl(168 80% 50%)"
+        strokeWidth="2"
+        fill="none"
+        style={{ filter: 'drop-shadow(0 0 6px hsl(168 80% 50% / 0.7)) drop-shadow(0 0 12px hsl(168 80% 50% / 0.4))' }}
+      />
+      
+      {/* Vertical support ribs */}
+      {[-30, -10, 10, 30].map((offset, i) => (
+        <line 
+          key={i}
+          x1={dumpsterX + offset} 
+          y1={dumpsterY + 1} 
+          x2={dumpsterX + offset * 0.9} 
+          y2={dumpsterY + 19}
+          stroke="hsl(168 50% 40%)"
+          strokeWidth="1.5"
+        />
+      ))}
+      
+      {/* Wheels */}
+      <circle 
+        cx={dumpsterX - 32} 
+        cy={dumpsterY + 22} 
+        r={4} 
+        fill="hsl(210 10% 15%)" 
+        stroke="hsl(168 60% 45%)" 
+        strokeWidth="1.5"
+      />
+      <circle 
+        cx={dumpsterX + 32} 
+        cy={dumpsterY + 22} 
+        r={4} 
+        fill="hsl(210 10% 15%)" 
+        stroke="hsl(168 60% 45%)" 
+        strokeWidth="1.5"
+      />
+      
+      {/* Hook/hitch point on front */}
+      <rect 
+        x={dumpsterX + 40} 
+        y={dumpsterY + 8} 
+        width={8} 
+        height={6} 
+        rx={1}
+        fill="hsl(30 80% 40%)"
+        stroke="hsl(30 90% 55%)"
+        strokeWidth="1"
+      />
+      
+      {/* Text label */}
+      {textOpacity > 0 && (
+        <g 
+          style={{ 
+            opacity: textOpacity,
+            filter: 'drop-shadow(0 0 8px hsl(0 0% 0%)) drop-shadow(0 0 16px hsl(0 0% 0% / 0.9))',
+          }}
+        >
+          <text
+            x={dumpsterX}
+            y={dumpsterY - 20}
+            textAnchor="middle"
+            fill="hsl(168 90% 75%)"
+            fontSize="13"
+            fontWeight="800"
+            fontFamily="system-ui, -apple-system, sans-serif"
+            letterSpacing="2"
+            stroke="hsl(0 0% 5%)"
+            strokeWidth="2.5"
+            paintOrder="stroke fill"
+          >
+            COMPLETE
+          </text>
+          <text
+            x={dumpsterX}
+            y={dumpsterY - 5}
+            textAnchor="middle"
+            fill="hsl(30 95% 70%)"
+            fontSize="13"
+            fontWeight="800"
+            fontFamily="system-ui, -apple-system, sans-serif"
+            letterSpacing="2.5"
+            stroke="hsl(0 0% 5%)"
+            strokeWidth="2.5"
+            paintOrder="stroke fill"
+          >
+            CLEAN UP
+          </text>
+        </g>
+      )}
+    </g>
+  );
+};
+
 export const CleanUpLayer: React.FC<LayerProps> = () => null;
 export const MobileShingleOverlay: React.FC<LayerProps> = () => null;
 
