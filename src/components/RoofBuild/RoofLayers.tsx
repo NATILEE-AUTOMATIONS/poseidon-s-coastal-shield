@@ -1477,7 +1477,7 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   );
 };
 
-// Ridge Vent & Cap - narrow strip along the peak line that drops into place
+// Ridge Vent & Cap - small triangle at the peak
 export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress }) => {
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
@@ -1485,7 +1485,7 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   if (progress < startProgress) return null;
   
   const easedProgress = easeOutQuint(layerProgress);
-  const translateY = -50 * (1 - easedProgress);
+  const translateY = -40 * (1 - easedProgress);
   const opacity = easedProgress;
   
   // Text label timing
@@ -1498,7 +1498,7 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         : 0;
   
   const peakX = 200;
-  const peakY = 56;
+  const peakY = 58;
   
   return (
     <g 
@@ -1509,14 +1509,10 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         opacity,
       }}
     >
-      {/* Ridge cap - dark strip along the peak */}
-      <path
-        d={`M 55 ${peakY + 35} L ${peakX} ${peakY - 3} L 345 ${peakY + 35}`}
-        fill="none"
-        stroke="hsl(210 8% 13%)"
-        strokeWidth="10"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+      {/* Small dark triangle at the peak - inside the roof */}
+      <polygon
+        points={`${peakX},${peakY} 85,115 315,115`}
+        fill="hsl(210 8% 12%)"
       />
       
       {/* Text label */}
@@ -1529,7 +1525,7 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         >
           <text
             x={peakX}
-            y={peakY + 55}
+            y={peakY + 30}
             textAnchor="middle"
             fill="hsl(168 90% 75%)"
             fontSize="14"
@@ -1544,7 +1540,7 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
           </text>
           <text
             x={peakX}
-            y={peakY + 72}
+            y={peakY + 47}
             textAnchor="middle"
             fill="hsl(30 95% 70%)"
             fontSize="14"
