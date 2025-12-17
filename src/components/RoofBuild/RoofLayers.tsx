@@ -1739,15 +1739,15 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   if (progress < startProgress) return null;
   
   // Simpler animation phases:
-  // 0-35%: Truck backs in from right to hitch point
-  // 35-45%: Brief pause at hitch
-  // 45-100%: Drive away together to the right
+  // 0-40%: Truck backs in from right to hitch point (touch)
+  // 40-100%: Drive away together immediately after touch
   
   // Calculate exact hitch position:
   // Dumpster hitch is at x=280 after scaling (200 + 40*2)
   // Truck hitch is at x=-78 relative to origin, with scale 3 = -234 offset
   // So truckX - 234 = 280, therefore truckX = 514
-  const hitchedPosition = 514; // Exact alignment with dumpster hitch
+  // Add small gap so they visually connect at touch point
+  const hitchedPosition = 520; // Slightly separated so they touch at connection
   const startPosition = 700;   // Start off-screen right  
   const endPosition = 800;     // Drive away off-screen right
   
@@ -1757,17 +1757,14 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   let truckX: number;
   let dumpsterOffset = 0;
   
-  if (layerProgress <= 0.35) {
-    // Backing in from right
-    const backProgress = layerProgress / 0.35;
+  if (layerProgress <= 0.40) {
+    // Backing in from right until touch
+    const backProgress = layerProgress / 0.40;
     const eased = easeOutQuint(backProgress);
     truckX = startPosition - (startPosition - hitchedPosition) * eased;
-  } else if (layerProgress <= 0.45) {
-    // Hitched - stay in place
-    truckX = hitchedPosition;
   } else {
-    // Driving away together
-    const driveProgress = (layerProgress - 0.45) / 0.55;
+    // Driving away together immediately after touch
+    const driveProgress = (layerProgress - 0.40) / 0.60;
     const easeInQuad = (x: number) => x * x;
     const eased = easeInQuad(driveProgress);
     truckX = hitchedPosition + (endPosition - hitchedPosition) * eased;
@@ -1776,7 +1773,7 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   }
   
   const opacity = layerProgress < 0.05 ? layerProgress / 0.05 : 1;
-  const isDrivingAway = layerProgress > 0.45;
+  const isDrivingAway = layerProgress > 0.40;
   
   return (
     <g className="truck-layer" style={{ opacity }}>
@@ -1804,8 +1801,8 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
           ))}
           <circle cx={168} cy={272} r={4} fill="hsl(210 10% 15%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
           <circle cx={232} cy={272} r={4} fill="hsl(210 10% 15%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
-          {/* Orange hitch - lowered to wheel level */}
-          <rect x={240} y={266} width={8} height={6} rx={1} fill="hsl(30 80% 40%)" stroke="hsl(30 90% 55%)" strokeWidth="1" />
+          {/* Orange hitch - matches stationary dumpster position */}
+          <rect x={240} y={268} width={8} height={6} rx={1} fill="hsl(30 80% 40%)" stroke="hsl(30 90% 55%)" strokeWidth="1" />
         </g>
       )}
       
