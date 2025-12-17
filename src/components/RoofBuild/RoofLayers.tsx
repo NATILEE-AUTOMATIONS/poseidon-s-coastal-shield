@@ -1609,7 +1609,7 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   const dumpsterX = 200;
   const dumpsterY = 250;
   const scaleX = 2;
-  const scaleY = 2.8; // 40% taller
+  const scaleY = 2.4; // Slightly shorter
   
   return (
     <g 
