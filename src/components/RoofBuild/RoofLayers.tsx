@@ -1478,29 +1478,15 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
 };
 
 // Ridge Vent & Cap - small shingle-colored triangle covering top 2 rows
-export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile = false }) => {
-  // DEBUG: Always log to see what values we receive
-  console.log('[RidgeCapLayer DEBUG]', {
-    isMobile,
-    isMobileType: typeof isMobile,
-    progress: progress?.toFixed?.(3) ?? progress,
-    startProgress,
-    endProgress,
-    shouldRender: progress >= startProgress,
-    willRender: isMobile || progress >= startProgress,
-  });
-  
+export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
-  // ALWAYS render on mobile for debugging, even before startProgress
-  // On desktop, only render when progress reaches startProgress
-  if (!isMobile && progress < startProgress) return null;
+  if (progress < startProgress) return null;
   
   const easedProgress = easeOutQuint(layerProgress);
   const translateY = -40 * (1 - easedProgress);
-  // On mobile, force minimum opacity so we can see if it renders at all
-  const opacity = isMobile ? Math.max(0.3, easedProgress) : easedProgress;
+  const opacity = easedProgress;
   
   // Text label timing
   const textOpacity = layerProgress < 0.15 
@@ -1540,19 +1526,6 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         opacity,
       }}
     >
-      {/* DEBUG: Bright red rectangle to confirm this component renders on mobile */}
-      {isMobile && (
-        <rect
-          x="150"
-          y="50"
-          width="100"
-          height="30"
-          fill="red"
-          stroke="yellow"
-          strokeWidth="3"
-        />
-      )}
-      
       <defs>
         <clipPath id="ridgeCapClip">
           <polygon points={`${peakX},${peakY} ${leftX},${bottomY} ${rightX},${bottomY}`} />
