@@ -15,6 +15,7 @@ import {
   FlashingLayer,
   RidgeCapLayer,
   DumpsterLayer,
+  TruckLayer,
   CleanUpLayer,
   materialInfo,
 } from './RoofBuild/RoofLayers';
@@ -76,9 +77,13 @@ const RoofBuildSection: React.FC = () => {
     ? flashingEnd + layerStep * 1.5
     : flashingEnd + layerStep * 1;
     
-  // Dumpster timing - starts right after ridge cap, desktop only
+  // Dumpster timing - starts right after ridge cap
   const dumpsterStart = ridgeCapEnd;
   const dumpsterEnd = ridgeCapEnd + layerStep * 2;
+  
+  // Truck timing - starts right after dumpster, desktop only
+  const truckStart = dumpsterEnd;
+  const truckEnd = dumpsterEnd + layerStep * 4; // Longer duration for the full sequence
     
   const layers = [
     { start: layerStart, end: deckingEnd },                    // 1. Decking
@@ -91,10 +96,15 @@ const RoofBuildSection: React.FC = () => {
     { start: ventsEnd, end: flashingEnd },                     // 8. Flashing
     { start: ridgeCapStart, end: ridgeCapEnd },                // 9. Ridge Vent & Cap
     { start: dumpsterStart, end: dumpsterEnd },                // 10. Complete Clean Up - Dumpster
+    { start: truckStart, end: truckEnd },                      // 11. Truck hauls dumpster away
   ];
   
-  // Calculate when all active layers end (dumpster is desktop only, so use ridgeCapEnd for mobile)
-  const roofLayersEnd = isMobile ? ridgeCapEnd + 0.05 : dumpsterEnd + 0.05;
+  // Calculate dumpster progress for truck to know when to show moving dumpster
+  const dumpsterRawProgress = (progress - dumpsterStart) / (dumpsterEnd - dumpsterStart);
+  const dumpsterAnimProgress = Math.max(0, Math.min(1, dumpsterRawProgress));
+  
+  // Calculate when all active layers end (truck is desktop only, so use dumpsterEnd for mobile)
+  const roofLayersEnd = isMobile ? dumpsterEnd + 0.05 : truckEnd + 0.05;
 
   // Show hint during buffer period (before animation starts)
   const showScrollHint = progress < layerStart;
@@ -278,8 +288,20 @@ const RoofBuildSection: React.FC = () => {
                   <FlashingLayer progress={progress} startProgress={layers[7].start} endProgress={layers[7].end} isMobile={isMobile} />
                   {/* 9. Ridge Vent & Cap */}
                   <RidgeCapLayer progress={progress} startProgress={layers[8].start} endProgress={layers[8].end} isMobile={isMobile} />
-                  {/* 10. Complete Clean Up - Dumpster */}
-                  <DumpsterLayer progress={progress} startProgress={layers[9].start} endProgress={layers[9].end} isMobile={isMobile} />
+                  {/* 10. Complete Clean Up - Dumpster (hidden when truck drives away) */}
+                  {(isMobile || progress < layers[10]?.start + (layers[10]?.end - layers[10]?.start) * 0.5) && (
+                    <DumpsterLayer progress={progress} startProgress={layers[9].start} endProgress={layers[9].end} isMobile={isMobile} />
+                  )}
+                  {/* 11. Truck hauls dumpster away (Desktop only) */}
+                  {!isMobile && (
+                    <TruckLayer 
+                      progress={progress} 
+                      startProgress={layers[10].start} 
+                      endProgress={layers[10].end} 
+                      isMobile={isMobile}
+                      dumpsterProgress={dumpsterAnimProgress}
+                    />
+                  )}
                   {/* 2. Drip Edge rendered after all layers to be on top */}
                   <DripEdgeEavesLayer progress={progress} startProgress={layers[1].start} endProgress={layers[1].end} isMobile={isMobile} />
                   
