@@ -1707,10 +1707,10 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         strokeWidth="1.5"
       />
       
-      {/* Hook/hitch point on front */}
+      {/* Hook/hitch point on front - lowered to wheel level */}
       <rect 
         x={dumpsterX + 40} 
-        y={dumpsterY + 8} 
+        y={dumpsterY + 18} 
         width={8} 
         height={6} 
         rx={1}
@@ -1804,8 +1804,8 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
           ))}
           <circle cx={168} cy={272} r={4} fill="hsl(210 10% 15%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
           <circle cx={232} cy={272} r={4} fill="hsl(210 10% 15%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
-          {/* Orange hitch */}
-          <rect x={240} y={258} width={8} height={6} rx={1} fill="hsl(30 80% 40%)" stroke="hsl(30 90% 55%)" strokeWidth="1" />
+          {/* Orange hitch - lowered to wheel level */}
+          <rect x={240} y={266} width={8} height={6} rx={1} fill="hsl(30 80% 40%)" stroke="hsl(30 90% 55%)" strokeWidth="1" />
         </g>
       )}
       
@@ -1886,8 +1886,8 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
         {/* Bumper */}
         <rect x={14} y={26} width={4} height={3} rx={0.5} fill="url(#truckChromeGradient)" stroke="hsl(168 40% 35%)" strokeWidth="0.5" />
         
-        {/* Simple hitch receiver - raised to connect with dumpster */}
-        <rect x={-80} y={16} width={6} height={3} rx={0.5} fill="hsl(30 70% 45%)" stroke="hsl(30 85% 55%)" strokeWidth="0.6" style={{ filter: 'drop-shadow(0 0 3px hsl(30 90% 50% / 0.5))' }} />
+        {/* Simple hitch receiver - lowered to wheel level */}
+        <rect x={-80} y={25} width={6} height={3} rx={0.5} fill="hsl(30 70% 45%)" stroke="hsl(30 85% 55%)" strokeWidth="0.6" style={{ filter: 'drop-shadow(0 0 3px hsl(30 90% 50% / 0.5))' }} />
         
         {/* Tail light */}
         <rect x={-76} y={12} width={2} height={4} rx={0.5} fill="hsl(0 80% 50%)" style={{ filter: 'drop-shadow(0 0 3px hsl(0 90% 50% / 0.7))' }} />
