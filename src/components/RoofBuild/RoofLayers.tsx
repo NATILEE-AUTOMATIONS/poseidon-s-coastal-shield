@@ -1710,9 +1710,9 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
       {/* Hook/hitch point - lowered to match truck hitch level */}
       <rect 
         x={dumpsterX + 40} 
-        y={dumpsterY + 20} 
+        y={dumpsterY + 21} 
         width={9} 
-        height={4} 
+        height={2} 
         rx={0.5}
         fill="hsl(30 70% 45%)"
         stroke="hsl(30 85% 55%)"
@@ -1803,7 +1803,7 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
           <circle cx={168} cy={272} r={4} fill="hsl(210 10% 15%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
           <circle cx={232} cy={272} r={4} fill="hsl(210 10% 15%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
           {/* Orange hitch - lowered to match truck hitch level */}
-          <rect x={240} y={270} width={9} height={4} rx={0.5} fill="hsl(30 70% 45%)" stroke="hsl(30 85% 55%)" strokeWidth="0.8" style={{ filter: 'drop-shadow(0 0 3px hsl(30 90% 50% / 0.5))' }} />
+          <rect x={240} y={271} width={9} height={2} rx={0.5} fill="hsl(30 70% 45%)" stroke="hsl(30 85% 55%)" strokeWidth="0.8" style={{ filter: 'drop-shadow(0 0 3px hsl(30 90% 50% / 0.5))' }} />
         </g>
       )}
       
