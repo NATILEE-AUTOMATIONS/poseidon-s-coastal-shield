@@ -81,9 +81,9 @@ const RoofBuildSection: React.FC = () => {
   const dumpsterStart = ridgeCapEnd;
   const dumpsterEnd = ridgeCapEnd + layerStep * 2;
   
-  // Truck timing - starts right after dumpster, desktop only
-  const truckStart = dumpsterEnd;
-  const truckEnd = dumpsterEnd + layerStep * 4; // Longer duration for the full sequence
+  // Truck timing - starts during dumpster animation, desktop only
+  const truckStart = dumpsterStart + layerStep * 0.5; // Start sooner - overlaps with dumpster
+  const truckEnd = truckStart + layerStep * 3; // Full haul sequence
     
   const layers = [
     { start: layerStart, end: deckingEnd },                    // 1. Decking
