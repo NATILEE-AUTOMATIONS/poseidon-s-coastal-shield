@@ -1733,7 +1733,7 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   // Add small gap so they visually connect at touch point
   const hitchedPosition = 540; // Truck stays further right until touch
   const startPosition = 700;   // Start off-screen right  
-  const endPosition = 800;     // Drive away off-screen right
+  const endPosition = 1200;    // Drive away fully off-screen right
   
   const truckY = 195; // Lowered truck
   const scale = 3;
