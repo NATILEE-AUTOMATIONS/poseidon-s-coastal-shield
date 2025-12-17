@@ -1604,11 +1604,11 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   const translateY = 80 * (1 - easedProgress);
   const opacity = Math.min(1, easedProgress * 2.5);
   
-  // Position: center of front yard, scaled up (40% taller)
+  // Position: center of front yard, scaled up
   const dumpsterX = 200;
   const dumpsterY = 250;
-  const scaleX = 2;
-  const scaleY = 2.4; // Slightly shorter
+  const scaleX = isMobile ? 2.2 : 2;
+  const scaleY = isMobile ? 3.2 : 2.4; // Taller on mobile
   
   return (
     <g 
