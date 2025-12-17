@@ -288,8 +288,8 @@ const RoofBuildSection: React.FC = () => {
                   <FlashingLayer progress={progress} startProgress={layers[7].start} endProgress={layers[7].end} isMobile={isMobile} />
                   {/* 9. Ridge Vent & Cap */}
                   <RidgeCapLayer progress={progress} startProgress={layers[8].start} endProgress={layers[8].end} isMobile={isMobile} />
-                  {/* 10. Complete Clean Up - Dumpster (hidden when truck drives away) */}
-                  {(isMobile || progress < layers[10]?.start + (layers[10]?.end - layers[10]?.start) * 0.5) && (
+                  {/* 10. Complete Clean Up - Dumpster (hidden when truck drives away at 45% of truck animation) */}
+                  {(isMobile || progress < layers[10]?.start + (layers[10]?.end - layers[10]?.start) * 0.45) && (
                     <DumpsterLayer progress={progress} startProgress={layers[9].start} endProgress={layers[9].end} isMobile={isMobile} />
                   )}
                   {/* 11. Truck hauls dumpster away (Desktop only) */}
