@@ -1502,9 +1502,9 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   // At y=91: left x ≈ 145, right x ≈ 255
   const peakX = 200;
   const peakY = 58;
-  const bottomY = 85;
-  const leftX = 152;
-  const rightX = 248;
+  const bottomY = 93;
+  const leftX = 143;
+  const rightX = 257;
   
   return (
     <g 
