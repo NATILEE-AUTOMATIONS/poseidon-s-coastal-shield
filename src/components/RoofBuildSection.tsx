@@ -77,9 +77,10 @@ const RoofBuildSection: React.FC = () => {
     ? flashingEnd + layerStep * 1.5
     : flashingEnd + layerStep * 1;
     
-  // Dumpster timing - starts right after ridge cap
+  // Dumpster timing - starts right after ridge cap (mobile: 4x longer for deliberate feel)
   const dumpsterStart = ridgeCapEnd;
-  const dumpsterEnd = ridgeCapEnd + layerStep * 2;
+  const dumpsterMultiplier = isMobile ? 5 : 2;
+  const dumpsterEnd = ridgeCapEnd + layerStep * dumpsterMultiplier;
   
   // Truck timing - starts right after dumpster, desktop only
   const truckStart = dumpsterEnd;
