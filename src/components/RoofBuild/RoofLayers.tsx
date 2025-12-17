@@ -1477,7 +1477,7 @@ export const FlashingLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   );
 };
 
-// Ridge Vent & Cap - clean, minimal design matching theme
+// Ridge Vent & Cap - simple dark fill for the peak triangle
 export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress }) => {
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
@@ -1485,8 +1485,8 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
   if (progress < startProgress) return null;
   
   const easedProgress = easeOutQuint(layerProgress);
-  const translateY = -80 * (1 - easedProgress);
-  const opacity = 0.2 + (0.8 * easedProgress);
+  const translateY = -60 * (1 - easedProgress);
+  const opacity = easedProgress;
   
   // Text label timing
   const textOpacity = layerProgress < 0.1 
@@ -1497,11 +1497,9 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         ? 1 - (layerProgress - 0.55) / 0.25 
         : 0;
   
-  // Roof peak coordinates
+  // Roof peak coordinates - smaller triangle just at the top
   const peakX = 200;
   const peakY = 56;
-  const leftEnd = 52;
-  const rightEnd = 348;
   
   return (
     <g 
@@ -1512,38 +1510,10 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         opacity,
       }}
     >
-      {/* Simple ridge cap - dark strip along the peak */}
-      <path
-        d={`M ${leftEnd} ${peakY + 3} L ${peakX} ${peakY - 5} L ${rightEnd} ${peakY + 3}`}
-        fill="none"
-        stroke="hsl(210 8% 14%)"
-        strokeWidth="14"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      
-      {/* Ridge cap top edge - slightly lighter */}
-      <path
-        d={`M ${leftEnd + 5} ${peakY + 1} L ${peakX} ${peakY - 7} L ${rightEnd - 5} ${peakY + 1}`}
-        fill="none"
-        stroke="hsl(210 6% 18%)"
-        strokeWidth="8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      
-      {/* Subtle teal accent line at peak */}
-      <path
-        d={`M ${leftEnd + 15} ${peakY - 2} L ${peakX} ${peakY - 10} L ${rightEnd - 15} ${peakY - 2}`}
-        fill="none"
-        stroke="hsl(168 70% 45%)"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        style={{
-          filter: `drop-shadow(0 0 ${6 + easedProgress * 10}px hsl(168 80% 50% / ${0.5 + easedProgress * 0.3}))`,
-          opacity: 0.6 + (0.4 * easedProgress),
-        }}
+      {/* Simple dark filled triangle at the peak - sits behind teal outline */}
+      <polygon
+        points={`${peakX},${peakY + 2} 70,${peakY + 45} 330,${peakY + 45}`}
+        fill="hsl(210 8% 12%)"
       />
       
       {/* Text label */}
@@ -1556,7 +1526,7 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         >
           <text
             x={peakX}
-            y={peakY + 40}
+            y={peakY + 30}
             textAnchor="middle"
             fill="hsl(168 90% 75%)"
             fontSize="14"
@@ -1571,7 +1541,7 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
           </text>
           <text
             x={peakX}
-            y={peakY + 57}
+            y={peakY + 47}
             textAnchor="middle"
             fill="hsl(30 95% 70%)"
             fontSize="14"
