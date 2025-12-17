@@ -2,16 +2,17 @@ import dumpsterImage from '@/assets/dumpster.webp';
 
 interface DumpsterProps {
   progress: number;
+  startProgress: number;
+  endProgress: number;
 }
 
-const Dumpster: React.FC<DumpsterProps> = ({ progress }) => {
-  // Dumpster appears from 5% to 25% scroll progress
-  const dumpsterStart = 0.05;
-  const dumpsterEnd = 0.25;
-  
+const Dumpster: React.FC<DumpsterProps> = ({ progress, startProgress, endProgress }) => {
   // Calculate animation progress (0 to 1)
-  const rawProgress = (progress - dumpsterStart) / (dumpsterEnd - dumpsterStart);
+  const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const animProgress = Math.max(0, Math.min(1, rawProgress));
+  
+  // Don't render if not in view yet
+  if (progress < startProgress - 0.01) return null;
   
   // Easing function for smooth animation
   const easeOutBack = (x: number): number => {
@@ -23,16 +24,13 @@ const Dumpster: React.FC<DumpsterProps> = ({ progress }) => {
   const easedProgress = easeOutBack(animProgress);
   
   // Start below viewport, rise up into position
-  const translateY = 150 * (1 - easedProgress); // Starts 150px below, rises to 0
+  const translateY = 120 * (1 - easedProgress); // Starts 120px below, rises to 0
   const opacity = animProgress;
-  const scale = 0.8 + (0.2 * easedProgress); // Scale from 0.8 to 1
+  const scale = 0.85 + (0.15 * easedProgress); // Scale from 0.85 to 1
   
-  // Don't render if not in view yet
-  if (progress < dumpsterStart - 0.02) return null;
-  
-  // Fade out when roof layers are mostly complete (around 50%)
-  const fadeOutStart = 0.45;
-  const fadeOutEnd = 0.55;
+  // Fade out when door starts opening (around 70%+)
+  const fadeOutStart = 0.72;
+  const fadeOutEnd = 0.80;
   const fadeOutProgress = progress > fadeOutStart 
     ? Math.min(1, (progress - fadeOutStart) / (fadeOutEnd - fadeOutStart))
     : 0;
@@ -44,11 +42,10 @@ const Dumpster: React.FC<DumpsterProps> = ({ progress }) => {
     <div 
       className="absolute z-20 pointer-events-none"
       style={{
-        bottom: '8%',
+        bottom: '5%',
         left: '50%',
         transform: `translateX(-50%) translateY(${translateY}px) scale(${scale})`,
         opacity: finalOpacity,
-        transition: 'opacity 0.2s ease-out',
         willChange: 'transform, opacity',
       }}
     >
@@ -57,17 +54,17 @@ const Dumpster: React.FC<DumpsterProps> = ({ progress }) => {
         <img 
           src={dumpsterImage} 
           alt="Construction dumpster"
-          className="w-48 md:w-56 lg:w-64 h-auto drop-shadow-2xl"
+          className="w-40 md:w-48 lg:w-56 h-auto"
           style={{
-            filter: 'drop-shadow(0 10px 30px hsl(0 0% 0% / 0.5)) drop-shadow(0 0 20px hsl(168 50% 30% / 0.3))',
+            filter: 'drop-shadow(0 8px 24px hsl(0 0% 0% / 0.6)) drop-shadow(0 0 15px hsl(168 50% 30% / 0.25))',
           }}
         />
         
         {/* Ground shadow */}
         <div 
-          className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-3/4 h-4 bg-black/30 rounded-full blur-md"
+          className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-3/4 h-3 bg-black/40 rounded-full blur-sm"
           style={{
-            transform: `translateX(-50%) scaleX(${0.8 + easedProgress * 0.2})`,
+            transform: `translateX(-50%) scaleX(${0.85 + easedProgress * 0.15})`,
           }}
         />
       </div>
