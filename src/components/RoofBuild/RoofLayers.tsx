@@ -1748,7 +1748,7 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   // Truck hitch is at x=-78 relative to origin, with scale 3 = -234 offset
   // So truckX - 234 = 280, therefore truckX = 514
   // Add small gap so they visually connect at touch point
-  const hitchedPosition = 498; // Even closer - hauling starts sooner
+  const hitchedPosition = 475; // Bumper touches dumpster hitch exactly
   const startPosition = 700;   // Start off-screen right  
   const endPosition = 800;     // Drive away off-screen right
   
