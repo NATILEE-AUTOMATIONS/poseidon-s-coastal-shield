@@ -1743,9 +1743,13 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   // 35-45%: Brief pause at hitch
   // 45-100%: Drive away together to the right
   
-  const hitchedPosition = 290; // X position when hitched (right of dumpster)
+  // Positions - truck stays to the right of dumpster, just barely touching
+  const hitchedPosition = 380; // Stop well to the right of dumpster (dumpster right edge ~290)
   const startPosition = 550;   // Start off-screen right  
-  const endPosition = 600;     // Drive away off-screen right
+  const endPosition = 650;     // Drive away off-screen right
+  
+  const truckY = 240;
+  const scale = 1.4; // Smaller truck
   
   let truckX: number;
   let dumpsterOffset = 0;
@@ -1768,9 +1772,7 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
     dumpsterOffset = (truckX - hitchedPosition);
   }
   
-  const truckY = 235; // Align with dumpster ground level
   const opacity = layerProgress < 0.05 ? layerProgress / 0.05 : 1;
-  const scale = 1.6;
   const isDrivingAway = layerProgress > 0.45;
   
   return (
