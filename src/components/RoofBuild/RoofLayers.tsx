@@ -1841,65 +1841,78 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
         <rect x={-75} y={8} width={40} height={18} rx={1} fill="url(#truckBodyGradient)" stroke="hsl(168 50% 35%)" strokeWidth="1" />
         <rect x={-73} y={10} width={36} height={14} fill="hsl(210 10% 10%)" /> {/* Bed interior */}
         
-        {/* Cab body - same color as bed */}
+        {/* Cab body - cleaner pickup truck shape */}
         <path 
-          d="M-35 6 L-35 26 L15 26 L15 10 L5 10 L-2 0 L-28 0 L-35 6 Z" 
+          d="M-35 8 L-35 26 L18 26 L18 16 L10 16 L4 4 L-30 4 L-35 8 Z" 
           fill="url(#truckBodyGradient)" 
-          stroke="hsl(168 60% 40%)"
-          strokeWidth="1.2"
+          stroke="hsl(168 50% 40%)"
+          strokeWidth="1"
         />
         
-        {/* Cab roof - matching bed color */}
+        {/* Roof panel */}
         <path 
-          d="M-32 0 L-4 0 L2 8 L-35 8 Z" 
+          d="M-30 4 L4 4 L8 12 L-32 12 Z" 
           fill="url(#truckBodyGradient)" 
-          stroke="hsl(168 50% 35%)"
-          strokeWidth="0.8"
+          stroke="hsl(168 45% 35%)"
+          strokeWidth="0.6"
         />
         
-        {/* Windows - properly fitted to cab */}
+        {/* Windshield */}
         <path 
-          d="M-28 2 L-5 2 L2 9 L-31 9 Z" 
+          d="M2 6 L7 14 L-10 14 L-10 6 Z" 
           fill="url(#truckWindowGradient)"
-          stroke="hsl(168 70% 50%)"
-          strokeWidth="0.8"
-          style={{ filter: 'drop-shadow(0 0 3px hsl(168 80% 50% / 0.5))' }}
+          stroke="hsl(200 40% 50%)"
+          strokeWidth="0.6"
         />
         
-        {/* Door line */}
-        <line x1={-12} y1={10} x2={-12} y2={24} stroke="hsl(168 40% 30%)" strokeWidth="0.8" />
+        {/* Side window */}
+        <path 
+          d="M-12 6 L-28 6 L-30 10 L-12 10 Z" 
+          fill="url(#truckWindowGradient)"
+          stroke="hsl(200 40% 50%)"
+          strokeWidth="0.6"
+        />
+        
+        {/* Window divider pillar */}
+        <rect x={-12} y={5} width={2} height={6} fill="url(#truckBodyGradient)" />
+        
+        {/* Door panel line */}
+        <line x1={-20} y1={12} x2={-20} y2={24} stroke="hsl(210 10% 25%)" strokeWidth="0.6" />
         
         {/* Door handle */}
-        <rect x={-18} y={16} width={4} height={1.5} rx={0.5} fill="url(#truckChromeGradient)" />
+        <rect x={-18} y={17} width={3} height={1.2} rx={0.4} fill="url(#truckChromeGradient)" />
         
-        {/* Headlight */}
-        <rect x={12} y={14} width={3} height={6} rx={1} fill="hsl(45 90% 70%)" style={{ filter: 'drop-shadow(0 0 4px hsl(45 100% 60% / 0.8))' }} />
+        {/* Headlights - stacked style */}
+        <rect x={15} y={16} width={2.5} height={3} rx={0.5} fill="hsl(45 95% 75%)" style={{ filter: 'drop-shadow(0 0 3px hsl(45 100% 70% / 0.9))' }} />
+        <rect x={15} y={20} width={2.5} height={2} rx={0.4} fill="hsl(30 90% 60%)" style={{ filter: 'drop-shadow(0 0 2px hsl(30 100% 60% / 0.7))' }} />
         
-        {/* Grille */}
-        <rect x={12} y={20} width={4} height={6} rx={0.5} fill="url(#truckChromeGradient)" stroke="hsl(168 50% 40%)" strokeWidth="0.5" />
-        {[0, 2, 4].map((y, i) => (
-          <line key={i} x1={12.5} y1={21 + y} x2={15.5} y2={21 + y} stroke="hsl(210 10% 20%)" strokeWidth="0.5" />
+        {/* Grille - horizontal bars */}
+        <rect x={10} y={17} width={5} height={8} rx={0.5} fill="hsl(210 8% 18%)" stroke="hsl(210 10% 30%)" strokeWidth="0.4" />
+        {[0, 2, 4, 6].map((y, i) => (
+          <line key={i} x1={10.5} y1={18 + y} x2={14.5} y2={18 + y} stroke="hsl(210 10% 35%)" strokeWidth="0.4" />
         ))}
         
-        {/* Bumper */}
-        <rect x={14} y={26} width={4} height={3} rx={0.5} fill="url(#truckChromeGradient)" stroke="hsl(168 40% 35%)" strokeWidth="0.5" />
+        {/* Front bumper */}
+        <rect x={8} y={25} width={10} height={2.5} rx={0.4} fill="hsl(210 8% 22%)" stroke="hsl(210 10% 30%)" strokeWidth="0.4" />
         
-        {/* Simple hitch receiver - lowered to wheel level */}
+        {/* Wheel well trim */}
+        <path d="M-2 26 Q5 20 12 26" fill="none" stroke="hsl(210 8% 25%)" strokeWidth="0.8" />
+        
+        {/* Simple hitch receiver */}
         <rect x={-80} y={25} width={6} height={3} rx={0.5} fill="hsl(30 70% 45%)" stroke="hsl(30 85% 55%)" strokeWidth="0.6" style={{ filter: 'drop-shadow(0 0 3px hsl(30 90% 50% / 0.5))' }} />
         
         {/* Tail light */}
         <rect x={-76} y={12} width={2} height={4} rx={0.5} fill="hsl(0 80% 50%)" style={{ filter: 'drop-shadow(0 0 3px hsl(0 90% 50% / 0.7))' }} />
         
         {/* Front wheel */}
-        <circle cx={5} cy={28} r={6} fill="hsl(210 10% 12%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
-        <circle cx={5} cy={28} r={3} fill="hsl(210 8% 20%)" stroke="hsl(168 40% 35%)" strokeWidth="0.8" />
+        <circle cx={5} cy={28} r={6} fill="hsl(210 10% 12%)" stroke="hsl(210 8% 28%)" strokeWidth="1" />
+        <circle cx={5} cy={28} r={3.5} fill="hsl(210 6% 18%)" />
+        <circle cx={5} cy={28} r={1.5} fill="hsl(210 8% 25%)" />
         
         {/* Rear wheel */}
-        <circle cx={-55} cy={28} r={6} fill="hsl(210 10% 12%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
-        <circle cx={-55} cy={28} r={3} fill="hsl(210 8% 20%)" stroke="hsl(168 40% 35%)" strokeWidth="0.8" />
-        
-        {/* Teal neon underglow */}
-        <line x1={-70} y1={30} x2={10} y2={30} stroke="hsl(168 80% 50%)" strokeWidth="1" style={{ filter: 'drop-shadow(0 0 6px hsl(168 90% 50% / 0.8)) drop-shadow(0 0 12px hsl(168 80% 50% / 0.5))' }} />
+        <circle cx={-55} cy={28} r={6} fill="hsl(210 10% 12%)" stroke="hsl(210 8% 28%)" strokeWidth="1" />
+        <circle cx={-55} cy={28} r={3.5} fill="hsl(210 6% 18%)" />
+        <circle cx={-55} cy={28} r={1.5} fill="hsl(210 8% 25%)" />
       </g>
     </g>
   );
