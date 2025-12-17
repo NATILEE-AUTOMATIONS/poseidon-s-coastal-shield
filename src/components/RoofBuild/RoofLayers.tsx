@@ -1857,9 +1857,9 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
           strokeWidth="0.8"
         />
         
-        {/* Windows - taller */}
+        {/* Windows - properly fitted to cab */}
         <path 
-          d="M-30 2 L-6 2 L0 10 L-33 10 Z" 
+          d="M-28 2 L-5 2 L2 9 L-31 9 Z" 
           fill="url(#truckWindowGradient)"
           stroke="hsl(168 70% 50%)"
           strokeWidth="0.8"
