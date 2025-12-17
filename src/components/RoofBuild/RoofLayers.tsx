@@ -1589,9 +1589,8 @@ export const RidgeCapLayer: React.FC<LayerProps> = ({ progress, startProgress, e
     </g>
   );
 };
-// 10. Dumpster - rises from below ground (Desktop only)
+// 10. Dumpster - rises from below ground
 export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, endProgress, isMobile }) => {
-  if (isMobile) return null;
   
   const rawProgress = (progress - startProgress) / (endProgress - startProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
