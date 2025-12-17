@@ -1821,10 +1821,10 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
             <stop offset="50%" stopColor="hsl(210 12% 16%)" />
             <stop offset="100%" stopColor="hsl(210 10% 12%)" />
           </linearGradient>
-          {/* Window gradient */}
+          {/* Window gradient - fully opaque */}
           <linearGradient id="truckWindowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="hsl(200 50% 25%)" stopOpacity="0.8" />
-            <stop offset="100%" stopColor="hsl(200 40% 15%)" stopOpacity="0.9" />
+            <stop offset="0%" stopColor="hsl(200 30% 18%)" />
+            <stop offset="100%" stopColor="hsl(200 25% 12%)" />
           </linearGradient>
           {/* Chrome/metal gradient */}
           <linearGradient id="truckChromeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -1833,9 +1833,6 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
             <stop offset="100%" stopColor="hsl(210 10% 25%)" />
           </linearGradient>
         </defs>
-        
-        {/* Solid background behind truck to cover any text */}
-        <rect x={-82} y={-5} width={90} height={45} fill="hsl(180 15% 6%)" />
         
         {/* Ground shadow */}
         <ellipse cx={-30} cy={32} rx={45} ry={4} fill="hsl(0 0% 0% / 0.5)" style={{ filter: 'blur(3px)' }} />
