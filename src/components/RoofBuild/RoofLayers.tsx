@@ -1707,10 +1707,10 @@ export const DumpsterLayer: React.FC<LayerProps> = ({ progress, startProgress, e
         strokeWidth="1.5"
       />
       
-      {/* Hook/hitch point - larger to match truck visually after scaling */}
+      {/* Hook/hitch point - lowered to match truck hitch level */}
       <rect 
         x={dumpsterX + 40} 
-        y={dumpsterY + 18} 
+        y={dumpsterY + 20} 
         width={9} 
         height={4} 
         rx={0.5}
@@ -1748,7 +1748,7 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   // Truck hitch is at x=-78 relative to origin, with scale 3 = -234 offset
   // So truckX - 234 = 280, therefore truckX = 514
   // Add small gap so they visually connect at touch point
-  const hitchedPosition = 516; // Touch point - starts hauling immediately
+  const hitchedPosition = 510; // Closer touch point - hauling starts immediately
   const startPosition = 700;   // Start off-screen right  
   const endPosition = 800;     // Drive away off-screen right
   
@@ -1802,8 +1802,8 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
           ))}
           <circle cx={168} cy={272} r={4} fill="hsl(210 10% 15%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
           <circle cx={232} cy={272} r={4} fill="hsl(210 10% 15%)" stroke="hsl(168 60% 45%)" strokeWidth="1.5" />
-          {/* Orange hitch - larger to match truck visually */}
-          <rect x={240} y={268} width={9} height={4} rx={0.5} fill="hsl(30 70% 45%)" stroke="hsl(30 85% 55%)" strokeWidth="0.8" style={{ filter: 'drop-shadow(0 0 3px hsl(30 90% 50% / 0.5))' }} />
+          {/* Orange hitch - lowered to match truck hitch level */}
+          <rect x={240} y={270} width={9} height={4} rx={0.5} fill="hsl(30 70% 45%)" stroke="hsl(30 85% 55%)" strokeWidth="0.8" style={{ filter: 'drop-shadow(0 0 3px hsl(30 90% 50% / 0.5))' }} />
         </g>
       )}
       
