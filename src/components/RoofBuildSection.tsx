@@ -17,6 +17,7 @@ import {
   DumpsterLayer,
   TruckLayer,
   CleanUpLayer,
+  CleanUpRevealText,
   materialInfo,
 } from './RoofBuild/RoofLayers';
 
@@ -418,6 +419,14 @@ const RoofBuildSection: React.FC = () => {
                   className="absolute inset-0 w-full h-full"
                   style={{ overflow: 'visible' }}
                 >
+                  {/* "Complete Clean Up" text - RENDERED FIRST so it's BEHIND dumpster */}
+                  <CleanUpRevealText 
+                    truckProgress={progress}
+                    truckStartProgress={layers[10].start}
+                    truckEndProgress={layers[10].end}
+                    isMobile={isMobile}
+                  />
+                  
                   {/* Dumpster rendered in same SVG as truck for alignment */}
                   {progress < layers[10]?.start + (layers[10]?.end - layers[10]?.start) * (isMobile ? 0.35 : 0.45) && (
                     <DumpsterLayer progress={progress} startProgress={layers[9].start} endProgress={layers[9].end} isMobile={isMobile} />
