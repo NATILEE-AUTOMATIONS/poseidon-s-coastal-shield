@@ -1957,23 +1957,6 @@ export const CleanUpRevealText: React.FC<{
         </text>
       </g>
       
-      {/* Glow effect that intensifies as revealed */}
-      {easedReveal > 0.3 && (
-        <g style={{ opacity: Math.min(1, (easedReveal - 0.3) * 1.5) }}>
-          <ellipse
-            cx="200"
-            cy="248"
-            rx={80 * easedReveal}
-            ry={25 * easedReveal}
-            fill="none"
-            stroke="hsl(168 70% 50%)"
-            strokeWidth="1"
-            style={{
-              filter: `drop-shadow(0 0 ${15 * easedReveal}px hsl(168 80% 50% / 0.4))`,
-            }}
-          />
-        </g>
-      )}
     </g>
   );
 };
