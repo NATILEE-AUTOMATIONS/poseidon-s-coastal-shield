@@ -1869,6 +1869,41 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   );
 };
 
+// Confetti particle generator for celebration effect
+const generateConfettiParticles = (count: number) => {
+  const particles = [];
+  const colors = [
+    'hsl(168 80% 55%)', // Teal
+    'hsl(168 70% 65%)', // Light teal
+    'hsl(30 90% 55%)',  // Orange
+    'hsl(35 85% 65%)',  // Light orange
+    'hsl(168 90% 45%)', // Deep teal
+    'hsl(25 95% 60%)',  // Deep orange
+  ];
+  
+  for (let i = 0; i < count; i++) {
+    const angle = (i / count) * Math.PI * 2 + Math.random() * 0.5;
+    const velocity = 60 + Math.random() * 80;
+    const size = 3 + Math.random() * 5;
+    const rotation = Math.random() * 360;
+    const rotationSpeed = (Math.random() - 0.5) * 720;
+    
+    particles.push({
+      id: i,
+      color: colors[i % colors.length],
+      angle,
+      velocity,
+      size,
+      rotation,
+      rotationSpeed,
+      shape: Math.random() > 0.5 ? 'rect' : 'circle',
+    });
+  }
+  return particles;
+};
+
+const confettiParticles = generateConfettiParticles(24);
+
 // "Complete Clean Up" text that reveals as dumpster moves away (desktop only)
 export const CleanUpRevealText: React.FC<{ 
   truckProgress: number;
@@ -1906,6 +1941,19 @@ export const CleanUpRevealText: React.FC<{
     ? Math.min(0.4, layerProgress / backPhaseEnd * 0.4) // Subtle hint while backing in
     : 0.4 + (easedReveal * 0.6); // Full opacity as revealed
   
+  // Confetti starts at 85% reveal and explodes outward
+  const confettiTrigger = 0.85;
+  const confettiProgress = revealProgress > confettiTrigger 
+    ? (revealProgress - confettiTrigger) / (1 - confettiTrigger)
+    : 0;
+  const easeOutQuart = (x: number) => 1 - Math.pow(1 - x, 4);
+  const easedConfetti = easeOutQuart(confettiProgress);
+  
+  // Text fades out as confetti explodes (last 10% of animation)
+  const textFadeOut = revealProgress > 0.90 
+    ? 1 - ((revealProgress - 0.90) / 0.10)
+    : 1;
+  
   return (
     <g className="cleanup-reveal-text">
       <defs>
@@ -1916,7 +1964,7 @@ export const CleanUpRevealText: React.FC<{
       </defs>
       
       {/* Text with reveal clip */}
-      <g clipPath="url(#cleanupRevealClip)" style={{ opacity }}>
+      <g clipPath="url(#cleanupRevealClip)" style={{ opacity: opacity * textFadeOut }}>
         {/* "COMPLETE" text */}
         <text
           x="200"
@@ -1957,6 +2005,51 @@ export const CleanUpRevealText: React.FC<{
         </text>
       </g>
       
+      {/* Confetti explosion */}
+      {confettiProgress > 0 && (
+        <g className="confetti-explosion">
+          {confettiParticles.map((particle) => {
+            const distance = particle.velocity * easedConfetti;
+            const x = 200 + Math.cos(particle.angle) * distance;
+            const y = 248 + Math.sin(particle.angle) * distance * 0.7; // Slightly flatter spread
+            const rotation = particle.rotation + particle.rotationSpeed * easedConfetti;
+            const particleOpacity = 1 - easedConfetti * 0.8; // Fade out as they fly
+            const scale = 1 - easedConfetti * 0.3; // Shrink slightly
+            
+            return (
+              <g
+                key={particle.id}
+                style={{
+                  transform: `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(${scale})`,
+                  transformOrigin: '0 0',
+                  opacity: particleOpacity,
+                }}
+              >
+                {particle.shape === 'rect' ? (
+                  <rect
+                    x={-particle.size / 2}
+                    y={-particle.size / 2}
+                    width={particle.size}
+                    height={particle.size * 0.6}
+                    fill={particle.color}
+                    style={{
+                      filter: `drop-shadow(0 0 ${4 + easedConfetti * 8}px ${particle.color})`,
+                    }}
+                  />
+                ) : (
+                  <circle
+                    r={particle.size / 2}
+                    fill={particle.color}
+                    style={{
+                      filter: `drop-shadow(0 0 ${4 + easedConfetti * 8}px ${particle.color})`,
+                    }}
+                  />
+                )}
+              </g>
+            );
+          })}
+        </g>
+      )}
     </g>
   );
 };
