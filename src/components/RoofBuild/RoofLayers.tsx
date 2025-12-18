@@ -1869,6 +1869,115 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   );
 };
 
+// "Complete Clean Up" text that reveals as dumpster moves away (desktop only)
+export const CleanUpRevealText: React.FC<{ 
+  truckProgress: number;
+  truckStartProgress: number;
+  truckEndProgress: number;
+  isMobile?: boolean;
+}> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile }) => {
+  if (isMobile) return null;
+  
+  const rawProgress = (truckProgress - truckStartProgress) / (truckEndProgress - truckStartProgress);
+  const layerProgress = Math.max(0, Math.min(1, rawProgress));
+  
+  // Truck backs in 0-40%, drives away 40-100%
+  const backPhaseEnd = 0.40;
+  const isDrivingAway = layerProgress > backPhaseEnd;
+  
+  // Calculate reveal progress (0 = fully hidden, 1 = fully revealed)
+  const revealProgress = isDrivingAway 
+    ? Math.min(1, (layerProgress - backPhaseEnd) / (1 - backPhaseEnd))
+    : 0;
+  
+  // Easing for smooth reveal
+  const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
+  const easedReveal = easeOutCubic(revealProgress);
+  
+  // Text starts hidden under dumpster (at x~200) and reveals from left as dumpster moves right
+  // clipPath reveals from left to right as dumpster moves away
+  const clipWidth = 200 * easedReveal; // Reveals up to 200px wide
+  
+  // Don't show until truck has started
+  if (truckProgress < truckStartProgress) return null;
+  
+  // Opacity fades in as truck approaches, then stays visible
+  const opacity = layerProgress < backPhaseEnd 
+    ? Math.min(0.4, layerProgress / backPhaseEnd * 0.4) // Subtle hint while backing in
+    : 0.4 + (easedReveal * 0.6); // Full opacity as revealed
+  
+  return (
+    <g className="cleanup-reveal-text">
+      <defs>
+        <clipPath id="cleanupRevealClip">
+          {/* Reveal from left edge of text area as dumpster moves right */}
+          <rect x={100} y={200} width={clipWidth} height={100} />
+        </clipPath>
+      </defs>
+      
+      {/* Text with reveal clip */}
+      <g clipPath="url(#cleanupRevealClip)" style={{ opacity }}>
+        {/* "COMPLETE" text */}
+        <text
+          x="200"
+          y="238"
+          textAnchor="middle"
+          fill="hsl(168 85% 65%)"
+          fontSize="18"
+          fontWeight="800"
+          fontFamily="system-ui, -apple-system, sans-serif"
+          letterSpacing="4"
+          stroke="hsl(0 0% 5%)"
+          strokeWidth="3"
+          paintOrder="stroke fill"
+          style={{
+            filter: 'drop-shadow(0 0 8px hsl(168 80% 50% / 0.8)) drop-shadow(0 0 20px hsl(168 80% 50% / 0.5))',
+          }}
+        >
+          COMPLETE
+        </text>
+        {/* "CLEAN UP" text */}
+        <text
+          x="200"
+          y="258"
+          textAnchor="middle"
+          fill="hsl(30 90% 65%)"
+          fontSize="18"
+          fontWeight="800"
+          fontFamily="system-ui, -apple-system, sans-serif"
+          letterSpacing="4"
+          stroke="hsl(0 0% 5%)"
+          strokeWidth="3"
+          paintOrder="stroke fill"
+          style={{
+            filter: 'drop-shadow(0 0 8px hsl(30 85% 55% / 0.8)) drop-shadow(0 0 20px hsl(30 85% 55% / 0.5))',
+          }}
+        >
+          CLEAN UP
+        </text>
+      </g>
+      
+      {/* Glow effect that intensifies as revealed */}
+      {easedReveal > 0.3 && (
+        <g style={{ opacity: Math.min(1, (easedReveal - 0.3) * 1.5) }}>
+          <ellipse
+            cx="200"
+            cy="248"
+            rx={80 * easedReveal}
+            ry={25 * easedReveal}
+            fill="none"
+            stroke="hsl(168 70% 50%)"
+            strokeWidth="1"
+            style={{
+              filter: `drop-shadow(0 0 ${15 * easedReveal}px hsl(168 80% 50% / 0.4))`,
+            }}
+          />
+        </g>
+      )}
+    </g>
+  );
+};
+
 export const CleanUpLayer: React.FC<LayerProps> = () => null;
 export const MobileShingleOverlay: React.FC<LayerProps> = () => null;
 
