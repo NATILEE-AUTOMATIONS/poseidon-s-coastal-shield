@@ -1965,7 +1965,7 @@ export const CleanUpRevealText: React.FC<{
 export const CleanUpLayer: React.FC<LayerProps> = () => null;
 export const MobileShingleOverlay: React.FC<LayerProps> = () => null;
 
-// Falling palm tree animation - synced with dumpster exit (desktop only)
+// Simple palm tree that drops into place (like drip edge animation)
 export const FallingPalmTree: React.FC<{ 
   truckProgress: number;
   truckStartProgress: number;
@@ -1974,174 +1974,61 @@ export const FallingPalmTree: React.FC<{
 }> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile }) => {
   if (isMobile) return null;
   
-  // Calculate when to start falling - around 35% through truck animation (dumpster starting to exit)
+  // Start dropping at 35% through truck animation
   const truckDuration = truckEndProgress - truckStartProgress;
-  const fallStart = truckStartProgress + (truckDuration * 0.35);
-  const fallEnd = truckStartProgress + (truckDuration * 0.70);
+  const dropStart = truckStartProgress + (truckDuration * 0.35);
+  const dropEnd = truckStartProgress + (truckDuration * 0.65);
   
-  // Palm tree fall progress (0 = upright, 1 = fallen)
-  const rawFallProgress = (truckProgress - fallStart) / (fallEnd - fallStart);
-  const fallProgress = Math.max(0, Math.min(1, rawFallProgress));
+  const rawProgress = (truckProgress - dropStart) / (dropEnd - dropStart);
+  const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
-  // Ease out bounce for natural falling motion
-  const easeOutBounce = (x: number): number => {
-    const n1 = 7.5625;
-    const d1 = 2.75;
-    if (x < 1 / d1) {
-      return n1 * x * x;
-    } else if (x < 2 / d1) {
-      return n1 * (x -= 1.5 / d1) * x + 0.75;
-    } else if (x < 2.5 / d1) {
-      return n1 * (x -= 2.25 / d1) * x + 0.9375;
-    } else {
-      return n1 * (x -= 2.625 / d1) * x + 0.984375;
-    }
-  };
+  if (truckProgress < dropStart) return null;
   
-  const easedFall = easeOutBounce(fallProgress);
+  const easedProgress = easeOutQuint(layerProgress);
+  const translateY = -120 * (1 - easedProgress);
   
-  // Rotation: 0 degrees (upright) to 85 degrees (fallen to the right)
-  const rotation = easedFall * 85;
-  
-  // Pivot point at base of tree trunk
-  const pivotX = 65;
-  const pivotY = 205;
-  
-  // Opacity: fade in slightly before falling, stay visible
-  const opacity = truckProgress < fallStart - 0.02 ? 0 : 1;
-  
-  // Tree sway before falling (subtle anticipation)
-  const preFallSway = truckProgress >= fallStart - 0.05 && truckProgress < fallStart
-    ? Math.sin((truckProgress - (fallStart - 0.05)) / 0.05 * Math.PI * 3) * 3
-    : 0;
-  
-  const totalRotation = rotation + preFallSway;
+  // Position on left side of house
+  const treeX = 55;
+  const treeBaseY = 210;
   
   return (
     <g 
-      className="falling-palm-tree"
-      style={{ 
-        opacity,
-        transform: `rotate(${totalRotation}deg)`,
-        transformOrigin: `${pivotX}px ${pivotY}px`,
-        transition: fallProgress === 0 ? 'none' : undefined,
+      className="palm-tree-layer"
+      style={{
+        transform: `translateY(${translateY}px)`,
       }}
     >
-      {/* Tree trunk - curved, organic */}
+      {/* Simple trunk */}
       <path
-        d={`M${pivotX},${pivotY} 
-            Q${pivotX - 5},${pivotY - 30} ${pivotX - 3},${pivotY - 60}
-            Q${pivotX},${pivotY - 90} ${pivotX + 2},${pivotY - 110}`}
+        d={`M${treeX},${treeBaseY} Q${treeX - 3},${treeBaseY - 35} ${treeX},${treeBaseY - 70}`}
         fill="none"
-        stroke="hsl(30 50% 35%)"
-        strokeWidth="8"
+        stroke="hsl(30 45% 35%)"
+        strokeWidth="6"
         strokeLinecap="round"
       />
       <path
-        d={`M${pivotX},${pivotY} 
-            Q${pivotX - 5},${pivotY - 30} ${pivotX - 3},${pivotY - 60}
-            Q${pivotX},${pivotY - 90} ${pivotX + 2},${pivotY - 110}`}
+        d={`M${treeX},${treeBaseY} Q${treeX - 3},${treeBaseY - 35} ${treeX},${treeBaseY - 70}`}
         fill="none"
-        stroke="hsl(30 45% 45%)"
-        strokeWidth="5"
+        stroke="hsl(30 40% 45%)"
+        strokeWidth="3"
         strokeLinecap="round"
       />
-      {/* Trunk texture lines */}
-      <path d={`M${pivotX - 3},${pivotY - 20} Q${pivotX + 3},${pivotY - 18} ${pivotX + 2},${pivotY - 22}`} 
-        fill="none" stroke="hsl(30 40% 30%)" strokeWidth="1.5" />
-      <path d={`M${pivotX - 4},${pivotY - 40} Q${pivotX + 2},${pivotY - 38} ${pivotX + 1},${pivotY - 42}`} 
-        fill="none" stroke="hsl(30 40% 30%)" strokeWidth="1.5" />
-      <path d={`M${pivotX - 3},${pivotY - 60} Q${pivotX + 2},${pivotY - 58} ${pivotX},${pivotY - 62}`} 
-        fill="none" stroke="hsl(30 40% 30%)" strokeWidth="1.5" />
-      <path d={`M${pivotX - 2},${pivotY - 80} Q${pivotX + 2},${pivotY - 78} ${pivotX + 1},${pivotY - 82}`} 
-        fill="none" stroke="hsl(30 40% 30%)" strokeWidth="1.5" />
       
-      {/* Palm fronds - radiating from top */}
-      <g className="palm-fronds">
-        {/* Center frond - straight up */}
-        <path
-          d={`M${pivotX + 2},${pivotY - 110} 
-              Q${pivotX + 5},${pivotY - 140} ${pivotX},${pivotY - 155}`}
-          fill="none"
-          stroke="hsl(168 70% 35%)"
-          strokeWidth="3"
-          strokeLinecap="round"
-        />
-        {/* Frond leaves */}
-        <path d={`M${pivotX + 3},${pivotY - 125} L${pivotX + 12},${pivotY - 130}`} stroke="hsl(168 75% 40%)" strokeWidth="2" strokeLinecap="round" />
-        <path d={`M${pivotX + 2},${pivotY - 135} L${pivotX + 10},${pivotY - 142}`} stroke="hsl(168 75% 40%)" strokeWidth="2" strokeLinecap="round" />
-        <path d={`M${pivotX + 1},${pivotY - 145} L${pivotX + 8},${pivotY - 153}`} stroke="hsl(168 75% 40%)" strokeWidth="2" strokeLinecap="round" />
-        <path d={`M${pivotX + 1},${pivotY - 125} L${pivotX - 8},${pivotY - 130}`} stroke="hsl(168 75% 40%)" strokeWidth="2" strokeLinecap="round" />
-        <path d={`M${pivotX},${pivotY - 135} L${pivotX - 7},${pivotY - 143}`} stroke="hsl(168 75% 40%)" strokeWidth="2" strokeLinecap="round" />
-        
-        {/* Right frond - arching right */}
-        <path
-          d={`M${pivotX + 2},${pivotY - 110} 
-              Q${pivotX + 25},${pivotY - 125} ${pivotX + 40},${pivotY - 115}`}
-          fill="none"
-          stroke="hsl(168 65% 38%)"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-        />
-        <path d={`M${pivotX + 15},${pivotY - 120} L${pivotX + 18},${pivotY - 130}`} stroke="hsl(168 70% 42%)" strokeWidth="1.5" strokeLinecap="round" />
-        <path d={`M${pivotX + 25},${pivotY - 122} L${pivotX + 28},${pivotY - 132}`} stroke="hsl(168 70% 42%)" strokeWidth="1.5" strokeLinecap="round" />
-        <path d={`M${pivotX + 33},${pivotY - 118} L${pivotX + 38},${pivotY - 126}`} stroke="hsl(168 70% 42%)" strokeWidth="1.5" strokeLinecap="round" />
-        
-        {/* Left frond - arching left */}
-        <path
-          d={`M${pivotX + 2},${pivotY - 110} 
-              Q${pivotX - 20},${pivotY - 125} ${pivotX - 35},${pivotY - 118}`}
-          fill="none"
-          stroke="hsl(168 65% 38%)"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-        />
-        <path d={`M${pivotX - 12},${pivotY - 120} L${pivotX - 15},${pivotY - 130}`} stroke="hsl(168 70% 42%)" strokeWidth="1.5" strokeLinecap="round" />
-        <path d={`M${pivotX - 22},${pivotY - 123} L${pivotX - 26},${pivotY - 133}`} stroke="hsl(168 70% 42%)" strokeWidth="1.5" strokeLinecap="round" />
-        
-        {/* Lower right frond - drooping */}
-        <path
-          d={`M${pivotX + 2},${pivotY - 108} 
-              Q${pivotX + 30},${pivotY - 100} ${pivotX + 45},${pivotY - 85}`}
-          fill="none"
-          stroke="hsl(168 60% 35%)"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <path d={`M${pivotX + 20},${pivotY - 102} L${pivotX + 25},${pivotY - 95}`} stroke="hsl(168 65% 40%)" strokeWidth="1.5" strokeLinecap="round" />
-        <path d={`M${pivotX + 32},${pivotY - 95} L${pivotX + 38},${pivotY - 88}`} stroke="hsl(168 65% 40%)" strokeWidth="1.5" strokeLinecap="round" />
-        
-        {/* Lower left frond - drooping */}
-        <path
-          d={`M${pivotX + 2},${pivotY - 108} 
-              Q${pivotX - 25},${pivotY - 100} ${pivotX - 40},${pivotY - 88}`}
-          fill="none"
-          stroke="hsl(168 60% 35%)"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <path d={`M${pivotX - 18},${pivotY - 103} L${pivotX - 22},${pivotY - 96}`} stroke="hsl(168 65% 40%)" strokeWidth="1.5" strokeLinecap="round" />
-        <path d={`M${pivotX - 30},${pivotY - 96} L${pivotX - 35},${pivotY - 90}`} stroke="hsl(168 65% 40%)" strokeWidth="1.5" strokeLinecap="round" />
-      </g>
+      {/* Simple fronds */}
+      <path d={`M${treeX},${treeBaseY - 70} Q${treeX + 20},${treeBaseY - 90} ${treeX + 30},${treeBaseY - 80}`} 
+        fill="none" stroke="hsl(168 65% 40%)" strokeWidth="3" strokeLinecap="round" />
+      <path d={`M${treeX},${treeBaseY - 70} Q${treeX - 18},${treeBaseY - 88} ${treeX - 28},${treeBaseY - 78}`} 
+        fill="none" stroke="hsl(168 65% 40%)" strokeWidth="3" strokeLinecap="round" />
+      <path d={`M${treeX},${treeBaseY - 70} Q${treeX + 5},${treeBaseY - 95} ${treeX},${treeBaseY - 105}`} 
+        fill="none" stroke="hsl(168 70% 42%)" strokeWidth="2.5" strokeLinecap="round" />
+      <path d={`M${treeX},${treeBaseY - 70} Q${treeX + 25},${treeBaseY - 75} ${treeX + 35},${treeBaseY - 65}`} 
+        fill="none" stroke="hsl(168 60% 38%)" strokeWidth="2" strokeLinecap="round" />
+      <path d={`M${treeX},${treeBaseY - 70} Q${treeX - 22},${treeBaseY - 73} ${treeX - 32},${treeBaseY - 63}`} 
+        fill="none" stroke="hsl(168 60% 38%)" strokeWidth="2" strokeLinecap="round" />
       
-      {/* Coconuts at trunk top */}
-      <circle cx={pivotX} cy={pivotY - 108} r="4" fill="hsl(30 55% 28%)" stroke="hsl(30 40% 20%)" strokeWidth="1" />
-      <circle cx={pivotX + 6} cy={pivotY - 106} r="3.5" fill="hsl(30 50% 30%)" stroke="hsl(30 40% 20%)" strokeWidth="1" />
-      <circle cx={pivotX - 5} cy={pivotY - 107} r="3" fill="hsl(30 55% 25%)" stroke="hsl(30 40% 20%)" strokeWidth="1" />
-      
-      {/* Ground shadow that appears as tree falls */}
-      {fallProgress > 0 && (
-        <ellipse
-          cx={pivotX + 60}
-          cy={pivotY + 5}
-          rx={25 * easedFall}
-          ry={4 * easedFall}
-          fill="hsl(0 0% 0% / 0.3)"
-          style={{
-            filter: 'blur(3px)',
-          }}
-        />
-      )}
+      {/* Coconuts */}
+      <circle cx={treeX} cy={treeBaseY - 68} r="3" fill="hsl(30 50% 30%)" />
+      <circle cx={treeX + 4} cy={treeBaseY - 66} r="2.5" fill="hsl(30 45% 35%)" />
     </g>
   );
 };
