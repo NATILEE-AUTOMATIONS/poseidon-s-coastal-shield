@@ -2005,16 +2005,24 @@ export const CleanUpRevealText: React.FC<{
         </text>
       </g>
       
-      {/* Confetti explosion */}
+      {/* Confetti explosion with gravity */}
       {confettiProgress > 0 && (
         <g className="confetti-explosion">
           {confettiParticles.map((particle) => {
-            const distance = particle.velocity * easedConfetti;
-            const x = 200 + Math.cos(particle.angle) * distance;
-            const y = 248 + Math.sin(particle.angle) * distance * 0.7; // Slightly flatter spread
-            const rotation = particle.rotation + particle.rotationSpeed * easedConfetti;
-            const particleOpacity = 1 - easedConfetti * 0.8; // Fade out as they fly
-            const scale = 1 - easedConfetti * 0.3; // Shrink slightly
+            const time = easedConfetti;
+            const gravity = 300; // Gravity strength
+            
+            // Initial velocity components (upward bias)
+            const vx = Math.cos(particle.angle) * particle.velocity;
+            const vy = Math.sin(particle.angle) * particle.velocity * 0.7 - 40; // Upward initial boost
+            
+            // Position with gravity: x = x0 + vt, y = y0 + vt + 0.5*g*t^2
+            const x = 200 + vx * time;
+            const y = 248 + vy * time + 0.5 * gravity * time * time;
+            
+            const rotation = particle.rotation + particle.rotationSpeed * time;
+            const particleOpacity = Math.max(0, 1 - time * 1.2); // Fade out completely
+            const scale = Math.max(0.2, 1 - time * 0.5); // Shrink more
             
             return (
               <g
@@ -2032,17 +2040,11 @@ export const CleanUpRevealText: React.FC<{
                     width={particle.size}
                     height={particle.size * 0.6}
                     fill={particle.color}
-                    style={{
-                      filter: `drop-shadow(0 0 ${4 + easedConfetti * 8}px ${particle.color})`,
-                    }}
                   />
                 ) : (
                   <circle
                     r={particle.size / 2}
                     fill={particle.color}
-                    style={{
-                      filter: `drop-shadow(0 0 ${4 + easedConfetti * 8}px ${particle.color})`,
-                    }}
                   />
                 )}
               </g>
