@@ -1965,7 +1965,7 @@ export const CleanUpRevealText: React.FC<{
 export const CleanUpLayer: React.FC<LayerProps> = () => null;
 export const MobileShingleOverlay: React.FC<LayerProps> = () => null;
 
-// Simple palm tree that drops into place (like drip edge animation)
+// Modern neon palm tree that drops into place (matches house aesthetic)
 export const FallingPalmTree: React.FC<{ 
   truckProgress: number;
   truckStartProgress: number;
@@ -1987,9 +1987,16 @@ export const FallingPalmTree: React.FC<{
   const easedProgress = easeOutQuint(layerProgress);
   const translateY = -120 * (1 - easedProgress);
   
+  // Glow intensity increases as it lands
+  const glowIntensity = easedProgress;
+  
   // Position on left side of house, at ground level
-  const treeX = 55;
-  const treeBaseY = 260;
+  const x = 55;
+  const baseY = 260;
+  
+  // Neon glow filter matching house style
+  const trunkGlow = `drop-shadow(0 0 ${3 + glowIntensity * 4}px hsl(25 90% 55% / 0.7)) drop-shadow(0 0 ${6 + glowIntensity * 6}px hsl(25 85% 50% / 0.4))`;
+  const frondGlow = `drop-shadow(0 0 ${3 + glowIntensity * 5}px hsl(168 80% 50% / 0.8)) drop-shadow(0 0 ${8 + glowIntensity * 8}px hsl(168 75% 45% / 0.5))`;
   
   return (
     <g 
@@ -1998,37 +2005,114 @@ export const FallingPalmTree: React.FC<{
         transform: `translateY(${translateY}px)`,
       }}
     >
-      {/* Simple trunk */}
+      {/* Trunk - neon orange outline style */}
       <path
-        d={`M${treeX},${treeBaseY} Q${treeX - 3},${treeBaseY - 35} ${treeX},${treeBaseY - 70}`}
+        d={`M${x},${baseY} 
+            C${x - 2},${baseY - 20} ${x - 4},${baseY - 40} ${x - 2},${baseY - 55}
+            C${x},${baseY - 65} ${x + 1},${baseY - 70} ${x},${baseY - 75}`}
         fill="none"
-        stroke="hsl(30 45% 35%)"
-        strokeWidth="6"
-        strokeLinecap="round"
-      />
-      <path
-        d={`M${treeX},${treeBaseY} Q${treeX - 3},${treeBaseY - 35} ${treeX},${treeBaseY - 70}`}
-        fill="none"
-        stroke="hsl(30 40% 45%)"
+        stroke="hsl(25 85% 50%)"
         strokeWidth="3"
         strokeLinecap="round"
+        style={{ filter: trunkGlow }}
+      />
+      {/* Inner trunk highlight */}
+      <path
+        d={`M${x},${baseY} 
+            C${x - 2},${baseY - 20} ${x - 4},${baseY - 40} ${x - 2},${baseY - 55}
+            C${x},${baseY - 65} ${x + 1},${baseY - 70} ${x},${baseY - 75}`}
+        fill="none"
+        stroke="hsl(30 90% 65%)"
+        strokeWidth="1.5"
+        strokeLinecap="round"
       />
       
-      {/* Simple fronds */}
-      <path d={`M${treeX},${treeBaseY - 70} Q${treeX + 20},${treeBaseY - 90} ${treeX + 30},${treeBaseY - 80}`} 
-        fill="none" stroke="hsl(168 65% 40%)" strokeWidth="3" strokeLinecap="round" />
-      <path d={`M${treeX},${treeBaseY - 70} Q${treeX - 18},${treeBaseY - 88} ${treeX - 28},${treeBaseY - 78}`} 
-        fill="none" stroke="hsl(168 65% 40%)" strokeWidth="3" strokeLinecap="round" />
-      <path d={`M${treeX},${treeBaseY - 70} Q${treeX + 5},${treeBaseY - 95} ${treeX},${treeBaseY - 105}`} 
-        fill="none" stroke="hsl(168 70% 42%)" strokeWidth="2.5" strokeLinecap="round" />
-      <path d={`M${treeX},${treeBaseY - 70} Q${treeX + 25},${treeBaseY - 75} ${treeX + 35},${treeBaseY - 65}`} 
-        fill="none" stroke="hsl(168 60% 38%)" strokeWidth="2" strokeLinecap="round" />
-      <path d={`M${treeX},${treeBaseY - 70} Q${treeX - 22},${treeBaseY - 73} ${treeX - 32},${treeBaseY - 63}`} 
-        fill="none" stroke="hsl(168 60% 38%)" strokeWidth="2" strokeLinecap="round" />
+      {/* Palm fronds - neon teal matching house */}
+      <g style={{ filter: frondGlow }}>
+        {/* Center frond - upward */}
+        <path 
+          d={`M${x},${baseY - 75} Q${x + 3},${baseY - 95} ${x - 2},${baseY - 108}`}
+          fill="none" 
+          stroke="hsl(168 80% 50%)" 
+          strokeWidth="2" 
+          strokeLinecap="round" 
+        />
+        
+        {/* Right fronds */}
+        <path 
+          d={`M${x},${baseY - 75} Q${x + 18},${baseY - 88} ${x + 28},${baseY - 82}`}
+          fill="none" 
+          stroke="hsl(168 80% 50%)" 
+          strokeWidth="2" 
+          strokeLinecap="round" 
+        />
+        <path 
+          d={`M${x},${baseY - 75} Q${x + 22},${baseY - 78} ${x + 32},${baseY - 68}`}
+          fill="none" 
+          stroke="hsl(168 75% 48%)" 
+          strokeWidth="1.5" 
+          strokeLinecap="round" 
+        />
+        
+        {/* Left fronds */}
+        <path 
+          d={`M${x},${baseY - 75} Q${x - 16},${baseY - 90} ${x - 26},${baseY - 85}`}
+          fill="none" 
+          stroke="hsl(168 80% 50%)" 
+          strokeWidth="2" 
+          strokeLinecap="round" 
+        />
+        <path 
+          d={`M${x},${baseY - 75} Q${x - 20},${baseY - 80} ${x - 30},${baseY - 70}`}
+          fill="none" 
+          stroke="hsl(168 75% 48%)" 
+          strokeWidth="1.5" 
+          strokeLinecap="round" 
+        />
+      </g>
       
-      {/* Coconuts */}
-      <circle cx={treeX} cy={treeBaseY - 68} r="3" fill="hsl(30 50% 30%)" />
-      <circle cx={treeX + 4} cy={treeBaseY - 66} r="2.5" fill="hsl(30 45% 35%)" />
+      {/* Frond inner highlights */}
+      <path 
+        d={`M${x},${baseY - 75} Q${x + 3},${baseY - 95} ${x - 2},${baseY - 108}`}
+        fill="none" 
+        stroke="hsl(168 85% 65%)" 
+        strokeWidth="0.75" 
+        strokeLinecap="round" 
+      />
+      <path 
+        d={`M${x},${baseY - 75} Q${x + 18},${baseY - 88} ${x + 28},${baseY - 82}`}
+        fill="none" 
+        stroke="hsl(168 85% 65%)" 
+        strokeWidth="0.75" 
+        strokeLinecap="round" 
+      />
+      <path 
+        d={`M${x},${baseY - 75} Q${x - 16},${baseY - 90} ${x - 26},${baseY - 85}`}
+        fill="none" 
+        stroke="hsl(168 85% 65%)" 
+        strokeWidth="0.75" 
+        strokeLinecap="round" 
+      />
+      
+      {/* Coconuts - small neon orange circles */}
+      <circle 
+        cx={x - 1} 
+        cy={baseY - 74} 
+        r="2.5" 
+        fill="none"
+        stroke="hsl(25 85% 55%)"
+        strokeWidth="1.5"
+        style={{ filter: trunkGlow }}
+      />
+      <circle 
+        cx={x + 3} 
+        cy={baseY - 73} 
+        r="2" 
+        fill="none"
+        stroke="hsl(30 80% 60%)"
+        strokeWidth="1.5"
+        style={{ filter: trunkGlow }}
+      />
     </g>
   );
 };
