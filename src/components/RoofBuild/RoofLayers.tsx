@@ -1,4 +1,5 @@
 import React from 'react';
+import neonPalmTree from '@/assets/neon-palm-tree.png';
 
 interface LayerProps {
   progress: number;
@@ -1965,7 +1966,7 @@ export const CleanUpRevealText: React.FC<{
 export const CleanUpLayer: React.FC<LayerProps> = () => null;
 export const MobileShingleOverlay: React.FC<LayerProps> = () => null;
 
-// Clean geometric palm tree matching house aesthetic
+// Neon palm tree image that drops into place
 export const FallingPalmTree: React.FC<{ 
   truckProgress: number;
   truckStartProgress: number;
@@ -1985,69 +1986,22 @@ export const FallingPalmTree: React.FC<{
   
   const easedProgress = easeOutQuint(layerProgress);
   const translateY = -120 * (1 - easedProgress);
-  const glowIntensity = 4 + easedProgress * 6;
-  
-  const x = 52;
-  const baseY = 262;
   
   return (
     <g 
       className="palm-tree-layer"
       style={{ transform: `translateY(${translateY}px)` }}
     >
-      {/* Trunk - single clean curved line */}
-      <path
-        d={`M${x},${baseY} C${x - 1},${baseY - 25} ${x - 2},${baseY - 45} ${x},${baseY - 60}`}
-        fill="none"
-        stroke="hsl(168 80% 50%)"
-        strokeWidth="2.5"
-        strokeLinecap="round"
+      <image
+        href={neonPalmTree}
+        x={15}
+        y={175}
+        width={70}
+        height={90}
         style={{
-          filter: `drop-shadow(0 0 ${glowIntensity}px hsl(168 80% 50% / 0.8))`,
+          filter: `drop-shadow(0 0 8px hsl(168 80% 50% / 0.5))`,
         }}
       />
-      
-      {/* Fronds - clean arcs radiating from top */}
-      <g style={{ filter: `drop-shadow(0 0 ${glowIntensity}px hsl(168 80% 50% / 0.8))` }}>
-        {/* Center frond */}
-        <path
-          d={`M${x},${baseY - 60} Q${x + 2},${baseY - 80} ${x - 3},${baseY - 92}`}
-          fill="none"
-          stroke="hsl(168 80% 50%)"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        {/* Right fronds */}
-        <path
-          d={`M${x},${baseY - 60} Q${x + 15},${baseY - 72} ${x + 24},${baseY - 65}`}
-          fill="none"
-          stroke="hsl(168 80% 50%)"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <path
-          d={`M${x},${baseY - 60} Q${x + 18},${baseY - 62} ${x + 28},${baseY - 52}`}
-          fill="none"
-          stroke="hsl(168 75% 48%)"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        {/* Left fronds */}
-        <path
-          d={`M${x},${baseY - 60} Q${x - 14},${baseY - 74} ${x - 22},${baseY - 68}`}
-          fill="none"
-          stroke="hsl(168 80% 50%)"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <path
-          d={`M${x},${baseY - 60} Q${x - 16},${baseY - 64} ${x - 26},${baseY - 55}`}
-          fill="none"
-          stroke="hsl(168 75% 48%)"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </g>
     </g>
   );
 };
