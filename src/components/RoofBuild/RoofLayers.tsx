@@ -1987,9 +1987,9 @@ export const FallingPalmTree: React.FC<{
   const easedProgress = easeOutQuint(layerProgress);
   const translateY = -120 * (1 - easedProgress);
   
-  // Position on left side of house
+  // Position on left side of house, at ground level
   const treeX = 55;
-  const treeBaseY = 210;
+  const treeBaseY = 260;
   
   return (
     <g 
