@@ -18,7 +18,6 @@ import {
   TruckLayer,
   CleanUpLayer,
   CleanUpRevealText,
-  FallingPalmTree,
   materialInfo,
 } from './RoofBuild/RoofLayers';
 
@@ -420,15 +419,7 @@ const RoofBuildSection: React.FC = () => {
                   className="absolute inset-0 w-full h-full"
                   style={{ overflow: 'visible' }}
                 >
-                  {/* Falling palm tree - rendered FIRST so it's behind everything */}
-                  <FallingPalmTree 
-                    truckProgress={progress}
-                    truckStartProgress={layers[10].start}
-                    truckEndProgress={layers[10].end}
-                    isMobile={isMobile}
-                  />
-                  
-                  {/* "Complete Clean Up" text - RENDERED SECOND so it's BEHIND dumpster */}
+                  {/* "Complete Clean Up" text - RENDERED FIRST so it's BEHIND dumpster */}
                   <CleanUpRevealText 
                     truckProgress={progress}
                     truckStartProgress={layers[10].start}
