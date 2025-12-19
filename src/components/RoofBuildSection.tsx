@@ -420,6 +420,14 @@ const RoofBuildSection: React.FC = () => {
                   className="absolute inset-0 w-full h-full"
                   style={{ overflow: 'visible' }}
                 >
+                  {/* Palm tree drops into place */}
+                  <FallingPalmTree 
+                    truckProgress={progress}
+                    truckStartProgress={layers[10].start}
+                    truckEndProgress={layers[10].end}
+                    isMobile={isMobile}
+                  />
+                  
                   {/* "Complete Clean Up" text - RENDERED so it's BEHIND dumpster */}
                   <CleanUpRevealText 
                     truckProgress={progress}

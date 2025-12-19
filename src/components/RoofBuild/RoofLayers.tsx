@@ -1,5 +1,4 @@
 import React from 'react';
-import neonPalmTree from '@/assets/neon-palm-tree.png';
 
 interface LayerProps {
   progress: number;
@@ -1966,7 +1965,7 @@ export const CleanUpRevealText: React.FC<{
 export const CleanUpLayer: React.FC<LayerProps> = () => null;
 export const MobileShingleOverlay: React.FC<LayerProps> = () => null;
 
-// Neon palm tree image that drops into place
+// Neon palm tree SVG that drops into place
 export const FallingPalmTree: React.FC<{ 
   truckProgress: number;
   truckStartProgress: number;
@@ -1986,22 +1985,130 @@ export const FallingPalmTree: React.FC<{
   
   const easedProgress = easeOutQuint(layerProgress);
   const translateY = -120 * (1 - easedProgress);
+  const glowIntensity = 3 + easedProgress * 5;
+  
+  // Tree position
+  const baseX = 52;
+  const baseY = 268;
+  const scale = 0.85;
   
   return (
     <g 
       className="palm-tree-layer"
       style={{ transform: `translateY(${translateY}px)` }}
     >
-      <image
-        href={neonPalmTree}
-        x={15}
-        y={175}
-        width={70}
-        height={90}
-        style={{
-          filter: `drop-shadow(0 0 8px hsl(168 80% 50% / 0.5))`,
-        }}
-      />
+      <g transform={`translate(${baseX}, ${baseY}) scale(${scale})`}>
+        {/* Trunk - warm orange/yellow gradient glow */}
+        <defs>
+          <linearGradient id="trunkGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stopColor="hsl(35 100% 50%)" />
+            <stop offset="50%" stopColor="hsl(40 100% 55%)" />
+            <stop offset="100%" stopColor="hsl(45 100% 60%)" />
+          </linearGradient>
+          <linearGradient id="frondGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="hsl(175 100% 50%)" />
+            <stop offset="50%" stopColor="hsl(168 100% 55%)" />
+            <stop offset="100%" stopColor="hsl(160 100% 50%)" />
+          </linearGradient>
+          <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation={glowIntensity} result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+        
+        {/* Trunk with segments */}
+        <g filter="url(#neonGlow)">
+          <path
+            d="M0,-75 C-2,-55 -3,-35 -1,-15 C1,5 2,20 0,0"
+            fill="none"
+            stroke="url(#trunkGradient)"
+            strokeWidth="4"
+            strokeLinecap="round"
+          />
+          {/* Trunk segments/notches */}
+          {[-65, -55, -45, -35, -25, -15, -5].map((y, i) => (
+            <path
+              key={i}
+              d={`M${-3 + (i % 2)},${y} Q${0},${y - 2} ${3 - (i % 2)},${y}`}
+              fill="none"
+              stroke="url(#trunkGradient)"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              opacity={0.8}
+            />
+          ))}
+        </g>
+        
+        {/* Palm fronds - radiating from top */}
+        <g filter="url(#neonGlow)">
+          {/* Center frond - pointing up */}
+          <path
+            d="M0,-75 Q2,-90 0,-105 M0,-80 Q-4,-88 -8,-92 M0,-80 Q4,-88 8,-92 M0,-85 Q-3,-92 -5,-98 M0,-85 Q3,-92 5,-98"
+            fill="none"
+            stroke="url(#frondGradient)"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+          
+          {/* Right fronds */}
+          <path
+            d="M0,-75 Q15,-82 32,-78 M5,-78 Q18,-82 28,-80 M8,-80 Q20,-83 30,-82"
+            fill="none"
+            stroke="hsl(170 100% 55%)"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+          <path
+            d="M0,-75 Q18,-72 38,-62 M6,-74 Q22,-70 35,-64 M10,-73 Q25,-70 36,-66"
+            fill="none"
+            stroke="hsl(175 100% 50%)"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          />
+          <path
+            d="M0,-75 Q15,-68 35,-52 M5,-72 Q18,-66 32,-55 M8,-70 Q20,-65 30,-56"
+            fill="none"
+            stroke="hsl(180 100% 50%)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+          
+          {/* Left fronds */}
+          <path
+            d="M0,-75 Q-15,-82 -32,-78 M-5,-78 Q-18,-82 -28,-80 M-8,-80 Q-20,-83 -30,-82"
+            fill="none"
+            stroke="hsl(170 100% 55%)"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+          <path
+            d="M0,-75 Q-18,-72 -38,-62 M-6,-74 Q-22,-70 -35,-64 M-10,-73 Q-25,-70 -36,-66"
+            fill="none"
+            stroke="hsl(175 100% 50%)"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          />
+          <path
+            d="M0,-75 Q-15,-68 -35,-52 M-5,-72 Q-18,-66 -32,-55 M-8,-70 Q-20,-65 -30,-56"
+            fill="none"
+            stroke="hsl(180 100% 50%)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+          
+          {/* Additional detail fronds for fullness */}
+          <path
+            d="M0,-75 Q12,-85 22,-90 M0,-75 Q-12,-85 -22,-90"
+            fill="none"
+            stroke="hsl(165 100% 52%)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+        </g>
+      </g>
     </g>
   );
 };
