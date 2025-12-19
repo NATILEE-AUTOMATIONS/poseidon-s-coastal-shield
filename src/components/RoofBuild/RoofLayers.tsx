@@ -1873,20 +1873,26 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
 const generateConfettiParticles = (count: number) => {
   const particles = [];
   const colors = [
-    'hsl(168 80% 55%)', // Teal
-    'hsl(168 70% 65%)', // Light teal
-    'hsl(30 90% 55%)',  // Orange
-    'hsl(35 85% 65%)',  // Light orange
-    'hsl(168 90% 45%)', // Deep teal
-    'hsl(25 95% 60%)',  // Deep orange
+    { fill: 'hsl(168 85% 50%)', glow: 'hsl(168 90% 60%)' }, // Bright teal
+    { fill: 'hsl(168 75% 60%)', glow: 'hsl(168 80% 70%)' }, // Light teal
+    { fill: 'hsl(28 95% 55%)', glow: 'hsl(28 100% 65%)' },  // Bright orange
+    { fill: 'hsl(35 90% 60%)', glow: 'hsl(35 95% 70%)' },   // Gold
+    { fill: 'hsl(168 95% 40%)', glow: 'hsl(168 100% 55%)' }, // Deep teal
+    { fill: 'hsl(20 100% 50%)', glow: 'hsl(20 100% 60%)' },  // Deep orange
+    { fill: 'hsl(45 95% 55%)', glow: 'hsl(45 100% 65%)' },   // Yellow gold
+    { fill: 'hsl(175 80% 45%)', glow: 'hsl(175 85% 55%)' },  // Cyan teal
   ];
   
+  const shapes = ['rect', 'circle', 'star', 'diamond'];
+  
   for (let i = 0; i < count; i++) {
-    const angle = (i / count) * Math.PI * 2 + Math.random() * 0.5;
-    const velocity = 60 + Math.random() * 80;
-    const size = 3 + Math.random() * 5;
+    // More upward bias with wider spread
+    const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.8;
+    const velocity = 100 + Math.random() * 120; // Faster explosion
+    const size = 5 + Math.random() * 8; // Bigger particles
     const rotation = Math.random() * 360;
-    const rotationSpeed = (Math.random() - 0.5) * 720;
+    const rotationSpeed = (Math.random() - 0.5) * 900; // Faster spin
+    const delay = Math.random() * 0.15; // Staggered start
     
     particles.push({
       id: i,
@@ -1896,13 +1902,14 @@ const generateConfettiParticles = (count: number) => {
       size,
       rotation,
       rotationSpeed,
-      shape: Math.random() > 0.5 ? 'rect' : 'circle',
+      delay,
+      shape: shapes[Math.floor(Math.random() * shapes.length)],
     });
   }
   return particles;
 };
 
-const confettiParticles = generateConfettiParticles(24);
+const confettiParticles = generateConfettiParticles(48); // More particles
 
 // "Complete Clean Up" text that reveals as dumpster moves away (desktop only)
 export const CleanUpRevealText: React.FC<{ 
@@ -2009,20 +2016,70 @@ export const CleanUpRevealText: React.FC<{
       {confettiProgress > 0 && (
         <g className="confetti-explosion">
           {confettiParticles.map((particle) => {
-            const time = easedConfetti;
-            const gravity = 300; // Gravity strength
+            // Staggered timing
+            const adjustedProgress = Math.max(0, confettiProgress - particle.delay) / (1 - particle.delay);
+            const time = easeOutQuart(Math.min(1, adjustedProgress));
+            const gravity = 400; // Stronger gravity
             
-            // Initial velocity components (upward bias)
+            // Initial velocity components with strong upward bias
             const vx = Math.cos(particle.angle) * particle.velocity;
-            const vy = Math.sin(particle.angle) * particle.velocity * 0.7 - 40; // Upward initial boost
+            const vy = Math.sin(particle.angle) * particle.velocity * 0.6 - 80; // Strong upward boost
             
-            // Position with gravity: x = x0 + vt, y = y0 + vt + 0.5*g*t^2
+            // Position with gravity
             const x = 200 + vx * time;
             const y = 248 + vy * time + 0.5 * gravity * time * time;
             
             const rotation = particle.rotation + particle.rotationSpeed * time;
-            const particleOpacity = Math.max(0, 1 - time * 1.2); // Fade out completely
-            const scale = Math.max(0.2, 1 - time * 0.5); // Shrink more
+            const particleOpacity = Math.max(0, 1 - adjustedProgress * 1.1);
+            const scale = Math.max(0.3, 1.2 - time * 0.6); // Start bigger
+            const glowIntensity = Math.max(0, 1 - time * 0.8);
+            
+            // Render different shapes
+            const renderShape = () => {
+              const { fill, glow } = particle.color;
+              const glowFilter = `drop-shadow(0 0 ${6 * glowIntensity}px ${glow}) drop-shadow(0 0 ${12 * glowIntensity}px ${glow})`;
+              
+              switch (particle.shape) {
+                case 'star':
+                  return (
+                    <polygon
+                      points="0,-6 1.5,-2 6,-2 2.5,1 4,6 0,3 -4,6 -2.5,1 -6,-2 -1.5,-2"
+                      fill={fill}
+                      style={{ filter: glowFilter, transform: `scale(${particle.size / 6})` }}
+                    />
+                  );
+                case 'diamond':
+                  return (
+                    <polygon
+                      points="0,-5 4,0 0,5 -4,0"
+                      fill={fill}
+                      style={{ filter: glowFilter, transform: `scale(${particle.size / 5})` }}
+                    />
+                  );
+                case 'rect':
+                  return (
+                    <rect
+                      x={-particle.size / 2}
+                      y={-particle.size / 3}
+                      width={particle.size}
+                      height={particle.size * 0.5}
+                      rx={1}
+                      fill={fill}
+                      style={{ filter: glowFilter }}
+                    />
+                  );
+                default:
+                  return (
+                    <circle
+                      r={particle.size / 2}
+                      fill={fill}
+                      style={{ filter: glowFilter }}
+                    />
+                  );
+              }
+            };
+            
+            if (adjustedProgress <= 0) return null;
             
             return (
               <g
@@ -2033,20 +2090,7 @@ export const CleanUpRevealText: React.FC<{
                   opacity: particleOpacity,
                 }}
               >
-                {particle.shape === 'rect' ? (
-                  <rect
-                    x={-particle.size / 2}
-                    y={-particle.size / 2}
-                    width={particle.size}
-                    height={particle.size * 0.6}
-                    fill={particle.color}
-                  />
-                ) : (
-                  <circle
-                    r={particle.size / 2}
-                    fill={particle.color}
-                  />
-                )}
+                {renderShape()}
               </g>
             );
           })}
