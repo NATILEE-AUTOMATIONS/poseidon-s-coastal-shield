@@ -1869,48 +1869,6 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   );
 };
 
-// Confetti particle generator for celebration effect
-const generateConfettiParticles = (count: number) => {
-  const particles = [];
-  const colors = [
-    { fill: 'hsl(168 85% 50%)', glow: 'hsl(168 90% 60%)' }, // Bright teal
-    { fill: 'hsl(168 75% 60%)', glow: 'hsl(168 80% 70%)' }, // Light teal
-    { fill: 'hsl(28 95% 55%)', glow: 'hsl(28 100% 65%)' },  // Bright orange
-    { fill: 'hsl(35 90% 60%)', glow: 'hsl(35 95% 70%)' },   // Gold
-    { fill: 'hsl(168 95% 40%)', glow: 'hsl(168 100% 55%)' }, // Deep teal
-    { fill: 'hsl(20 100% 50%)', glow: 'hsl(20 100% 60%)' },  // Deep orange
-    { fill: 'hsl(45 95% 55%)', glow: 'hsl(45 100% 65%)' },   // Yellow gold
-    { fill: 'hsl(175 80% 45%)', glow: 'hsl(175 85% 55%)' },  // Cyan teal
-  ];
-  
-  const shapes = ['rect', 'circle', 'star', 'diamond'];
-  
-  for (let i = 0; i < count; i++) {
-    // More upward bias with wider spread
-    const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.8;
-    const velocity = 100 + Math.random() * 120; // Faster explosion
-    const size = 5 + Math.random() * 8; // Bigger particles
-    const rotation = Math.random() * 360;
-    const rotationSpeed = (Math.random() - 0.5) * 900; // Faster spin
-    const delay = Math.random() * 0.15; // Staggered start
-    
-    particles.push({
-      id: i,
-      color: colors[i % colors.length],
-      angle,
-      velocity,
-      size,
-      rotation,
-      rotationSpeed,
-      delay,
-      shape: shapes[Math.floor(Math.random() * shapes.length)],
-    });
-  }
-  return particles;
-};
-
-const confettiParticles = generateConfettiParticles(48); // More particles
-
 // "Complete Clean Up" text that reveals as dumpster moves away (desktop only)
 export const CleanUpRevealText: React.FC<{ 
   truckProgress: number;
@@ -1948,18 +1906,6 @@ export const CleanUpRevealText: React.FC<{
     ? Math.min(0.4, layerProgress / backPhaseEnd * 0.4) // Subtle hint while backing in
     : 0.4 + (easedReveal * 0.6); // Full opacity as revealed
   
-  // Confetti starts at 85% reveal and explodes outward
-  const confettiTrigger = 0.85;
-  const confettiProgress = revealProgress > confettiTrigger 
-    ? (revealProgress - confettiTrigger) / (1 - confettiTrigger)
-    : 0;
-  const easeOutQuart = (x: number) => 1 - Math.pow(1 - x, 4);
-  const easedConfetti = easeOutQuart(confettiProgress);
-  
-  // Text fades out as confetti explodes (last 10% of animation)
-  const textFadeOut = revealProgress > 0.90 
-    ? 1 - ((revealProgress - 0.90) / 0.10)
-    : 1;
   
   return (
     <g className="cleanup-reveal-text">
@@ -1971,7 +1917,7 @@ export const CleanUpRevealText: React.FC<{
       </defs>
       
       {/* Text with reveal clip */}
-      <g clipPath="url(#cleanupRevealClip)" style={{ opacity: opacity * textFadeOut }}>
+      <g clipPath="url(#cleanupRevealClip)" style={{ opacity }}>
         {/* "COMPLETE" text */}
         <text
           x="200"
@@ -2012,90 +1958,6 @@ export const CleanUpRevealText: React.FC<{
         </text>
       </g>
       
-      {/* Confetti explosion with gravity */}
-      {confettiProgress > 0 && (
-        <g className="confetti-explosion">
-          {confettiParticles.map((particle) => {
-            // Staggered timing
-            const adjustedProgress = Math.max(0, confettiProgress - particle.delay) / (1 - particle.delay);
-            const time = easeOutQuart(Math.min(1, adjustedProgress));
-            const gravity = 400; // Stronger gravity
-            
-            // Initial velocity components with strong upward bias
-            const vx = Math.cos(particle.angle) * particle.velocity;
-            const vy = Math.sin(particle.angle) * particle.velocity * 0.6 - 80; // Strong upward boost
-            
-            // Position with gravity
-            const x = 200 + vx * time;
-            const y = 248 + vy * time + 0.5 * gravity * time * time;
-            
-            const rotation = particle.rotation + particle.rotationSpeed * time;
-            const particleOpacity = Math.max(0, 1 - adjustedProgress * 1.1);
-            const scale = Math.max(0.3, 1.2 - time * 0.6); // Start bigger
-            const glowIntensity = Math.max(0, 1 - time * 0.8);
-            
-            // Render different shapes
-            const renderShape = () => {
-              const { fill, glow } = particle.color;
-              const glowFilter = `drop-shadow(0 0 ${6 * glowIntensity}px ${glow}) drop-shadow(0 0 ${12 * glowIntensity}px ${glow})`;
-              
-              switch (particle.shape) {
-                case 'star':
-                  return (
-                    <polygon
-                      points="0,-6 1.5,-2 6,-2 2.5,1 4,6 0,3 -4,6 -2.5,1 -6,-2 -1.5,-2"
-                      fill={fill}
-                      style={{ filter: glowFilter, transform: `scale(${particle.size / 6})` }}
-                    />
-                  );
-                case 'diamond':
-                  return (
-                    <polygon
-                      points="0,-5 4,0 0,5 -4,0"
-                      fill={fill}
-                      style={{ filter: glowFilter, transform: `scale(${particle.size / 5})` }}
-                    />
-                  );
-                case 'rect':
-                  return (
-                    <rect
-                      x={-particle.size / 2}
-                      y={-particle.size / 3}
-                      width={particle.size}
-                      height={particle.size * 0.5}
-                      rx={1}
-                      fill={fill}
-                      style={{ filter: glowFilter }}
-                    />
-                  );
-                default:
-                  return (
-                    <circle
-                      r={particle.size / 2}
-                      fill={fill}
-                      style={{ filter: glowFilter }}
-                    />
-                  );
-              }
-            };
-            
-            if (adjustedProgress <= 0) return null;
-            
-            return (
-              <g
-                key={particle.id}
-                style={{
-                  transform: `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(${scale})`,
-                  transformOrigin: '0 0',
-                  opacity: particleOpacity,
-                }}
-              >
-                {renderShape()}
-              </g>
-            );
-          })}
-        </g>
-      )}
     </g>
   );
 };
