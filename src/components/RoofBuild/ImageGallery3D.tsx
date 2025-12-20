@@ -15,33 +15,34 @@ interface ImageGallery3DProps {
 }
 
 // DESKTOP ONLY - This component handles the billboard drive-by effect
+// Images appear AFTER the user has fully entered the doorway (zoom complete ~0.98)
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
-  // Gallery background fade-in - pushed later to not overlap with roof animations
-  const galleryBgStart = 0.96;
+  // Gallery background fade-in - starts after zoom is complete (user has "entered" the door)
+  const galleryBgStart = 0.985;
   
-  // Image 1 timing
-  const anim1Start = 0.965;
-  const anim1Duration = 0.015;
+  // Image 1 timing - starts after background
+  const anim1Start = 0.988;
+  const anim1Duration = 0.008;
   const anim1Progress = progress >= anim1Start 
     ? Math.min(1, (progress - anim1Start) / anim1Duration) 
     : 0;
   
   // Image 2 timing
-  const anim2Start = 0.975;
-  const anim2Duration = 0.012;
+  const anim2Start = 0.992;
+  const anim2Duration = 0.006;
   const anim2Progress = progress >= anim2Start 
     ? Math.min(1, (progress - anim2Start) / anim2Duration)
     : 0;
   
   // Image 3 timing
-  const anim3Start = 0.985;
-  const anim3Duration = 0.01;
+  const anim3Start = 0.996;
+  const anim3Duration = 0.004;
   const anim3Progress = progress >= anim3Start 
     ? Math.min(1, (progress - anim3Start) / anim3Duration)
     : 0;
     
   const galleryBgOpacity = progress >= galleryBgStart 
-    ? Math.min(1, (progress - galleryBgStart) / 0.02)
+    ? Math.min(1, (progress - galleryBgStart) / 0.01)
     : 0;
   
   // Don't render anything until background starts fading in
@@ -81,9 +82,9 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
       ? 1 - ((anim3Progress - fadeOutStart) / (1 - fadeOutStart))
       : 1;
 
-  // Image 4 timing
-  const anim4Start = 0.965;
-  const anim4Duration = 0.035;
+  // Image 4 timing - the grand reveal, starts with gallery
+  const anim4Start = 0.988;
+  const anim4Duration = 0.012;
   const anim4Progress = progress >= anim4Start 
     ? Math.min(1, (progress - anim4Start) / anim4Duration)
     : 0;
