@@ -2042,40 +2042,71 @@ export const FallingPalmTree: React.FC<{
         </defs>
         
         {/* === TRUNK === */}
-        {/* Outer glow layer */}
+        {/* Outer soft glow */}
         <g filter="url(#palmTrunkGlow)">
           <path
-            d="M0,-78 C-3,-60 -4,-40 -2,-20 C0,0 1,8 0,5"
+            d="M0,-78 C-2,-55 -3,-35 -1,-15 C0,0 0,8 0,5"
             fill="none"
-            stroke="hsl(38 100% 55%)"
-            strokeWidth="8"
+            stroke="hsl(32 100% 50%)"
+            strokeWidth="12"
             strokeLinecap="round"
           />
         </g>
         
-        {/* Main trunk with curved segments */}
+        {/* Middle glow layer */}
         <g filter="url(#palmNeonGlowInner)">
           <path
-            d="M0,-78 C-3,-60 -4,-40 -2,-20 C0,0 1,8 0,5"
+            d="M0,-78 C-2,-55 -3,-35 -1,-15 C0,0 0,8 0,5"
             fill="none"
-            stroke="url(#palmTrunkGradient)"
-            strokeWidth="5"
+            stroke="hsl(38 100% 55%)"
+            strokeWidth="7"
             strokeLinecap="round"
           />
-          
-          {/* Trunk ring segments - curved for realism */}
-          {[-70, -62, -54, -46, -38, -30, -22, -14, -6].map((y, i) => (
+        </g>
+        
+        {/* Core bright trunk */}
+        <path
+          d="M0,-78 C-2,-55 -3,-35 -1,-15 C0,0 0,8 0,5"
+          fill="none"
+          stroke="url(#palmTrunkGradient)"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+        
+        {/* Bright center highlight */}
+        <path
+          d="M0,-78 C-2,-55 -3,-35 -1,-15 C0,0 0,8 0,5"
+          fill="none"
+          stroke="hsl(48 100% 85%)"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          opacity={0.8}
+        />
+        
+        {/* Elegant curved segment rings */}
+        {[-72, -64, -56, -48, -40, -32, -24, -16, -8, 0].map((y, i) => (
+          <g key={`ring-group-${i}`}>
+            {/* Ring glow */}
             <path
-              key={`ring-${i}`}
-              d={`M${-4 + Math.sin(i * 0.5)},${y} Q${0},${y - 1.5} ${4 - Math.sin(i * 0.5)},${y}`}
+              d={`M${-5 + Math.sin(i * 0.4) * 0.5},${y} Q${0},${y - 2} ${5 - Math.sin(i * 0.4) * 0.5},${y}`}
               fill="none"
-              stroke="hsl(42 100% 65%)"
+              stroke="hsl(38 100% 55%)"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              opacity={0.5}
+              filter="url(#palmNeonGlowInner)"
+            />
+            {/* Ring core */}
+            <path
+              d={`M${-5 + Math.sin(i * 0.4) * 0.5},${y} Q${0},${y - 2} ${5 - Math.sin(i * 0.4) * 0.5},${y}`}
+              fill="none"
+              stroke="hsl(45 100% 70%)"
               strokeWidth="1.2"
               strokeLinecap="round"
               opacity={0.9}
             />
-          ))}
-        </g>
+          </g>
+        ))}
         
         {/* === FRONDS === */}
         {/* Outer glow aura */}
