@@ -220,7 +220,8 @@ const RoofBuildSection: React.FC = () => {
         }}
       />
 
-      {/* Desktop Gallery removed */}
+      {/* Desktop 3D Gallery - appears during doorway entry */}
+      {!isMobile && <ImageGallery3D progress={progress} />}
 
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
