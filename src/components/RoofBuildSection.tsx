@@ -119,10 +119,10 @@ const RoofBuildSection: React.FC = () => {
     ? Math.min(75, ((progress - doorStart) / 0.12) * 75) 
     : 0;
 
-  // Door zoom: starts after door opens, completes 16% later (DESKTOP ONLY)
+  // Door zoom: starts after door opens, completes 25% later for deeper zoom (DESKTOP ONLY)
   const zoomStart = doorStart + 0.12;
   const zoomProgress = !isMobile && progress > zoomStart 
-    ? Math.min(1, (progress - zoomStart) / 0.16)
+    ? Math.min(1, (progress - zoomStart) / 0.25)
     : 0;
   
   // Update scroll context so navbar can fade (desktop only)
@@ -135,8 +135,8 @@ const RoofBuildSection: React.FC = () => {
     x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
   const easedZoom = easeInOutQuad(zoomProgress);
   
-  // Scale: 1x → 15x (DESKTOP ONLY - mobile stays at 1)
-  const zoomScale = isMobile ? 1 : 1 + (easedZoom * 14);
+  // Scale: 1x → 40x for deeper doorway zoom (DESKTOP ONLY - mobile stays at 1)
+  const zoomScale = isMobile ? 1 : 1 + (easedZoom * 39);
   
   // Delayed warm light - DESKTOP ONLY
   const lightProgress = isMobile ? 0 : Math.max(0, (zoomProgress - 0.2) / 0.8);
