@@ -146,10 +146,10 @@ const RoofBuildSection: React.FC = () => {
   const gridFadeOut = isMobile ? 1 : Math.max(0, 1 - (zoomProgress * 3));
   const houseFadeOut = isMobile ? 1 : Math.max(0, 1 - (easedZoom * 2));
 
-  // 3D Gallery visibility - DESKTOP ONLY (starts AFTER zoom completes ~0.98)
-  const galleryStartPoint = 0.985;
+  // 3D Gallery visibility - DESKTOP ONLY (starts VERY late, after zoom fully completes)
+  const galleryStartPoint = 0.995;
   const galleryProgress = !isMobile && progress > galleryStartPoint 
-    ? Math.min(1, (progress - galleryStartPoint) / 0.015)
+    ? Math.min(1, (progress - galleryStartPoint) / 0.005)
     : 0;
   const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
   const overlayFade = galleryProgress > 0 ? 1 - easeOutCubic(galleryProgress) : 1;
