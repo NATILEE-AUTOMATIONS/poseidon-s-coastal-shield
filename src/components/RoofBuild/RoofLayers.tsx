@@ -2078,114 +2078,49 @@ export const FallingPalmTree: React.FC<{
         </g>
         
         {/* === FRONDS === */}
-        {/* Soft outer glow for entire frond area */}
-        <g filter="url(#palmNeonGlowOuter)" opacity={0.4}>
-          <ellipse cx="0" cy="-95" rx="55" ry="35" fill="none" stroke="hsl(172 100% 50%)" strokeWidth="12" />
+        {/* Outer glow aura */}
+        <g filter="url(#palmNeonGlowOuter)" opacity={0.35}>
+          <path d="M0,-78 Q0,-100 0,-118 M0,-78 Q20,-92 45,-88 M0,-78 Q-20,-92 -45,-88 M0,-78 Q28,-82 52,-70 M0,-78 Q-28,-82 -52,-70 M0,-78 Q25,-72 45,-52 M0,-78 Q-25,-72 -45,-52" fill="none" stroke="hsl(172 100% 55%)" strokeWidth="8" strokeLinecap="round" />
         </g>
         
-        {/* Main fronds with realistic leaflet detail */}
+        {/* Middle glow layer */}
+        <g filter="url(#palmNeonGlowMiddle)" opacity={0.6}>
+          <path d="M0,-78 Q0,-100 0,-118 M0,-78 Q20,-92 45,-88 M0,-78 Q-20,-92 -45,-88 M0,-78 Q28,-82 52,-70 M0,-78 Q-28,-82 -52,-70 M0,-78 Q25,-72 45,-52 M0,-78 Q-25,-72 -45,-52" fill="none" stroke="hsl(170 100% 52%)" strokeWidth="4" strokeLinecap="round" />
+        </g>
+        
+        {/* Main crisp fronds */}
         <g filter="url(#palmNeonGlowInner)">
-          {/* Center frond - pointing up */}
-          <path d="M0,-78 C0,-88 0,-100 0,-115" fill="none" stroke="hsl(170 100% 55%)" strokeWidth="3" strokeLinecap="round" />
-          {/* Center frond leaflets */}
-          {[-85, -90, -95, -100, -105, -110].map((y, i) => (
-            <g key={`center-${i}`}>
-              <path d={`M0,${y} Q${-6 - i},${y - 4} ${-10 - i * 1.2},${y - 2}`} fill="none" stroke="hsl(172 100% 58%)" strokeWidth={1.8 - i * 0.15} strokeLinecap="round" />
-              <path d={`M0,${y} Q${6 + i},${y - 4} ${10 + i * 1.2},${y - 2}`} fill="none" stroke="hsl(172 100% 58%)" strokeWidth={1.8 - i * 0.15} strokeLinecap="round" />
-            </g>
-          ))}
+          {/* Center frond - straight up */}
+          <path d="M0,-78 Q0,-98 0,-118" fill="none" stroke="hsl(170 100% 55%)" strokeWidth="2.5" strokeLinecap="round" />
           
-          {/* Right frond 1 - upper right */}
-          <path d="M0,-78 C12,-85 28,-90 48,-85" fill="none" stroke="hsl(168 100% 52%)" strokeWidth="2.8" strokeLinecap="round" />
-          {[0.15, 0.3, 0.45, 0.6, 0.75, 0.9].map((t, i) => {
-            const x = 12 * t + 36 * t * t;
-            const y = -78 - 12 * t + 5 * t * t;
-            return (
-              <g key={`r1-${i}`}>
-                <path d={`M${x},${y} Q${x + 4},${y - 6} ${x + 8},${y - 10}`} fill="none" stroke="hsl(170 100% 56%)" strokeWidth={1.6 - i * 0.12} strokeLinecap="round" />
-                <path d={`M${x},${y} Q${x + 6},${y + 2} ${x + 10},${y + 5}`} fill="none" stroke="hsl(175 100% 54%)" strokeWidth={1.4 - i * 0.1} strokeLinecap="round" />
-              </g>
-            );
-          })}
+          {/* Upper right frond */}
+          <path d="M0,-78 Q22,-94 48,-88" fill="none" stroke="hsl(168 100% 55%)" strokeWidth="2.5" strokeLinecap="round" />
           
-          {/* Right frond 2 - middle right */}
-          <path d="M0,-78 C16,-80 35,-78 55,-68" fill="none" stroke="hsl(172 100% 55%)" strokeWidth="2.6" strokeLinecap="round" />
-          {[0.2, 0.35, 0.5, 0.65, 0.8, 0.95].map((t, i) => {
-            const x = 16 * t + 39 * t * t;
-            const y = -78 - 2 * t + 12 * t * t;
-            return (
-              <g key={`r2-${i}`}>
-                <path d={`M${x},${y} Q${x + 3},${y - 7} ${x + 6},${y - 12}`} fill="none" stroke="hsl(168 100% 58%)" strokeWidth={1.5 - i * 0.1} strokeLinecap="round" />
-                <path d={`M${x},${y} Q${x + 7},${y + 3} ${x + 12},${y + 6}`} fill="none" stroke="hsl(178 100% 52%)" strokeWidth={1.3 - i * 0.08} strokeLinecap="round" />
-              </g>
-            );
-          })}
+          {/* Middle right frond */}
+          <path d="M0,-78 Q30,-82 55,-68" fill="none" stroke="hsl(172 100% 52%)" strokeWidth="2.3" strokeLinecap="round" />
           
-          {/* Right frond 3 - lower right (drooping) */}
-          <path d="M0,-78 C14,-74 30,-65 48,-48" fill="none" stroke="hsl(175 100% 50%)" strokeWidth="2.4" strokeLinecap="round" />
-          {[0.2, 0.4, 0.6, 0.8, 1].map((t, i) => {
-            const x = 14 * t + 34 * t * t;
-            const y = -78 + 4 * t + 26 * t * t;
-            return (
-              <g key={`r3-${i}`}>
-                <path d={`M${x},${y} Q${x + 2},${y - 6} ${x + 4},${y - 10}`} fill="none" stroke="hsl(172 100% 55%)" strokeWidth={1.4 - i * 0.1} strokeLinecap="round" />
-                <path d={`M${x},${y} Q${x + 6},${y + 4} ${x + 10},${y + 8}`} fill="none" stroke="hsl(180 100% 50%)" strokeWidth={1.2 - i * 0.08} strokeLinecap="round" />
-              </g>
-            );
-          })}
+          {/* Lower right frond - graceful droop */}
+          <path d="M0,-78 Q28,-72 48,-50" fill="none" stroke="hsl(175 100% 50%)" strokeWidth="2" strokeLinecap="round" />
           
-          {/* Left frond 1 - upper left (mirror of right) */}
-          <path d="M0,-78 C-12,-85 -28,-90 -48,-85" fill="none" stroke="hsl(168 100% 52%)" strokeWidth="2.8" strokeLinecap="round" />
-          {[0.15, 0.3, 0.45, 0.6, 0.75, 0.9].map((t, i) => {
-            const x = -(12 * t + 36 * t * t);
-            const y = -78 - 12 * t + 5 * t * t;
-            return (
-              <g key={`l1-${i}`}>
-                <path d={`M${x},${y} Q${x - 4},${y - 6} ${x - 8},${y - 10}`} fill="none" stroke="hsl(170 100% 56%)" strokeWidth={1.6 - i * 0.12} strokeLinecap="round" />
-                <path d={`M${x},${y} Q${x - 6},${y + 2} ${x - 10},${y + 5}`} fill="none" stroke="hsl(175 100% 54%)" strokeWidth={1.4 - i * 0.1} strokeLinecap="round" />
-              </g>
-            );
-          })}
+          {/* Upper left frond */}
+          <path d="M0,-78 Q-22,-94 -48,-88" fill="none" stroke="hsl(168 100% 55%)" strokeWidth="2.5" strokeLinecap="round" />
           
-          {/* Left frond 2 - middle left */}
-          <path d="M0,-78 C-16,-80 -35,-78 -55,-68" fill="none" stroke="hsl(172 100% 55%)" strokeWidth="2.6" strokeLinecap="round" />
-          {[0.2, 0.35, 0.5, 0.65, 0.8, 0.95].map((t, i) => {
-            const x = -(16 * t + 39 * t * t);
-            const y = -78 - 2 * t + 12 * t * t;
-            return (
-              <g key={`l2-${i}`}>
-                <path d={`M${x},${y} Q${x - 3},${y - 7} ${x - 6},${y - 12}`} fill="none" stroke="hsl(168 100% 58%)" strokeWidth={1.5 - i * 0.1} strokeLinecap="round" />
-                <path d={`M${x},${y} Q${x - 7},${y + 3} ${x - 12},${y + 6}`} fill="none" stroke="hsl(178 100% 52%)" strokeWidth={1.3 - i * 0.08} strokeLinecap="round" />
-              </g>
-            );
-          })}
+          {/* Middle left frond */}
+          <path d="M0,-78 Q-30,-82 -55,-68" fill="none" stroke="hsl(172 100% 52%)" strokeWidth="2.3" strokeLinecap="round" />
           
-          {/* Left frond 3 - lower left (drooping) */}
-          <path d="M0,-78 C-14,-74 -30,-65 -48,-48" fill="none" stroke="hsl(175 100% 50%)" strokeWidth="2.4" strokeLinecap="round" />
-          {[0.2, 0.4, 0.6, 0.8, 1].map((t, i) => {
-            const x = -(14 * t + 34 * t * t);
-            const y = -78 + 4 * t + 26 * t * t;
-            return (
-              <g key={`l3-${i}`}>
-                <path d={`M${x},${y} Q${x - 2},${y - 6} ${x - 4},${y - 10}`} fill="none" stroke="hsl(172 100% 55%)" strokeWidth={1.4 - i * 0.1} strokeLinecap="round" />
-                <path d={`M${x},${y} Q${x - 6},${y + 4} ${x - 10},${y + 8}`} fill="none" stroke="hsl(180 100% 50%)" strokeWidth={1.2 - i * 0.08} strokeLinecap="round" />
-              </g>
-            );
-          })}
+          {/* Lower left frond - graceful droop */}
+          <path d="M0,-78 Q-28,-72 -48,-50" fill="none" stroke="hsl(175 100% 50%)" strokeWidth="2" strokeLinecap="round" />
           
-          {/* Extra diagonal fronds for fullness */}
-          <path d="M0,-78 C8,-88 18,-95 32,-100" fill="none" stroke="hsl(170 100% 54%)" strokeWidth="2.2" strokeLinecap="round" />
-          <path d="M0,-78 C-8,-88 -18,-95 -32,-100" fill="none" stroke="hsl(170 100% 54%)" strokeWidth="2.2" strokeLinecap="round" />
-          {/* Leaflets on extra fronds */}
-          <path d="M10,-84 Q14,-90 18,-94 M16,-88 Q20,-92 24,-96 M22,-92 Q26,-95 30,-98" fill="none" stroke="hsl(175 100% 56%)" strokeWidth="1.2" strokeLinecap="round" />
-          <path d="M-10,-84 Q-14,-90 -18,-94 M-16,-88 Q-20,-92 -24,-96 M-22,-92 Q-26,-95 -30,-98" fill="none" stroke="hsl(175 100% 56%)" strokeWidth="1.2" strokeLinecap="round" />
+          {/* Diagonal accent fronds */}
+          <path d="M0,-78 Q12,-96 28,-105" fill="none" stroke="hsl(170 100% 54%)" strokeWidth="2" strokeLinecap="round" />
+          <path d="M0,-78 Q-12,-96 -28,-105" fill="none" stroke="hsl(170 100% 54%)" strokeWidth="2" strokeLinecap="round" />
         </g>
         
-        {/* Bright highlight at frond center */}
-        <circle cx="0" cy="-78" r="4" fill="hsl(170 100% 65%)" opacity={0.9}>
-          <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite" />
+        {/* Glowing center point */}
+        <circle cx="0" cy="-78" r="3.5" fill="hsl(170 100% 60%)" opacity={0.9}>
+          <animate attributeName="opacity" values="0.7;1;0.7" dur="2.5s" repeatCount="indefinite" />
         </circle>
-        <circle cx="0" cy="-78" r="2" fill="hsl(175 100% 80%)" />
+        <circle cx="0" cy="-78" r="1.5" fill="hsl(180 100% 85%)" />
       </g>
     </g>
   );
