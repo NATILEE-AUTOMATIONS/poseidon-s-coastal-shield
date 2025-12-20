@@ -11,58 +11,56 @@ interface ImageGallery3DProps {
 
 // DESKTOP ONLY - Simple sequential image reveal after entering doorway
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
-  // Gallery starts very late - after user fully enters the door
+  // Image 1 starts when entering the doorway (around 0.85 progress)
+  const img1Start = 0.85;
+  const img1End = 0.94;
+  
+  // Gallery background starts later
   const galleryStart = 0.995;
   
-  // Don't render until we reach the gallery section
-  if (progress < galleryStart) return null;
+  // Calculate image 1 progress separately (appears earlier)
+  const img1Progress = progress < img1Start ? 0 
+    : progress > img1End ? 1 
+    : (progress - img1Start) / (img1End - img1Start);
+  
+  // Don't render anything until image 1 should start
+  if (progress < img1Start) return null;
   
   // Normalize progress within gallery section (0.995 to 1.0 = 0 to 1)
-  const galleryRange = 1.0 - galleryStart; // 0.005
-  const normalizedProgress = (progress - galleryStart) / galleryRange;
+  const galleryRange = 1.0 - galleryStart;
+  const normalizedProgress = progress < galleryStart ? 0 : (progress - galleryStart) / galleryRange;
   
-  // Background fade in first 20% of gallery
-  const bgOpacity = Math.min(1, normalizedProgress / 0.2);
+  // Background fade in first 20% of gallery (only after gallery starts)
+  const bgOpacity = progress < galleryStart ? 0 : Math.min(1, normalizedProgress / 0.2);
   
-  // Image 1: 10% to 40% of gallery progress
-  const img1Start = 0.1;
-  const img1End = 0.4;
-  const img1Progress = normalizedProgress < img1Start ? 0 
-    : normalizedProgress > img1End ? 1 
-    : (normalizedProgress - img1Start) / (img1End - img1Start);
-  
-  // Image 2: 30% to 60% of gallery progress (overlaps slightly with img1)
-  const img2Start = 0.3;
-  const img2End = 0.6;
-  const img2Progress = normalizedProgress < img2Start ? 0 
-    : normalizedProgress > img2End ? 1 
-    : (normalizedProgress - img2Start) / (img2End - img2Start);
+  // Images 2-4 use the old gallery timing
+  // Image 2: 30% to 60% of gallery progress
+  const img2Progress = normalizedProgress < 0.3 ? 0 
+    : normalizedProgress > 0.6 ? 1 
+    : (normalizedProgress - 0.3) / 0.3;
   
   // Image 3: 50% to 80% of gallery progress
-  const img3Start = 0.5;
-  const img3End = 0.8;
-  const img3Progress = normalizedProgress < img3Start ? 0 
-    : normalizedProgress > img3End ? 1 
-    : (normalizedProgress - img3Start) / (img3End - img3Start);
+  const img3Progress = normalizedProgress < 0.5 ? 0 
+    : normalizedProgress > 0.8 ? 1 
+    : (normalizedProgress - 0.5) / 0.3;
   
   // Final hero image: 70% to 100% of gallery progress
-  const img4Start = 0.7;
-  const img4End = 1.0;
-  const img4Progress = normalizedProgress < img4Start ? 0 
-    : normalizedProgress > img4End ? 1 
-    : (normalizedProgress - img4Start) / (img4End - img4Start);
+  const img4Progress = normalizedProgress < 0.7 ? 0 
+    : normalizedProgress > 1.0 ? 1 
+    : (normalizedProgress - 0.7) / 0.3;
 
   // Simple easing
   const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 
-  // Image 1 animation - slides in from right, fades out
-  const img1Opacity = img1Progress < 0.3 
-    ? img1Progress / 0.3 
-    : img1Progress > 0.7 
-      ? 1 - ((img1Progress - 0.7) / 0.3) 
+  // Image 1 animation - expands from nothing, user walks by it
+  // Starts tiny and centered, grows and shifts as user "passes" it
+  const img1Opacity = img1Progress < 0.15 
+    ? img1Progress / 0.15  // Fade in first 15%
+    : img1Progress > 0.85 
+      ? 1 - ((img1Progress - 0.85) / 0.15)  // Fade out last 15%
       : 1;
-  const img1X = 100 - (easeOut(img1Progress) * 150); // Starts right, moves left
-  const img1Scale = 0.5 + (easeOut(img1Progress) * 0.6);
+  const img1Scale = easeOut(Math.min(img1Progress * 2, 1)); // Scale 0->1 in first half
+  const img1Y = -easeOut(img1Progress) * 200; // Moves up as user "passes" it
 
   // Image 2 animation - slides in from left, fades out
   const img2Opacity = img2Progress < 0.3 
@@ -99,14 +97,14 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
           hsl(15 30% 5% / 1) 100%)`,
       }}
     >
-      {/* Image 1 - slides from right */}
+      {/* Image 1 - expands from nothing, user walks by */}
       {img1Progress > 0 && img1Opacity > 0.01 && (
         <div
           className="absolute"
           style={{
             left: '50%',
             top: '50%',
-            transform: `translate(calc(-50% + ${img1X}px), -50%) scale(${img1Scale})`,
+            transform: `translate(-50%, calc(-50% + ${img1Y}px)) scale(${img1Scale})`,
             opacity: img1Opacity,
           }}
         >
