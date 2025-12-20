@@ -135,8 +135,8 @@ const RoofBuildSection: React.FC = () => {
     x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
   const easedZoom = easeInOutQuad(zoomProgress);
   
-  // Scale: 1x → 100x for complete doorway immersion (DESKTOP ONLY - mobile stays at 1)
-  const zoomScale = isMobile ? 1 : 1 + (easedZoom * 99);
+  // Scale: 1x → 250x for full doorway pass-through (DESKTOP ONLY - mobile stays at 1)
+  const zoomScale = isMobile ? 1 : 1 + (easedZoom * 249);
   
   // Delayed warm light - DESKTOP ONLY
   const lightProgress = isMobile ? 0 : Math.max(0, (zoomProgress - 0.2) / 0.8);
