@@ -25,7 +25,7 @@ import YardSign from './RoofBuild/YardSign';
 
 
 import { useScrollContext } from '@/context/ScrollContext';
-import ImageGallery3D from './RoofBuild/ImageGallery3D';
+// ImageGallery3D removed
 
 import { useIsMobile } from '@/hooks/use-mobile';
 
