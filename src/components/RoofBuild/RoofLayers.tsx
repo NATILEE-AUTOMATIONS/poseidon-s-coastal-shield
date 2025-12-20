@@ -1965,7 +1965,7 @@ export const CleanUpRevealText: React.FC<{
 export const CleanUpLayer: React.FC<LayerProps> = () => null;
 export const MobileShingleOverlay: React.FC<LayerProps> = () => null;
 
-// Neon palm tree SVG that drops into place
+// World-class neon palm tree SVG that drops into place
 export const FallingPalmTree: React.FC<{ 
   truckProgress: number;
   truckStartProgress: number;
@@ -1985,12 +1985,11 @@ export const FallingPalmTree: React.FC<{
   
   const easedProgress = easeOutQuint(layerProgress);
   const translateY = -120 * (1 - easedProgress);
-  const glowIntensity = 3 + easedProgress * 5;
   
   // Tree position
   const baseX = 52;
   const baseY = 268;
-  const scale = 0.85;
+  const scale = 0.95;
   
   return (
     <g 
@@ -1998,116 +1997,143 @@ export const FallingPalmTree: React.FC<{
       style={{ transform: `translateY(${translateY}px)` }}
     >
       <g transform={`translate(${baseX}, ${baseY}) scale(${scale})`}>
-        {/* Trunk - warm orange/yellow gradient glow */}
         <defs>
-          <linearGradient id="trunkGradient" x1="0%" y1="100%" x2="0%" y2="0%">
-            <stop offset="0%" stopColor="hsl(35 100% 50%)" />
-            <stop offset="50%" stopColor="hsl(40 100% 55%)" />
-            <stop offset="100%" stopColor="hsl(45 100% 60%)" />
+          {/* Premium trunk gradient - vibrant orange to yellow */}
+          <linearGradient id="palmTrunkGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stopColor="hsl(25 100% 45%)" />
+            <stop offset="30%" stopColor="hsl(35 100% 55%)" />
+            <stop offset="60%" stopColor="hsl(42 100% 58%)" />
+            <stop offset="100%" stopColor="hsl(48 100% 62%)" />
           </linearGradient>
-          <linearGradient id="frondGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="hsl(175 100% 50%)" />
-            <stop offset="50%" stopColor="hsl(168 100% 55%)" />
-            <stop offset="100%" stopColor="hsl(160 100% 50%)" />
+          
+          {/* Premium frond gradients - rich cyan/teal */}
+          <linearGradient id="palmFrondMain" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="hsl(175 100% 45%)" />
+            <stop offset="50%" stopColor="hsl(170 100% 55%)" />
+            <stop offset="100%" stopColor="hsl(165 100% 50%)" />
           </linearGradient>
-          <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation={glowIntensity} result="blur" />
+          <linearGradient id="palmFrondBright" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="hsl(180 100% 55%)" />
+            <stop offset="100%" stopColor="hsl(172 100% 60%)" />
+          </linearGradient>
+          
+          {/* Multi-layer glow filter for premium neon effect */}
+          <filter id="palmNeonGlowOuter" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur1" />
+            <feColorMatrix in="blur1" type="matrix" values="1 0 0 0 0  0 1 0 0 0.8  0 0 1 0 0.6  0 0 0 0.6 0" />
+          </filter>
+          <filter id="palmNeonGlowMiddle" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur2" />
+            <feColorMatrix in="blur2" type="matrix" values="1 0 0 0 0.1  0 1 0 0 0.9  0 0 1 0 0.8  0 0 0 0.8 0" />
+          </filter>
+          <filter id="palmNeonGlowInner" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur3" />
             <feMerge>
-              <feMergeNode in="blur" />
+              <feMergeNode in="blur3" />
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
+          
+          {/* Orange glow for trunk */}
+          <filter id="palmTrunkGlow" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="trunkBlur" />
+            <feColorMatrix in="trunkBlur" type="matrix" values="1 0 0 0 0.2  0 0.6 0 0 0  0 0 0.2 0 0  0 0 0 0.7 0" />
+          </filter>
         </defs>
         
-        {/* Trunk with segments */}
-        <g filter="url(#neonGlow)">
+        {/* === TRUNK === */}
+        {/* Outer glow layer */}
+        <g filter="url(#palmTrunkGlow)">
           <path
-            d="M0,-75 C-2,-55 -3,-35 -1,-15 C1,5 2,20 0,0"
+            d="M0,-78 C-3,-60 -4,-40 -2,-20 C0,0 1,8 0,5"
             fill="none"
-            stroke="url(#trunkGradient)"
-            strokeWidth="4"
+            stroke="hsl(38 100% 55%)"
+            strokeWidth="8"
             strokeLinecap="round"
           />
-          {/* Trunk segments/notches */}
-          {[-65, -55, -45, -35, -25, -15, -5].map((y, i) => (
+        </g>
+        
+        {/* Main trunk with curved segments */}
+        <g filter="url(#palmNeonGlowInner)">
+          <path
+            d="M0,-78 C-3,-60 -4,-40 -2,-20 C0,0 1,8 0,5"
+            fill="none"
+            stroke="url(#palmTrunkGradient)"
+            strokeWidth="5"
+            strokeLinecap="round"
+          />
+          
+          {/* Trunk ring segments - curved for realism */}
+          {[-70, -62, -54, -46, -38, -30, -22, -14, -6].map((y, i) => (
             <path
-              key={i}
-              d={`M${-3 + (i % 2)},${y} Q${0},${y - 2} ${3 - (i % 2)},${y}`}
+              key={`ring-${i}`}
+              d={`M${-4 + Math.sin(i * 0.5)},${y} Q${0},${y - 1.5} ${4 - Math.sin(i * 0.5)},${y}`}
               fill="none"
-              stroke="url(#trunkGradient)"
-              strokeWidth="1.5"
+              stroke="hsl(42 100% 65%)"
+              strokeWidth="1.2"
               strokeLinecap="round"
-              opacity={0.8}
+              opacity={0.9}
             />
           ))}
         </g>
         
-        {/* Palm fronds - radiating from top */}
-        <g filter="url(#neonGlow)">
-          {/* Center frond - pointing up */}
-          <path
-            d="M0,-75 Q2,-90 0,-105 M0,-80 Q-4,-88 -8,-92 M0,-80 Q4,-88 8,-92 M0,-85 Q-3,-92 -5,-98 M0,-85 Q3,-92 5,-98"
-            fill="none"
-            stroke="url(#frondGradient)"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-          
-          {/* Right fronds */}
-          <path
-            d="M0,-75 Q15,-82 32,-78 M5,-78 Q18,-82 28,-80 M8,-80 Q20,-83 30,-82"
-            fill="none"
-            stroke="hsl(170 100% 55%)"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-          <path
-            d="M0,-75 Q18,-72 38,-62 M6,-74 Q22,-70 35,-64 M10,-73 Q25,-70 36,-66"
-            fill="none"
-            stroke="hsl(175 100% 50%)"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-          />
-          <path
-            d="M0,-75 Q15,-68 35,-52 M5,-72 Q18,-66 32,-55 M8,-70 Q20,-65 30,-56"
-            fill="none"
-            stroke="hsl(180 100% 50%)"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-          
-          {/* Left fronds */}
-          <path
-            d="M0,-75 Q-15,-82 -32,-78 M-5,-78 Q-18,-82 -28,-80 M-8,-80 Q-20,-83 -30,-82"
-            fill="none"
-            stroke="hsl(170 100% 55%)"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-          <path
-            d="M0,-75 Q-18,-72 -38,-62 M-6,-74 Q-22,-70 -35,-64 M-10,-73 Q-25,-70 -36,-66"
-            fill="none"
-            stroke="hsl(175 100% 50%)"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-          />
-          <path
-            d="M0,-75 Q-15,-68 -35,-52 M-5,-72 Q-18,-66 -32,-55 M-8,-70 Q-20,-65 -30,-56"
-            fill="none"
-            stroke="hsl(180 100% 50%)"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-          
-          {/* Additional detail fronds for fullness */}
-          <path
-            d="M0,-75 Q12,-85 22,-90 M0,-75 Q-12,-85 -22,-90"
-            fill="none"
-            stroke="hsl(165 100% 52%)"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
+        {/* === FRONDS === */}
+        {/* Outer glow layer for fronds */}
+        <g filter="url(#palmNeonGlowOuter)" opacity={0.5}>
+          <path d="M0,-78 Q0,-95 0,-115 M0,-78 Q25,-88 50,-80 M0,-78 Q-25,-88 -50,-80 M0,-78 Q30,-78 55,-65 M0,-78 Q-30,-78 -55,-65 M0,-78 Q28,-70 50,-50 M0,-78 Q-28,-70 -50,-50" fill="none" stroke="hsl(175 100% 50%)" strokeWidth="6" strokeLinecap="round" />
         </g>
+        
+        {/* Middle glow layer */}
+        <g filter="url(#palmNeonGlowMiddle)" opacity={0.7}>
+          <path d="M0,-78 Q0,-95 0,-115 M0,-78 Q25,-88 50,-80 M0,-78 Q-25,-88 -50,-80 M0,-78 Q30,-78 55,-65 M0,-78 Q-30,-78 -55,-65 M0,-78 Q28,-70 50,-50 M0,-78 Q-28,-70 -50,-50" fill="none" stroke="hsl(172 100% 55%)" strokeWidth="4" strokeLinecap="round" />
+        </g>
+        
+        {/* Main frond paths with detail */}
+        <g filter="url(#palmNeonGlowInner)">
+          {/* Center frond - upward */}
+          <path d="M0,-78 Q1,-96 0,-118" fill="none" stroke="url(#palmFrondMain)" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M0,-85 Q-5,-95 -10,-102 M0,-85 Q5,-95 10,-102" fill="none" stroke="hsl(175 100% 55%)" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M0,-92 Q-4,-100 -7,-108 M0,-92 Q4,-100 7,-108" fill="none" stroke="hsl(172 100% 58%)" strokeWidth="1.2" strokeLinecap="round" />
+          <path d="M0,-100 Q-3,-106 -5,-112 M0,-100 Q3,-106 5,-112" fill="none" stroke="hsl(170 100% 60%)" strokeWidth="1" strokeLinecap="round" />
+          
+          {/* Right upper frond */}
+          <path d="M0,-78 Q18,-90 42,-88" fill="none" stroke="url(#palmFrondMain)" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M8,-82 Q18,-88 30,-88 M12,-84 Q22,-88 35,-87 M18,-85 Q28,-88 40,-86" fill="none" stroke="hsl(175 100% 55%)" strokeWidth="1.3" strokeLinecap="round" />
+          
+          {/* Right middle frond */}
+          <path d="M0,-78 Q24,-82 52,-72" fill="none" stroke="url(#palmFrondBright)" strokeWidth="2.3" strokeLinecap="round" />
+          <path d="M10,-79 Q28,-80 45,-74 M16,-78 Q34,-78 48,-73 M22,-77 Q38,-76 50,-72" fill="none" stroke="hsl(172 100% 58%)" strokeWidth="1.2" strokeLinecap="round" />
+          
+          {/* Right lower frond */}
+          <path d="M0,-78 Q22,-74 48,-56" fill="none" stroke="url(#palmFrondMain)" strokeWidth="2" strokeLinecap="round" />
+          <path d="M8,-76 Q24,-72 40,-60 M14,-74 Q30,-70 44,-58 M20,-72 Q34,-68 46,-56" fill="none" stroke="hsl(178 100% 52%)" strokeWidth="1.1" strokeLinecap="round" />
+          
+          {/* Left upper frond */}
+          <path d="M0,-78 Q-18,-90 -42,-88" fill="none" stroke="url(#palmFrondMain)" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M-8,-82 Q-18,-88 -30,-88 M-12,-84 Q-22,-88 -35,-87 M-18,-85 Q-28,-88 -40,-86" fill="none" stroke="hsl(175 100% 55%)" strokeWidth="1.3" strokeLinecap="round" />
+          
+          {/* Left middle frond */}
+          <path d="M0,-78 Q-24,-82 -52,-72" fill="none" stroke="url(#palmFrondBright)" strokeWidth="2.3" strokeLinecap="round" />
+          <path d="M-10,-79 Q-28,-80 -45,-74 M-16,-78 Q-34,-78 -48,-73 M-22,-77 Q-38,-76 -50,-72" fill="none" stroke="hsl(172 100% 58%)" strokeWidth="1.2" strokeLinecap="round" />
+          
+          {/* Left lower frond */}
+          <path d="M0,-78 Q-22,-74 -48,-56" fill="none" stroke="url(#palmFrondMain)" strokeWidth="2" strokeLinecap="round" />
+          <path d="M-8,-76 Q-24,-72 -40,-60 M-14,-74 Q-30,-70 -44,-58 M-20,-72 Q-34,-68 -46,-56" fill="none" stroke="hsl(178 100% 52%)" strokeWidth="1.1" strokeLinecap="round" />
+          
+          {/* Extra detail fronds for fullness */}
+          <path d="M0,-78 Q14,-92 28,-98 M0,-78 Q-14,-92 -28,-98" fill="none" stroke="hsl(168 100% 55%)" strokeWidth="1.8" strokeLinecap="round" />
+          <path d="M4,-80 Q16,-90 26,-95 M-4,-80 Q-16,-90 -26,-95" fill="none" stroke="hsl(170 100% 58%)" strokeWidth="1.2" strokeLinecap="round" />
+          
+          {/* Drooping lower fronds for realism */}
+          <path d="M0,-78 Q18,-68 38,-45" fill="none" stroke="hsl(180 100% 48%)" strokeWidth="1.6" strokeLinecap="round" />
+          <path d="M0,-78 Q-18,-68 -38,-45" fill="none" stroke="hsl(180 100% 48%)" strokeWidth="1.6" strokeLinecap="round" />
+          <path d="M6,-76 Q20,-66 35,-48 M-6,-76 Q-20,-66 -35,-48" fill="none" stroke="hsl(178 100% 52%)" strokeWidth="1" strokeLinecap="round" />
+        </g>
+        
+        {/* Highlight glow at frond center */}
+        <circle cx="0" cy="-78" r="3" fill="hsl(175 100% 70%)" opacity={0.8}>
+          <animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite" />
+        </circle>
       </g>
     </g>
   );
