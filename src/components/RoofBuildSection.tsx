@@ -298,21 +298,23 @@ const RoofBuildSection: React.FC = () => {
                   {/* Palm trees and yard sign - INSIDE the house SVG so they scale with the house */}
                   {!isMobile && (
                     <>
-                      {/* Palm tree drops into place - left side */}
+                      {/* Palm tree 1 - left side, enters first */}
                       <FallingPalmTree 
                         truckProgress={progress}
                         truckStartProgress={layers[10].start}
                         truckEndProgress={layers[10].end}
                         isMobile={isMobile}
+                        delayOffset={0}
                       />
                       
-                      {/* Palm tree drops into place - right side (mirrored) */}
+                      {/* Palm tree 2 - right side (mirrored), enters after palm tree 1 */}
                       <FallingPalmTree 
                         truckProgress={progress}
                         truckStartProgress={layers[10].start}
                         truckEndProgress={layers[10].end}
                         isMobile={isMobile}
                         mirrored
+                        delayOffset={0.08}
                       />
                       
                       {/* Yard sign drops in to the right of the door */}

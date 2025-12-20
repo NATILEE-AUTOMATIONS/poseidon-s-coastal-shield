@@ -1977,38 +1977,53 @@ export const CleanUpRevealText: React.FC<{
 export const CleanUpLayer: React.FC<LayerProps> = () => null;
 export const MobileShingleOverlay: React.FC<LayerProps> = () => null;
 
-// World-class neon palm tree SVG that drops into place
+// World-class neon palm tree SVG with smooth entrance animation
 export const FallingPalmTree: React.FC<{ 
   truckProgress: number;
   truckStartProgress: number;
   truckEndProgress: number;
   isMobile?: boolean;
   mirrored?: boolean;
-}> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile, mirrored = false }) => {
+  delayOffset?: number; // 0-1 fraction of duration to delay entrance
+}> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile, mirrored = false, delayOffset = 0 }) => {
   if (isMobile) return null;
   
   const truckDuration = truckEndProgress - truckStartProgress;
-  const dropStart = truckStartProgress + (truckDuration * 0.70);
-  const dropEnd = truckStartProgress + (truckDuration * 0.90);
+  // Apply delay offset for staggered entrance
+  const dropStart = truckStartProgress + (truckDuration * 0.70) + (truckDuration * delayOffset);
+  const dropEnd = truckStartProgress + (truckDuration * 0.95) + (truckDuration * delayOffset);
   
   const rawProgress = (truckProgress - dropStart) / (dropEnd - dropStart);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
   if (truckProgress < dropStart) return null;
   
+  // Custom easing for smooth, elegant entrance
   const easedProgress = easeOutQuint(layerProgress);
-  const translateY = -120 * (1 - easedProgress);
+  
+  // Slide up from below with gentle easing
+  const translateY = 80 * (1 - easedProgress);
+  
+  // Fade in smoothly
+  const opacity = Math.min(1, easedProgress * 2);
+  
+  // Subtle scale for growth effect
+  const scaleAnim = 0.7 + (easedProgress * 0.3);
   
   // Tree position - mirrored version on the right side
   const baseX = mirrored ? 348 : 52;
   const baseY = 268;
-  const scale = 0.95;
+  const scale = 0.95 * scaleAnim;
   const scaleX = mirrored ? -1 : 1;
   
   return (
     <g 
       className="palm-tree-layer"
-      style={{ transform: `translateY(${translateY}px)` }}
+      style={{ 
+        transform: `translateY(${translateY}px)`,
+        opacity,
+        transition: 'opacity 0.1s ease-out',
+      }}
     >
       <g transform={`translate(${baseX}, ${baseY}) scale(${scaleX * scale}, ${scale})`}>
         <defs>
