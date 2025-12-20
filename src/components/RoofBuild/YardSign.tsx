@@ -2,7 +2,9 @@ import React from 'react';
 import poseidonLogo from '@/assets/poseidon-logo.png';
 
 interface YardSignProps {
-  progress: number;
+  truckProgress: number;
+  truckStartProgress: number;
+  truckEndProgress: number;
   isMobile?: boolean;
 }
 
@@ -13,17 +15,19 @@ const easeInOutQuad = (x: number): number => {
     : 1 - Math.pow(-2 * x + 2, 2) / 2;
 };
 
-const YardSign: React.FC<YardSignProps> = ({ progress, isMobile }) => {
-  // Animation timing - after underlayment finishes on mobile (~0.82), desktop unchanged
-  const dropStart = isMobile ? 0.85 : 0.78;
-  const dropEnd = isMobile ? 0.92 : 0.82;
-  // No fade out - sign stays visible until zoom takes over
+const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile }) => {
+  if (isMobile) return null;
+  
+  const truckDuration = truckEndProgress - truckStartProgress;
+  // Drop in after palm trees (they start at 0.70)
+  const dropStart = truckStartProgress + (truckDuration * 0.75);
+  const dropEnd = truckStartProgress + (truckDuration * 0.92);
 
   // Calculate drop animation (enters from above)
   let dropProgress = 0;
-  if (progress >= dropStart && progress < dropEnd) {
-    dropProgress = (progress - dropStart) / (dropEnd - dropStart);
-  } else if (progress >= dropEnd) {
+  if (truckProgress >= dropStart && truckProgress < dropEnd) {
+    dropProgress = (truckProgress - dropStart) / (dropEnd - dropStart);
+  } else if (truckProgress >= dropEnd) {
     dropProgress = 1;
   }
 
@@ -38,7 +42,7 @@ const YardSign: React.FC<YardSignProps> = ({ progress, isMobile }) => {
 
   // No fade out - just hide before drop starts
   let opacity = entryOpacity;
-  if (progress < dropStart) {
+  if (truckProgress < dropStart) {
     opacity = 0;
   }
 
@@ -46,10 +50,10 @@ const YardSign: React.FC<YardSignProps> = ({ progress, isMobile }) => {
 
   return (
     <g
-      transform="translate(320, 265)"
+      className="yard-sign-layer"
       style={{
         opacity,
-        transform: `translate(320px, ${265 + translateY}px)`,
+        transform: `translate(280px, ${265 + translateY}px)`,
       }}
     >
       {/* Sign post */}

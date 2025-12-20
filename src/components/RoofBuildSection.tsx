@@ -21,6 +21,7 @@ import {
   FallingPalmTree,
   materialInfo,
 } from './RoofBuild/RoofLayers';
+import YardSign from './RoofBuild/YardSign';
 
 
 import { useScrollContext } from '@/context/ScrollContext';
@@ -420,8 +421,25 @@ const RoofBuildSection: React.FC = () => {
                   className="absolute inset-0 w-full h-full"
                   style={{ overflow: 'visible' }}
                 >
-                  {/* Palm tree drops into place */}
+                  {/* Palm tree drops into place - left side */}
                   <FallingPalmTree 
+                    truckProgress={progress}
+                    truckStartProgress={layers[10].start}
+                    truckEndProgress={layers[10].end}
+                    isMobile={isMobile}
+                  />
+                  
+                  {/* Palm tree drops into place - right side (mirrored) */}
+                  <FallingPalmTree 
+                    truckProgress={progress}
+                    truckStartProgress={layers[10].start}
+                    truckEndProgress={layers[10].end}
+                    isMobile={isMobile}
+                    mirrored
+                  />
+                  
+                  {/* Yard sign drops in to the right of the door */}
+                  <YardSign 
                     truckProgress={progress}
                     truckStartProgress={layers[10].start}
                     truckEndProgress={layers[10].end}

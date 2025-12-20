@@ -1901,11 +1901,23 @@ export const CleanUpRevealText: React.FC<{
   // Don't show until truck has started
   if (truckProgress < truckStartProgress) return null;
   
-  // Opacity fades in as truck approaches, then stays visible
-  const opacity = layerProgress < backPhaseEnd 
+  // Fade out after text is fully revealed - starts fading at 85% of truck animation
+  const fadeOutStart = 0.80;
+  const fadeOutEnd = 0.95;
+  let fadeOutOpacity = 1;
+  if (layerProgress > fadeOutStart) {
+    fadeOutOpacity = Math.max(0, 1 - ((layerProgress - fadeOutStart) / (fadeOutEnd - fadeOutStart)));
+  }
+  
+  // Opacity fades in as truck approaches, then stays visible, then fades out
+  const baseOpacity = layerProgress < backPhaseEnd 
     ? Math.min(0.4, layerProgress / backPhaseEnd * 0.4) // Subtle hint while backing in
     : 0.4 + (easedReveal * 0.6); // Full opacity as revealed
   
+  const opacity = baseOpacity * fadeOutOpacity;
+  
+  // Don't render if fully faded out
+  if (opacity <= 0) return null;
   
   return (
     <g className="cleanup-reveal-text">
@@ -1971,12 +1983,13 @@ export const FallingPalmTree: React.FC<{
   truckStartProgress: number;
   truckEndProgress: number;
   isMobile?: boolean;
-}> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile }) => {
+  mirrored?: boolean;
+}> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile, mirrored = false }) => {
   if (isMobile) return null;
   
   const truckDuration = truckEndProgress - truckStartProgress;
-  const dropStart = truckStartProgress + (truckDuration * 0.55);
-  const dropEnd = truckStartProgress + (truckDuration * 0.80);
+  const dropStart = truckStartProgress + (truckDuration * 0.70);
+  const dropEnd = truckStartProgress + (truckDuration * 0.90);
   
   const rawProgress = (truckProgress - dropStart) / (dropEnd - dropStart);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
@@ -1986,17 +1999,18 @@ export const FallingPalmTree: React.FC<{
   const easedProgress = easeOutQuint(layerProgress);
   const translateY = -120 * (1 - easedProgress);
   
-  // Tree position
-  const baseX = 52;
+  // Tree position - mirrored version on the right side
+  const baseX = mirrored ? 348 : 52;
   const baseY = 268;
   const scale = 0.95;
+  const scaleX = mirrored ? -1 : 1;
   
   return (
     <g 
       className="palm-tree-layer"
       style={{ transform: `translateY(${translateY}px)` }}
     >
-      <g transform={`translate(${baseX}, ${baseY}) scale(${scale})`}>
+      <g transform={`translate(${baseX}, ${baseY}) scale(${scaleX * scale}, ${scale})`}>
         <defs>
           {/* Premium trunk gradient - vibrant orange to yellow */}
           <linearGradient id="palmTrunkGradient" x1="0%" y1="100%" x2="0%" y2="0%">
