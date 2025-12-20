@@ -2001,14 +2001,14 @@ export const FallingPalmTree: React.FC<{
   // Custom easing for smooth, elegant entrance
   const easedProgress = easeOutQuint(layerProgress);
   
-  // Slide up from below with gentle easing
-  const translateY = 80 * (1 - easedProgress);
+  // Fall from sky (start above, drop down to position)
+  const translateY = -150 * (1 - easedProgress);
   
   // Fade in smoothly
   const opacity = Math.min(1, easedProgress * 2);
   
   // Subtle scale for growth effect
-  const scaleAnim = 0.7 + (easedProgress * 0.3);
+  const scaleAnim = 0.85 + (easedProgress * 0.15);
   
   // Tree position - mirrored version on the right side
   const baseX = mirrored ? 348 : 52;
