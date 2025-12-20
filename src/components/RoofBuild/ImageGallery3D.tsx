@@ -5,316 +5,206 @@ import aerialEstatePool from '@/assets/aerial-estate-pool.png';
 import multilevelRoofTeam from '@/assets/multilevel-roof-team.png';
 import TestimonialReveal from './TestimonialReveal';
 
-// Exponential ease-out for dramatic zoom effect
-const easeOutExpo = (t: number): number => {
-  return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-};
-
 interface ImageGallery3DProps {
   progress: number;
 }
 
-// DESKTOP ONLY - This component handles the billboard drive-by effect
-// Images appear AFTER the user has fully entered the doorway (well after zoom complete)
+// DESKTOP ONLY - Simple sequential image reveal after entering doorway
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
-  // Gallery background fade-in - starts very late, after user fully "enters" door
-  const galleryBgStart = 0.995;
+  // Gallery starts very late - after user fully enters the door
+  const galleryStart = 0.995;
   
-  // Much slower, more spread out timing for images
-  // Each image gets more scroll distance to animate properly
-  const anim1Start = 0.996;
-  const anim1Duration = 0.0015; // Slower animation
-  const anim1Progress = progress >= anim1Start 
-    ? Math.min(1, (progress - anim1Start) / anim1Duration) 
-    : 0;
+  // Don't render until we reach the gallery section
+  if (progress < galleryStart) return null;
   
-  // Image 2 timing - later with more space
-  const anim2Start = 0.9975;
-  const anim2Duration = 0.0015;
-  const anim2Progress = progress >= anim2Start 
-    ? Math.min(1, (progress - anim2Start) / anim2Duration)
-    : 0;
+  // Normalize progress within gallery section (0.995 to 1.0 = 0 to 1)
+  const galleryRange = 1.0 - galleryStart; // 0.005
+  const normalizedProgress = (progress - galleryStart) / galleryRange;
   
-  // Image 3 timing
-  const anim3Start = 0.999;
-  const anim3Duration = 0.001;
-  const anim3Progress = progress >= anim3Start 
-    ? Math.min(1, (progress - anim3Start) / anim3Duration)
-    : 0;
-    
-  const galleryBgOpacity = progress >= galleryBgStart 
-    ? Math.min(1, (progress - galleryBgStart) / 0.002)
-    : 0;
+  // Background fade in first 20% of gallery
+  const bgOpacity = Math.min(1, normalizedProgress / 0.2);
   
-  // Don't render anything until background starts fading in
-  if (progress < galleryBgStart) return null;
+  // Image 1: 10% to 40% of gallery progress
+  const img1Start = 0.1;
+  const img1End = 0.4;
+  const img1Progress = normalizedProgress < img1Start ? 0 
+    : normalizedProgress > img1End ? 1 
+    : (normalizedProgress - img1Start) / (img1End - img1Start);
+  
+  // Image 2: 30% to 60% of gallery progress (overlaps slightly with img1)
+  const img2Start = 0.3;
+  const img2End = 0.6;
+  const img2Progress = normalizedProgress < img2Start ? 0 
+    : normalizedProgress > img2End ? 1 
+    : (normalizedProgress - img2Start) / (img2End - img2Start);
+  
+  // Image 3: 50% to 80% of gallery progress
+  const img3Start = 0.5;
+  const img3End = 0.8;
+  const img3Progress = normalizedProgress < img3Start ? 0 
+    : normalizedProgress > img3End ? 1 
+    : (normalizedProgress - img3Start) / (img3End - img3Start);
+  
+  // Final hero image: 70% to 100% of gallery progress
+  const img4Start = 0.7;
+  const img4End = 1.0;
+  const img4Progress = normalizedProgress < img4Start ? 0 
+    : normalizedProgress > img4End ? 1 
+    : (normalizedProgress - img4Start) / (img4End - img4Start);
 
-  // Fade timing
-  const fadeOutStart = 0.75;
-  const fadeInSpeed = 0.15;
+  // Simple easing
+  const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 
-  // Image 1: drifts LEFT
-  const left1Percent = 55 - (anim1Progress * 85);
-  const scale1 = 0.25 + (anim1Progress * 1.3);
-  const top1Percent = 50 - (Math.sin(anim1Progress * Math.PI) * 15);
-  const opacity1 = anim1Progress < fadeInSpeed 
-    ? anim1Progress / fadeInSpeed
-    : anim1Progress > fadeOutStart 
-      ? 1 - ((anim1Progress - fadeOutStart) / (1 - fadeOutStart))
+  // Image 1 animation - slides in from right, fades out
+  const img1Opacity = img1Progress < 0.3 
+    ? img1Progress / 0.3 
+    : img1Progress > 0.7 
+      ? 1 - ((img1Progress - 0.7) / 0.3) 
       : 1;
+  const img1X = 100 - (easeOut(img1Progress) * 150); // Starts right, moves left
+  const img1Scale = 0.5 + (easeOut(img1Progress) * 0.6);
 
-  // Image 2: drifts RIGHT
-  const left2Percent = 45 + (anim2Progress * 85);
-  const scale2 = 0.25 + (anim2Progress * 1.3);
-  const top2Percent = 50 - (Math.sin(anim2Progress * Math.PI) * 15);
-  const opacity2 = anim2Progress < fadeInSpeed 
-    ? anim2Progress / fadeInSpeed
-    : anim2Progress > fadeOutStart 
-      ? 1 - ((anim2Progress - fadeOutStart) / (1 - fadeOutStart))
+  // Image 2 animation - slides in from left, fades out
+  const img2Opacity = img2Progress < 0.3 
+    ? img2Progress / 0.3 
+    : img2Progress > 0.7 
+      ? 1 - ((img2Progress - 0.7) / 0.3) 
       : 1;
+  const img2X = -100 + (easeOut(img2Progress) * 150); // Starts left, moves right
+  const img2Scale = 0.5 + (easeOut(img2Progress) * 0.6);
 
-  // Image 3: drifts LEFT
-  const left3Percent = 55 - (anim3Progress * 85);
-  const scale3 = 0.25 + (anim3Progress * 1.3);
-  const top3Percent = 50 - (Math.sin(anim3Progress * Math.PI) * 15);
-  const opacity3 = anim3Progress < fadeInSpeed 
-    ? anim3Progress / fadeInSpeed
-    : anim3Progress > fadeOutStart 
-      ? 1 - ((anim3Progress - fadeOutStart) / (1 - fadeOutStart))
+  // Image 3 animation - slides in from right
+  const img3Opacity = img3Progress < 0.3 
+    ? img3Progress / 0.3 
+    : img3Progress > 0.7 
+      ? 1 - ((img3Progress - 0.7) / 0.3) 
       : 1;
+  const img3X = 100 - (easeOut(img3Progress) * 150);
+  const img3Scale = 0.5 + (easeOut(img3Progress) * 0.6);
 
-  // Image 4 timing - the grand reveal, starts with first image
-  const anim4Start = 0.996;
-  const anim4Duration = 0.004;
-  const anim4Progress = progress >= anim4Start 
-    ? Math.min(1, (progress - anim4Start) / anim4Duration)
-    : 0;
-  
-  const easedProgress4 = easeOutExpo(anim4Progress);
-  
-  // Scale with overshoot effect
-  const baseScale4 = 0.05;
-  const maxScale4 = 1.15;
-  const scale4 = (() => {
-    const scaleOvershoot = anim4Progress > 0.8 
-      ? maxScale4 - ((anim4Progress - 0.8) / 0.2) * 0.15 
-      : baseScale4 + (easedProgress4 * (maxScale4 - baseScale4 + 0.1));
-    return Math.max(baseScale4, scaleOvershoot);
-  })();
-  
-  // 3D rotation
-  const rotateY4 = 0;
-  const rotateX4 = -45 + (easedProgress4 * 45);
-  
-  // Vertical descent: starts above viewport, drops to center
-  const top4Percent = -30 + (easedProgress4 * 65); // -30% → 35%
-  
-  // Opacity: quick fade in
-  const opacity4 = anim4Progress < 0.15 
-    ? anim4Progress / 0.15 
-    : 1;
-  
-  // Light burst intensity: peaks at 40-60% of animation
-  const lightBurstIntensity = Math.sin(anim4Progress * Math.PI) * 0.8;
-
-  // Combined opacity for background
-  const bgOpacity = Math.max(opacity1, opacity2, opacity3, opacity4);
+  // Image 4 (hero) - dramatic center zoom, stays visible
+  const img4Opacity = img4Progress < 0.2 ? img4Progress / 0.2 : 1;
+  const img4Scale = 0.3 + (easeOut(img4Progress) * 0.8);
+  const img4Y = 50 - (easeOut(img4Progress) * 50); // Drops from above
 
   return (
     <div 
       className="fixed inset-0 pointer-events-none"
       style={{
         zIndex: 105,
-        perspective: '1200px',
-        opacity: galleryBgOpacity,  // Smooth fade-in for entire gallery
-        background: `radial-gradient(ellipse 80% 60% at 70% 30%, 
-          hsl(25 40% 15% / ${Math.min(bgOpacity, 0.95)}) 0%, 
-          hsl(20 30% 8% / ${Math.min(bgOpacity, 1)}) 50%,
-          hsl(15 20% 5% / ${Math.min(bgOpacity, 1)}) 100%)`,
+        opacity: bgOpacity,
+        background: `radial-gradient(ellipse 100% 80% at 50% 40%, 
+          hsl(25 50% 12% / 0.98) 0%, 
+          hsl(20 40% 8% / 1) 50%,
+          hsl(15 30% 5% / 1) 100%)`,
       }}
     >
-      {/* Image 1 - drive-by from right to left */}
-      {anim1Progress > 0 && opacity1 > 0 && (
+      {/* Image 1 - slides from right */}
+      {img1Progress > 0 && img1Opacity > 0.01 && (
         <div
           className="absolute"
           style={{
-            left: `${left1Percent}%`,
-            top: `${top1Percent}%`,
-            transform: `translate(-50%, -50%) scale(${scale1})`,
-            opacity: opacity1,
-            transformStyle: 'preserve-3d',
+            left: '50%',
+            top: '50%',
+            transform: `translate(calc(-50% + ${img1X}px), -50%) scale(${img1Scale})`,
+            opacity: img1Opacity,
           }}
         >
           <div
-            className="relative overflow-hidden"
+            className="overflow-hidden rounded-xl"
             style={{
-              borderRadius: '12px',
-              boxShadow: `
-                0 4px 20px hsl(0 0% 0% / 0.4),
-                0 8px 40px hsl(0 0% 0% / 0.5),
-                0 16px 60px hsl(0 0% 0% / 0.6)
-              `,
+              boxShadow: '0 20px 60px hsl(0 0% 0% / 0.6), 0 10px 30px hsl(0 0% 0% / 0.4)',
             }}
           >
             <img
               src={coastalRoofImage}
               alt="Completed coastal roof project"
-              style={{
-                width: '60vw',
-                maxWidth: '800px',
-                height: 'auto',
-                maxHeight: '55vh',
-                objectFit: 'cover',
-                display: 'block',
-              }}
+              className="w-[50vw] max-w-[700px] h-auto max-h-[50vh] object-cover"
             />
           </div>
         </div>
       )}
 
-      {/* Image 2 - drive-by from left to right (MIRRORED) */}
-      {anim2Progress > 0 && opacity2 > 0 && (
+      {/* Image 2 - slides from left */}
+      {img2Progress > 0 && img2Opacity > 0.01 && (
         <div
           className="absolute"
           style={{
-            left: `${left2Percent}%`,
-            top: `${top2Percent}%`,
-            transform: `translate(-50%, -50%) scale(${scale2})`,
-            opacity: opacity2,
-            transformStyle: 'preserve-3d',
+            left: '50%',
+            top: '50%',
+            transform: `translate(calc(-50% + ${img2X}px), -50%) scale(${img2Scale})`,
+            opacity: img2Opacity,
           }}
         >
           <div
-            className="relative overflow-hidden"
+            className="overflow-hidden rounded-xl"
             style={{
-              borderRadius: '12px',
-              boxShadow: `
-                0 4px 20px hsl(0 0% 0% / 0.4),
-                0 8px 40px hsl(0 0% 0% / 0.5),
-                0 16px 60px hsl(0 0% 0% / 0.6)
-              `,
+              boxShadow: '0 20px 60px hsl(0 0% 0% / 0.6), 0 10px 30px hsl(0 0% 0% / 0.4)',
             }}
           >
             <img
               src={coastalRoofInProgress}
               alt="Coastal roof in progress"
-              style={{
-                width: '60vw',
-                maxWidth: '800px',
-                height: 'auto',
-                maxHeight: '55vh',
-                objectFit: 'cover',
-                display: 'block',
-              }}
+              className="w-[50vw] max-w-[700px] h-auto max-h-[50vh] object-cover"
             />
           </div>
         </div>
       )}
 
-      {/* Image 3 - drive-by from right to left (SAME AS IMAGE 1) */}
-      {anim3Progress > 0 && opacity3 > 0 && (
+      {/* Image 3 - slides from right */}
+      {img3Progress > 0 && img3Opacity > 0.01 && (
         <div
           className="absolute"
           style={{
-            left: `${left3Percent}%`,
-            top: `${top3Percent}%`,
-            transform: `translate(-50%, -50%) scale(${scale3})`,
-            opacity: opacity3,
-            transformStyle: 'preserve-3d',
+            left: '50%',
+            top: '50%',
+            transform: `translate(calc(-50% + ${img3X}px), -50%) scale(${img3Scale})`,
+            opacity: img3Opacity,
           }}
         >
           <div
-            className="relative overflow-hidden"
+            className="overflow-hidden rounded-xl"
             style={{
-              borderRadius: '12px',
-              boxShadow: `
-                0 4px 20px hsl(0 0% 0% / 0.4),
-                0 8px 40px hsl(0 0% 0% / 0.5),
-                0 16px 60px hsl(0 0% 0% / 0.6)
-              `,
+              boxShadow: '0 20px 60px hsl(0 0% 0% / 0.6), 0 10px 30px hsl(0 0% 0% / 0.4)',
             }}
           >
             <img
               src={aerialEstatePool}
               alt="Aerial view of estate with pool"
-              style={{
-                width: '60vw',
-                maxWidth: '800px',
-                height: 'auto',
-                maxHeight: '55vh',
-                objectFit: 'cover',
-                display: 'block',
-              }}
+              className="w-[50vw] max-w-[700px] h-auto max-h-[50vh] object-cover"
             />
           </div>
         </div>
       )}
 
-      {/* Image 4 - CINEMATIC GRAND REVEAL - 3D zoom from center */}
-      {anim4Progress > 0 && opacity4 > 0 && (
-        <>
-          {/* Light burst behind image */}
+      {/* Image 4 - Hero reveal, drops from top center */}
+      {img4Progress > 0 && img4Opacity > 0.01 && (
+        <div
+          className="absolute"
+          style={{
+            left: '50%',
+            top: '45%',
+            transform: `translate(-50%, calc(-50% + ${img4Y}px)) scale(${img4Scale})`,
+            opacity: img4Opacity,
+          }}
+        >
           <div
-            className="absolute"
+            className="overflow-hidden rounded-2xl"
             style={{
-              left: '50%',
-              top: `${top4Percent}%`,
-              transform: 'translate(-50%, -50%)',
-              width: '150vw',
-              height: '150vh',
-              background: `radial-gradient(ellipse 50% 50% at 50% 50%, 
-                hsl(35 80% 55% / ${lightBurstIntensity * 0.6}) 0%,
-                hsl(168 70% 40% / ${lightBurstIntensity * 0.3}) 30%,
-                transparent 70%)`,
-              filter: 'blur(60px)',
-              pointerEvents: 'none',
-            }}
-          />
-          
-          {/* The image with 3D transform */}
-          <div
-            className="absolute"
-            style={{
-              left: '50%',
-              top: `${top4Percent}%`,
-              transform: `translate(-50%, -50%) 
-                perspective(1200px) 
-                rotateY(${rotateY4}deg) 
-                rotateX(${rotateX4}deg) 
-                scale(${scale4})`,
-              opacity: opacity4,
-              transformStyle: 'preserve-3d',
-              willChange: 'transform, opacity',
+              boxShadow: `
+                0 0 60px hsl(35 80% 50% / 0.3),
+                0 0 100px hsl(168 70% 45% / 0.2),
+                0 30px 80px hsl(0 0% 0% / 0.6)
+              `,
             }}
           >
-            <div
-              className="relative overflow-hidden"
-              style={{
-                borderRadius: '16px',
-                boxShadow: `
-                  0 0 ${30 + lightBurstIntensity * 40}px hsl(35 80% 50% / ${0.3 + lightBurstIntensity * 0.4}),
-                  0 0 ${60 + lightBurstIntensity * 60}px hsl(168 70% 45% / ${0.2 + lightBurstIntensity * 0.3}),
-                  0 8px 40px hsl(0 0% 0% / 0.5),
-                  0 16px 80px hsl(0 0% 0% / 0.6),
-                  0 32px 120px hsl(0 0% 0% / 0.4)
-                `,
-              }}
-            >
-              <img
-                src={multilevelRoofTeam}
-                alt="Multilevel coastal home with roofing crew"
-                style={{
-                  width: '65vw',
-                  maxWidth: '900px',
-                  height: 'auto',
-                  maxHeight: '65vh',
-                  objectFit: 'cover',
-                  display: 'block',
-                }}
-              />
-            </div>
+            <img
+              src={multilevelRoofTeam}
+              alt="Multilevel coastal home with roofing crew"
+              className="w-[60vw] max-w-[850px] h-auto max-h-[60vh] object-cover"
+            />
           </div>
-        </>
+        </div>
       )}
       
       {/* Testimonial Reveal */}
