@@ -86,13 +86,11 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
         {/* Doorway portal grid - replaces flat orange glow */}
         <DoorwayGrid lightIntensity={lightIntensity} lightBoost={lightBoost} />
         
-        
-        {/* Animated door with 3D perspective rotation */}
+        {/* Animated door - flat 2D rotation (swings open from left hinge) */}
         <g
           style={{
-            transformOrigin: '177.5px 230px',
-            transform: `perspective(400px) rotateY(-${doorAngle}deg)`,
-            transformStyle: 'preserve-3d',
+            transformOrigin: '177.5px 230px', // Left edge of door, center height
+            transform: `rotate(-${doorAngle}deg)`, // Simple 2D rotation
           }}
         >
           <rect
