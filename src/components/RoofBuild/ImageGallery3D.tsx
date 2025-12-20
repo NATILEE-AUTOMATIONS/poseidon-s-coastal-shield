@@ -11,9 +11,9 @@ interface ImageGallery3DProps {
 
 // DESKTOP ONLY - Simple sequential image reveal after entering doorway
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
-  // Image 1 starts when entering the doorway (around 0.85 progress)
-  const img1Start = 0.85;
-  const img1End = 0.94;
+  // Image 1 starts when fully inside the doorway (0.75 progress)
+  const img1Start = 0.75;
+  const img1End = 0.92;
   
   // Gallery background starts later
   const galleryStart = 0.995;
@@ -52,15 +52,14 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   // Simple easing
   const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 
-  // Image 1 animation - expands from nothing, user walks by it
-  // Starts tiny and centered, grows and shifts as user "passes" it
-  const img1Opacity = img1Progress < 0.15 
-    ? img1Progress / 0.15  // Fade in first 15%
-    : img1Progress > 0.85 
-      ? 1 - ((img1Progress - 0.85) / 0.15)  // Fade out last 15%
+  // Image 1 animation - expands from center, user "walks by" it
+  const img1Opacity = img1Progress < 0.1 
+    ? img1Progress / 0.1  // Quick fade in
+    : img1Progress > 0.9 
+      ? 1 - ((img1Progress - 0.9) / 0.1)  // Fade out at end
       : 1;
-  const img1Scale = easeOut(Math.min(img1Progress * 2, 1)); // Scale 0->1 in first half
-  const img1Y = -easeOut(img1Progress) * 200; // Moves up as user "passes" it
+  const img1Scale = 0.3 + easeOut(Math.min(img1Progress * 1.5, 1)) * 0.7; // Scale 0.3->1
+  const img1Y = -easeOut(img1Progress) * 150; // Moves up as user "passes" it
 
   // Image 2 animation - slides in from left, fades out
   const img2Opacity = img2Progress < 0.3 
@@ -68,7 +67,7 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
     : img2Progress > 0.7 
       ? 1 - ((img2Progress - 0.7) / 0.3) 
       : 1;
-  const img2X = -100 + (easeOut(img2Progress) * 150); // Starts left, moves right
+  const img2X = -100 + (easeOut(img2Progress) * 150);
   const img2Scale = 0.5 + (easeOut(img2Progress) * 0.6);
 
   // Image 3 animation - slides in from right
@@ -83,7 +82,7 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   // Image 4 (hero) - dramatic center zoom, stays visible
   const img4Opacity = img4Progress < 0.2 ? img4Progress / 0.2 : 1;
   const img4Scale = 0.3 + (easeOut(img4Progress) * 0.8);
-  const img4Y = 50 - (easeOut(img4Progress) * 50); // Drops from above
+  const img4Y = 50 - (easeOut(img4Progress) * 50);
 
   return (
     <>
