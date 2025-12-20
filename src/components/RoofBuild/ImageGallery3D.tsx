@@ -9,107 +9,138 @@ interface ImageGallery3DProps {
   progress: number;
 }
 
-// DESKTOP ONLY - Simple sequential image reveal after entering doorway
+// DESKTOP ONLY - Smooth sequential image reveal after entering doorway
 const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
-  // Image 1 starts when fully inside the doorway (0.75 progress)
-  const img1Start = 0.75;
-  const img1End = 0.92;
+  // All images appear after door zoom starts (around 0.82+)
+  const img1Start = 0.82;
+  const img1End = 0.90;
   
-  // Gallery background starts later
-  const galleryStart = 0.995;
+  const img2Start = 0.88;
+  const img2End = 0.94;
   
-  // Calculate image 1 progress separately (appears earlier)
-  const img1Progress = progress < img1Start ? 0 
-    : progress > img1End ? 1 
-    : (progress - img1Start) / (img1End - img1Start);
+  const img3Start = 0.92;
+  const img3End = 0.97;
   
-  // Don't render anything until image 1 should start
+  const img4Start = 0.95;
+  const img4End = 1.0;
+  
+  // Calculate individual image progress
+  const calcProgress = (start: number, end: number) => 
+    progress < start ? 0 : progress > end ? 1 : (progress - start) / (end - start);
+  
+  const img1Progress = calcProgress(img1Start, img1End);
+  const img2Progress = calcProgress(img2Start, img2End);
+  const img3Progress = calcProgress(img3Start, img3End);
+  const img4Progress = calcProgress(img4Start, img4End);
+  
+  // Don't render anything until first image should start
   if (progress < img1Start) return null;
   
-  // Normalize progress within gallery section (0.995 to 1.0 = 0 to 1)
-  const galleryRange = 1.0 - galleryStart;
-  const normalizedProgress = progress < galleryStart ? 0 : (progress - galleryStart) / galleryRange;
-  
-  // Background fade in first 20% of gallery (only after gallery starts)
-  const bgOpacity = progress < galleryStart ? 0 : Math.min(1, normalizedProgress / 0.2);
-  
-  // Images 2-4 use the old gallery timing
-  // Image 2: 30% to 60% of gallery progress
-  const img2Progress = normalizedProgress < 0.3 ? 0 
-    : normalizedProgress > 0.6 ? 1 
-    : (normalizedProgress - 0.3) / 0.3;
-  
-  // Image 3: 50% to 80% of gallery progress
-  const img3Progress = normalizedProgress < 0.5 ? 0 
-    : normalizedProgress > 0.8 ? 1 
-    : (normalizedProgress - 0.5) / 0.3;
-  
-  // Final hero image: 70% to 100% of gallery progress
-  const img4Progress = normalizedProgress < 0.7 ? 0 
-    : normalizedProgress > 1.0 ? 1 
-    : (normalizedProgress - 0.7) / 0.3;
-
-  // Simple easing
+  // Smooth easing
   const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+  const easeInOut = (t: number) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 
   // Image 1 animation - expands from center, user "walks by" it
-  const img1Opacity = img1Progress < 0.1 
-    ? img1Progress / 0.1  // Quick fade in
-    : img1Progress > 0.9 
-      ? 1 - ((img1Progress - 0.9) / 0.1)  // Fade out at end
+  const img1Opacity = img1Progress < 0.15 
+    ? img1Progress / 0.15 
+    : img1Progress > 0.85 
+      ? 1 - ((img1Progress - 0.85) / 0.15) 
       : 1;
-  const img1Scale = 0.3 + easeOut(Math.min(img1Progress * 1.5, 1)) * 0.7; // Scale 0.3->1
-  const img1Y = -easeOut(img1Progress) * 150; // Moves up as user "passes" it
+  const img1Scale = 0.2 + easeOut(Math.min(img1Progress * 2, 1)) * 0.8;
+  const img1Y = -easeInOut(img1Progress) * 180;
 
-  // Image 2 animation - slides in from left, fades out
-  const img2Opacity = img2Progress < 0.3 
-    ? img2Progress / 0.3 
-    : img2Progress > 0.7 
-      ? 1 - ((img2Progress - 0.7) / 0.3) 
+  // Image 2 animation - slides from left
+  const img2Opacity = img2Progress < 0.2 
+    ? img2Progress / 0.2 
+    : img2Progress > 0.8 
+      ? 1 - ((img2Progress - 0.8) / 0.2) 
       : 1;
-  const img2X = -100 + (easeOut(img2Progress) * 150);
-  const img2Scale = 0.5 + (easeOut(img2Progress) * 0.6);
+  const img2X = -120 + easeOut(img2Progress) * 160;
+  const img2Scale = 0.3 + easeOut(img2Progress) * 0.7;
+  const img2Y = -easeInOut(img2Progress) * 120;
 
-  // Image 3 animation - slides in from right
-  const img3Opacity = img3Progress < 0.3 
-    ? img3Progress / 0.3 
-    : img3Progress > 0.7 
-      ? 1 - ((img3Progress - 0.7) / 0.3) 
+  // Image 3 animation - slides from right
+  const img3Opacity = img3Progress < 0.2 
+    ? img3Progress / 0.2 
+    : img3Progress > 0.8 
+      ? 1 - ((img3Progress - 0.8) / 0.2) 
       : 1;
-  const img3X = 100 - (easeOut(img3Progress) * 150);
-  const img3Scale = 0.5 + (easeOut(img3Progress) * 0.6);
+  const img3X = 120 - easeOut(img3Progress) * 160;
+  const img3Scale = 0.3 + easeOut(img3Progress) * 0.7;
+  const img3Y = -easeInOut(img3Progress) * 100;
 
   // Image 4 (hero) - dramatic center zoom, stays visible
-  const img4Opacity = img4Progress < 0.2 ? img4Progress / 0.2 : 1;
-  const img4Scale = 0.3 + (easeOut(img4Progress) * 0.8);
-  const img4Y = 50 - (easeOut(img4Progress) * 50);
+  const img4Opacity = img4Progress < 0.3 ? img4Progress / 0.3 : 1;
+  const img4Scale = 0.2 + easeOut(img4Progress) * 0.9;
+  const img4Y = 80 - easeOut(img4Progress) * 80;
+
+  // Background gradually fades in
+  const bgOpacity = progress < 0.85 ? 0 : Math.min(1, (progress - 0.85) / 0.1);
 
   return (
     <>
-      {/* Image 1 - SEPARATE from background, appears during doorway entry */}
+      {/* Gallery background - appears behind images */}
+      <div 
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          zIndex: 140,
+          opacity: bgOpacity,
+          background: `radial-gradient(ellipse 100% 80% at 50% 40%, 
+            hsl(25 50% 12% / 0.98) 0%, 
+            hsl(20 40% 8% / 1) 50%,
+            hsl(15 30% 5% / 1) 100%)`,
+        }}
+      />
+
+      {/* Image 1 - appears first when entering doorway */}
       {img1Progress > 0 && img1Opacity > 0.01 && (
         <div
-          className="fixed inset-0 pointer-events-none"
-          style={{ zIndex: 110 }}
+          className="fixed inset-0 pointer-events-none flex items-center justify-center"
+          style={{ zIndex: 150 }}
         >
           <div
-            className="absolute"
             style={{
-              left: '50%',
-              top: '50%',
-              transform: `translate(-50%, calc(-50% + ${img1Y}px)) scale(${img1Scale})`,
+              transform: `translateY(${img1Y}px) scale(${img1Scale})`,
               opacity: img1Opacity,
             }}
           >
             <div
               className="overflow-hidden rounded-xl"
               style={{
-                boxShadow: '0 20px 60px hsl(0 0% 0% / 0.6), 0 10px 30px hsl(0 0% 0% / 0.4)',
+                boxShadow: '0 25px 80px hsl(0 0% 0% / 0.7), 0 10px 40px hsl(0 0% 0% / 0.5)',
               }}
             >
               <img
                 src={coastalHomeRoofing}
                 alt="Coastal home roofing project"
+                className="w-[55vw] max-w-[750px] h-auto max-h-[55vh] object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Image 2 - slides from left */}
+      {img2Progress > 0 && img2Opacity > 0.01 && (
+        <div
+          className="fixed inset-0 pointer-events-none flex items-center justify-center"
+          style={{ zIndex: 151 }}
+        >
+          <div
+            style={{
+              transform: `translate(${img2X}px, ${img2Y}px) scale(${img2Scale})`,
+              opacity: img2Opacity,
+            }}
+          >
+            <div
+              className="overflow-hidden rounded-xl"
+              style={{
+                boxShadow: '0 25px 80px hsl(0 0% 0% / 0.7), 0 10px 40px hsl(0 0% 0% / 0.5)',
+              }}
+            >
+              <img
+                src={coastalRoofInProgress}
+                alt="Coastal roof in progress"
                 className="w-[50vw] max-w-[700px] h-auto max-h-[50vh] object-cover"
               />
             </div>
@@ -117,67 +148,30 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
         </div>
       )}
 
-      {/* Gallery background and remaining images */}
-      <div 
-        className="fixed inset-0 pointer-events-none"
-        style={{
-          zIndex: 105,
-          opacity: bgOpacity,
-          background: `radial-gradient(ellipse 100% 80% at 50% 40%, 
-            hsl(25 50% 12% / 0.98) 0%, 
-            hsl(20 40% 8% / 1) 50%,
-            hsl(15 30% 5% / 1) 100%)`,
-        }}
-      >
-
-      {/* Image 2 - slides from left */}
-      {img2Progress > 0 && img2Opacity > 0.01 && (
-        <div
-          className="absolute"
-          style={{
-            left: '50%',
-            top: '50%',
-            transform: `translate(calc(-50% + ${img2X}px), -50%) scale(${img2Scale})`,
-            opacity: img2Opacity,
-          }}
-        >
-          <div
-            className="overflow-hidden rounded-xl"
-            style={{
-              boxShadow: '0 20px 60px hsl(0 0% 0% / 0.6), 0 10px 30px hsl(0 0% 0% / 0.4)',
-            }}
-          >
-            <img
-              src={coastalRoofInProgress}
-              alt="Coastal roof in progress"
-              className="w-[50vw] max-w-[700px] h-auto max-h-[50vh] object-cover"
-            />
-          </div>
-        </div>
-      )}
-
       {/* Image 3 - slides from right */}
       {img3Progress > 0 && img3Opacity > 0.01 && (
         <div
-          className="absolute"
-          style={{
-            left: '50%',
-            top: '50%',
-            transform: `translate(calc(-50% + ${img3X}px), -50%) scale(${img3Scale})`,
-            opacity: img3Opacity,
-          }}
+          className="fixed inset-0 pointer-events-none flex items-center justify-center"
+          style={{ zIndex: 152 }}
         >
           <div
-            className="overflow-hidden rounded-xl"
             style={{
-              boxShadow: '0 20px 60px hsl(0 0% 0% / 0.6), 0 10px 30px hsl(0 0% 0% / 0.4)',
+              transform: `translate(${img3X}px, ${img3Y}px) scale(${img3Scale})`,
+              opacity: img3Opacity,
             }}
           >
-            <img
-              src={aerialEstatePool}
-              alt="Aerial view of estate with pool"
-              className="w-[50vw] max-w-[700px] h-auto max-h-[50vh] object-cover"
-            />
+            <div
+              className="overflow-hidden rounded-xl"
+              style={{
+                boxShadow: '0 25px 80px hsl(0 0% 0% / 0.7), 0 10px 40px hsl(0 0% 0% / 0.5)',
+              }}
+            >
+              <img
+                src={aerialEstatePool}
+                alt="Aerial view of estate with pool"
+                className="w-[50vw] max-w-[700px] h-auto max-h-[50vh] object-cover"
+              />
+            </div>
           </div>
         </div>
       )}
@@ -185,36 +179,37 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
       {/* Image 4 - Hero reveal, drops from top center */}
       {img4Progress > 0 && img4Opacity > 0.01 && (
         <div
-          className="absolute"
-          style={{
-            left: '50%',
-            top: '45%',
-            transform: `translate(-50%, calc(-50% + ${img4Y}px)) scale(${img4Scale})`,
-            opacity: img4Opacity,
-          }}
+          className="fixed inset-0 pointer-events-none flex items-center justify-center"
+          style={{ zIndex: 153 }}
         >
           <div
-            className="overflow-hidden rounded-2xl"
             style={{
-              boxShadow: `
-                0 0 60px hsl(35 80% 50% / 0.3),
-                0 0 100px hsl(168 70% 45% / 0.2),
-                0 30px 80px hsl(0 0% 0% / 0.6)
-              `,
+              transform: `translateY(${img4Y}px) scale(${img4Scale})`,
+              opacity: img4Opacity,
             }}
           >
-            <img
-              src={multilevelRoofTeam}
-              alt="Multilevel coastal home with roofing crew"
-              className="w-[60vw] max-w-[850px] h-auto max-h-[60vh] object-cover"
-            />
+            <div
+              className="overflow-hidden rounded-2xl"
+              style={{
+                boxShadow: `
+                  0 0 60px hsl(35 80% 50% / 0.3),
+                  0 0 100px hsl(168 70% 45% / 0.2),
+                  0 30px 80px hsl(0 0% 0% / 0.6)
+                `,
+              }}
+            >
+              <img
+                src={multilevelRoofTeam}
+                alt="Multilevel coastal home with roofing crew"
+                className="w-[60vw] max-w-[850px] h-auto max-h-[60vh] object-cover"
+              />
+            </div>
           </div>
         </div>
       )}
       
       {/* Testimonial Reveal */}
       <TestimonialReveal progress={progress} />
-      </div>
     </>
   );
 };
