@@ -2077,50 +2077,96 @@ export const FallingPalmTree: React.FC<{
           ))}
         </g>
         
-        {/* === FRONDS === */}
-        {/* Outer glow aura */}
-        <g filter="url(#palmNeonGlowOuter)" opacity={0.35}>
-          <path d="M0,-78 Q0,-100 0,-118 M0,-78 Q20,-92 45,-88 M0,-78 Q-20,-92 -45,-88 M0,-78 Q28,-82 52,-70 M0,-78 Q-28,-82 -52,-70 M0,-78 Q25,-72 45,-52 M0,-78 Q-25,-72 -45,-52" fill="none" stroke="hsl(172 100% 55%)" strokeWidth="8" strokeLinecap="round" />
-        </g>
+        {/* === FRONDS - Premium realistic palm leaves === */}
         
-        {/* Middle glow layer */}
-        <g filter="url(#palmNeonGlowMiddle)" opacity={0.6}>
-          <path d="M0,-78 Q0,-100 0,-118 M0,-78 Q20,-92 45,-88 M0,-78 Q-20,-92 -45,-88 M0,-78 Q28,-82 52,-70 M0,-78 Q-28,-82 -52,-70 M0,-78 Q25,-72 45,-52 M0,-78 Q-25,-72 -45,-52" fill="none" stroke="hsl(170 100% 52%)" strokeWidth="4" strokeLinecap="round" />
-        </g>
+        {/* Soft ambient glow behind all fronds */}
+        <ellipse cx="0" cy="-98" rx="55" ry="35" fill="hsl(172 100% 50%)" opacity={0.15} filter="url(#palmNeonGlowOuter)" />
         
-        {/* Main crisp fronds */}
+        {/* Main frond group with inner glow */}
         <g filter="url(#palmNeonGlowInner)">
-          {/* Center frond - straight up */}
-          <path d="M0,-78 Q0,-98 0,-118" fill="none" stroke="hsl(170 100% 55%)" strokeWidth="2.5" strokeLinecap="round" />
           
-          {/* Upper right frond */}
-          <path d="M0,-78 Q22,-94 48,-88" fill="none" stroke="hsl(168 100% 55%)" strokeWidth="2.5" strokeLinecap="round" />
+          {/* CENTER FROND - vertical with elegant leaflets */}
+          <g>
+            <path d="M0,-78 C0,-88 0,-105 0,-122" fill="none" stroke="hsl(168 100% 52%)" strokeWidth="2" strokeLinecap="round" />
+            {/* Leaflets curving outward */}
+            <path d="M0,-85 C3,-88 8,-89 12,-87" fill="none" stroke="hsl(170 100% 55%)" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M0,-85 C-3,-88 -8,-89 -12,-87" fill="none" stroke="hsl(170 100% 55%)" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M0,-92 C4,-96 10,-98 15,-95" fill="none" stroke="hsl(170 100% 55%)" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M0,-92 C-4,-96 -10,-98 -15,-95" fill="none" stroke="hsl(170 100% 55%)" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M0,-100 C4,-105 11,-108 16,-104" fill="none" stroke="hsl(172 100% 54%)" strokeWidth="1.3" strokeLinecap="round" />
+            <path d="M0,-100 C-4,-105 -11,-108 -16,-104" fill="none" stroke="hsl(172 100% 54%)" strokeWidth="1.3" strokeLinecap="round" />
+            <path d="M0,-108 C3,-114 8,-117 12,-114" fill="none" stroke="hsl(172 100% 53%)" strokeWidth="1.2" strokeLinecap="round" />
+            <path d="M0,-108 C-3,-114 -8,-117 -12,-114" fill="none" stroke="hsl(172 100% 53%)" strokeWidth="1.2" strokeLinecap="round" />
+            <path d="M0,-115 C2,-120 5,-123 8,-121" fill="none" stroke="hsl(175 100% 52%)" strokeWidth="1" strokeLinecap="round" />
+            <path d="M0,-115 C-2,-120 -5,-123 -8,-121" fill="none" stroke="hsl(175 100% 52%)" strokeWidth="1" strokeLinecap="round" />
+          </g>
           
-          {/* Middle right frond */}
-          <path d="M0,-78 Q30,-82 55,-68" fill="none" stroke="hsl(172 100% 52%)" strokeWidth="2.3" strokeLinecap="round" />
+          {/* RIGHT UPPER FROND */}
+          <g>
+            <path d="M0,-78 C12,-86 28,-92 48,-90" fill="none" stroke="hsl(168 100% 52%)" strokeWidth="2" strokeLinecap="round" />
+            <path d="M8,-82 C10,-87 12,-92 10,-97" fill="none" stroke="hsl(170 100% 55%)" strokeWidth="1.4" strokeLinecap="round" />
+            <path d="M16,-86 C19,-91 22,-97 20,-102" fill="none" stroke="hsl(170 100% 55%)" strokeWidth="1.4" strokeLinecap="round" />
+            <path d="M24,-88 C28,-93 33,-98 32,-104" fill="none" stroke="hsl(172 100% 54%)" strokeWidth="1.3" strokeLinecap="round" />
+            <path d="M32,-89 C37,-93 42,-97 42,-103" fill="none" stroke="hsl(172 100% 53%)" strokeWidth="1.2" strokeLinecap="round" />
+            <path d="M40,-90 C46,-92 52,-94 54,-98" fill="none" stroke="hsl(175 100% 52%)" strokeWidth="1" strokeLinecap="round" />
+          </g>
           
-          {/* Lower right frond - graceful droop */}
-          <path d="M0,-78 Q28,-72 48,-50" fill="none" stroke="hsl(175 100% 50%)" strokeWidth="2" strokeLinecap="round" />
+          {/* LEFT UPPER FROND */}
+          <g>
+            <path d="M0,-78 C-12,-86 -28,-92 -48,-90" fill="none" stroke="hsl(168 100% 52%)" strokeWidth="2" strokeLinecap="round" />
+            <path d="M-8,-82 C-10,-87 -12,-92 -10,-97" fill="none" stroke="hsl(170 100% 55%)" strokeWidth="1.4" strokeLinecap="round" />
+            <path d="M-16,-86 C-19,-91 -22,-97 -20,-102" fill="none" stroke="hsl(170 100% 55%)" strokeWidth="1.4" strokeLinecap="round" />
+            <path d="M-24,-88 C-28,-93 -33,-98 -32,-104" fill="none" stroke="hsl(172 100% 54%)" strokeWidth="1.3" strokeLinecap="round" />
+            <path d="M-32,-89 C-37,-93 -42,-97 -42,-103" fill="none" stroke="hsl(172 100% 53%)" strokeWidth="1.2" strokeLinecap="round" />
+            <path d="M-40,-90 C-46,-92 -52,-94 -54,-98" fill="none" stroke="hsl(175 100% 52%)" strokeWidth="1" strokeLinecap="round" />
+          </g>
           
-          {/* Upper left frond */}
-          <path d="M0,-78 Q-22,-94 -48,-88" fill="none" stroke="hsl(168 100% 55%)" strokeWidth="2.5" strokeLinecap="round" />
+          {/* RIGHT MIDDLE FROND */}
+          <g>
+            <path d="M0,-78 C15,-80 35,-78 55,-68" fill="none" stroke="hsl(170 100% 50%)" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M10,-78 C14,-84 18,-90 16,-95" fill="none" stroke="hsl(172 100% 54%)" strokeWidth="1.3" strokeLinecap="round" />
+            <path d="M20,-77 C25,-83 30,-88 29,-94" fill="none" stroke="hsl(172 100% 54%)" strokeWidth="1.3" strokeLinecap="round" />
+            <path d="M30,-76 C36,-80 42,-84 42,-90" fill="none" stroke="hsl(172 100% 52%)" strokeWidth="1.2" strokeLinecap="round" />
+            <path d="M40,-73 C47,-76 54,-78 55,-83" fill="none" stroke="hsl(175 100% 50%)" strokeWidth="1" strokeLinecap="round" />
+            <path d="M48,-70 C54,-71 60,-72 62,-76" fill="none" stroke="hsl(175 100% 48%)" strokeWidth="0.9" strokeLinecap="round" />
+          </g>
           
-          {/* Middle left frond */}
-          <path d="M0,-78 Q-30,-82 -55,-68" fill="none" stroke="hsl(172 100% 52%)" strokeWidth="2.3" strokeLinecap="round" />
+          {/* LEFT MIDDLE FROND */}
+          <g>
+            <path d="M0,-78 C-15,-80 -35,-78 -55,-68" fill="none" stroke="hsl(170 100% 50%)" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M-10,-78 C-14,-84 -18,-90 -16,-95" fill="none" stroke="hsl(172 100% 54%)" strokeWidth="1.3" strokeLinecap="round" />
+            <path d="M-20,-77 C-25,-83 -30,-88 -29,-94" fill="none" stroke="hsl(172 100% 54%)" strokeWidth="1.3" strokeLinecap="round" />
+            <path d="M-30,-76 C-36,-80 -42,-84 -42,-90" fill="none" stroke="hsl(172 100% 52%)" strokeWidth="1.2" strokeLinecap="round" />
+            <path d="M-40,-73 C-47,-76 -54,-78 -55,-83" fill="none" stroke="hsl(175 100% 50%)" strokeWidth="1" strokeLinecap="round" />
+            <path d="M-48,-70 C-54,-71 -60,-72 -62,-76" fill="none" stroke="hsl(175 100% 48%)" strokeWidth="0.9" strokeLinecap="round" />
+          </g>
           
-          {/* Lower left frond - graceful droop */}
-          <path d="M0,-78 Q-28,-72 -48,-50" fill="none" stroke="hsl(175 100% 50%)" strokeWidth="2" strokeLinecap="round" />
+          {/* RIGHT LOWER FROND - graceful droop */}
+          <g>
+            <path d="M0,-78 C12,-74 30,-68 45,-50" fill="none" stroke="hsl(172 100% 48%)" strokeWidth="1.6" strokeLinecap="round" />
+            <path d="M8,-76 C12,-80 16,-85 14,-90" fill="none" stroke="hsl(172 100% 52%)" strokeWidth="1.2" strokeLinecap="round" />
+            <path d="M18,-72 C24,-76 30,-80 28,-86" fill="none" stroke="hsl(172 100% 50%)" strokeWidth="1.1" strokeLinecap="round" />
+            <path d="M28,-66 C35,-68 42,-70 42,-76" fill="none" stroke="hsl(175 100% 48%)" strokeWidth="1" strokeLinecap="round" />
+            <path d="M36,-58 C42,-58 48,-58 50,-62" fill="none" stroke="hsl(175 100% 46%)" strokeWidth="0.9" strokeLinecap="round" />
+          </g>
           
-          {/* Diagonal accent fronds */}
-          <path d="M0,-78 Q12,-96 28,-105" fill="none" stroke="hsl(170 100% 54%)" strokeWidth="2" strokeLinecap="round" />
-          <path d="M0,-78 Q-12,-96 -28,-105" fill="none" stroke="hsl(170 100% 54%)" strokeWidth="2" strokeLinecap="round" />
+          {/* LEFT LOWER FROND - graceful droop */}
+          <g>
+            <path d="M0,-78 C-12,-74 -30,-68 -45,-50" fill="none" stroke="hsl(172 100% 48%)" strokeWidth="1.6" strokeLinecap="round" />
+            <path d="M-8,-76 C-12,-80 -16,-85 -14,-90" fill="none" stroke="hsl(172 100% 52%)" strokeWidth="1.2" strokeLinecap="round" />
+            <path d="M-18,-72 C-24,-76 -30,-80 -28,-86" fill="none" stroke="hsl(172 100% 50%)" strokeWidth="1.1" strokeLinecap="round" />
+            <path d="M-28,-66 C-35,-68 -42,-70 -42,-76" fill="none" stroke="hsl(175 100% 48%)" strokeWidth="1" strokeLinecap="round" />
+            <path d="M-36,-58 C-42,-58 -48,-58 -50,-62" fill="none" stroke="hsl(175 100% 46%)" strokeWidth="0.9" strokeLinecap="round" />
+          </g>
+          
         </g>
         
-        {/* Glowing center point */}
-        <circle cx="0" cy="-78" r="3.5" fill="hsl(170 100% 60%)" opacity={0.9}>
-          <animate attributeName="opacity" values="0.7;1;0.7" dur="2.5s" repeatCount="indefinite" />
+        {/* Bright glowing center hub */}
+        <circle cx="0" cy="-78" r="4" fill="hsl(170 100% 50%)" opacity={0.8} filter="url(#palmNeonGlowMiddle)" />
+        <circle cx="0" cy="-78" r="2.5" fill="hsl(170 100% 60%)" opacity={0.95}>
+          <animate attributeName="opacity" values="0.85;1;0.85" dur="3s" repeatCount="indefinite" />
         </circle>
-        <circle cx="0" cy="-78" r="1.5" fill="hsl(180 100% 85%)" />
+        <circle cx="0" cy="-78" r="1" fill="hsl(180 100% 90%)" />
       </g>
     </g>
   );
