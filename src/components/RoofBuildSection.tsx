@@ -2,7 +2,6 @@
 import React, { useRef, useEffect } from 'react';
 import { useScrollProgress } from '@/hooks/useScrollProgress';
 import GridBackground from './RoofBuild/GridBackground';
-import doorwayRevealImage from '@/assets/doorway-reveal-image.png';
 import HouseSVG from './RoofBuild/HouseSVG';
 import {
   DeckingLayer,
@@ -157,19 +156,6 @@ const RoofBuildSection: React.FC = () => {
   
   // Skip all overlays on mobile
   const mobileOverlayMultiplier = isMobile ? 0 : 1;
-  
-  // Doorway reveal image - appears when zooming into doorway (DESKTOP ONLY)
-  // Starts at 0.88 (well into the zoom) and animates until 1.0
-  const doorwayImageStart = 0.88;
-  const doorwayImageProgress = !isMobile && progress > doorwayImageStart
-    ? Math.min(1, (progress - doorwayImageStart) / 0.12)
-    : 0;
-  // Smooth easing for natural feel
-  const easedImageProgress = easeOutCubic(doorwayImageProgress);
-  // Image starts below viewport and scrolls up through view
-  const imageTranslateY = 100 - (easedImageProgress * 200); // Starts at +100%, ends at -100%
-  const imageScale = 0.8 + (easedImageProgress * 0.4); // 0.8 -> 1.2 scale
-  const imageOpacity = doorwayImageProgress > 0 ? Math.min(1, doorwayImageProgress * 3) : 0;
 
   // Calculate staggered exit progress for label pairs (desktop only)
   // Labels exit from 0.92 to 0.96 (AFTER all roof animations complete)
@@ -235,32 +221,6 @@ const RoofBuildSection: React.FC = () => {
       />
 
       {/* Desktop Gallery removed */}
-      
-      {/* Doorway Reveal Image - scrolls through view as user enters doorway */}
-      {!isMobile && doorwayImageProgress > 0 && (
-        <div 
-          className="fixed inset-0 flex items-center justify-center pointer-events-none z-[150]"
-          style={{ opacity: imageOpacity }}
-        >
-          <div
-            className="relative w-[80vw] max-w-4xl"
-            style={{
-              transform: `translateY(${imageTranslateY}%) scale(${imageScale})`,
-              transition: 'none',
-              willChange: 'transform, opacity',
-            }}
-          >
-            <img 
-              src={doorwayRevealImage}
-              alt="Beautiful coastal home roofing project"
-              className="w-full h-auto rounded-2xl shadow-2xl"
-              style={{
-                boxShadow: '0 25px 80px -20px rgba(0,0,0,0.5), 0 0 60px rgba(168, 200, 180, 0.3)',
-              }}
-            />
-          </div>
-        </div>
-      )}
 
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
