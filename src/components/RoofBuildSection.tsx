@@ -446,54 +446,57 @@ const RoofBuildSection: React.FC = () => {
 
           </div>
 
-          {/* Palm trees and yard sign - INSIDE zoom container with INVERSE SCALE to stay stationary */}
-          {!isMobile && (
+        </div>
+
+        {/* Palm trees and yard sign - FIXED to viewport, positioned to align with house */}
+        {!isMobile && zoomProgress < 1 && (
+          <div 
+            className="fixed inset-0 flex items-center justify-center pointer-events-none"
+            style={{
+              opacity: Math.max(0, 1 - zoomProgress * 3), // Fade out faster during zoom
+              zIndex: 30,
+            }}
+          >
+            {/* Container matches the house positioning */}
             <div 
-              className="absolute inset-0 flex items-center justify-center pointer-events-none"
+              className="relative w-full max-w-2xl aspect-[4/3]"
               style={{
-                opacity: Math.max(0, 1 - zoomProgress * 2.5), // Fade out during zoom
-                zIndex: 25,
-                // Apply inverse scale to counter the parent zoom - makes them appear stationary
-                transform: `scale(${1 / zoomScale})`,
-                transformOrigin: '50% 82%', // Same origin as the house zoom
+                marginTop: '14rem', // Match house position
               }}
             >
-              <div className="relative w-full max-w-2xl aspect-[4/3]">
-                <svg
-                  viewBox="0 0 400 280"
-                  className="absolute inset-0 w-full h-full"
-                  style={{ overflow: 'visible' }}
-                >
-                  {/* Palm tree drops into place - left side */}
-                  <FallingPalmTree 
-                    truckProgress={progress}
-                    truckStartProgress={layers[10].start}
-                    truckEndProgress={layers[10].end}
-                    isMobile={isMobile}
-                  />
-                  
-                  {/* Palm tree drops into place - right side (mirrored) */}
-                  <FallingPalmTree 
-                    truckProgress={progress}
-                    truckStartProgress={layers[10].start}
-                    truckEndProgress={layers[10].end}
-                    isMobile={isMobile}
-                    mirrored
-                  />
-                  
-                  {/* Yard sign drops in to the right of the door */}
-                  <YardSign 
-                    truckProgress={progress}
-                    truckStartProgress={layers[10].start}
-                    truckEndProgress={layers[10].end}
-                    isMobile={isMobile}
-                  />
-                </svg>
-              </div>
+              <svg
+                viewBox="0 0 400 280"
+                className="absolute inset-0 w-full h-full"
+                style={{ overflow: 'visible' }}
+              >
+                {/* Palm tree drops into place - left side */}
+                <FallingPalmTree 
+                  truckProgress={progress}
+                  truckStartProgress={layers[10].start}
+                  truckEndProgress={layers[10].end}
+                  isMobile={isMobile}
+                />
+                
+                {/* Palm tree drops into place - right side (mirrored) */}
+                <FallingPalmTree 
+                  truckProgress={progress}
+                  truckStartProgress={layers[10].start}
+                  truckEndProgress={layers[10].end}
+                  isMobile={isMobile}
+                  mirrored
+                />
+                
+                {/* Yard sign drops in to the right of the door */}
+                <YardSign 
+                  truckProgress={progress}
+                  truckStartProgress={layers[10].start}
+                  truckEndProgress={layers[10].end}
+                  isMobile={isMobile}
+                />
+              </svg>
             </div>
-          )}
-
-        </div>
+          </div>
+        )}
 
 
         {/* Progress bar - HARD HIDE at 60% before door opens */}
