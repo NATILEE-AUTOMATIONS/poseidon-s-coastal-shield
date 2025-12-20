@@ -86,42 +86,50 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
   const img4Y = 50 - (easeOut(img4Progress) * 50); // Drops from above
 
   return (
-    <div 
-      className="fixed inset-0 pointer-events-none"
-      style={{
-        zIndex: 105,
-        opacity: bgOpacity,
-        background: `radial-gradient(ellipse 100% 80% at 50% 40%, 
-          hsl(25 50% 12% / 0.98) 0%, 
-          hsl(20 40% 8% / 1) 50%,
-          hsl(15 30% 5% / 1) 100%)`,
-      }}
-    >
-      {/* Image 1 - expands from nothing, user walks by */}
+    <>
+      {/* Image 1 - SEPARATE from background, appears during doorway entry */}
       {img1Progress > 0 && img1Opacity > 0.01 && (
         <div
-          className="absolute"
-          style={{
-            left: '50%',
-            top: '50%',
-            transform: `translate(-50%, calc(-50% + ${img1Y}px)) scale(${img1Scale})`,
-            opacity: img1Opacity,
-          }}
+          className="fixed inset-0 pointer-events-none"
+          style={{ zIndex: 110 }}
         >
           <div
-            className="overflow-hidden rounded-xl"
+            className="absolute"
             style={{
-              boxShadow: '0 20px 60px hsl(0 0% 0% / 0.6), 0 10px 30px hsl(0 0% 0% / 0.4)',
+              left: '50%',
+              top: '50%',
+              transform: `translate(-50%, calc(-50% + ${img1Y}px)) scale(${img1Scale})`,
+              opacity: img1Opacity,
             }}
           >
-            <img
-              src={coastalHomeRoofing}
-              alt="Coastal home roofing project"
-              className="w-[50vw] max-w-[700px] h-auto max-h-[50vh] object-cover"
-            />
+            <div
+              className="overflow-hidden rounded-xl"
+              style={{
+                boxShadow: '0 20px 60px hsl(0 0% 0% / 0.6), 0 10px 30px hsl(0 0% 0% / 0.4)',
+              }}
+            >
+              <img
+                src={coastalHomeRoofing}
+                alt="Coastal home roofing project"
+                className="w-[50vw] max-w-[700px] h-auto max-h-[50vh] object-cover"
+              />
+            </div>
           </div>
         </div>
       )}
+
+      {/* Gallery background and remaining images */}
+      <div 
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          zIndex: 105,
+          opacity: bgOpacity,
+          background: `radial-gradient(ellipse 100% 80% at 50% 40%, 
+            hsl(25 50% 12% / 0.98) 0%, 
+            hsl(20 40% 8% / 1) 50%,
+            hsl(15 30% 5% / 1) 100%)`,
+        }}
+      >
 
       {/* Image 2 - slides from left */}
       {img2Progress > 0 && img2Opacity > 0.01 && (
@@ -207,7 +215,8 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
       
       {/* Testimonial Reveal */}
       <TestimonialReveal progress={progress} />
-    </div>
+      </div>
+    </>
   );
 };
 
