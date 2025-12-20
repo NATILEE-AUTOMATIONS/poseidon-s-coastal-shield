@@ -53,7 +53,7 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
       className="yard-sign-layer"
       style={{
         opacity,
-        transform: `translate(280px, ${265 + translateY}px)`,
+        transform: `translate(215px, ${280 + translateY}px)`,
       }}
     >
       {/* Sign post */}
@@ -61,7 +61,7 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
         x="32"
         y="0"
         width="6"
-        height="60"
+        height="40"
         fill="hsl(160 25% 20%)"
         stroke="hsl(160 30% 30%)"
         strokeWidth="0.5"
