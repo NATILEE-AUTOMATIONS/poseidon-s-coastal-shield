@@ -446,51 +446,52 @@ const RoofBuildSection: React.FC = () => {
 
           </div>
 
-          {/* Palm trees and yard sign - OUTSIDE the zooming container so they stay stationary */}
-          {!isMobile && (
-            <div 
-              className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none"
-              style={{
-                opacity: Math.max(0, 1 - zoomProgress * 2.5), // Fade out during zoom
-              }}
-            >
-              <div className="relative w-full max-w-3xl aspect-[4/3]">
-                <svg
-                  viewBox="0 0 400 280"
-                  className="absolute inset-0 w-full h-full"
-                  style={{ overflow: 'visible' }}
-                >
-                  {/* Palm tree drops into place - left side */}
-                  <FallingPalmTree 
-                    truckProgress={progress}
-                    truckStartProgress={layers[10].start}
-                    truckEndProgress={layers[10].end}
-                    isMobile={isMobile}
-                  />
-                  
-                  {/* Palm tree drops into place - right side (mirrored) */}
-                  <FallingPalmTree 
-                    truckProgress={progress}
-                    truckStartProgress={layers[10].start}
-                    truckEndProgress={layers[10].end}
-                    isMobile={isMobile}
-                    mirrored
-                  />
-                  
-                  {/* Yard sign drops in to the right of the door */}
-                  <YardSign 
-                    truckProgress={progress}
-                    truckStartProgress={layers[10].start}
-                    truckEndProgress={layers[10].end}
-                    isMobile={isMobile}
-                  />
-                </svg>
-              </div>
-            </div>
-          )}
-
-
         </div>
+
+        {/* Palm trees and yard sign - FIXED position outside ALL zooming containers */}
+        {!isMobile && (
+          <div 
+            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+            style={{
+              opacity: Math.max(0, 1 - zoomProgress * 2.5), // Fade out during zoom
+              zIndex: 25,
+              paddingTop: '14rem', // Match the pt-56 lg:pt-64 of the content container
+            }}
+          >
+            <div className="relative w-full max-w-2xl aspect-[4/3]">
+              <svg
+                viewBox="0 0 400 280"
+                className="absolute inset-0 w-full h-full"
+                style={{ overflow: 'visible' }}
+              >
+                {/* Palm tree drops into place - left side */}
+                <FallingPalmTree 
+                  truckProgress={progress}
+                  truckStartProgress={layers[10].start}
+                  truckEndProgress={layers[10].end}
+                  isMobile={isMobile}
+                />
+                
+                {/* Palm tree drops into place - right side (mirrored) */}
+                <FallingPalmTree 
+                  truckProgress={progress}
+                  truckStartProgress={layers[10].start}
+                  truckEndProgress={layers[10].end}
+                  isMobile={isMobile}
+                  mirrored
+                />
+                
+                {/* Yard sign drops in to the right of the door */}
+                <YardSign 
+                  truckProgress={progress}
+                  truckStartProgress={layers[10].start}
+                  truckEndProgress={layers[10].end}
+                  isMobile={isMobile}
+                />
+              </svg>
+            </div>
+          </div>
+        )}
 
 
         {/* Progress bar - HARD HIDE at 60% before door opens */}
