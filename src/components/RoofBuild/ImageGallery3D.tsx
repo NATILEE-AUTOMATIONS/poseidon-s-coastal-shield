@@ -1,5 +1,5 @@
 import React from 'react';
-import coastalRoofImage from '@/assets/coastal-roof-project.png';
+import coastalHomeRoofing from '@/assets/coastal-home-roofing.png';
 import coastalRoofInProgress from '@/assets/coastal-roof-inprogress.png';
 import aerialEstatePool from '@/assets/aerial-estate-pool.png';
 import multilevelRoofTeam from '@/assets/multilevel-roof-team.png';
@@ -115,8 +115,8 @@ const ImageGallery3D: React.FC<ImageGallery3DProps> = ({ progress }) => {
             }}
           >
             <img
-              src={coastalRoofImage}
-              alt="Completed coastal roof project"
+              src={coastalHomeRoofing}
+              alt="Coastal home roofing project"
               className="w-[50vw] max-w-[700px] h-auto max-h-[50vh] object-cover"
             />
           </div>
