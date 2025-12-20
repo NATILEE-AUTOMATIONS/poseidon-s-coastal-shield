@@ -1975,8 +1975,8 @@ export const FallingPalmTree: React.FC<{
   if (isMobile) return null;
   
   const truckDuration = truckEndProgress - truckStartProgress;
-  const dropStart = truckStartProgress + (truckDuration * 0.35);
-  const dropEnd = truckStartProgress + (truckDuration * 0.65);
+  const dropStart = truckStartProgress + (truckDuration * 0.55);
+  const dropEnd = truckStartProgress + (truckDuration * 0.80);
   
   const rawProgress = (truckProgress - dropStart) / (dropEnd - dropStart);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
