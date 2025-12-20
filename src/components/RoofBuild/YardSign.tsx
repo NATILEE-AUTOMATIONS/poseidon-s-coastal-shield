@@ -97,8 +97,8 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
             src={poseidonLogo} 
             alt="Poseidon Roofing" 
             style={{ 
-              maxWidth: '66px', 
-              maxHeight: '40px', 
+              maxWidth: '80px', 
+              maxHeight: '50px', 
               objectFit: 'contain' 
             }}
           />
