@@ -69,11 +69,11 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
       
       {/* Sign board background */}
       <rect
-        x="-18"
-        y="-58"
-        width="108"
-        height="64"
-        rx="4"
+        x="0"
+        y="-42"
+        width="72"
+        height="46"
+        rx="3"
         fill="hsl(160 30% 8%)"
         stroke="hsl(174 62% 38%)"
         strokeWidth="1.5"
@@ -83,7 +83,7 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
       />
       
       {/* Logo container */}
-      <foreignObject x="-14" y="-54" width="100" height="56">
+      <foreignObject x="2" y="-40" width="68" height="42">
         <div 
           style={{ 
             width: '100%', 
@@ -97,8 +97,8 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
             src={poseidonLogo} 
             alt="Poseidon Roofing" 
             style={{ 
-              maxWidth: '96px', 
-              maxHeight: '52px', 
+              maxWidth: '66px', 
+              maxHeight: '40px', 
               objectFit: 'contain' 
             }}
           />
