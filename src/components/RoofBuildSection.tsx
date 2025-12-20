@@ -119,10 +119,10 @@ const RoofBuildSection: React.FC = () => {
     ? Math.min(75, ((progress - doorStart) / 0.12) * 75) 
     : 0;
 
-  // Door zoom: starts while door is opening (after 4% into door animation) for seamless effect (DESKTOP ONLY)
-  const zoomStart = doorStart + 0.04;
+  // Door zoom: starts after door opens, extended duration for full doorway entry (DESKTOP ONLY)
+  const zoomStart = doorStart + 0.12;
   const zoomProgress = !isMobile && progress > zoomStart 
-    ? Math.min(1, (progress - zoomStart) / 0.38)
+    ? Math.min(1, (progress - zoomStart) / 0.30)
     : 0;
   
   // Update scroll context so navbar can fade (desktop only)
