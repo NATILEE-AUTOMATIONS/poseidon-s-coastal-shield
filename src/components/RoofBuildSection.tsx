@@ -331,37 +331,35 @@ const RoofBuildSection: React.FC = () => {
                   {/* 2. Drip Edge rendered after all layers to be on top */}
                   <DripEdgeEavesLayer progress={progress} startProgress={layers[1].start} endProgress={layers[1].end} isMobile={isMobile} />
                   
-                  {/* Palm trees and yard sign - INSIDE the house SVG so they scale with the house */}
-                  {!isMobile && (
-                    <>
-                      {/* Palm tree 1 - left side, enters first */}
-                      <FallingPalmTree 
-                        truckProgress={progress}
-                        truckStartProgress={layers[10].start}
-                        truckEndProgress={layers[10].end}
-                        isMobile={isMobile}
-                        delayOffset={0}
-                      />
-                      
-                      {/* Palm tree 2 - right side (mirrored), enters after palm tree 1 */}
-                      <FallingPalmTree 
-                        truckProgress={progress}
-                        truckStartProgress={layers[10].start}
-                        truckEndProgress={layers[10].end}
-                        isMobile={isMobile}
-                        mirrored
-                        delayOffset={0.08}
-                      />
-                      
-                      {/* Yard sign drops in to the right of the door */}
-                      <YardSign 
-                        truckProgress={progress}
-                        truckStartProgress={layers[10].start}
-                        truckEndProgress={layers[10].end}
-                        isMobile={isMobile}
-                      />
-                    </>
-                  )}
+                  {/* Palm trees and yard sign - render for BOTH mobile and desktop */}
+                  <>
+                    {/* Palm tree 1 - left side, enters first */}
+                    <FallingPalmTree 
+                      truckProgress={progress}
+                      truckStartProgress={layers[10].start}
+                      truckEndProgress={layers[10].end}
+                      isMobile={isMobile}
+                      delayOffset={0}
+                    />
+                    
+                    {/* Palm tree 2 - right side (mirrored), enters after palm tree 1 */}
+                    <FallingPalmTree 
+                      truckProgress={progress}
+                      truckStartProgress={layers[10].start}
+                      truckEndProgress={layers[10].end}
+                      isMobile={isMobile}
+                      mirrored
+                      delayOffset={0.08}
+                    />
+                    
+                    {/* Yard sign drops in to the right of the door */}
+                    <YardSign 
+                      truckProgress={progress}
+                      truckStartProgress={layers[10].start}
+                      truckEndProgress={layers[10].end}
+                      isMobile={isMobile}
+                    />
+                  </>
                   
                 </svg>
               </div>

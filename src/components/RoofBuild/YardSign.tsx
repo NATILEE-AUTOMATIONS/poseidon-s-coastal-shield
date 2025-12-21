@@ -16,8 +16,6 @@ const easeInOutQuad = (x: number): number => {
 };
 
 const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile }) => {
-  if (isMobile) return null;
-  
   const truckDuration = truckEndProgress - truckStartProgress;
   // Drop in after palm trees (they start at 0.70)
   const dropStart = truckStartProgress + (truckDuration * 0.75);
@@ -48,12 +46,17 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
 
   if (opacity <= 0) return null;
 
+  // Mobile-specific positioning and scale
+  const signX = isMobile ? 260 : 245;
+  const signY = isMobile ? 268 : 290;
+  const signScale = isMobile ? 0.65 : 1;
+
   return (
     <g
       className="yard-sign-layer"
       style={{
         opacity,
-        transform: `translate(245px, ${290 + translateY}px)`,
+        transform: `translate(${signX}px, ${signY + translateY}px) scale(${signScale})`,
       }}
     >
       {/* Sign post */}

@@ -1878,8 +1878,6 @@ export const CleanUpRevealText: React.FC<{
   truckEndProgress: number;
   isMobile?: boolean;
 }> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile }) => {
-  if (isMobile) return null;
-  
   const rawProgress = (truckProgress - truckStartProgress) / (truckEndProgress - truckStartProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
@@ -1895,6 +1893,12 @@ export const CleanUpRevealText: React.FC<{
   // Easing for smooth reveal
   const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
   const easedReveal = easeOutCubic(revealProgress);
+  
+  // Mobile-specific sizing
+  const fontSize = isMobile ? 12 : 18;
+  const y1 = isMobile ? 243 : 238;
+  const y2 = isMobile ? 257 : 258;
+  const letterSpacing = isMobile ? 2 : 4;
   
   // Text starts hidden under dumpster (at x~200) and reveals from left as dumpster moves right
   // clipPath reveals from left to right as dumpster moves away
@@ -1935,15 +1939,15 @@ export const CleanUpRevealText: React.FC<{
         {/* "COMPLETE" text */}
         <text
           x="200"
-          y="238"
+          y={y1}
           textAnchor="middle"
           fill="hsl(168 85% 65%)"
-          fontSize="18"
+          fontSize={fontSize}
           fontWeight="800"
           fontFamily="system-ui, -apple-system, sans-serif"
-          letterSpacing="4"
+          letterSpacing={letterSpacing}
           stroke="hsl(0 0% 5%)"
-          strokeWidth="3"
+          strokeWidth={isMobile ? 2 : 3}
           paintOrder="stroke fill"
           style={{
             filter: 'drop-shadow(0 0 8px hsl(168 80% 50% / 0.8)) drop-shadow(0 0 20px hsl(168 80% 50% / 0.5))',
@@ -1954,15 +1958,15 @@ export const CleanUpRevealText: React.FC<{
         {/* "CLEAN UP" text */}
         <text
           x="200"
-          y="258"
+          y={y2}
           textAnchor="middle"
           fill="hsl(30 90% 65%)"
-          fontSize="18"
+          fontSize={fontSize}
           fontWeight="800"
           fontFamily="system-ui, -apple-system, sans-serif"
-          letterSpacing="4"
+          letterSpacing={letterSpacing}
           stroke="hsl(0 0% 5%)"
-          strokeWidth="3"
+          strokeWidth={isMobile ? 2 : 3}
           paintOrder="stroke fill"
           style={{
             filter: 'drop-shadow(0 0 8px hsl(30 85% 55% / 0.8)) drop-shadow(0 0 20px hsl(30 85% 55% / 0.5))',
@@ -1988,8 +1992,6 @@ export const FallingPalmTree: React.FC<{
   mirrored?: boolean;
   delayOffset?: number; // 0-1 fraction of duration to delay entrance
 }> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile, mirrored = false, delayOffset = 0 }) => {
-  if (isMobile) return null;
-  
   const truckDuration = truckEndProgress - truckStartProgress;
   // Apply delay offset for staggered entrance
   const dropStart = truckStartProgress + (truckDuration * 0.70) + (truckDuration * delayOffset);
@@ -2012,10 +2014,12 @@ export const FallingPalmTree: React.FC<{
   // Subtle scale for growth effect
   const scaleAnim = 0.85 + (easedProgress * 0.15);
   
-  // Tree position - mirrored version on the right side
-  const baseX = mirrored ? 348 : 52;
-  const baseY = 268;
-  const scale = 0.95 * scaleAnim;
+  // Tree position - mobile-specific positioning and scaling
+  const baseX = isMobile 
+    ? (mirrored ? 310 : 90)    // Closer together on mobile's narrower viewport
+    : (mirrored ? 348 : 52);   // Desktop original
+  const baseY = isMobile ? 255 : 268;
+  const scale = (isMobile ? 0.55 : 0.95) * scaleAnim;
   const scaleX = mirrored ? -1 : 1;
   
   return (
