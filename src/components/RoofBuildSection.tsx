@@ -227,6 +227,19 @@ const RoofBuildSection: React.FC = () => {
         }}
       />
 
+      {/* Poseidon Logo - Independent element, appears during doorway zoom on desktop */}
+      {!isMobile && zoomProgress > 0.15 && (
+        <div className="fixed inset-0 flex items-center justify-center z-[101] pointer-events-none">
+          <img 
+            src={poseidonDoorLogo} 
+            alt="Poseidon Roofing"
+            className="w-64 md:w-80 lg:w-[450px] max-w-[80vw]"
+            style={{ 
+              opacity: 1
+            }}
+          />
+        </div>
+      )}
 
       {/* Doorway Image Reveal - appears AFTER zoom is fully complete */}
       {!isMobile && <DoorwayImageReveal progress={progress} zoomProgress={zoomProgress} />}
@@ -338,23 +351,6 @@ const RoofBuildSection: React.FC = () => {
                   )}
                   
                 </svg>
-                
-                {/* Poseidon Logo - positioned at door location, scales with house zoom */}
-                {!isMobile && zoomProgress > 0.15 && zoomProgress < 0.85 && (
-                  <div 
-                    className="absolute inset-0 flex items-end justify-center pointer-events-none"
-                    style={{ paddingBottom: '18%' }} // Align with door position (82% from top = 18% from bottom)
-                  >
-                    <img 
-                      src={poseidonDoorLogo} 
-                      alt="Poseidon Roofing"
-                      className="w-24 md:w-32 lg:w-40"
-                      style={{ 
-                        opacity: zoomProgress < 0.75 ? 1 : Math.max(0, 1 - (zoomProgress - 0.75) * 10)
-                      }}
-                    />
-                  </div>
-                )}
               </div>
             </div>
 
