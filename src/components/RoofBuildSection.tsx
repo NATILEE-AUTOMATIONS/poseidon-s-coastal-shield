@@ -227,25 +227,26 @@ const RoofBuildSection: React.FC = () => {
         }}
       />
 
-      {/* Poseidon Logo - Fixed centered on screen, appears during doorway zoom on desktop */}
-      {!isMobile && zoomProgress > 0.15 && (
-        <div 
-          className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[101] pointer-events-none"
-        >
-          <img 
-            src={poseidonDoorLogo} 
-            alt="Poseidon Roofing"
-            className="w-64 md:w-80 lg:w-[450px] max-w-[80vw]"
-            style={{ opacity: 1 }}
-          />
-        </div>
-      )}
 
       {/* Doorway Image Reveal - appears AFTER zoom is fully complete */}
       {!isMobile && <DoorwayImageReveal progress={progress} zoomProgress={zoomProgress} />}
 
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
+        {/* Poseidon Logo - appears during doorway zoom, stays in center of sticky container */}
+        {!isMobile && zoomProgress > 0.15 && (
+          <div 
+            className="absolute inset-0 flex items-center justify-center z-[101] pointer-events-none"
+          >
+            <img 
+              src={poseidonDoorLogo} 
+              alt="Poseidon Roofing"
+              className="w-64 md:w-80 lg:w-[450px] max-w-[80vw]"
+              style={{ opacity: 1 }}
+            />
+          </div>
+        )}
+        
         <div style={{ opacity: gridFadeOut, transition: 'opacity 0.15s ease-out' }}>
           <GridBackground horizonOpacity={outlineOpacity} />
         </div>
