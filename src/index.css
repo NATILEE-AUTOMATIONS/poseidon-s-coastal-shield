@@ -431,7 +431,8 @@
     opacity: 0 !important;
   }
   .yard-sign-layer,
-  .palm-tree-layer {
+  .palm-tree-layer,
+  .cleanup-text-layer {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
@@ -448,7 +449,8 @@
     opacity: 0 !important;
   }
   .yard-sign-layer,
-  .palm-tree-layer {
+  .palm-tree-layer,
+  .cleanup-text-layer {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
