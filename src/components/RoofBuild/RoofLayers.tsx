@@ -1728,11 +1728,8 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   // 40-100%: Drive away together immediately after touch
   
   // Mobile-adjusted positions (smaller viewport)
-  // On mobile: dumpster hitch (orange rect) is at ~272px (200 + 40*1.8 after scaling)
-  // Truck bed back is at truckX + (-75 * scale) = truckX - 135
-  // To align truck back with dumpster hitch: truckX - 135 = 272, so truckX = 407
-  // But we want the truck's hitch receiver (at bed back) to connect, so move truck further left
-  const hitchedPosition = isMobile ? 365 : 500;
+  // Move truck further right so orange hitch rect on dumpster connects to truck's back bumper
+  const hitchedPosition = isMobile ? 445 : 580;
   const startPosition = isMobile ? 520 : 700;
   const endPosition = isMobile ? 900 : 1200;
   const truckY = isMobile ? 230 : 195;
