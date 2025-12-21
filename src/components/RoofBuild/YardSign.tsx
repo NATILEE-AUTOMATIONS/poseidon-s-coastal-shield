@@ -53,17 +53,17 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
 
   if (opacity <= 0) return null;
 
-  // Mobile-specific positioning and scale - much bigger sign on mobile
-  const signX = isMobile ? 210 : 245;
-  const signY = isMobile ? 230 : 290;
-  const signScale = isMobile ? 1.6 : 1;
+  // Mobile-specific positioning and scale - MUCH bigger sign on mobile
+  const signX = isMobile ? 170 : 245;
+  const signY = isMobile ? 200 : 290;
+  const signScale = isMobile ? 2.2 : 1;
   
-  // Sign dimensions - bigger on mobile
-  const boardWidth = isMobile ? 100 : 72;
-  const boardHeight = isMobile ? 65 : 46;
-  const postX = isMobile ? 47 : 32;
-  const postWidth = isMobile ? 8 : 6;
-  const postHeight = isMobile ? 50 : 40;
+  // Sign dimensions - significantly bigger on mobile
+  const boardWidth = isMobile ? 130 : 72;
+  const boardHeight = isMobile ? 85 : 46;
+  const postX = isMobile ? 58 : 32;
+  const postWidth = isMobile ? 12 : 6;
+  const postHeight = isMobile ? 60 : 40;
 
   return (
     <g
