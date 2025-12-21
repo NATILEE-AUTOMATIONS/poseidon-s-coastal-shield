@@ -23,7 +23,7 @@ import {
 } from './RoofBuild/RoofLayers';
 import YardSign from './RoofBuild/YardSign';
 import DoorwayImageReveal from './RoofBuild/DoorwayImageReveal';
-import poseidonDoorLogo from '@/assets/poseidon-door-logo.png';
+
 
 import { useScrollContext } from '@/context/ScrollContext';
 // ImageGallery3D removed
@@ -224,18 +224,7 @@ const RoofBuildSection: React.FC = () => {
           opacity: (easedLight > 0.01 && mobileOverlayMultiplier > 0) ? mobileOverlayMultiplier : 0,
           willChange: 'background, opacity',
         }}
-      >
-        {/* Poseidon Logo - appears as user enters through the door */}
-        <img 
-          src={poseidonDoorLogo} 
-          alt="Poseidon Roofing"
-          className="w-64 md:w-80 lg:w-[500px] max-w-[80vw]"
-          style={{
-            opacity: easedLight > 0.05 ? Math.min(1, easedLight * 2.5) : 0,
-            transform: `scale(${0.5 + Math.min(1, easedLight * 1.5) * 0.5})`,
-          }}
-        />
-      </div>
+      />
 
       {/* Doorway Image Reveal - appears AFTER zoom is fully complete */}
       {!isMobile && <DoorwayImageReveal progress={progress} zoomProgress={zoomProgress} />}
