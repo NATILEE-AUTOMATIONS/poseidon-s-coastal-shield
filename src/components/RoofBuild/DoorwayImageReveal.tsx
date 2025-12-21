@@ -1,31 +1,31 @@
 import React from 'react';
 import doorwayImage from '@/assets/doorway-reveal-image.png';
+import coastalCrew from '@/assets/coastal-home-crew.png';
+import coastalRoofing from '@/assets/coastal-home-roofing.png';
+import aerialPool from '@/assets/aerial-estate-pool.png';
 
 interface DoorwayImageRevealProps {
-  zoomProgress: number; // 0-1, where 1 = fully zoomed through door
+  progress: number; // Raw scroll progress 0-1
 }
 
-const DoorwayImageReveal: React.FC<DoorwayImageRevealProps> = ({ zoomProgress }) => {
-  // Only show after zoom is 70% complete (user is well inside the doorway)
-  const showThreshold = 0.7;
+const images = [doorwayImage, coastalCrew, coastalRoofing, aerialPool];
+
+const DoorwayImageReveal: React.FC<DoorwayImageRevealProps> = ({ progress }) => {
+  // Show when progress reaches 92% - this is AFTER the door zoom completes
+  const showThreshold = 0.92;
   
-  if (zoomProgress < showThreshold) return null;
+  if (progress < showThreshold) return null;
   
-  // Animation from 0.7 to 0.9 zoomProgress
-  const imageProgress = Math.max(0, Math.min(1, (zoomProgress - showThreshold) / 0.2));
+  // Animation from 0.92 to 0.97
+  const revealProgress = Math.max(0, Math.min(1, (progress - showThreshold) / 0.05));
   
   // Smooth easing
   const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
-  const easedProgress = easeOutCubic(imageProgress);
-
-  // Animation values
-  const opacity = easedProgress;
-  const scale = 0.85 + (easedProgress * 0.15);
-  const translateY = 80 * (1 - easedProgress);
+  const easedProgress = easeOutCubic(revealProgress);
 
   return (
     <div 
-      className="fixed inset-0 z-[200] flex items-center justify-center pointer-events-none"
+      className="fixed inset-0 z-[250] flex items-center justify-center pointer-events-none"
       style={{
         background: `radial-gradient(
           ellipse at center 35%,
@@ -33,24 +33,37 @@ const DoorwayImageReveal: React.FC<DoorwayImageRevealProps> = ({ zoomProgress })
           hsl(32 80% 45%) 40%,
           hsl(25 50% 10%) 100%
         )`,
-        opacity: Math.min(1, (zoomProgress - showThreshold) / 0.1),
+        opacity: easedProgress,
       }}
     >
-      <div
-        className="relative max-w-[70vw] md:max-w-[550px]"
-        style={{
-          opacity,
-          transform: `translateY(${translateY}px) scale(${scale})`,
-        }}
-      >
-        <img
-          src={doorwayImage}
-          alt="Premium roofing project"
-          className="w-full h-auto rounded-xl"
-          style={{
-            boxShadow: '0 0 60px 20px hsla(32, 80%, 50%, 0.4), 0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-          }}
-        />
+      {/* Grid of images */}
+      <div className="grid grid-cols-2 gap-4 max-w-[80vw] md:max-w-[700px] p-4">
+        {images.map((img, index) => {
+          // Stagger each image's appearance
+          const staggerDelay = index * 0.15;
+          const imageReveal = Math.max(0, Math.min(1, (revealProgress - staggerDelay) / 0.4));
+          const imageEased = easeOutCubic(imageReveal);
+          
+          return (
+            <div
+              key={index}
+              className="relative overflow-hidden rounded-xl"
+              style={{
+                opacity: imageEased,
+                transform: `translateY(${40 * (1 - imageEased)}px) scale(${0.9 + imageEased * 0.1})`,
+              }}
+            >
+              <img
+                src={img}
+                alt={`Roofing project ${index + 1}`}
+                className="w-full h-auto object-cover"
+                style={{
+                  boxShadow: '0 0 40px 10px hsla(32, 80%, 50%, 0.3), 0 15px 30px -8px rgba(0, 0, 0, 0.4)',
+                }}
+              />
+            </div>
+          );
+        })}
       </div>
     </div>
   );
