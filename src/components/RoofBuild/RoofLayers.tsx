@@ -1878,6 +1878,9 @@ export const CleanUpRevealText: React.FC<{
   truckEndProgress: number;
   isMobile?: boolean;
 }> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile }) => {
+  // Hide completely on mobile
+  if (isMobile) return null;
+  
   const rawProgress = (truckProgress - truckStartProgress) / (truckEndProgress - truckStartProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
@@ -1929,7 +1932,7 @@ export const CleanUpRevealText: React.FC<{
   if (opacity <= 0) return null;
   
   return (
-    <g className="cleanup-reveal-text">
+    <g className="cleanup-reveal-text cleanup-text-layer">
       <defs>
         <clipPath id="cleanupRevealClip">
           {/* Reveal from left edge of text area as dumpster moves right */}
