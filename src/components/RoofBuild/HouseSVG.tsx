@@ -73,16 +73,18 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
           style={{ filter: 'drop-shadow(0 0 8px hsl(168 80% 40% / 0.2))' }}
         />
         
-        {/* Ground line */}
-        <line
-          x1="30"
-          y1="265"
-          x2="370"
-          y2="265"
-          stroke="hsl(168 80% 45%)"
-          strokeWidth="2"
-          style={{ filter: 'drop-shadow(0 0 10px hsl(168 80% 45% / 0.5))' }}
-        />
+        {/* Ground line - hidden during zoom */}
+        {!hideRoofOutline && (
+          <line
+            x1="30"
+            y1="265"
+            x2="370"
+            y2="265"
+            stroke="hsl(168 80% 45%)"
+            strokeWidth="2"
+            style={{ filter: 'drop-shadow(0 0 10px hsl(168 80% 45% / 0.5))' }}
+          />
+        )}
         
         {/* Doorway portal grid - replaces flat orange glow */}
         <DoorwayGrid lightIntensity={lightIntensity} lightBoost={lightBoost} />
