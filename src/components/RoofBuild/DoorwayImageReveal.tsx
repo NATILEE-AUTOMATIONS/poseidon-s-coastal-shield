@@ -2,19 +2,19 @@ import React from 'react';
 import doorwayImage from '@/assets/doorway-reveal-image.png';
 
 interface DoorwayImageRevealProps {
-  progress: number; // Main scroll progress 0-1
+  zoomProgress: number; // 0-1, where 1 = fully zoomed through door
 }
 
-const DoorwayImageReveal: React.FC<DoorwayImageRevealProps> = ({ progress }) => {
-  // Show after 85% scroll progress
-  const showThreshold = 0.85;
+const DoorwayImageReveal: React.FC<DoorwayImageRevealProps> = ({ zoomProgress }) => {
+  // Only show after zoom is 70% complete (user is well inside the doorway)
+  const showThreshold = 0.7;
   
-  if (progress < showThreshold) return null;
+  if (zoomProgress < showThreshold) return null;
   
-  // Animation progress from 0.85 to 0.95
-  const imageProgress = Math.max(0, Math.min(1, (progress - showThreshold) / 0.10));
+  // Animation from 0.7 to 0.9 zoomProgress
+  const imageProgress = Math.max(0, Math.min(1, (zoomProgress - showThreshold) / 0.2));
   
-  // Smooth easing function
+  // Smooth easing
   const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
   const easedProgress = easeOutCubic(imageProgress);
 
@@ -33,7 +33,7 @@ const DoorwayImageReveal: React.FC<DoorwayImageRevealProps> = ({ progress }) => 
           hsl(32 80% 45%) 40%,
           hsl(25 50% 10%) 100%
         )`,
-        opacity: Math.min(1, (progress - showThreshold) / 0.05),
+        opacity: Math.min(1, (zoomProgress - showThreshold) / 0.1),
       }}
     >
       <div
