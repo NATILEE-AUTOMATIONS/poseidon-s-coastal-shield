@@ -234,9 +234,9 @@ const RoofBuildSection: React.FC = () => {
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
         {/* Poseidon Logo - zoom animation tied to scroll progress */}
-        {!isMobile && zoomProgress > 0.15 && (() => {
-          // Logo zooms from 0 to 1 between zoomProgress 0.15 and 0.45
-          const logoProgress = Math.min(1, Math.max(0, (zoomProgress - 0.15) / 0.30));
+        {!isMobile && zoomProgress > 0 && (() => {
+          // Logo zooms from 0 to 1 between zoomProgress 0 and 0.20 (completes before orange screen)
+          const logoProgress = Math.min(1, Math.max(0, zoomProgress / 0.20));
           const easeOutBack = (x: number) => {
             const c1 = 1.70158;
             const c3 = c1 + 1;
