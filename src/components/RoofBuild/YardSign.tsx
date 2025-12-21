@@ -21,8 +21,9 @@ const easeOutQuint = (x: number): number => {
 };
 
 const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile }) => {
-  // Hide completely on mobile
-  if (isMobile) return null;
+  // ALWAYS check screen width directly - don't trust isMobile prop  
+  const isActuallyMobile = typeof window !== 'undefined' && window.innerWidth < 900;
+  if (isMobile || isActuallyMobile) return null;
   
   const truckDuration = truckEndProgress - truckStartProgress;
   // Drop in after palm trees (they start at 0.70)

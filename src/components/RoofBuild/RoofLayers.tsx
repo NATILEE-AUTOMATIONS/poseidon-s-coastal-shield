@@ -1878,7 +1878,8 @@ export const CleanUpRevealText: React.FC<{
   truckEndProgress: number;
   isMobile?: boolean;
 }> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile }) => {
-  // Hide completely on mobile
+  // ALWAYS check screen width directly - don't trust isMobile prop
+  const isActuallyMobile = typeof window !== 'undefined' && window.innerWidth < 900;
   if (isMobile) return null;
   
   const rawProgress = (truckProgress - truckStartProgress) / (truckEndProgress - truckStartProgress);
@@ -1998,8 +1999,9 @@ export const FallingPalmTree: React.FC<{
   mirrored?: boolean;
   delayOffset?: number; // 0-1 fraction of duration to delay entrance
 }> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile, mirrored = false, delayOffset = 0 }) => {
-  // Hide completely on mobile
-  if (isMobile) return null;
+  // ALWAYS check screen width directly - don't trust isMobile prop
+  const isActuallyMobile = typeof window !== 'undefined' && window.innerWidth < 900;
+  if (isMobile || isActuallyMobile) return null;
   
   const truckDuration = truckEndProgress - truckStartProgress;
   // Apply delay offset for staggered entrance
