@@ -43,53 +43,54 @@ const RoofBuildSection: React.FC = () => {
   // Desktop: Roof layers: 8-55%, Dumpster: 55-62%, Door: 65-77%, Zoom: 77-93%, Gallery: 93%+
   const roofProgress = Math.min(1, progress / (isMobile ? 0.90 : 0.60));
   
-  // Mobile layers spread from 15% to 85%, desktop from 8% to 55%
-  const mobileLayerStart = 0.15; // Start later so card is visible
+  // Mobile layers spread from 10% to 90%, desktop from 8% to 55%
+  // CRITICAL: Mobile timing must fit all layers + dumpster + truck within 0-1 range
+  const mobileLayerStart = 0.10;
   const desktopLayerStart = 0.08;
-  const mobileLayerStep = 0.055; // Reduced from 0.075 so animations fit before sign
-  const desktopLayerStep = 0.035; // Compressed to fit all layers within 55%
+  const mobileLayerStep = 0.035; // Compressed to fit everything including truck
+  const desktopLayerStep = 0.035;
   const layerStep = isMobile ? mobileLayerStep : desktopLayerStep;
   const layerStart = isMobile ? mobileLayerStart : desktopLayerStart;
   
-  // Decking - reduced multipliers to fit all layers
-  const deckingMultiplier = isMobile ? 2 : 2;
+  // Decking
+  const deckingMultiplier = isMobile ? 1.5 : 2;
   const deckingEnd = layerStart + (layerStep * deckingMultiplier);
   
   // Drip edge
-  const dripEdgeMultiplier = isMobile ? 1.5 : 1.5;
+  const dripEdgeMultiplier = isMobile ? 1 : 1.5;
   const dripEdgeEnd = deckingEnd + (layerStep * dripEdgeMultiplier);
   
   // Ice & water shield
-  const iceWaterMultiplier = isMobile ? 1.5 : 1.5;
+  const iceWaterMultiplier = isMobile ? 1 : 1.5;
   const iceWaterEnd = dripEdgeEnd + (layerStep * iceWaterMultiplier);
   
   // Underlayment
-  const underlaymentMultiplier = isMobile ? 2 : 1.5;
+  const underlaymentMultiplier = isMobile ? 1.5 : 1.5;
   const underlaymentEnd = iceWaterEnd + (layerStep * underlaymentMultiplier);
   
   // Starter strip
-  const starterStripMultiplier = isMobile ? 1.5 : 1.5;
+  const starterStripMultiplier = isMobile ? 1 : 1.5;
   const starterStripEnd = underlaymentEnd + (layerStep * starterStripMultiplier);
   
   // Shingles, Vents, Flashing
-  const shinglesEnd = starterStripEnd + layerStep * 2;
-  const ventsEnd = shinglesEnd + layerStep * 1.5;
-  const flashingEnd = ventsEnd + layerStep * 1.5;
+  const shinglesEnd = starterStripEnd + layerStep * (isMobile ? 1.5 : 2);
+  const ventsEnd = shinglesEnd + layerStep * (isMobile ? 1 : 1.5);
+  const flashingEnd = ventsEnd + layerStep * (isMobile ? 1 : 1.5);
   
   // Ridge cap - shorter duration
   const ridgeCapStart = flashingEnd;
   const ridgeCapEnd = isMobile 
-    ? flashingEnd + layerStep * 1.5
+    ? flashingEnd + layerStep * 1
     : flashingEnd + layerStep * 1;
     
-  // Dumpster timing - starts right after ridge cap (mobile: 4x longer for deliberate feel)
+  // Dumpster timing - starts right after ridge cap
   const dumpsterStart = ridgeCapEnd;
-  const dumpsterMultiplier = isMobile ? 5 : 2;
+  const dumpsterMultiplier = isMobile ? 3 : 2;
   const dumpsterEnd = ridgeCapEnd + layerStep * dumpsterMultiplier;
   
   // Truck timing - starts right after dumpster (both mobile and desktop)
   const truckStart = dumpsterEnd;
-  const truckMultiplier = isMobile ? 6 : 4; // Mobile gets longer truck animation
+  const truckMultiplier = isMobile ? 4 : 4;
   const truckEnd = dumpsterEnd + layerStep * truckMultiplier;
     
   const layers = [
