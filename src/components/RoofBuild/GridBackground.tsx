@@ -1,6 +1,10 @@
 import React from 'react';
 
-const GridBackground: React.FC = () => {
+interface GridBackgroundProps {
+  horizonOpacity?: number;
+}
+
+const GridBackground: React.FC<GridBackgroundProps> = ({ horizonOpacity = 1 }) => {
   return (
     <div className="absolute inset-0 overflow-hidden hidden md:block">
       {/* Deep background */}
@@ -60,7 +64,7 @@ const GridBackground: React.FC = () => {
         />
       </div>
       
-      {/* Horizon glow line */}
+      {/* Horizon glow line - fades out during door animation */}
       <div 
         className="absolute left-0 right-0 top-[25%]"
         style={{
@@ -71,6 +75,8 @@ const GridBackground: React.FC = () => {
             0 0 80px 30px hsl(168 80% 45% / 0.2),
             0 0 120px 50px hsl(168 80% 45% / 0.1)
           `,
+          opacity: horizonOpacity,
+          transition: 'opacity 0.2s ease-out',
         }}
       />
       
