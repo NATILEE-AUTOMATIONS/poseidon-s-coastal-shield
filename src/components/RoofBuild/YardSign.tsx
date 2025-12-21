@@ -54,9 +54,9 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
   if (opacity <= 0) return null;
 
   // Mobile-specific positioning and scale
-  const signX = isMobile ? 260 : 245;
-  const signY = isMobile ? 268 : 290;
-  const signScale = isMobile ? 0.65 : 1;
+  const signX = isMobile ? 245 : 245;
+  const signY = isMobile ? 250 : 290;
+  const signScale = isMobile ? 1.1 : 1;
 
   return (
     <g
