@@ -225,16 +225,15 @@ const RoofBuildSection: React.FC = () => {
         }}
       >
         {/* Poseidon Logo - appears as user enters through the door */}
-        {easedLight > 0.3 && overlayFade > 0.5 && (
+        {easedLight > 0.1 && (
           <img 
             src="/poseidon-logo.png" 
             alt="Poseidon Roofing"
-            className="w-40 md:w-64 lg:w-80 drop-shadow-2xl"
+            className="w-48 md:w-72 lg:w-96"
             style={{
-              opacity: Math.min(1, (easedLight - 0.3) * 2) * overlayFade,
-              transform: `scale(${0.8 + Math.min(1, (easedLight - 0.3) * 2) * 0.2})`,
-              filter: 'drop-shadow(0 0 30px hsl(25 80% 30% / 0.5))',
-              transition: 'opacity 0.3s ease-out, transform 0.3s ease-out',
+              opacity: Math.min(1, easedLight * 1.5) * overlayFade,
+              transform: `scale(${0.7 + Math.min(1, easedLight) * 0.3})`,
+              filter: 'drop-shadow(0 0 40px hsl(25 80% 20% / 0.8)) drop-shadow(0 0 80px hsl(25 90% 30% / 0.4))',
             }}
           />
         )}
