@@ -1880,7 +1880,7 @@ export const CleanUpRevealText: React.FC<{
 }> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile }) => {
   // ALWAYS check screen width directly - don't trust isMobile prop
   const isActuallyMobile = typeof window !== 'undefined' && window.innerWidth < 900;
-  if (isMobile) return null;
+  if (isMobile || isActuallyMobile) return null;
   
   const rawProgress = (truckProgress - truckStartProgress) / (truckEndProgress - truckStartProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
