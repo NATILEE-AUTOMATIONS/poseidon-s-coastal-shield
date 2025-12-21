@@ -235,7 +235,7 @@ const RoofBuildSection: React.FC = () => {
             alt="Poseidon Roofing"
             className="w-64 md:w-80 lg:w-[450px] max-w-[80vw]"
             style={{ 
-              opacity: Math.min(1, (zoomProgress - 0.15) * 2)
+              opacity: Math.min(1, (zoomProgress - 0.15) * 6)
             }}
           />
         </div>
