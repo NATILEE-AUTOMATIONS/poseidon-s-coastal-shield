@@ -6,10 +6,10 @@ interface HouseSVGProps {
   className?: string;
   doorAngle?: number; // 0-75 degrees
   lightBoost?: number; // 0-1 additional light intensity during zoom
-  hideRoofOutline?: boolean; // Hide roof outline during zoom
+  outlineOpacity?: number; // 0-1 for fading out roof/ground lines
 }
 
-const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, lightBoost = 0, hideRoofOutline = false }) => {
+const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, lightBoost = 0, outlineOpacity = 1 }) => {
   const baseLightIntensity = doorAngle / 75;
   const lightIntensity = Math.min(1, baseLightIntensity + (lightBoost * 0.5));
   
@@ -73,18 +73,20 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
           style={{ filter: 'drop-shadow(0 0 8px hsl(168 80% 40% / 0.2))' }}
         />
         
-        {/* Ground line - hidden during zoom */}
-        {!hideRoofOutline && (
-          <line
-            x1="30"
-            y1="265"
-            x2="370"
-            y2="265"
-            stroke="hsl(168 80% 45%)"
-            strokeWidth="2"
-            style={{ filter: 'drop-shadow(0 0 10px hsl(168 80% 45% / 0.5))' }}
-          />
-        )}
+        {/* Ground line - fades out during door animation */}
+        <line
+          x1="30"
+          y1="265"
+          x2="370"
+          y2="265"
+          stroke="hsl(168 80% 45%)"
+          strokeWidth="2"
+          style={{ 
+            filter: 'drop-shadow(0 0 10px hsl(168 80% 45% / 0.5))',
+            opacity: outlineOpacity,
+            transition: 'opacity 0.2s ease-out'
+          }}
+        />
         
         {/* Doorway portal grid - replaces flat orange glow */}
         <DoorwayGrid lightIntensity={lightIntensity} lightBoost={lightBoost} />
@@ -208,11 +210,13 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
         <path
           d="M40 160 L200 55 L360 160 Z"
           fill="url(#roofDeckGradient)"
-          stroke={hideRoofOutline ? "transparent" : "hsl(168 80% 50%)"}
+          stroke="hsl(168 80% 50%)"
           strokeWidth="2.5"
           strokeLinejoin="round"
           style={{
-            filter: hideRoofOutline ? 'none' : 'drop-shadow(0 0 15px hsl(168 80% 45% / 0.4))',
+            filter: 'drop-shadow(0 0 15px hsl(168 80% 45% / 0.4))',
+            opacity: outlineOpacity,
+            transition: 'opacity 0.2s ease-out'
           }}
         />
         

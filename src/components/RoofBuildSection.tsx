@@ -119,6 +119,11 @@ const RoofBuildSection: React.FC = () => {
     ? Math.min(75, ((progress - doorStart) / 0.12) * 75) 
     : 0;
 
+  // Outline fade: starts when door starts opening, fully gone by zoom start
+  const outlineOpacity = !isMobile && progress > doorStart 
+    ? Math.max(0, 1 - ((progress - doorStart) / 0.08))
+    : 1;
+
   // Door zoom: starts after door opens, extended duration for full doorway entry (DESKTOP ONLY)
   const zoomStart = doorStart + 0.12;
   const zoomProgress = !isMobile && progress > zoomStart 
@@ -271,7 +276,7 @@ const RoofBuildSection: React.FC = () => {
                   )}
                   
                   {/* House base with animated door */}
-                  <HouseSVG doorAngle={doorAngle} lightBoost={zoomProgress} hideRoofOutline={zoomProgress > 0} />
+                  <HouseSVG doorAngle={doorAngle} lightBoost={zoomProgress} outlineOpacity={outlineOpacity} />
                   
                   {/* Animated roof layers - 10 layers in correct installation order */}
                   {/* 1. Replace Decking */}
