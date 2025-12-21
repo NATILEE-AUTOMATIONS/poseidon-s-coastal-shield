@@ -231,7 +231,7 @@ const RoofBuildSection: React.FC = () => {
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
         <div style={{ opacity: gridFadeOut, transition: 'opacity 0.15s ease-out' }}>
-          <GridBackground />
+          <GridBackground horizonOpacity={outlineOpacity} />
         </div>
         
         {/* Content container - with top padding for navbar clearance */}
