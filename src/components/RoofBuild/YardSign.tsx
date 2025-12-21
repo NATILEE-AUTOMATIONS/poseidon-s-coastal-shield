@@ -53,17 +53,17 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
 
   if (opacity <= 0) return null;
 
-  // Mobile-specific positioning and scale - MUCH bigger sign on mobile
-  const signX = isMobile ? 170 : 245;
-  const signY = isMobile ? 200 : 290;
-  const signScale = isMobile ? 2.2 : 1;
+  // Mobile-specific positioning and scale - DRAMATICALLY bigger sign on mobile
+  const signX = isMobile ? 120 : 245;
+  const signY = isMobile ? 160 : 290;
+  const signScale = isMobile ? 3.5 : 1;
   
-  // Sign dimensions - significantly bigger on mobile
-  const boardWidth = isMobile ? 130 : 72;
-  const boardHeight = isMobile ? 85 : 46;
-  const postX = isMobile ? 58 : 32;
-  const postWidth = isMobile ? 12 : 6;
-  const postHeight = isMobile ? 60 : 40;
+  // Sign dimensions - MUCH bigger on mobile
+  const boardWidth = isMobile ? 150 : 72;
+  const boardHeight = isMobile ? 100 : 46;
+  const postX = isMobile ? 68 : 32;
+  const postWidth = isMobile ? 14 : 6;
+  const postHeight = isMobile ? 70 : 40;
 
   return (
     <g
@@ -114,8 +114,8 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
             src={poseidonLogo} 
             alt="Poseidon Roofing" 
             style={{ 
-              maxWidth: isMobile ? '140px' : '100px', 
-              maxHeight: isMobile ? '80px' : '60px', 
+              maxWidth: isMobile ? '200px' : '100px', 
+              maxHeight: isMobile ? '120px' : '60px', 
               objectFit: 'contain' 
             }}
           />
