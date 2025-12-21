@@ -6,8 +6,9 @@ interface DoorwayImageRevealProps {
 }
 
 const DoorwayImageReveal: React.FC<DoorwayImageRevealProps> = ({ zoomProgress }) => {
-  // Image starts appearing at zoomProgress 0.85
-  const imageProgress = Math.max(0, Math.min(1, (zoomProgress - 0.85) / 0.15));
+  // Start appearing much earlier - at zoomProgress 0.3
+  const showThreshold = 0.3;
+  const imageProgress = Math.max(0, Math.min(1, (zoomProgress - showThreshold) / 0.4));
   
   // Smooth easing function
   const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
@@ -18,11 +19,12 @@ const DoorwayImageReveal: React.FC<DoorwayImageRevealProps> = ({ zoomProgress })
   const scale = 0.85 + (easedProgress * 0.15); // 0.85 → 1.0
   const translateY = 80 * (1 - easedProgress); // 80px → 0px
 
-  if (zoomProgress < 0.8) return null;
+  // Show as soon as there's any zoom progress
+  if (zoomProgress < 0.25) return null;
 
   return (
     <div 
-      className="fixed inset-0 z-[150] flex items-center justify-center"
+      className="fixed inset-0 z-[200] flex items-center justify-center pointer-events-none"
       style={{
         background: `radial-gradient(
           ellipse at center 35%,
@@ -30,7 +32,7 @@ const DoorwayImageReveal: React.FC<DoorwayImageRevealProps> = ({ zoomProgress })
           hsl(32 80% 45%) 40%,
           hsl(25 50% 10%) 100%
         )`,
-        opacity: Math.min(1, (zoomProgress - 0.8) / 0.1), // Fade in the background first
+        opacity: Math.min(1, (zoomProgress - 0.25) / 0.15),
       }}
     >
       <div
@@ -38,7 +40,6 @@ const DoorwayImageReveal: React.FC<DoorwayImageRevealProps> = ({ zoomProgress })
         style={{
           opacity,
           transform: `translateY(${translateY}px) scale(${scale})`,
-          transition: 'none',
         }}
       >
         <img
