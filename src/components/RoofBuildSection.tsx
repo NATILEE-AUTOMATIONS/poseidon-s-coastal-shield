@@ -212,7 +212,7 @@ const RoofBuildSection: React.FC = () => {
 
       {/* Warm light overlay - delayed fade-in for smoother experience - z-[100] to cover EVERYTHING */}
       <div 
-        className="fixed inset-0 pointer-events-none z-[100]"
+        className="fixed inset-0 pointer-events-none z-[100] flex items-center justify-center"
         style={{
           background: `radial-gradient(circle at 50% 45%, 
             hsl(35 98% 75% / ${Math.min(1, easedLight * 1.2 * overlayFade * mobileOverlayMultiplier)}), 
@@ -223,7 +223,22 @@ const RoofBuildSection: React.FC = () => {
           opacity: (easedLight > 0.01 && mobileOverlayMultiplier > 0) ? mobileOverlayMultiplier : 0,
           willChange: 'background, opacity',
         }}
-      />
+      >
+        {/* Poseidon Logo - appears as user enters through the door */}
+        {easedLight > 0.3 && overlayFade > 0.5 && (
+          <img 
+            src="/poseidon-logo.png" 
+            alt="Poseidon Roofing"
+            className="w-40 md:w-64 lg:w-80 drop-shadow-2xl"
+            style={{
+              opacity: Math.min(1, (easedLight - 0.3) * 2) * overlayFade,
+              transform: `scale(${0.8 + Math.min(1, (easedLight - 0.3) * 2) * 0.2})`,
+              filter: 'drop-shadow(0 0 30px hsl(25 80% 30% / 0.5))',
+              transition: 'opacity 0.3s ease-out, transform 0.3s ease-out',
+            }}
+          />
+        )}
+      </div>
 
       {/* Doorway Image Reveal - appears AFTER zoom is fully complete */}
       {!isMobile && <DoorwayImageReveal progress={progress} zoomProgress={zoomProgress} />}
