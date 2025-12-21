@@ -438,16 +438,35 @@
     opacity: 0 !important;
     pointer-events: none !important;
     transform: scale(0) !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
   }
 }
 
-/* Media query fallback for real mobile devices */
-@media (max-width: 767px) {
+/* Media query fallback for real mobile devices - match hook breakpoint exactly */
+@media (max-width: 768px) {
   .field-shingles-layer {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
   }
+  .yard-sign-layer,
+  .palm-tree-layer,
+  .cleanup-text-layer {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: scale(0) !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+}
+
+/* Additional touch device targeting */
+@media (hover: none) and (pointer: coarse) {
   .yard-sign-layer,
   .palm-tree-layer,
   .cleanup-text-layer {
