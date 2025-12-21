@@ -53,10 +53,17 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
 
   if (opacity <= 0) return null;
 
-  // Mobile-specific positioning and scale
-  const signX = isMobile ? 245 : 245;
-  const signY = isMobile ? 250 : 290;
-  const signScale = isMobile ? 1.1 : 1;
+  // Mobile-specific positioning and scale - much bigger sign on mobile
+  const signX = isMobile ? 210 : 245;
+  const signY = isMobile ? 230 : 290;
+  const signScale = isMobile ? 1.6 : 1;
+  
+  // Sign dimensions - bigger on mobile
+  const boardWidth = isMobile ? 100 : 72;
+  const boardHeight = isMobile ? 65 : 46;
+  const postX = isMobile ? 47 : 32;
+  const postWidth = isMobile ? 8 : 6;
+  const postHeight = isMobile ? 50 : 40;
 
   return (
     <g
@@ -68,10 +75,10 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
     >
       {/* Sign post */}
       <rect
-        x="32"
+        x={postX}
         y="0"
-        width="6"
-        height="40"
+        width={postWidth}
+        height={postHeight}
         fill="hsl(160 25% 20%)"
         stroke="hsl(160 30% 30%)"
         strokeWidth="0.5"
@@ -80,20 +87,20 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
       {/* Sign board background */}
       <rect
         x="0"
-        y="-42"
-        width="72"
-        height="46"
-        rx="3"
+        y={-boardHeight + 4}
+        width={boardWidth}
+        height={boardHeight}
+        rx="4"
         fill="hsl(160 30% 8%)"
         stroke="hsl(174 62% 38%)"
-        strokeWidth="1.5"
+        strokeWidth={isMobile ? 2 : 1.5}
         style={{
           filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.5))',
         }}
       />
       
       {/* Logo container */}
-      <foreignObject x="2" y="-40" width="68" height="42">
+      <foreignObject x="2" y={-boardHeight + 6} width={boardWidth - 4} height={boardHeight - 4}>
         <div 
           style={{ 
             width: '100%', 
@@ -107,8 +114,8 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
             src={poseidonLogo} 
             alt="Poseidon Roofing" 
             style={{ 
-              maxWidth: '100px', 
-              maxHeight: '60px', 
+              maxWidth: isMobile ? '140px' : '100px', 
+              maxHeight: isMobile ? '80px' : '60px', 
               objectFit: 'contain' 
             }}
           />
