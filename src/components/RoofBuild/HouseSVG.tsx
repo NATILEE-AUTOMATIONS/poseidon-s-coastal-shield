@@ -73,7 +73,17 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
           style={{ filter: 'drop-shadow(0 0 8px hsl(168 80% 40% / 0.2))' }}
         />
         
-        {/* Ground line - HIDDEN, rendered separately outside zoom container */}
+        {/* Ground line - fades out during door animation */}
+        <line
+          x1="30"
+          y1="265"
+          x2="370"
+          y2="265"
+          stroke="hsl(168 80% 45%)"
+          strokeWidth="2"
+          opacity={outlineOpacity}
+          style={{ filter: 'drop-shadow(0 0 10px hsl(168 80% 45% / 0.5))' }}
+        />
         
         {/* Doorway portal grid - replaces flat orange glow */}
         <DoorwayGrid lightIntensity={lightIntensity} lightBoost={lightBoost} />
@@ -193,13 +203,17 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
 
       {/* Roof structure - clean minimal framing */}
       <g className="roof-deck">
-        {/* Roof deck surface - dark background, outline rendered separately outside zoom */}
+        {/* Roof deck surface - dark background */}
         <path
           d="M40 160 L200 55 L360 160 Z"
           fill="url(#roofDeckGradient)"
-          stroke="transparent"
+          stroke="hsl(168 80% 50%)"
           strokeWidth="2.5"
           strokeLinejoin="round"
+          opacity={outlineOpacity}
+          style={{
+            filter: 'drop-shadow(0 0 15px hsl(168 80% 45% / 0.4))',
+          }}
         />
         
         {/* Simple interior framing lines */}
