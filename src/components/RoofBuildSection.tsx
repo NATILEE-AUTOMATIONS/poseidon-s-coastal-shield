@@ -87,9 +87,10 @@ const RoofBuildSection: React.FC = () => {
   const dumpsterMultiplier = isMobile ? 5 : 2;
   const dumpsterEnd = ridgeCapEnd + layerStep * dumpsterMultiplier;
   
-  // Truck timing - starts right after dumpster, desktop only
+  // Truck timing - starts right after dumpster (both mobile and desktop)
   const truckStart = dumpsterEnd;
-  const truckEnd = dumpsterEnd + layerStep * 4; // Longer duration for the full sequence
+  const truckMultiplier = isMobile ? 6 : 4; // Mobile gets longer truck animation
+  const truckEnd = dumpsterEnd + layerStep * truckMultiplier;
     
   const layers = [
     { start: layerStart, end: deckingEnd },                    // 1. Decking
@@ -109,8 +110,8 @@ const RoofBuildSection: React.FC = () => {
   const dumpsterRawProgress = (progress - dumpsterStart) / (dumpsterEnd - dumpsterStart);
   const dumpsterAnimProgress = Math.max(0, Math.min(1, dumpsterRawProgress));
   
-  // Calculate when all active layers end (truck is desktop only, so use dumpsterEnd for mobile)
-  const roofLayersEnd = isMobile ? dumpsterEnd + 0.05 : truckEnd + 0.05;
+  // Calculate when all active layers end (truck now runs on both mobile and desktop)
+  const roofLayersEnd = truckEnd + 0.05;
 
   // Show hint during buffer period (before animation starts)
   const showScrollHint = progress < layerStart;
