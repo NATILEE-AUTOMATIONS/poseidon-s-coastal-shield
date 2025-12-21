@@ -221,7 +221,7 @@ const RoofBuildSection: React.FC = () => {
       />
 
       {/* Doorway Image Reveal - appears when fully inside the doorway */}
-      {!isMobile && <DoorwayImageReveal zoomProgress={zoomProgress} />}
+      {!isMobile && <DoorwayImageReveal progress={progress} />}
 
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">

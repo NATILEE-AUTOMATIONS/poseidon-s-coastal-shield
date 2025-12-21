@@ -2,13 +2,17 @@ import React from 'react';
 import doorwayImage from '@/assets/doorway-reveal-image.png';
 
 interface DoorwayImageRevealProps {
-  zoomProgress: number;
+  progress: number; // Main scroll progress 0-1
 }
 
-const DoorwayImageReveal: React.FC<DoorwayImageRevealProps> = ({ zoomProgress }) => {
-  // Start appearing much earlier - at zoomProgress 0.3
-  const showThreshold = 0.3;
-  const imageProgress = Math.max(0, Math.min(1, (zoomProgress - showThreshold) / 0.4));
+const DoorwayImageReveal: React.FC<DoorwayImageRevealProps> = ({ progress }) => {
+  // Show after 85% scroll progress
+  const showThreshold = 0.85;
+  
+  if (progress < showThreshold) return null;
+  
+  // Animation progress from 0.85 to 0.95
+  const imageProgress = Math.max(0, Math.min(1, (progress - showThreshold) / 0.10));
   
   // Smooth easing function
   const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
@@ -16,11 +20,8 @@ const DoorwayImageReveal: React.FC<DoorwayImageRevealProps> = ({ zoomProgress })
 
   // Animation values
   const opacity = easedProgress;
-  const scale = 0.85 + (easedProgress * 0.15); // 0.85 → 1.0
-  const translateY = 80 * (1 - easedProgress); // 80px → 0px
-
-  // Show as soon as there's any zoom progress
-  if (zoomProgress < 0.25) return null;
+  const scale = 0.85 + (easedProgress * 0.15);
+  const translateY = 80 * (1 - easedProgress);
 
   return (
     <div 
@@ -32,7 +33,7 @@ const DoorwayImageReveal: React.FC<DoorwayImageRevealProps> = ({ zoomProgress })
           hsl(32 80% 45%) 40%,
           hsl(25 50% 10%) 100%
         )`,
-        opacity: Math.min(1, (zoomProgress - 0.25) / 0.15),
+        opacity: Math.min(1, (progress - showThreshold) / 0.05),
       }}
     >
       <div
