@@ -1907,13 +1907,15 @@ export const CleanUpRevealText: React.FC<{
   // Don't show until truck has started
   if (truckProgress < truckStartProgress) return null;
   
-  // Fade out after text is fully revealed - smoother fade with easing
-  const fadeOutStart = 0.78;
-  const fadeOutEnd = 0.92;
+  // Fade out after text is fully revealed - faster, cleaner fade
+  const fadeOutStart = 0.65; // Start fading earlier
+  const fadeOutEnd = 0.80;   // Complete fade sooner
   let fadeOutOpacity = 1;
   if (layerProgress > fadeOutStart) {
-    const fadeProgress = (layerProgress - fadeOutStart) / (fadeOutEnd - fadeOutStart);
-    fadeOutOpacity = Math.max(0, 1 - easeOutQuart(fadeProgress));
+    const fadeProgress = Math.min(1, (layerProgress - fadeOutStart) / (fadeOutEnd - fadeOutStart));
+    // Use easeInQuad for a natural accelerating fade-out
+    const easeInQuad = (x: number) => x * x;
+    fadeOutOpacity = Math.max(0, 1 - easeInQuad(fadeProgress));
   }
   
   // Opacity fades in smoothly as truck approaches, then stays visible, then fades out
