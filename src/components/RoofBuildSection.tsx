@@ -228,14 +228,14 @@ const RoofBuildSection: React.FC = () => {
       />
 
       {/* Poseidon Logo - Independent element, appears during doorway zoom on desktop */}
-      {!isMobile && zoomProgress > 0.15 && (
+      {!isMobile && zoomProgress > 0.15 && zoomProgress < 0.85 && (
         <div className="fixed inset-0 flex items-center justify-center z-[101] pointer-events-none">
           <img 
             src={poseidonDoorLogo} 
             alt="Poseidon Roofing"
             className="w-64 md:w-80 lg:w-[450px] max-w-[80vw]"
             style={{ 
-              opacity: 1
+              opacity: zoomProgress < 0.75 ? 1 : Math.max(0, 1 - (zoomProgress - 0.75) * 10)
             }}
           />
         </div>
