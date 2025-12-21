@@ -1733,7 +1733,7 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   const hitchedPosition = isMobile ? 405 : 540;
   const startPosition = isMobile ? 520 : 700;
   const endPosition = isMobile ? -200 : 1200;
-  const truckY = isMobile ? 205 : 195;
+  const truckY = isMobile ? 230 : 195;
   const scale = isMobile ? 1.8 : 3;
   
   // Mobile: slower, more deliberate easing (power of 6)
@@ -1766,13 +1766,14 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   const opacity = layerProgress < (isMobile ? 0.08 : 0.05) 
     ? layerProgress / (isMobile ? 0.08 : 0.05) 
     : 1;
-  const isDrivingAway = layerProgress > backPhaseEnd;
+  // Use >= to prevent flash gap between dumpster layers
+  const isDrivingAway = layerProgress >= backPhaseEnd;
   
   // Mobile dumpster scale values (MUST match DumpsterLayer exactly)
   const dumpsterScaleX = isMobile ? 1.8 : 2;
   const dumpsterScaleY = isMobile ? 2.0 : 2.4;
   const dumpsterOriginX = 200;
-  const dumpsterOriginY = 270;
+  const dumpsterOriginY = 270; // Matches DumpsterLayer: dumpsterY + 20 = 250 + 20
   
   return (
     <g className="truck-layer" style={{ opacity }}>
