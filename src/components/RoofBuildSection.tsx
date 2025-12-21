@@ -497,7 +497,8 @@ const RoofBuildSection: React.FC = () => {
                   />
                   
                   {/* Dumpster rendered in same SVG as truck for alignment */}
-                  {progress < layers[10]?.start + (layers[10]?.end - layers[10]?.start) * (isMobile ? 0.35 : 0.45) && (
+                  {/* Hide exactly when truck's isDrivingAway becomes true (backPhaseEnd: 0.50 mobile, 0.40 desktop) */}
+                  {progress < layers[10]?.start + (layers[10]?.end - layers[10]?.start) * (isMobile ? 0.50 : 0.40) && (
                     <DumpsterLayer progress={progress} startProgress={layers[9].start} endProgress={layers[9].end} isMobile={isMobile} />
                   )}
                   <TruckLayer 
