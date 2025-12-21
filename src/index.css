@@ -430,11 +430,21 @@
     visibility: hidden !important;
     opacity: 0 !important;
   }
+  .yard-sign-layer {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
 }
 
 /* Media query fallback for real mobile devices */
 @media (max-width: 767px) {
   .field-shingles-layer {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
+  .yard-sign-layer {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
