@@ -213,7 +213,7 @@ const RoofBuildSection: React.FC = () => {
 
       {/* Warm light overlay - delayed fade-in for smoother experience - z-[100] to cover EVERYTHING */}
       <div 
-        className="fixed inset-0 pointer-events-none z-[100] flex items-center justify-center"
+        className="fixed inset-0 pointer-events-none z-[100]"
         style={{
           background: `radial-gradient(circle at 50% 45%, 
             hsl(35 98% 75% / ${Math.min(1, easedLight * 1.2 * overlayFade * mobileOverlayMultiplier)}), 
@@ -224,18 +224,24 @@ const RoofBuildSection: React.FC = () => {
           opacity: (easedLight > 0.01 && mobileOverlayMultiplier > 0) ? mobileOverlayMultiplier : 0,
           willChange: 'background, opacity',
         }}
-      >
-        {/* Poseidon Logo - appears as user enters through the door */}
-        <img 
-          src={poseidonDoorLogo} 
-          alt="Poseidon Roofing"
-          className="w-64 md:w-80 lg:w-[500px] max-w-[80vw]"
-          style={{
-            opacity: easedLight > 0.05 ? Math.min(1, easedLight * 2.5) : 0,
-            transform: `scale(${0.5 + Math.min(1, easedLight * 1.5) * 0.5})`,
-          }}
-        />
-      </div>
+      />
+
+      {/* Poseidon Logo Overlay - SEPARATE from warm light, appears during door zoom */}
+      {!isMobile && zoomProgress > 0.1 && zoomProgress < 0.95 && (
+        <div 
+          className="fixed inset-0 z-[150] flex items-center justify-center pointer-events-none"
+        >
+          <img 
+            src={poseidonDoorLogo} 
+            alt="Poseidon Roofing"
+            className="w-72 md:w-96 lg:w-[550px] max-w-[85vw]"
+            style={{
+              opacity: Math.min(1, (zoomProgress - 0.1) * 3) * Math.max(0, 1 - (zoomProgress - 0.7) * 4),
+              transform: `scale(${0.7 + zoomProgress * 0.3})`,
+            }}
+          />
+        </div>
+      )}
 
       {/* Doorway Image Reveal - appears AFTER zoom is fully complete */}
       {!isMobile && <DoorwayImageReveal progress={progress} zoomProgress={zoomProgress} />}
