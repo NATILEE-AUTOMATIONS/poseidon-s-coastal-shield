@@ -1890,9 +1890,9 @@ export const CleanUpRevealText: React.FC<{
     ? Math.min(1, (layerProgress - backPhaseEnd) / (1 - backPhaseEnd))
     : 0;
   
-  // Easing for smooth reveal
-  const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
-  const easedReveal = easeOutCubic(revealProgress);
+  // Smoother easing with easeOutQuart for elegant reveal
+  const easeOutQuart = (x: number) => 1 - Math.pow(1 - x, 4);
+  const easedReveal = easeOutQuart(revealProgress);
   
   // Mobile-specific sizing
   const fontSize = isMobile ? 12 : 18;
@@ -1907,18 +1907,19 @@ export const CleanUpRevealText: React.FC<{
   // Don't show until truck has started
   if (truckProgress < truckStartProgress) return null;
   
-  // Fade out after text is fully revealed - starts fading at 85% of truck animation
-  const fadeOutStart = 0.80;
-  const fadeOutEnd = 0.95;
+  // Fade out after text is fully revealed - smoother fade with easing
+  const fadeOutStart = 0.78;
+  const fadeOutEnd = 0.92;
   let fadeOutOpacity = 1;
   if (layerProgress > fadeOutStart) {
-    fadeOutOpacity = Math.max(0, 1 - ((layerProgress - fadeOutStart) / (fadeOutEnd - fadeOutStart)));
+    const fadeProgress = (layerProgress - fadeOutStart) / (fadeOutEnd - fadeOutStart);
+    fadeOutOpacity = Math.max(0, 1 - easeOutQuart(fadeProgress));
   }
   
-  // Opacity fades in as truck approaches, then stays visible, then fades out
+  // Opacity fades in smoothly as truck approaches, then stays visible, then fades out
   const baseOpacity = layerProgress < backPhaseEnd 
-    ? Math.min(0.4, layerProgress / backPhaseEnd * 0.4) // Subtle hint while backing in
-    : 0.4 + (easedReveal * 0.6); // Full opacity as revealed
+    ? Math.min(0.3, easeOutQuart(layerProgress / backPhaseEnd) * 0.3) // Subtle eased hint
+    : 0.3 + (easedReveal * 0.7); // Full opacity as revealed
   
   const opacity = baseOpacity * fadeOutOpacity;
   
@@ -2002,17 +2003,26 @@ export const FallingPalmTree: React.FC<{
   
   if (truckProgress < dropStart) return null;
   
-  // Custom easing for smooth, elegant entrance
-  const easedProgress = easeOutQuint(layerProgress);
+  // Smooth easeOutBack for subtle overshoot/bounce effect
+  const easeOutBack = (x: number): number => {
+    const c1 = 1.70158;
+    const c3 = c1 + 1;
+    return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+  };
   
-  // Fall from sky (start above, drop down to position)
-  const translateY = -150 * (1 - easedProgress);
+  // Use easeOutQuint for position, easeOutBack for scale (subtle bounce)
+  const easedPosition = easeOutQuint(layerProgress);
+  const easedScale = easeOutBack(layerProgress);
   
-  // Fade in smoothly
-  const opacity = Math.min(1, easedProgress * 2);
+  // Fall from sky (start above, drop down to position) - shorter drop distance
+  const translateY = -120 * (1 - easedPosition);
   
-  // Subtle scale for growth effect
-  const scaleAnim = 0.85 + (easedProgress * 0.15);
+  // Fade in very smoothly with easing
+  const fadeIn = easeOutQuint(Math.min(1, layerProgress * 1.5));
+  const opacity = fadeIn;
+  
+  // Scale with subtle overshoot for organic feel
+  const scaleAnim = 0.9 + (easedScale * 0.1);
   
   // Tree position - mobile-specific positioning and scaling
   const baseX = isMobile 

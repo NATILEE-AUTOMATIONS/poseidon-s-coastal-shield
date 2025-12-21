@@ -8,11 +8,16 @@ interface YardSignProps {
   isMobile?: boolean;
 }
 
-// easeInOutQuad for smooth drop animation (same as roofing materials)
-const easeInOutQuad = (x: number): number => {
-  return x < 0.5 
-    ? 2 * x * x 
-    : 1 - Math.pow(-2 * x + 2, 2) / 2;
+// easeOutBack for smooth drop with subtle bounce
+const easeOutBack = (x: number): number => {
+  const c1 = 1.70158;
+  const c3 = c1 + 1;
+  return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+};
+
+// easeOutQuint for smooth position animation
+const easeOutQuint = (x: number): number => {
+  return 1 - Math.pow(1 - x, 5);
 };
 
 const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile }) => {
@@ -29,20 +34,22 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
     dropProgress = 1;
   }
 
-  const easedDrop = easeInOutQuad(dropProgress);
-  const translateY = -150 * (1 - easedDrop); // Drops from -150 to 0
+  // Use easeOutQuint for position, easeOutBack for subtle bounce on scale
+  const easedPosition = easeOutQuint(dropProgress);
+  const easedScale = easeOutBack(dropProgress);
+  const translateY = -100 * (1 - easedPosition); // Shorter, smoother drop
 
-  // Calculate entry opacity (fades in from 0.4 to 1 like materials)
-  let entryOpacity = 1;
-  if (dropProgress < 1) {
-    entryOpacity = 0.4 + 0.6 * easedDrop;
-  }
-
+  // Smooth fade in with easing
+  const fadeIn = easeOutQuint(Math.min(1, dropProgress * 1.5));
+  
   // No fade out - just hide before drop starts
-  let opacity = entryOpacity;
+  let opacity = fadeIn;
   if (truckProgress < dropStart) {
     opacity = 0;
   }
+  
+  // Add subtle scale bounce effect
+  const bounceScale = 0.95 + (easedScale * 0.05);
 
   if (opacity <= 0) return null;
 
@@ -56,7 +63,7 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
       className="yard-sign-layer"
       style={{
         opacity,
-        transform: `translate(${signX}px, ${signY + translateY}px) scale(${signScale})`,
+        transform: `translate(${signX}px, ${signY + translateY}px) scale(${signScale * bounceScale})`,
       }}
     >
       {/* Sign post */}
