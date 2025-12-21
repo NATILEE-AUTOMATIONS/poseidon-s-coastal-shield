@@ -227,11 +227,10 @@ const RoofBuildSection: React.FC = () => {
         }}
       />
 
-      {/* Poseidon Logo - Static position, appears during doorway zoom on desktop */}
+      {/* Poseidon Logo - Fixed centered on screen, appears during doorway zoom on desktop */}
       {!isMobile && zoomProgress > 0.15 && (
         <div 
-          className="absolute left-1/2 -translate-x-1/2 z-[101] pointer-events-none"
-          style={{ top: '40vh' }}
+          className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[101] pointer-events-none"
         >
           <img 
             src={poseidonDoorLogo} 
