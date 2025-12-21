@@ -68,10 +68,8 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
   return (
     <g
       className="yard-sign-layer"
-      style={{
-        opacity,
-        transform: `translate(${signX}px, ${signY + translateY}px) scale(${signScale * bounceScale})`,
-      }}
+      style={{ opacity }}
+      transform={`translate(${signX}, ${signY + translateY}) scale(${signScale * bounceScale})`}
     >
       {/* Sign post */}
       <rect
