@@ -51,9 +51,9 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
   // Add subtle scale bounce effect
   const bounceScale = 0.95 + (easedScale * 0.05);
 
-  if (opacity <= 0) return null;
+  if (opacity <= 0 || isMobile) return null;
 
-  // Mobile-specific positioning and scale - DRAMATICALLY bigger sign on mobile
+  // Desktop positioning and scale
   const signX = isMobile ? 120 : 245;
   const signY = isMobile ? 160 : 290;
   const signScale = isMobile ? 3.5 : 1;
