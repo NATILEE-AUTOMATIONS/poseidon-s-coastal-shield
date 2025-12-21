@@ -1729,7 +1729,7 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   
   // Mobile-adjusted positions (smaller viewport)
   // Truck backs up from right, its back orange bumper connects to dumpster's orange hitch
-  const hitchedPosition = isMobile ? 420 : 480;
+  const hitchedPosition = isMobile ? 420 : 540;
   const startPosition = isMobile ? 520 : 700;
   const endPosition = isMobile ? 900 : 1200;
   const truckY = isMobile ? 230 : 195;
