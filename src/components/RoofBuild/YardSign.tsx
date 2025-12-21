@@ -21,6 +21,9 @@ const easeOutQuint = (x: number): number => {
 };
 
 const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile }) => {
+  // Hide completely on mobile
+  if (isMobile) return null;
+  
   const truckDuration = truckEndProgress - truckStartProgress;
   // Drop in after palm trees (they start at 0.70)
   const dropStart = truckStartProgress + (truckDuration * 0.75);
@@ -51,19 +54,19 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
   // Add subtle scale bounce effect
   const bounceScale = 0.95 + (easedScale * 0.05);
 
-  if (opacity <= 0 || isMobile) return null;
+  if (opacity <= 0) return null;
 
   // Desktop positioning and scale
-  const signX = isMobile ? 120 : 245;
-  const signY = isMobile ? 160 : 290;
-  const signScale = isMobile ? 3.5 : 1;
+  const signX = 245;
+  const signY = 290;
+  const signScale = 1;
   
-  // Sign dimensions - MUCH bigger on mobile
-  const boardWidth = isMobile ? 150 : 72;
-  const boardHeight = isMobile ? 100 : 46;
-  const postX = isMobile ? 68 : 32;
-  const postWidth = isMobile ? 14 : 6;
-  const postHeight = isMobile ? 70 : 40;
+  // Sign dimensions
+  const boardWidth = 72;
+  const boardHeight = 46;
+  const postX = 32;
+  const postWidth = 6;
+  const postHeight = 40;
 
   return (
     <g
@@ -91,7 +94,7 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
         rx="4"
         fill="hsl(160 30% 8%)"
         stroke="hsl(174 62% 38%)"
-        strokeWidth={isMobile ? 2 : 1.5}
+        strokeWidth={1.5}
         style={{
           filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.5))',
         }}
@@ -112,9 +115,9 @@ const YardSign: React.FC<YardSignProps> = ({ truckProgress, truckStartProgress, 
             src={poseidonLogo} 
             alt="Poseidon Roofing" 
             style={{ 
-              maxWidth: isMobile ? '200px' : '100px', 
-              maxHeight: isMobile ? '120px' : '60px', 
-              objectFit: 'contain' 
+              maxWidth: '100px', 
+              maxHeight: '60px', 
+              objectFit: 'contain'
             }}
           />
         </div>
