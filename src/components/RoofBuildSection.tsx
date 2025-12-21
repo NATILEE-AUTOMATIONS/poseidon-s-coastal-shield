@@ -234,6 +234,35 @@ const RoofBuildSection: React.FC = () => {
 
           {/* Main visualization container - house centered independently */}
           <div className="relative w-full max-w-5xl mx-auto">
+            {/* Static roof outline that stays in place during zoom */}
+            {!isMobile && zoomProgress > 0 && (
+              <div 
+                className="absolute inset-0 flex justify-center pointer-events-none"
+                style={{
+                  opacity: Math.max(0, 1 - zoomProgress * 2),
+                }}
+              >
+                <div className="w-full max-w-2xl" style={{ containerType: 'inline-size' }}>
+                  <svg
+                    viewBox="0 0 400 280"
+                    className="w-full"
+                    style={{ overflow: 'visible' }}
+                  >
+                    <path
+                      d="M40 160 L200 55 L360 160"
+                      fill="none"
+                      stroke="hsl(168 80% 50%)"
+                      strokeWidth="2.5"
+                      strokeLinejoin="round"
+                      style={{
+                        filter: 'drop-shadow(0 0 15px hsl(168 80% 45% / 0.4))',
+                      }}
+                    />
+                  </svg>
+                </div>
+              </div>
+            )}
+            
             {/* House + Layers SVG - perfectly centered with zoom effect */}
               <div 
                 className="flex justify-center"
