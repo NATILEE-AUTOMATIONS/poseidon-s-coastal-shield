@@ -254,8 +254,8 @@ const RoofBuildSection: React.FC = () => {
                     overflow: 'visible',
                   }}
                 >
-                  {/* Pulsing roof outline hint during buffer period */}
-                  {showScrollHint && (
+                  {/* Pulsing roof outline hint during buffer period - hidden during zoom */}
+                  {showScrollHint && zoomProgress === 0 && (
                     <path
                       d="M45 162 L200 52 L355 162"
                       fill="none"
