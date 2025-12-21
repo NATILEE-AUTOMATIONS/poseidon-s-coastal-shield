@@ -233,19 +233,34 @@ const RoofBuildSection: React.FC = () => {
 
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
-        {/* Poseidon Logo - appears during doorway zoom, stays in center of sticky container */}
-        {!isMobile && zoomProgress > 0.15 && (
-          <div 
-            className="absolute inset-0 flex items-center justify-center z-[101] pointer-events-none"
-          >
-            <img 
-              src={poseidonDoorLogo} 
-              alt="Poseidon Roofing"
-              className="w-64 md:w-80 lg:w-[450px] max-w-[80vw]"
-              style={{ opacity: 1 }}
-            />
-          </div>
-        )}
+        {/* Poseidon Logo - zoom animation tied to scroll progress */}
+        {!isMobile && zoomProgress > 0.15 && (() => {
+          // Logo zooms from 0 to 1 between zoomProgress 0.15 and 0.45
+          const logoProgress = Math.min(1, Math.max(0, (zoomProgress - 0.15) / 0.30));
+          const easeOutBack = (x: number) => {
+            const c1 = 1.70158;
+            const c3 = c1 + 1;
+            return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+          };
+          const logoScale = easeOutBack(logoProgress);
+          
+          return (
+            <div 
+              className="absolute inset-0 flex items-center justify-center z-[101] pointer-events-none"
+            >
+              <img 
+                src={poseidonDoorLogo} 
+                alt="Poseidon Roofing"
+                className="w-64 md:w-80 lg:w-[450px] max-w-[80vw]"
+                style={{ 
+                  opacity: logoProgress,
+                  transform: `scale(${logoScale})`,
+                  willChange: 'transform, opacity',
+                }}
+              />
+            </div>
+          );
+        })()}
         
         <div style={{ opacity: gridFadeOut, transition: 'opacity 0.15s ease-out' }}>
           <GridBackground horizonOpacity={outlineOpacity} />
