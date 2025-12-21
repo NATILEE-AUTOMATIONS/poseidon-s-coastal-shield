@@ -2028,10 +2028,10 @@ export const FallingPalmTree: React.FC<{
   
   // Tree position - mobile-specific positioning and scaling
   const baseX = isMobile 
-    ? (mirrored ? 310 : 90)    // Closer together on mobile's narrower viewport
+    ? (mirrored ? 320 : 80)    // Adjusted for larger size on mobile
     : (mirrored ? 348 : 52);   // Desktop original
-  const baseY = isMobile ? 255 : 268;
-  const scale = (isMobile ? 0.55 : 0.95) * scaleAnim;
+  const baseY = isMobile ? 250 : 268;
+  const scale = (isMobile ? 0.85 : 0.95) * scaleAnim; // Much bigger on mobile (was 0.55)
   const scaleX = mirrored ? -1 : 1;
   
   return (
