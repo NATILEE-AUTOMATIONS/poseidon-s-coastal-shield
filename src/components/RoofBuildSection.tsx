@@ -225,17 +225,22 @@ const RoofBuildSection: React.FC = () => {
           opacity: (easedLight > 0.01 && mobileOverlayMultiplier > 0) ? mobileOverlayMultiplier : 0,
           willChange: 'background, opacity',
         }}
-      >
-        {/* Poseidon Logo in doorway */}
-        {easedLight > 0.1 && (
+      />
+
+      {/* Poseidon Logo - Independent element, appears during doorway zoom on desktop */}
+      {!isMobile && zoomProgress > 0.3 && (
+        <div className="fixed inset-0 flex items-center justify-center z-[101] pointer-events-none">
           <img 
             src={poseidonDoorLogo} 
             alt="Poseidon Roofing"
             className="w-64 md:w-80 lg:w-[450px] max-w-[80vw]"
-            style={{ opacity: 1 }}
+            style={{ 
+              opacity: Math.min(1, (zoomProgress - 0.3) * 3),
+              transition: 'opacity 0.3s ease-out'
+            }}
           />
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Doorway Image Reveal - appears AFTER zoom is fully complete */}
       {!isMobile && <DoorwayImageReveal progress={progress} zoomProgress={zoomProgress} />}
