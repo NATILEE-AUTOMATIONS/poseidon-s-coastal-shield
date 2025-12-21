@@ -22,7 +22,7 @@ import {
   materialInfo,
 } from './RoofBuild/RoofLayers';
 import YardSign from './RoofBuild/YardSign';
-
+import DoorwayImageReveal from './RoofBuild/DoorwayImageReveal';
 
 import { useScrollContext } from '@/context/ScrollContext';
 // ImageGallery3D removed
@@ -220,7 +220,8 @@ const RoofBuildSection: React.FC = () => {
         }}
       />
 
-      {/* Desktop Gallery removed */}
+      {/* Doorway Image Reveal - appears when fully inside the doorway */}
+      {!isMobile && <DoorwayImageReveal zoomProgress={zoomProgress} />}
 
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
