@@ -233,16 +233,12 @@ const RoofBuildSection: React.FC = () => {
 
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
-        {/* Poseidon Logo - zoom animation tied to scroll progress */}
+        {/* Poseidon Logo - pure zoom animation from 0 to full size */}
         {!isMobile && zoomProgress > 0 && (() => {
-          // Logo zooms from 0 to 1 between zoomProgress 0 and 0.20 (completes before orange screen)
+          // Logo scales from 0 to 1 between zoomProgress 0 and 0.20
           const logoProgress = Math.min(1, Math.max(0, zoomProgress / 0.20));
-          const easeOutBack = (x: number) => {
-            const c1 = 1.70158;
-            const c3 = c1 + 1;
-            return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
-          };
-          const logoScale = easeOutBack(logoProgress);
+          const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
+          const logoScale = easeOutCubic(logoProgress);
           
           return (
             <div 
@@ -253,9 +249,8 @@ const RoofBuildSection: React.FC = () => {
                 alt="Poseidon Roofing"
                 className="w-64 md:w-80 lg:w-[450px] max-w-[80vw]"
                 style={{ 
-                  opacity: logoProgress,
                   transform: `scale(${logoScale})`,
-                  willChange: 'transform, opacity',
+                  willChange: 'transform',
                 }}
               />
             </div>
