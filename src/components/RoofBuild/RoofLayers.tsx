@@ -1995,6 +1995,9 @@ export const FallingPalmTree: React.FC<{
   mirrored?: boolean;
   delayOffset?: number; // 0-1 fraction of duration to delay entrance
 }> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile, mirrored = false, delayOffset = 0 }) => {
+  // Hide completely on mobile
+  if (isMobile) return null;
+  
   const truckDuration = truckEndProgress - truckStartProgress;
   // Apply delay offset for staggered entrance
   const dropStart = truckStartProgress + (truckDuration * 0.70) + (truckDuration * delayOffset);
