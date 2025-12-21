@@ -216,17 +216,17 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
           }}
         />
         
-        {/* Simple interior framing lines */}
+        {/* Simple interior framing lines - fade out during door animation */}
         {/* Left slope rafter lines */}
-        <line x1="80" y1="160" x2="200" y2="55" stroke="hsl(168 50% 35%)" strokeWidth="2" opacity="0.4" />
-        <line x1="140" y1="160" x2="200" y2="55" stroke="hsl(168 50% 35%)" strokeWidth="2" opacity="0.4" />
+        <line x1="80" y1="160" x2="200" y2="55" stroke="hsl(168 50% 35%)" strokeWidth="2" opacity={0.4 * outlineOpacity} />
+        <line x1="140" y1="160" x2="200" y2="55" stroke="hsl(168 50% 35%)" strokeWidth="2" opacity={0.4 * outlineOpacity} />
         
         {/* Right slope rafter lines */}
-        <line x1="320" y1="160" x2="200" y2="55" stroke="hsl(168 50% 35%)" strokeWidth="2" opacity="0.4" />
-        <line x1="260" y1="160" x2="200" y2="55" stroke="hsl(168 50% 35%)" strokeWidth="2" opacity="0.4" />
+        <line x1="320" y1="160" x2="200" y2="55" stroke="hsl(168 50% 35%)" strokeWidth="2" opacity={0.4 * outlineOpacity} />
+        <line x1="260" y1="160" x2="200" y2="55" stroke="hsl(168 50% 35%)" strokeWidth="2" opacity={0.4 * outlineOpacity} />
         
         {/* Single collar tie */}
-        <line x1="100" y1="120" x2="300" y2="120" stroke="hsl(168 50% 40%)" strokeWidth="2.5" opacity="0.5" />
+        <line x1="100" y1="120" x2="300" y2="120" stroke="hsl(168 50% 40%)" strokeWidth="2.5" opacity={0.5 * outlineOpacity} />
       </g>
 
       {/* ===== PREMIUM CHIMNEY (Left side of roof) ===== */}
