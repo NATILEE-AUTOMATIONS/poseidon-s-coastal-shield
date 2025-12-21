@@ -352,13 +352,15 @@ const RoofBuildSection: React.FC = () => {
                       delayOffset={0.08}
                     />
                     
-                    {/* Yard sign drops in to the right of the door */}
-                    <YardSign 
-                      truckProgress={progress}
-                      truckStartProgress={layers[10].start}
-                      truckEndProgress={layers[10].end}
-                      isMobile={isMobile}
-                    />
+                    {/* Yard sign drops in to the right of the door - HIDE ON MOBILE */}
+                    {!isMobile && (
+                      <YardSign 
+                        truckProgress={progress}
+                        truckStartProgress={layers[10].start}
+                        truckEndProgress={layers[10].end}
+                        isMobile={isMobile}
+                      />
+                    )}
                   </>
                   
                 </svg>
