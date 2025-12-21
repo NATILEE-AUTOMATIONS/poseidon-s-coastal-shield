@@ -271,7 +271,7 @@ const RoofBuildSection: React.FC = () => {
                   )}
                   
                   {/* House base with animated door */}
-                  <HouseSVG doorAngle={doorAngle} lightBoost={zoomProgress} />
+                  <HouseSVG doorAngle={doorAngle} lightBoost={zoomProgress} hideRoofOutline={zoomProgress > 0} />
                   
                   {/* Animated roof layers - 10 layers in correct installation order */}
                   {/* 1. Replace Decking */}
