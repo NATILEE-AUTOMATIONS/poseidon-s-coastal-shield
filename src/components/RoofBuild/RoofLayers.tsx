@@ -1,4 +1,5 @@
 import React from 'react';
+import poseidonLogo from '@/assets/poseidon-logo.png';
 
 interface LayerProps {
   progress: number;
@@ -2364,6 +2365,121 @@ export const MobilePalmTree: React.FC<{
         {/* Static center point - no animation */}
         <circle cx="0" cy="-78" r="3.5" fill="hsl(170 100% 60%)" opacity={0.9} />
         <circle cx="0" cy="-78" r="1.5" fill="hsl(180 100% 85%)" />
+      </g>
+    </g>
+  );
+};
+
+// Mobile-only yard sign - drops in after second palm tree
+// Uses CSS drop-shadow instead of expensive SVG filters for GPU performance
+export const MobileYardSign: React.FC<{
+  truckProgress: number;
+  truckStartProgress: number;
+  truckEndProgress: number;
+  isMobile?: boolean;
+  delayOffset?: number;
+}> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile, delayOffset = 0.18 }) => {
+  // ONLY show on mobile
+  const isActuallyMobile = typeof window !== 'undefined' && window.innerWidth < 900;
+  if (!isMobile && !isActuallyMobile) return null;
+  
+  const truckDuration = truckEndProgress - truckStartProgress;
+  // Start dropping after second palm tree
+  const dropStart = truckStartProgress + (truckDuration * 0.75) + (truckDuration * delayOffset);
+  const dropEnd = truckStartProgress + (truckDuration * 1.03) + (truckDuration * delayOffset);
+  
+  const rawProgress = (truckProgress - dropStart) / (dropEnd - dropStart);
+  const layerProgress = Math.max(0, Math.min(1, rawProgress));
+  
+  if (truckProgress < dropStart) return null;
+  
+  // Softer easeOutCubic for deliberate, scroll-connected animation
+  const easeOutCubic = (x: number): number => 1 - Math.pow(1 - x, 3);
+  const easeOutQuart = (x: number): number => 1 - Math.pow(1 - x, 4);
+  
+  const easedPosition = easeOutCubic(layerProgress);
+  const easedScale = easeOutQuart(layerProgress);
+  
+  // Fall from sky - deliberate descent
+  const translateY = Math.round(-100 * (1 - easedPosition));
+  
+  // Fade in gradually
+  const opacity = easeOutCubic(Math.min(1, layerProgress * 0.9));
+  
+  // Subtle scale animation
+  const scaleAnim = 0.97 + (easedScale * 0.03);
+  
+  // Position - right of doorway on mobile
+  const baseX = 260;
+  const baseY = 268;
+  const scale = 1.3 * scaleAnim; // Larger for mobile visibility
+  
+  // Sign dimensions (scaled up for mobile)
+  const boardWidth = 80;
+  const boardHeight = 52;
+  const postX = 36;
+  const postWidth = 7;
+  const postHeight = 45;
+  
+  return (
+    <g 
+      className="mobile-yard-sign-layer"
+      style={{ 
+        transform: `translate3d(0, ${translateY}px, 0)`,
+        opacity,
+        willChange: 'transform, opacity',
+        backfaceVisibility: 'hidden',
+      } as React.CSSProperties}
+    >
+      <g transform={`translate(${baseX}, ${baseY}) scale(${scale})`}>
+        {/* Sign with subtle drop shadow */}
+        <g style={{ filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.4))' }}>
+          {/* Sign post */}
+          <rect
+            x={postX}
+            y="0"
+            width={postWidth}
+            height={postHeight}
+            fill="hsl(160 25% 20%)"
+            stroke="hsl(160 30% 30%)"
+            strokeWidth="0.5"
+          />
+          
+          {/* Sign board background */}
+          <rect
+            x="0"
+            y={-boardHeight + 4}
+            width={boardWidth}
+            height={boardHeight}
+            rx="4"
+            fill="hsl(160 30% 8%)"
+            stroke="hsl(174 62% 38%)"
+            strokeWidth={1.5}
+          />
+          
+          {/* Logo container */}
+          <foreignObject x="2" y={-boardHeight + 6} width={boardWidth - 4} height={boardHeight - 4}>
+            <div 
+              style={{ 
+                width: '100%', 
+                height: '100%', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center' 
+              }}
+            >
+              <img 
+                src={poseidonLogo} 
+                alt="Poseidon Roofing" 
+                style={{ 
+                  maxWidth: '110px', 
+                  maxHeight: '70px', 
+                  objectFit: 'contain'
+                }}
+              />
+            </div>
+          </foreignObject>
+        </g>
       </g>
     </g>
   );
