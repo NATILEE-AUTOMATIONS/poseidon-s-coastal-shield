@@ -126,13 +126,13 @@ const RoofBuildSection: React.FC = () => {
     : 0;
 
   // Outline fade: starts when door starts opening, fully gone by zoom start
-  const outlineOpacity = !isMobile && progress > doorStart 
+  const outlineOpacity = progress > doorStart 
     ? Math.max(0, 1 - ((progress - doorStart) / 0.08))
     : 1;
 
-  // Door zoom: starts after door opens, extended duration for full doorway entry (DESKTOP ONLY)
+  // Door zoom: starts after door opens, extended duration for full doorway entry
   const zoomStart = doorStart + 0.12;
-  const zoomProgress = !isMobile && progress > zoomStart 
+  const zoomProgress = progress > zoomStart 
     ? Math.min(1, (progress - zoomStart) / 0.30)
     : 0;
   
@@ -146,16 +146,16 @@ const RoofBuildSection: React.FC = () => {
     x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
   const easedZoom = easeInOutQuad(zoomProgress);
   
-  // Scale: 1x → 500x for full doorway pass-through (DESKTOP ONLY - mobile stays at 1)
-  const zoomScale = isMobile ? 1 : 1 + (easedZoom * 499);
+  // Scale: 1x → 500x for full doorway pass-through
+  const zoomScale = 1 + (easedZoom * 499);
   
-  // Delayed warm light - DESKTOP ONLY
-  const lightProgress = isMobile ? 0 : Math.max(0, (zoomProgress - 0.2) / 0.8);
+  // Delayed warm light effect
+  const lightProgress = Math.max(0, (zoomProgress - 0.2) / 0.8);
   const easedLight = easeInOutQuad(lightProgress);
   
-  // Fade out elements during zoom - DESKTOP ONLY (mobile always visible)
-  const gridFadeOut = isMobile ? 1 : Math.max(0, 1 - (zoomProgress * 3));
-  const houseFadeOut = isMobile ? 1 : Math.max(0, 1 - (easedZoom * 2));
+  // Fade out elements during zoom
+  const gridFadeOut = Math.max(0, 1 - (zoomProgress * 3));
+  const houseFadeOut = Math.max(0, 1 - (easedZoom * 2));
 
   // 3D Gallery visibility - DESKTOP ONLY (starts VERY late, after zoom fully completes)
   const galleryStartPoint = 0.995;
@@ -165,8 +165,8 @@ const RoofBuildSection: React.FC = () => {
   const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
   const overlayFade = galleryProgress > 0 ? 1 - easeOutCubic(galleryProgress) : 1;
   
-  // Skip all overlays on mobile
-  const mobileOverlayMultiplier = isMobile ? 0 : 1;
+  // Overlay multiplier for effects
+  const mobileOverlayMultiplier = 1;
 
   // Calculate staggered exit progress for label pairs (desktop only)
   // Labels exit from 0.92 to 0.96 (AFTER all roof animations complete)
