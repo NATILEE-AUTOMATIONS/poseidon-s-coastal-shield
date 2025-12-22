@@ -39,7 +39,7 @@ const Index = () => {
         <Navbar />
         <HeroSection />
         <RoofBuildSection />
-        {!isMobile && <ProjectGallerySection />}
+        <ProjectGallerySection />
       </main>
     </ScrollProvider>
   );
