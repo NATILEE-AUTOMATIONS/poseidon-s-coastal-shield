@@ -275,8 +275,8 @@ const RoofBuildSection: React.FC = () => {
               <div 
                 className="flex justify-center"
                 style={{
-                  transform: isMobile ? 'scale(1)' : `scale(${zoomScale})`,
-                  transformOrigin: '50% 82%',
+                  transform: `scale(${zoomScale})`,
+                  transformOrigin: isMobile ? '50% 70%' : '50% 82%',
                   opacity: houseFadeOut,
                   willChange: 'transform, opacity',
                   backfaceVisibility: 'hidden', // Prevent flicker
