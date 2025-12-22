@@ -122,20 +122,22 @@ const RoofBuildSection: React.FC = () => {
   // Door animation: starts after roof layers complete
   // Mobile: starts immediately after truck; Desktop: waits until 70%
   const doorStart = isMobile ? roofLayersEnd : Math.max(0.70, roofLayersEnd);
-  const doorOpenDuration = isMobile ? 0.04 : 0.12;
+  // Mobile: slower door open (0.10) for deliberate reveal; Desktop: 0.12
+  const doorOpenDuration = isMobile ? 0.10 : 0.12;
   const doorAngle = progress > doorStart 
     ? Math.min(75, ((progress - doorStart) / doorOpenDuration) * 75) 
     : 0;
 
   // Outline fade: starts when door starts opening, fully gone by zoom start
+  // Mobile: slower fade (0.15) to match slower door; Desktop: 0.08
   const outlineOpacity = progress > doorStart 
-    ? Math.max(0, 1 - ((progress - doorStart) / 0.08))
+    ? Math.max(0, 1 - ((progress - doorStart) / (isMobile ? 0.15 : 0.08)))
     : 1;
 
   // Door zoom: starts after door opens, extended duration for full doorway entry
-  // Mobile: fast zoom (0.08) to complete within scroll bounds; Desktop: slower (0.30)
+  // Mobile: much slower zoom (0.25) for smooth, deliberate approach; Desktop: 0.30
   const zoomStart = doorStart + doorOpenDuration;
-  const zoomDuration = isMobile ? 0.08 : 0.30;
+  const zoomDuration = isMobile ? 0.25 : 0.30;
   const zoomProgress = progress > zoomStart 
     ? Math.min(1, (progress - zoomStart) / zoomDuration)
     : 0;
