@@ -1752,10 +1752,10 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   } else {
     // Driving away together immediately after touch
     const driveProgress = (layerProgress - backPhaseEnd) / (1 - backPhaseEnd);
-    // Mobile: gentler drive away easing
-    const easeInQuad = (x: number) => x * x;
+    // Smoother easing for buttery drive away
+    const easeInOutQuad = (x: number) => x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
     const easeInCubic = (x: number) => x * x * x;
-    const eased = isMobile ? easeInCubic(driveProgress) : easeInQuad(driveProgress);
+    const eased = isMobile ? easeInOutQuad(driveProgress) : easeInCubic(driveProgress);
     truckX = hitchedPosition + (endPosition - hitchedPosition) * eased;
     // Dumpster moves with truck
     dumpsterOffset = (truckX - hitchedPosition);
@@ -1883,8 +1883,8 @@ export const CleanUpRevealText: React.FC<{
   const rawProgress = (truckProgress - truckStartProgress) / (truckEndProgress - truckStartProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
-  // Truck backs in 0-40%, drives away 40-100%
-  const backPhaseEnd = 0.40;
+  // Truck backs in 0-50% on mobile, drives away 50-100%
+  const backPhaseEnd = isMobile ? 0.50 : 0.40;
   const isDrivingAway = layerProgress > backPhaseEnd;
   
   // Calculate reveal progress (0 = fully hidden, 1 = fully revealed)
@@ -1892,9 +1892,10 @@ export const CleanUpRevealText: React.FC<{
     ? Math.min(1, (layerProgress - backPhaseEnd) / (1 - backPhaseEnd))
     : 0;
   
-  // Smoother easing with easeOutQuart for elegant reveal
+  // Smoother easing with easeOutExpo for buttery reveal
+  const easeOutExpo = (x: number) => x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
   const easeOutQuart = (x: number) => 1 - Math.pow(1 - x, 4);
-  const easedReveal = easeOutQuart(revealProgress);
+  const easedReveal = easeOutExpo(revealProgress);
   
   // Mobile-specific sizing - bigger but fits within dumpster
   const fontSize = isMobile ? 18 : 18;
@@ -1909,15 +1910,15 @@ export const CleanUpRevealText: React.FC<{
   // Don't show until truck has started
   if (truckProgress < truckStartProgress) return null;
   
-  // Fade out after text is fully revealed - MUCH slower fade for mobile visibility
-  const fadeOutStart = 0.90; // Start fading very late
-  const fadeOutEnd = 0.98;   // Complete fade at very end
+  // Fade out after text is fully revealed - smooth fade at end
+  const fadeOutStart = 0.88;
+  const fadeOutEnd = 0.98;
   let fadeOutOpacity = 1;
   if (layerProgress > fadeOutStart) {
     const fadeProgress = Math.min(1, (layerProgress - fadeOutStart) / (fadeOutEnd - fadeOutStart));
-    // Use easeInQuad for a natural accelerating fade-out
-    const easeInQuad = (x: number) => x * x;
-    fadeOutOpacity = Math.max(0, 1 - easeInQuad(fadeProgress));
+    // Smooth easeInOutQuad for graceful fade-out
+    const easeInOutQuad = (x: number) => x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+    fadeOutOpacity = Math.max(0, 1 - easeInOutQuad(fadeProgress));
   }
   
   // Opacity fades in smoothly as truck approaches, then stays visible, then fades out
@@ -2252,36 +2253,32 @@ export const MobilePalmTree: React.FC<{
   if (!isMobile && !isActuallyMobile) return null;
   
   const truckDuration = truckEndProgress - truckStartProgress;
-  // Start dropping LATER - at 65% of truck animation (was 45%)
-  const dropStart = truckStartProgress + (truckDuration * 0.65);
-  const dropEnd = truckStartProgress + (truckDuration * 0.90);
+  // Start dropping LATER - at 70% of truck animation
+  const dropStart = truckStartProgress + (truckDuration * 0.70);
+  const dropEnd = truckStartProgress + (truckDuration * 0.95);
   
   const rawProgress = (truckProgress - dropStart) / (dropEnd - dropStart);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
   if (truckProgress < dropStart) return null;
   
-  // Smooth easeOutBack for subtle overshoot/bounce effect
-  const easeOutBack = (x: number): number => {
-    const c1 = 1.70158;
-    const c3 = c1 + 1;
-    return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
-  };
+  // Smoother easeOutExpo for buttery smooth animation
+  const easeOutExpo = (x: number): number => x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
   
-  const easeOutQuint = (x: number): number => 1 - Math.pow(1 - x, 5);
+  // Gentle easeOutQuart for scale
+  const easeOutQuart = (x: number): number => 1 - Math.pow(1 - x, 4);
   
-  const easedPosition = easeOutQuint(layerProgress);
-  const easedScale = easeOutBack(layerProgress);
+  const easedPosition = easeOutExpo(layerProgress);
+  const easedScale = easeOutQuart(layerProgress);
   
-  // Fall from sky - shorter drop distance
-  const translateY = -120 * (1 - easedPosition);
+  // Fall from sky - smooth drop
+  const translateY = -100 * (1 - easedPosition);
   
-  // Fade in very smoothly with easing
-  const fadeIn = easeOutQuint(Math.min(1, layerProgress * 1.5));
-  const opacity = fadeIn;
+  // Fade in smoothly
+  const opacity = easeOutQuart(Math.min(1, layerProgress * 1.2));
   
-  // Scale with subtle overshoot for organic feel
-  const scaleAnim = 0.9 + (easedScale * 0.1);
+  // Scale smoothly without bounce for less choppiness
+  const scaleAnim = 0.92 + (easedScale * 0.08);
   
   // Position on left side of lawn - adjusted for mobile
   const baseX = 70;
@@ -2294,7 +2291,7 @@ export const MobilePalmTree: React.FC<{
       style={{ 
         transform: `translateY(${translateY}px)`,
         opacity,
-        transition: 'opacity 0.1s ease-out',
+        willChange: 'transform, opacity',
       }}
     >
       <g transform={`translate(${baseX}, ${baseY}) scale(${scale})`}>
