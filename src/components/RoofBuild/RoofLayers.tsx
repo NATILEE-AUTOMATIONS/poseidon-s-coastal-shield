@@ -1896,11 +1896,11 @@ export const CleanUpRevealText: React.FC<{
   const easeOutQuart = (x: number) => 1 - Math.pow(1 - x, 4);
   const easedReveal = easeOutQuart(revealProgress);
   
-  // Mobile-specific sizing
-  const fontSize = isMobile ? 12 : 18;
-  const y1 = isMobile ? 243 : 238;
-  const y2 = isMobile ? 257 : 258;
-  const letterSpacing = isMobile ? 2 : 4;
+  // Mobile-specific sizing - MUCH bigger text on mobile
+  const fontSize = isMobile ? 28 : 18;
+  const y1 = isMobile ? 235 : 238;
+  const y2 = isMobile ? 260 : 258;
+  const letterSpacing = isMobile ? 3 : 4;
   
   // Text starts hidden under dumpster (at x~200) and reveals from left as dumpster moves right
   // clipPath reveals from left to right as dumpster moves away
