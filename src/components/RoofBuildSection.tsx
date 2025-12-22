@@ -55,7 +55,7 @@ const RoofBuildSection: React.FC = () => {
   const layerStart = isMobile ? mobileLayerStart : desktopLayerStart;
   
   // Decking
-  const deckingMultiplier = isMobile ? 1.5 : 2;
+  const deckingMultiplier = isMobile ? 3 : 2;
   const deckingEnd = layerStart + (layerStep * deckingMultiplier);
   
   // Drip edge
