@@ -1775,14 +1775,24 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   const dumpsterOriginY = 270; // Matches DumpsterLayer: dumpsterY + 20 = 250 + 20
   
   return (
-    <g className="truck-layer" style={{ opacity }}>
+    <g 
+      className="truck-layer" 
+      style={{ 
+        opacity,
+        willChange: 'transform, opacity',
+        backfaceVisibility: 'hidden',
+      } as React.CSSProperties}
+    >
       {/* Dumpster that moves with truck after hitch */}
       {isDrivingAway && dumpsterProgress >= 1 && (
         <g 
           style={{
-            transform: `translateX(${dumpsterOffset}px) scale(${dumpsterScaleX}, ${dumpsterScaleY})`,
+            // GPU-accelerated transform with rounded values
+            transform: `translate3d(${Math.round(dumpsterOffset)}px, 0, 0) scale(${dumpsterScaleX}, ${dumpsterScaleY})`,
             transformOrigin: `${dumpsterOriginX}px ${dumpsterOriginY}px`,
-          }}
+            willChange: 'transform',
+            backfaceVisibility: 'hidden',
+          } as React.CSSProperties}
         >
           {/* Ground shadow */}
           <ellipse cx={200} cy={272} rx={48} ry={6} fill="hsl(0 0% 5%)" />
@@ -1811,12 +1821,14 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
         </g>
       )}
       
-      {/* F-150 Style Truck - positioned so back of truck connects to dumpster */}
+      {/* F-150 Style Truck - GPU accelerated */}
       <g 
         style={{
-          transform: `translate(${truckX}px, ${truckY}px) scale(${scale})`,
+          transform: `translate3d(${Math.round(truckX)}px, ${truckY}px, 0) scale(${scale})`,
           transformOrigin: '0 0',
-        }}
+          willChange: 'transform',
+          backfaceVisibility: 'hidden',
+        } as React.CSSProperties}
       >
         {/* Ground shadow */}
         <ellipse cx={-30} cy={32} rx={45} ry={4} fill="hsl(0 0% 5%)" />
@@ -1871,15 +1883,13 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   );
 };
 
-// "Complete Clean Up" text that reveals as dumpster moves away (both mobile and desktop)
+// "Complete Clean Up" text - OPTIMIZED with GPU-accelerated opacity+transform instead of clipPath
 export const CleanUpRevealText: React.FC<{ 
   truckProgress: number;
   truckStartProgress: number;
   truckEndProgress: number;
   isMobile?: boolean;
 }> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile }) => {
-  // Show on both mobile and desktop
-  
   const rawProgress = (truckProgress - truckStartProgress) / (truckEndProgress - truckStartProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
@@ -1887,101 +1897,95 @@ export const CleanUpRevealText: React.FC<{
   const backPhaseEnd = isMobile ? 0.50 : 0.40;
   const isDrivingAway = layerProgress > backPhaseEnd;
   
-  // Calculate reveal progress (0 = fully hidden, 1 = fully revealed)
+  // Calculate reveal progress
   const revealProgress = isDrivingAway 
     ? Math.min(1, (layerProgress - backPhaseEnd) / (1 - backPhaseEnd))
     : 0;
   
-  // Smoother easing with easeOutExpo for buttery reveal
+  // Smooth easing
   const easeOutExpo = (x: number) => x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
   const easeOutQuart = (x: number) => 1 - Math.pow(1 - x, 4);
   const easedReveal = easeOutExpo(revealProgress);
   
-  // Mobile-specific sizing - bigger but fits within dumpster
+  // Mobile-specific sizing
   const fontSize = isMobile ? 18 : 18;
   const y1 = isMobile ? 238 : 238;
   const y2 = isMobile ? 255 : 258;
   const letterSpacing = isMobile ? 2 : 4;
   
-  // Text starts hidden under dumpster (at x~200) and reveals from left as dumpster moves right
-  // clipPath reveals from left to right as dumpster moves away
-  const clipWidth = 200 * easedReveal; // Reveals up to 200px wide
+  // GPU-accelerated: slide in from left instead of clipPath
+  const translateX = Math.round(-40 * (1 - easedReveal));
   
-  // Don't show until truck has started
   if (truckProgress < truckStartProgress) return null;
   
-  // Fade out after text is fully revealed - smooth fade at end
-  const fadeOutStart = 0.88;
-  const fadeOutEnd = 0.98;
+  // Fade out smoothly at end - complete by 80% for mobile to reduce overlap with palm tree
+  const fadeOutStart = isMobile ? 0.75 : 0.88;
+  const fadeOutEnd = isMobile ? 0.85 : 0.98;
   let fadeOutOpacity = 1;
   if (layerProgress > fadeOutStart) {
     const fadeProgress = Math.min(1, (layerProgress - fadeOutStart) / (fadeOutEnd - fadeOutStart));
-    // Smooth easeInOutQuad for graceful fade-out
     const easeInOutQuad = (x: number) => x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
     fadeOutOpacity = Math.max(0, 1 - easeInOutQuad(fadeProgress));
   }
   
-  // Opacity fades in smoothly as truck approaches, then stays visible, then fades out
+  // Smooth opacity animation
   const baseOpacity = layerProgress < backPhaseEnd 
-    ? Math.min(0.3, easeOutQuart(layerProgress / backPhaseEnd) * 0.3) // Subtle eased hint
-    : 0.3 + (easedReveal * 0.7); // Full opacity as revealed
+    ? Math.min(0.3, easeOutQuart(layerProgress / backPhaseEnd) * 0.3)
+    : 0.3 + (easedReveal * 0.7);
   
   const opacity = baseOpacity * fadeOutOpacity;
   
-  // Don't render if fully faded out
   if (opacity <= 0) return null;
   
   return (
-    <g className="cleanup-reveal-text cleanup-text-layer">
-      <defs>
-        <clipPath id="cleanupRevealClip">
-          {/* Reveal from left edge of text area as dumpster moves right */}
-          <rect x={100} y={200} width={clipWidth} height={100} />
-        </clipPath>
-      </defs>
-      
-      {/* Text with reveal clip */}
-      <g clipPath="url(#cleanupRevealClip)" style={{ opacity }}>
-        {/* "COMPLETE" text */}
-        <text
-          x="200"
-          y={y1}
-          textAnchor="middle"
-          fill="hsl(168 85% 65%)"
-          fontSize={fontSize}
-          fontWeight="800"
-          fontFamily="system-ui, -apple-system, sans-serif"
-          letterSpacing={letterSpacing}
-          stroke="hsl(0 0% 5%)"
-          strokeWidth={isMobile ? 2 : 3}
-          paintOrder="stroke fill"
-          style={{
-            filter: 'drop-shadow(0 0 8px hsl(168 80% 50% / 0.8)) drop-shadow(0 0 20px hsl(168 80% 50% / 0.5))',
-          }}
-        >
-          COMPLETE
-        </text>
-        {/* "CLEAN UP" text */}
-        <text
-          x="200"
-          y={y2}
-          textAnchor="middle"
-          fill="hsl(30 90% 65%)"
-          fontSize={fontSize}
-          fontWeight="800"
-          fontFamily="system-ui, -apple-system, sans-serif"
-          letterSpacing={letterSpacing}
-          stroke="hsl(0 0% 5%)"
-          strokeWidth={isMobile ? 2 : 3}
-          paintOrder="stroke fill"
-          style={{
-            filter: 'drop-shadow(0 0 8px hsl(30 85% 55% / 0.8)) drop-shadow(0 0 20px hsl(30 85% 55% / 0.5))',
-          }}
-        >
-          CLEAN UP
-        </text>
-      </g>
-      
+    <g 
+      className="cleanup-reveal-text cleanup-text-layer"
+      style={{
+        // GPU-accelerated transform + opacity
+        transform: `translate3d(${translateX}px, 0, 0)`,
+        opacity,
+        willChange: 'transform, opacity',
+        backfaceVisibility: 'hidden',
+      } as React.CSSProperties}
+    >
+      {/* "COMPLETE" text */}
+      <text
+        x="200"
+        y={y1}
+        textAnchor="middle"
+        fill="hsl(168 85% 65%)"
+        fontSize={fontSize}
+        fontWeight="800"
+        fontFamily="system-ui, -apple-system, sans-serif"
+        letterSpacing={letterSpacing}
+        stroke="hsl(0 0% 5%)"
+        strokeWidth={isMobile ? 2 : 3}
+        paintOrder="stroke fill"
+        style={{
+          filter: 'drop-shadow(0 0 8px hsl(168 80% 50% / 0.8)) drop-shadow(0 0 20px hsl(168 80% 50% / 0.5))',
+        }}
+      >
+        COMPLETE
+      </text>
+      {/* "CLEAN UP" text */}
+      <text
+        x="200"
+        y={y2}
+        textAnchor="middle"
+        fill="hsl(30 90% 65%)"
+        fontSize={fontSize}
+        fontWeight="800"
+        fontFamily="system-ui, -apple-system, sans-serif"
+        letterSpacing={letterSpacing}
+        stroke="hsl(0 0% 5%)"
+        strokeWidth={isMobile ? 2 : 3}
+        paintOrder="stroke fill"
+        style={{
+          filter: 'drop-shadow(0 0 8px hsl(30 85% 55% / 0.8)) drop-shadow(0 0 20px hsl(30 85% 55% / 0.5))',
+        }}
+      >
+        CLEAN UP
+      </text>
     </g>
   );
 };
@@ -2240,8 +2244,8 @@ export const MobileVentsLayer: React.FC<LayerProps> = ({ progress, startProgress
   );
 };
 
-// Mobile-only palm tree that drops onto left lawn as dump truck drives away
-// Uses exact same design as desktop FallingPalmTree
+// Mobile-only palm tree - OPTIMIZED for GPU performance
+// Uses CSS drop-shadow instead of expensive SVG filters
 export const MobilePalmTree: React.FC<{ 
   truckProgress: number;
   truckStartProgress: number;
@@ -2253,34 +2257,32 @@ export const MobilePalmTree: React.FC<{
   if (!isMobile && !isActuallyMobile) return null;
   
   const truckDuration = truckEndProgress - truckStartProgress;
-  // Start dropping LATER - at 70% of truck animation
-  const dropStart = truckStartProgress + (truckDuration * 0.70);
-  const dropEnd = truckStartProgress + (truckDuration * 0.95);
+  // Start dropping at 80% of truck animation (later = less overlap with other animations)
+  const dropStart = truckStartProgress + (truckDuration * 0.80);
+  const dropEnd = truckStartProgress + (truckDuration * 0.98);
   
   const rawProgress = (truckProgress - dropStart) / (dropEnd - dropStart);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
   if (truckProgress < dropStart) return null;
   
-  // Smoother easeOutExpo for buttery smooth animation
+  // Smooth easeOutExpo for buttery animation
   const easeOutExpo = (x: number): number => x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
-  
-  // Gentle easeOutQuart for scale
   const easeOutQuart = (x: number): number => 1 - Math.pow(1 - x, 4);
   
   const easedPosition = easeOutExpo(layerProgress);
   const easedScale = easeOutQuart(layerProgress);
   
-  // Fall from sky - smooth drop
-  const translateY = -100 * (1 - easedPosition);
+  // Fall from sky - round to whole pixels to prevent sub-pixel jitter
+  const translateY = Math.round(-100 * (1 - easedPosition));
   
   // Fade in smoothly
   const opacity = easeOutQuart(Math.min(1, layerProgress * 1.2));
   
-  // Scale smoothly without bounce for less choppiness
+  // Scale smoothly
   const scaleAnim = 0.92 + (easedScale * 0.08);
   
-  // Position on left side of lawn - adjusted for mobile
+  // Position on left side of lawn
   const baseX = 70;
   const baseY = 270;
   const scale = 0.95 * scaleAnim;
@@ -2289,70 +2291,27 @@ export const MobilePalmTree: React.FC<{
     <g 
       className="mobile-palm-tree-layer"
       style={{ 
-        transform: `translateY(${translateY}px)`,
+        // GPU-accelerated transform with rounded values
+        transform: `translate3d(0, ${translateY}px, 0)`,
         opacity,
         willChange: 'transform, opacity',
-      }}
+        backfaceVisibility: 'hidden',
+      } as React.CSSProperties}
     >
       <g transform={`translate(${baseX}, ${baseY}) scale(${scale})`}>
         <defs>
-          {/* Premium trunk gradient - vibrant orange to yellow */}
+          {/* Premium trunk gradient */}
           <linearGradient id="mobilePalmTrunkGradient" x1="0%" y1="100%" x2="0%" y2="0%">
             <stop offset="0%" stopColor="hsl(25 100% 45%)" />
             <stop offset="30%" stopColor="hsl(35 100% 55%)" />
             <stop offset="60%" stopColor="hsl(42 100% 58%)" />
             <stop offset="100%" stopColor="hsl(48 100% 62%)" />
           </linearGradient>
-          
-          {/* Premium frond gradients - rich cyan/teal */}
-          <linearGradient id="mobilePalmFrondMain" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="hsl(175 100% 45%)" />
-            <stop offset="50%" stopColor="hsl(170 100% 55%)" />
-            <stop offset="100%" stopColor="hsl(165 100% 50%)" />
-          </linearGradient>
-          <linearGradient id="mobilePalmFrondBright" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="hsl(180 100% 55%)" />
-            <stop offset="100%" stopColor="hsl(172 100% 60%)" />
-          </linearGradient>
-          
-          {/* Multi-layer glow filter for premium neon effect */}
-          <filter id="mobilePalmNeonGlowOuter" x="-100%" y="-100%" width="300%" height="300%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur1" />
-            <feColorMatrix in="blur1" type="matrix" values="1 0 0 0 0  0 1 0 0 0.8  0 0 1 0 0.6  0 0 0 0.6 0" />
-          </filter>
-          <filter id="mobilePalmNeonGlowMiddle" x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur2" />
-            <feColorMatrix in="blur2" type="matrix" values="1 0 0 0 0.1  0 1 0 0 0.9  0 0 1 0 0.8  0 0 0 0.8 0" />
-          </filter>
-          <filter id="mobilePalmNeonGlowInner" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur3" />
-            <feMerge>
-              <feMergeNode in="blur3" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-          
-          {/* Orange glow for trunk */}
-          <filter id="mobilePalmTrunkGlow" x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="trunkBlur" />
-            <feColorMatrix in="trunkBlur" type="matrix" values="1 0 0 0 0.2  0 0.6 0 0 0  0 0 0.2 0 0  0 0 0 0.7 0" />
-          </filter>
         </defs>
         
-        {/* === TRUNK === */}
-        {/* Outer glow layer */}
-        <g filter="url(#mobilePalmTrunkGlow)">
-          <path
-            d="M0,-78 C-3,-60 -4,-40 -2,-20 C0,0 1,8 0,5"
-            fill="none"
-            stroke="hsl(38 100% 55%)"
-            strokeWidth="8"
-            strokeLinecap="round"
-          />
-        </g>
-        
-        {/* Main trunk with curved segments */}
-        <g filter="url(#mobilePalmNeonGlowInner)">
+        {/* === TRUNK - simplified, no heavy filters === */}
+        {/* Trunk glow using lightweight CSS drop-shadow */}
+        <g style={{ filter: 'drop-shadow(0 0 6px hsl(38 100% 50% / 0.5))' }}>
           <path
             d="M0,-78 C-3,-60 -4,-40 -2,-20 C0,0 1,8 0,5"
             fill="none"
@@ -2361,7 +2320,7 @@ export const MobilePalmTree: React.FC<{
             strokeLinecap="round"
           />
           
-          {/* Trunk ring segments - curved for realism */}
+          {/* Trunk ring segments */}
           {[-70, -62, -54, -46, -38, -30, -22, -14, -6].map((y, i) => (
             <path
               key={`mobile-ring-${i}`}
@@ -2375,49 +2334,35 @@ export const MobilePalmTree: React.FC<{
           ))}
         </g>
         
-        {/* === FRONDS === */}
-        {/* Outer glow aura */}
-        <g filter="url(#mobilePalmNeonGlowOuter)" opacity={0.35}>
-          <path d="M0,-78 Q0,-100 0,-118 M0,-78 Q20,-92 45,-88 M0,-78 Q-20,-92 -45,-88 M0,-78 Q28,-82 52,-70 M0,-78 Q-28,-82 -52,-70 M0,-78 Q25,-72 45,-52 M0,-78 Q-25,-72 -45,-52" fill="none" stroke="hsl(172 100% 55%)" strokeWidth="8" strokeLinecap="round" />
+        {/* === FRONDS - simplified with CSS drop-shadow === */}
+        {/* Outer glow using CSS instead of SVG filter */}
+        <g style={{ filter: 'drop-shadow(0 0 10px hsl(172 100% 55% / 0.4))' }} opacity={0.4}>
+          <path d="M0,-78 Q0,-100 0,-118 M0,-78 Q20,-92 45,-88 M0,-78 Q-20,-92 -45,-88 M0,-78 Q28,-82 52,-70 M0,-78 Q-28,-82 -52,-70 M0,-78 Q25,-72 45,-52 M0,-78 Q-25,-72 -45,-52" fill="none" stroke="hsl(172 100% 55%)" strokeWidth="6" strokeLinecap="round" />
         </g>
         
-        {/* Middle glow layer */}
-        <g filter="url(#mobilePalmNeonGlowMiddle)" opacity={0.6}>
-          <path d="M0,-78 Q0,-100 0,-118 M0,-78 Q20,-92 45,-88 M0,-78 Q-20,-92 -45,-88 M0,-78 Q28,-82 52,-70 M0,-78 Q-28,-82 -52,-70 M0,-78 Q25,-72 45,-52 M0,-78 Q-25,-72 -45,-52" fill="none" stroke="hsl(170 100% 52%)" strokeWidth="4" strokeLinecap="round" />
-        </g>
-        
-        {/* Main crisp fronds */}
-        <g filter="url(#mobilePalmNeonGlowInner)">
-          {/* Center frond - straight up */}
+        {/* Main crisp fronds with subtle glow */}
+        <g style={{ filter: 'drop-shadow(0 0 3px hsl(170 100% 55% / 0.6))' }}>
+          {/* Center frond */}
           <path d="M0,-78 Q0,-98 0,-118" fill="none" stroke="hsl(170 100% 55%)" strokeWidth="2.5" strokeLinecap="round" />
-          
           {/* Upper right frond */}
           <path d="M0,-78 Q22,-94 48,-88" fill="none" stroke="hsl(168 100% 55%)" strokeWidth="2.5" strokeLinecap="round" />
-          
           {/* Middle right frond */}
           <path d="M0,-78 Q30,-82 55,-68" fill="none" stroke="hsl(172 100% 52%)" strokeWidth="2.3" strokeLinecap="round" />
-          
-          {/* Lower right frond - graceful droop */}
+          {/* Lower right frond */}
           <path d="M0,-78 Q28,-72 48,-50" fill="none" stroke="hsl(175 100% 50%)" strokeWidth="2" strokeLinecap="round" />
-          
           {/* Upper left frond */}
           <path d="M0,-78 Q-22,-94 -48,-88" fill="none" stroke="hsl(168 100% 55%)" strokeWidth="2.5" strokeLinecap="round" />
-          
           {/* Middle left frond */}
           <path d="M0,-78 Q-30,-82 -55,-68" fill="none" stroke="hsl(172 100% 52%)" strokeWidth="2.3" strokeLinecap="round" />
-          
-          {/* Lower left frond - graceful droop */}
+          {/* Lower left frond */}
           <path d="M0,-78 Q-28,-72 -48,-50" fill="none" stroke="hsl(175 100% 50%)" strokeWidth="2" strokeLinecap="round" />
-          
           {/* Diagonal accent fronds */}
           <path d="M0,-78 Q12,-96 28,-105" fill="none" stroke="hsl(170 100% 54%)" strokeWidth="2" strokeLinecap="round" />
           <path d="M0,-78 Q-12,-96 -28,-105" fill="none" stroke="hsl(170 100% 54%)" strokeWidth="2" strokeLinecap="round" />
         </g>
         
-        {/* Glowing center point */}
-        <circle cx="0" cy="-78" r="3.5" fill="hsl(170 100% 60%)" opacity={0.9}>
-          <animate attributeName="opacity" values="0.7;1;0.7" dur="2.5s" repeatCount="indefinite" />
-        </circle>
+        {/* Static center point - no animation */}
+        <circle cx="0" cy="-78" r="3.5" fill="hsl(170 100% 60%)" opacity={0.9} />
         <circle cx="0" cy="-78" r="1.5" fill="hsl(180 100% 85%)" />
       </g>
     </g>
