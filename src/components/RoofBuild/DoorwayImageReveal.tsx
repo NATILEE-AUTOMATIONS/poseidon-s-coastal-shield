@@ -3,6 +3,7 @@ import doorwayImage from '@/assets/doorway-reveal-image.png';
 import coastalCrew from '@/assets/coastal-home-crew.png';
 import coastalRoofing from '@/assets/coastal-home-roofing.png';
 import aerialPool from '@/assets/aerial-estate-pool.png';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface DoorwayImageRevealProps {
   progress: number;
@@ -17,6 +18,11 @@ const images = [
 ];
 
 const DoorwayImageReveal: React.FC<DoorwayImageRevealProps> = ({ progress, zoomProgress }) => {
+  const isMobile = useIsMobile();
+  
+  // Mobile: skip fixed overlay - users scroll naturally to ProjectGallerySection below
+  if (isMobile) return null;
+  
   // Only show when zoom is fully complete (zoomProgress = 1 means we're through the door)
   if (zoomProgress < 0.95) return null;
   

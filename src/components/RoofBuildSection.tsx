@@ -170,7 +170,10 @@ const RoofBuildSection: React.FC = () => {
     ? Math.min(1, (progress - galleryStartPoint) / (isMobile ? 0.02 : 0.005))
     : 0;
   const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
-  const overlayFade = galleryProgress > 0 ? 1 - easeOutCubic(galleryProgress) : 1;
+  // Mobile: keep warm background visible until user scrolls past; Desktop: fade based on gallery progress
+  const overlayFade = isMobile 
+    ? 1 
+    : (galleryProgress > 0 ? 1 - easeOutCubic(galleryProgress) : 1);
   
   // Overlay multiplier for effects
   const mobileOverlayMultiplier = 1;
@@ -251,15 +254,8 @@ const RoofBuildSection: React.FC = () => {
           const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
           const logoScale = easeOutCubic(logoProgress);
           
-          // Logo fades out on mobile from zoomProgress 0.40 to 0.70 (faster with compressed timeline)
-          const logoFadeOut = isMobile 
-            ? zoomProgress > 0.40 
-              ? Math.max(0, 1 - (zoomProgress - 0.40) / 0.30)
-              : 1
-            : 1; // Desktop stays visible
-          
-          // Don't render if fully faded out
-          if (logoFadeOut <= 0) return null;
+          // Logo stays visible on both mobile and desktop
+          const logoFadeOut = 1;
           
           return (
             <div 
