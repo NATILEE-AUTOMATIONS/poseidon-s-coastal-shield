@@ -119,9 +119,9 @@ const RoofBuildSection: React.FC = () => {
   // Show hint during buffer period (before animation starts)
   const showScrollHint = progress < layerStart;
   
-  // Door animation: starts after roof layers complete, fully open 12% later (DESKTOP ONLY)
+  // Door animation: starts after roof layers complete, fully open 12% later
   const doorStart = Math.max(0.70, roofLayersEnd);
-  const doorAngle = !isMobile && progress > doorStart 
+  const doorAngle = progress > doorStart 
     ? Math.min(75, ((progress - doorStart) / 0.12) * 75) 
     : 0;
 
