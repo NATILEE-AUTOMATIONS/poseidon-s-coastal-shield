@@ -132,9 +132,7 @@ const RoofBuildSection: React.FC = () => {
 
   // Door zoom: starts after door opens, extended duration for full doorway entry
   const zoomStart = doorStart + 0.12;
-  const zoomProgress = progress > zoomStart 
-    ? Math.min(1, (progress - zoomStart) / 0.30)
-    : 0;
+  const zoomProgress = 0; // Zoom disabled
   
   // Update scroll context so navbar can fade (desktop only)
   useEffect(() => {
@@ -147,26 +145,24 @@ const RoofBuildSection: React.FC = () => {
   const easedZoom = easeInOutQuad(zoomProgress);
   
   // Scale: 1x → 500x for full doorway pass-through
-  const zoomScale = 1 + (easedZoom * 499);
+  const zoomScale = 1; // No zoom scaling
   
   // Delayed warm light effect
-  const lightProgress = Math.max(0, (zoomProgress - 0.2) / 0.8);
-  const easedLight = easeInOutQuad(lightProgress);
+  const lightProgress = 0; // No light effect
+  const easedLight = 0;
   
   // Fade out elements during zoom
-  const gridFadeOut = Math.max(0, 1 - (zoomProgress * 3));
-  const houseFadeOut = Math.max(0, 1 - (easedZoom * 2));
+  const gridFadeOut = 1; // Grid always visible
+  const houseFadeOut = 1; // House always visible
 
   // 3D Gallery visibility (starts VERY late, after zoom fully completes)
   const galleryStartPoint = 0.995;
-  const galleryProgress = progress > galleryStartPoint 
-    ? Math.min(1, (progress - galleryStartPoint) / 0.005)
-    : 0;
+  const galleryProgress = 0; // No gallery transition
   const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
   const overlayFade = galleryProgress > 0 ? 1 - easeOutCubic(galleryProgress) : 1;
   
   // Overlay multiplier for effects
-  const mobileOverlayMultiplier = 1;
+  const mobileOverlayMultiplier = 0; // No overlays
 
   // Calculate staggered exit progress for label pairs (desktop only)
   // Labels exit from 0.92 to 0.96 (AFTER all roof animations complete)
@@ -233,33 +229,12 @@ const RoofBuildSection: React.FC = () => {
 
 
       {/* Doorway Image Reveal - appears AFTER zoom is fully complete */}
-      <DoorwayImageReveal progress={progress} zoomProgress={zoomProgress} />
+      {/* DoorwayImageReveal removed - zoom disabled */}
 
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
         {/* Poseidon Logo - pure zoom animation from 0 to full size, starts when entering doorway */}
-        {zoomProgress > 0.10 && (() => {
-          // Logo scales from 0 to 1 between zoomProgress 0.10 and 0.25 (faster zoom to full size)
-          const logoProgress = Math.min(1, Math.max(0, (zoomProgress - 0.10) / 0.15));
-          const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
-          const logoScale = easeOutCubic(logoProgress);
-          
-          return (
-            <div 
-              className="absolute inset-0 flex items-center justify-center z-[101] pointer-events-none"
-            >
-              <img 
-                src={poseidonDoorLogo} 
-                alt="Poseidon Roofing"
-                className="w-40 sm:w-56 md:w-80 lg:w-[450px] max-w-[70vw]"
-                style={{ 
-                  transform: `scale(${logoScale})`,
-                  willChange: 'transform',
-                }}
-              />
-            </div>
-          );
-        })()}
+        {/* Poseidon Logo removed - zoom disabled */}
         
         <div style={{ opacity: gridFadeOut, transition: 'opacity 0.15s ease-out' }}>
           <GridBackground horizonOpacity={outlineOpacity} />
