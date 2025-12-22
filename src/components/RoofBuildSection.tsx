@@ -131,9 +131,11 @@ const RoofBuildSection: React.FC = () => {
     : 1;
 
   // Door zoom: starts after door opens, extended duration for full doorway entry
+  // Mobile: faster zoom (0.12) to complete before section ends; Desktop: slower (0.30)
   const zoomStart = doorStart + 0.12;
+  const zoomDuration = isMobile ? 0.12 : 0.30;
   const zoomProgress = progress > zoomStart 
-    ? Math.min(1, (progress - zoomStart) / 0.30)
+    ? Math.min(1, (progress - zoomStart) / zoomDuration)
     : 0;
   
   // Update scroll context so navbar can fade (desktop only)
