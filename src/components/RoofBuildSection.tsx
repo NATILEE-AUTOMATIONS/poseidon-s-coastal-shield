@@ -67,7 +67,7 @@ const RoofBuildSection: React.FC = () => {
   const iceWaterEnd = dripEdgeEnd + (layerStep * iceWaterMultiplier);
   
   // Underlayment
-  const underlaymentMultiplier = isMobile ? 1.5 : 1.5;
+  const underlaymentMultiplier = isMobile ? 3 : 1.5;
   const underlaymentEnd = iceWaterEnd + (layerStep * underlaymentMultiplier);
   
   // Starter strip
