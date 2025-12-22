@@ -488,8 +488,8 @@ const RoofBuildSection: React.FC = () => {
                   className="absolute inset-0 w-full h-full"
                   style={{ overflow: 'visible' }}
                 >
-                  {/* "Complete Clean Up" text - DESKTOP ONLY */}
-                  {!isMobile && (
+                  {/* "Complete Clean Up" text - MOBILE ONLY */}
+                  {isMobile && (
                     <CleanUpRevealText 
                       truckProgress={progress}
                       truckStartProgress={layers[10].start}
