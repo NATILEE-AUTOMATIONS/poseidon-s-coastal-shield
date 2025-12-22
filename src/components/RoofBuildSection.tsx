@@ -20,6 +20,7 @@ import {
   CleanUpRevealText,
   FallingPalmTree,
   MobilePalmTree,
+  MobileYardSign,
   materialInfo,
 } from './RoofBuild/RoofLayers';
 import YardSign from './RoofBuild/YardSign';
@@ -380,6 +381,13 @@ const RoofBuildSection: React.FC = () => {
                         isMobile={isMobile}
                         mirrored={true}
                         delayOffset={0.10}
+                      />
+                      <MobileYardSign 
+                        truckProgress={progress}
+                        truckStartProgress={layers[10].start}
+                        truckEndProgress={layers[10].end}
+                        isMobile={isMobile}
+                        delayOffset={0.18}
                       />
                     </>
                   )}
