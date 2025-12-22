@@ -488,15 +488,13 @@ const RoofBuildSection: React.FC = () => {
                   className="absolute inset-0 w-full h-full"
                   style={{ overflow: 'visible' }}
                 >
-                  {/* "Complete Clean Up" text - MOBILE ONLY */}
-                  {isMobile && (
-                    <CleanUpRevealText 
-                      truckProgress={progress}
-                      truckStartProgress={layers[10].start}
-                      truckEndProgress={layers[10].end}
-                      isMobile={isMobile}
-                    />
-                  )}
+                  {/* "Complete Clean Up" text - shows on both mobile and desktop */}
+                  <CleanUpRevealText 
+                    truckProgress={progress}
+                    truckStartProgress={layers[10].start}
+                    truckEndProgress={layers[10].end}
+                    isMobile={isMobile}
+                  />
                   
                   {/* Dumpster rendered in same SVG as truck for alignment */}
                   {/* Hide exactly when truck's isDrivingAway becomes true (backPhaseEnd: 0.50 mobile, 0.40 desktop) */}

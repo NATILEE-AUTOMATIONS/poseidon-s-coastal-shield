@@ -1871,16 +1871,14 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   );
 };
 
-// "Complete Clean Up" text that reveals as dumpster moves away (MOBILE ONLY)
+// "Complete Clean Up" text that reveals as dumpster moves away (both mobile and desktop)
 export const CleanUpRevealText: React.FC<{ 
   truckProgress: number;
   truckStartProgress: number;
   truckEndProgress: number;
   isMobile?: boolean;
 }> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile }) => {
-  // ALWAYS check screen width directly - show ONLY on mobile
-  const isActuallyMobile = typeof window !== 'undefined' && window.innerWidth < 900;
-  if (!isMobile && !isActuallyMobile) return null;
+  // Show on both mobile and desktop
   
   const rawProgress = (truckProgress - truckStartProgress) / (truckEndProgress - truckStartProgress);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
