@@ -131,9 +131,9 @@ const RoofBuildSection: React.FC = () => {
     : 1;
 
   // Door zoom: starts after door opens, extended duration for full doorway entry
-  // Mobile: faster zoom (0.12) to complete before section ends; Desktop: slower (0.30)
+  // Mobile: extended zoom (0.25) for logo reveal/fade sequence; Desktop: slower (0.30)
   const zoomStart = doorStart + 0.12;
-  const zoomDuration = isMobile ? 0.12 : 0.30;
+  const zoomDuration = isMobile ? 0.25 : 0.30;
   const zoomProgress = progress > zoomStart 
     ? Math.min(1, (progress - zoomStart) / zoomDuration)
     : 0;
@@ -246,6 +246,16 @@ const RoofBuildSection: React.FC = () => {
           const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
           const logoScale = easeOutCubic(logoProgress);
           
+          // Logo fades out on mobile from zoomProgress 0.60 to 0.80
+          const logoFadeOut = isMobile 
+            ? zoomProgress > 0.60 
+              ? Math.max(0, 1 - (zoomProgress - 0.60) / 0.20)
+              : 1
+            : 1; // Desktop stays visible
+          
+          // Don't render if fully faded out
+          if (logoFadeOut <= 0) return null;
+          
           return (
             <div 
               className="absolute inset-0 flex items-center justify-center z-[101] pointer-events-none"
@@ -256,7 +266,8 @@ const RoofBuildSection: React.FC = () => {
                 className="w-40 sm:w-56 md:w-80 lg:w-[450px] max-w-[70vw]"
                 style={{ 
                   transform: `scale(${logoScale})`,
-                  willChange: 'transform',
+                  opacity: logoFadeOut,
+                  willChange: 'transform, opacity',
                 }}
               />
             </div>
