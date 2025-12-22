@@ -119,10 +119,12 @@ const RoofBuildSection: React.FC = () => {
   // Show hint during buffer period (before animation starts)
   const showScrollHint = progress < layerStart;
   
-  // Door animation: starts after roof layers complete, fully open 12% later
-  const doorStart = Math.max(0.70, roofLayersEnd);
+  // Door animation: starts after roof layers complete
+  // Mobile: starts immediately after truck; Desktop: waits until 70%
+  const doorStart = isMobile ? roofLayersEnd : Math.max(0.70, roofLayersEnd);
+  const doorOpenDuration = isMobile ? 0.04 : 0.12;
   const doorAngle = progress > doorStart 
-    ? Math.min(75, ((progress - doorStart) / 0.12) * 75) 
+    ? Math.min(75, ((progress - doorStart) / doorOpenDuration) * 75) 
     : 0;
 
   // Outline fade: starts when door starts opening, fully gone by zoom start
@@ -131,9 +133,9 @@ const RoofBuildSection: React.FC = () => {
     : 1;
 
   // Door zoom: starts after door opens, extended duration for full doorway entry
-  // Mobile: extended zoom (0.25) for logo reveal/fade sequence; Desktop: slower (0.30)
-  const zoomStart = doorStart + 0.12;
-  const zoomDuration = isMobile ? 0.25 : 0.30;
+  // Mobile: fast zoom (0.08) to complete within scroll bounds; Desktop: slower (0.30)
+  const zoomStart = doorStart + doorOpenDuration;
+  const zoomDuration = isMobile ? 0.08 : 0.30;
   const zoomProgress = progress > zoomStart 
     ? Math.min(1, (progress - zoomStart) / zoomDuration)
     : 0;
@@ -160,9 +162,10 @@ const RoofBuildSection: React.FC = () => {
   const houseFadeOut = Math.max(0, 1 - (easedZoom * 2));
 
   // 3D Gallery visibility (starts VERY late, after zoom fully completes)
-  const galleryStartPoint = 0.995;
+  // Mobile: earlier start with longer duration; Desktop: very late start
+  const galleryStartPoint = isMobile ? 0.98 : 0.995;
   const galleryProgress = progress > galleryStartPoint 
-    ? Math.min(1, (progress - galleryStartPoint) / 0.005)
+    ? Math.min(1, (progress - galleryStartPoint) / (isMobile ? 0.02 : 0.005))
     : 0;
   const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
   const overlayFade = galleryProgress > 0 ? 1 - easeOutCubic(galleryProgress) : 1;
@@ -246,10 +249,10 @@ const RoofBuildSection: React.FC = () => {
           const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
           const logoScale = easeOutCubic(logoProgress);
           
-          // Logo fades out on mobile from zoomProgress 0.60 to 0.80
+          // Logo fades out on mobile from zoomProgress 0.40 to 0.70 (faster with compressed timeline)
           const logoFadeOut = isMobile 
-            ? zoomProgress > 0.60 
-              ? Math.max(0, 1 - (zoomProgress - 0.60) / 0.20)
+            ? zoomProgress > 0.40 
+              ? Math.max(0, 1 - (zoomProgress - 0.40) / 0.30)
               : 1
             : 1; // Desktop stays visible
           
