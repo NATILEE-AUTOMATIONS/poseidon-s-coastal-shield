@@ -2238,3 +2238,127 @@ export const MobileVentsLayer: React.FC<LayerProps> = ({ progress, startProgress
     </g>
   );
 };
+
+// Mobile-only palm tree that drops onto left lawn as dump truck drives away
+export const MobilePalmTree: React.FC<{ 
+  truckProgress: number;
+  truckStartProgress: number;
+  truckEndProgress: number;
+  isMobile?: boolean;
+}> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile }) => {
+  // ONLY show on mobile
+  const isActuallyMobile = typeof window !== 'undefined' && window.innerWidth < 900;
+  if (!isMobile && !isActuallyMobile) return null;
+  
+  const truckDuration = truckEndProgress - truckStartProgress;
+  // Start dropping when truck starts driving away (40% of truck animation)
+  const dropStart = truckStartProgress + (truckDuration * 0.45);
+  const dropEnd = truckStartProgress + (truckDuration * 0.75);
+  
+  const rawProgress = (truckProgress - dropStart) / (dropEnd - dropStart);
+  const layerProgress = Math.max(0, Math.min(1, rawProgress));
+  
+  if (truckProgress < dropStart) return null;
+  
+  // Smooth easeOutBack for bounce effect
+  const easeOutBack = (x: number): number => {
+    const c1 = 1.70158;
+    const c3 = c1 + 1;
+    return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+  };
+  
+  const easeOutQuint = (x: number): number => 1 - Math.pow(1 - x, 5);
+  
+  const easedPosition = easeOutQuint(layerProgress);
+  const easedScale = easeOutBack(layerProgress);
+  
+  // Fall from sky
+  const translateY = -150 * (1 - easedPosition);
+  
+  // Fade in
+  const fadeIn = easeOutQuint(Math.min(1, layerProgress * 1.5));
+  const opacity = fadeIn;
+  
+  // Scale with bounce
+  const scaleAnim = 0.85 + (easedScale * 0.15);
+  
+  // Position on left side of lawn
+  const baseX = 55;
+  const baseY = 275;
+  const scale = 1.1 * scaleAnim;
+  
+  return (
+    <g 
+      className="mobile-palm-tree-layer"
+      style={{ 
+        transform: `translateY(${translateY}px)`,
+        opacity,
+        transition: 'opacity 0.1s ease-out',
+      }}
+    >
+      <g transform={`translate(${baseX}, ${baseY}) scale(${scale})`}>
+        <defs>
+          <linearGradient id="mobilePalmTrunkGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stopColor="hsl(25 100% 45%)" />
+            <stop offset="30%" stopColor="hsl(35 100% 55%)" />
+            <stop offset="60%" stopColor="hsl(42 100% 58%)" />
+            <stop offset="100%" stopColor="hsl(48 100% 62%)" />
+          </linearGradient>
+          
+          <linearGradient id="mobilePalmFrondMain" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="hsl(175 100% 45%)" />
+            <stop offset="50%" stopColor="hsl(170 100% 55%)" />
+            <stop offset="100%" stopColor="hsl(165 100% 50%)" />
+          </linearGradient>
+          
+          <filter id="mobilePalmGlow" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
+            <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0.8  0 0 1 0 0.6  0 0 0 0.7 0" />
+          </filter>
+          
+          <filter id="mobileTrunkGlow" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="trunkBlur" />
+            <feColorMatrix in="trunkBlur" type="matrix" values="1 0 0 0 0.2  0 0.6 0 0 0  0 0 0.2 0 0  0 0 0 0.6 0" />
+          </filter>
+        </defs>
+        
+        {/* Trunk with glow */}
+        <g filter="url(#mobileTrunkGlow)">
+          <path
+            d="M0,-35 Q-2,-25 -1,-15 Q1,-5 0,5 Q-1,15 0,25"
+            fill="none"
+            stroke="url(#mobilePalmTrunkGradient)"
+            strokeWidth="6"
+            strokeLinecap="round"
+          />
+        </g>
+        <path
+          d="M0,-35 Q-2,-25 -1,-15 Q1,-5 0,5 Q-1,15 0,25"
+          fill="none"
+          stroke="url(#mobilePalmTrunkGradient)"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+        
+        {/* Fronds with glow */}
+        <g filter="url(#mobilePalmGlow)">
+          {/* Center frond */}
+          <path d="M0,-35 Q0,-55 5,-70 Q10,-60 15,-50 Q5,-45 0,-35" fill="url(#mobilePalmFrondMain)" />
+          {/* Left fronds */}
+          <path d="M0,-35 Q-15,-50 -30,-55 Q-20,-45 -10,-38 Q-5,-36 0,-35" fill="url(#mobilePalmFrondMain)" />
+          <path d="M0,-35 Q-20,-40 -35,-38 Q-22,-35 -12,-33 Q-5,-33 0,-35" fill="url(#mobilePalmFrondMain)" />
+          {/* Right fronds */}
+          <path d="M0,-35 Q15,-50 30,-55 Q20,-45 10,-38 Q5,-36 0,-35" fill="url(#mobilePalmFrondMain)" />
+          <path d="M0,-35 Q20,-40 35,-38 Q22,-35 12,-33 Q5,-33 0,-35" fill="url(#mobilePalmFrondMain)" />
+        </g>
+        
+        {/* Solid fronds on top */}
+        <path d="M0,-35 Q0,-55 5,-70 Q10,-60 15,-50 Q5,-45 0,-35" fill="hsl(170 100% 50%)" />
+        <path d="M0,-35 Q-15,-50 -30,-55 Q-20,-45 -10,-38 Q-5,-36 0,-35" fill="hsl(172 100% 48%)" />
+        <path d="M0,-35 Q-20,-40 -35,-38 Q-22,-35 -12,-33 Q-5,-33 0,-35" fill="hsl(168 100% 45%)" />
+        <path d="M0,-35 Q15,-50 30,-55 Q20,-45 10,-38 Q5,-36 0,-35" fill="hsl(172 100% 48%)" />
+        <path d="M0,-35 Q20,-40 35,-38 Q22,-35 12,-33 Q5,-33 0,-35" fill="hsl(168 100% 45%)" />
+      </g>
+    </g>
+  );
+};
