@@ -431,8 +431,7 @@
     opacity: 0 !important;
   }
   .yard-sign-layer,
-  .palm-tree-layer,
-  .cleanup-text-layer {
+  .palm-tree-layer {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
@@ -452,8 +451,7 @@
     opacity: 0 !important;
   }
   .yard-sign-layer,
-  .palm-tree-layer,
-  .cleanup-text-layer {
+  .palm-tree-layer {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
@@ -468,8 +466,7 @@
 /* Additional touch device targeting */
 @media (hover: none) and (pointer: coarse) {
   .yard-sign-layer,
-  .palm-tree-layer,
-  .cleanup-text-layer {
+  .palm-tree-layer {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
