@@ -1915,12 +1915,14 @@ export const CleanUpRevealText: React.FC<{
   
   if (truckProgress < truckStartProgress) return null;
   
-  // Fade out smoothly at end - mobile stays visible much longer
-  const fadeOutStart = isMobile ? 0.95 : 0.88;
-  const fadeOutEnd = isMobile ? 1.02 : 0.96;
+  // Fade out smoothly at end - mobile uses rawProgress (unclamped) to stay visible much longer
+  const fadeOutStart = isMobile ? 1.08 : 0.88;
+  const fadeOutEnd = isMobile ? 1.20 : 0.96;
   let fadeOutOpacity = 1;
-  if (layerProgress > fadeOutStart) {
-    const fadeProgress = Math.min(1, (layerProgress - fadeOutStart) / (fadeOutEnd - fadeOutStart));
+  // Use rawProgress for mobile (can exceed 1.0), layerProgress for desktop
+  const fadeCheckProgress = isMobile ? rawProgress : layerProgress;
+  if (fadeCheckProgress > fadeOutStart) {
+    const fadeProgress = Math.min(1, (fadeCheckProgress - fadeOutStart) / (fadeOutEnd - fadeOutStart));
     const easeInOutQuad = (x: number) => x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
     fadeOutOpacity = Math.max(0, 1 - easeInOutQuad(fadeProgress));
   }
