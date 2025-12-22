@@ -1883,7 +1883,7 @@ export const TruckLayer: React.FC<LayerProps & { dumpsterProgress: number }> = (
   );
 };
 
-// "Complete Clean Up" text - OPTIMIZED with GPU-accelerated opacity+transform instead of clipPath
+// "Complete Clean Up" text - stationary, revealed by dumpster moving away
 export const CleanUpRevealText: React.FC<{ 
   truckProgress: number;
   truckStartProgress: number;
@@ -1913,12 +1913,9 @@ export const CleanUpRevealText: React.FC<{
   const y2 = isMobile ? 255 : 258;
   const letterSpacing = isMobile ? 2 : 4;
   
-  // GPU-accelerated: slide in from left instead of clipPath
-  const translateX = Math.round(-40 * (1 - easedReveal));
-  
   if (truckProgress < truckStartProgress) return null;
   
-  // Fade out smoothly at end - complete by 80% for mobile to reduce overlap with palm tree
+  // Fade out smoothly at end
   const fadeOutStart = isMobile ? 0.75 : 0.88;
   const fadeOutEnd = isMobile ? 0.85 : 0.98;
   let fadeOutOpacity = 1;
@@ -1928,10 +1925,10 @@ export const CleanUpRevealText: React.FC<{
     fadeOutOpacity = Math.max(0, 1 - easeInOutQuad(fadeProgress));
   }
   
-  // Smooth opacity animation
+  // Smooth opacity animation - just fade in as dumpster reveals it
   const baseOpacity = layerProgress < backPhaseEnd 
-    ? Math.min(0.3, easeOutQuart(layerProgress / backPhaseEnd) * 0.3)
-    : 0.3 + (easedReveal * 0.7);
+    ? 0 // Hidden while truck backs in
+    : easedReveal; // Fade in as dumpster moves away
   
   const opacity = baseOpacity * fadeOutOpacity;
   
@@ -1941,12 +1938,9 @@ export const CleanUpRevealText: React.FC<{
     <g 
       className="cleanup-reveal-text cleanup-text-layer"
       style={{
-        // GPU-accelerated transform + opacity
-        transform: `translate3d(${translateX}px, 0, 0)`,
         opacity,
-        willChange: 'transform, opacity',
-        backfaceVisibility: 'hidden',
-      } as React.CSSProperties}
+        willChange: 'opacity',
+      }}
     >
       {/* "COMPLETE" text */}
       <text
