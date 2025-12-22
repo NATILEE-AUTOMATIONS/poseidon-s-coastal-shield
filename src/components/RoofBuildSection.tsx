@@ -133,7 +133,7 @@ const RoofBuildSection: React.FC = () => {
   // Door zoom: starts after door opens, extended duration for full doorway entry
   const zoomStart = doorStart + 0.12;
   const zoomProgress = progress > zoomStart 
-    ? Math.min(1, (progress - zoomStart) / (isMobile ? 0.20 : 0.30))
+    ? Math.min(1, (progress - zoomStart) / 0.30)
     : 0;
   
   // Update scroll context so navbar can fade (desktop only)
@@ -146,8 +146,8 @@ const RoofBuildSection: React.FC = () => {
     x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
   const easedZoom = easeInOutQuad(zoomProgress);
   
-  // Scale: 1x → 500x for full doorway pass-through (300x on mobile for performance)
-  const zoomScale = 1 + (easedZoom * (isMobile ? 299 : 499));
+  // Scale: 1x → 500x for full doorway pass-through
+  const zoomScale = 1 + (easedZoom * 499);
   
   // Delayed warm light effect
   const lightProgress = Math.max(0, (zoomProgress - 0.2) / 0.8);
@@ -275,8 +275,8 @@ const RoofBuildSection: React.FC = () => {
               <div 
                 className="flex justify-center"
                 style={{
-                  transform: `scale(${zoomScale})`,
-                  transformOrigin: isMobile ? '50% 68%' : '50% 82%',
+                  transform: isMobile ? 'scale(1)' : `scale(${zoomScale})`,
+                  transformOrigin: '50% 82%',
                   opacity: houseFadeOut,
                   willChange: 'transform, opacity',
                   backfaceVisibility: 'hidden', // Prevent flicker
