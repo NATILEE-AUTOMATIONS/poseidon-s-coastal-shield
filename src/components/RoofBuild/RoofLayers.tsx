@@ -2245,15 +2245,18 @@ export const MobilePalmTree: React.FC<{
   truckStartProgress: number;
   truckEndProgress: number;
   isMobile?: boolean;
-}> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile }) => {
+  mirrored?: boolean;
+  delayOffset?: number;
+}> = ({ truckProgress, truckStartProgress, truckEndProgress, isMobile, mirrored = false, delayOffset = 0 }) => {
   // ONLY show on mobile
   const isActuallyMobile = typeof window !== 'undefined' && window.innerWidth < 900;
   if (!isMobile && !isActuallyMobile) return null;
   
   const truckDuration = truckEndProgress - truckStartProgress;
   // Start dropping at 80% of truck animation (later = less overlap with other animations)
-  const dropStart = truckStartProgress + (truckDuration * 0.80);
-  const dropEnd = truckStartProgress + (truckDuration * 0.98);
+  // Apply delay offset for staggered entrance
+  const dropStart = truckStartProgress + (truckDuration * 0.80) + (truckDuration * delayOffset);
+  const dropEnd = truckStartProgress + (truckDuration * 0.98) + (truckDuration * delayOffset);
   
   const rawProgress = (truckProgress - dropStart) / (dropEnd - dropStart);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
@@ -2276,10 +2279,11 @@ export const MobilePalmTree: React.FC<{
   // Scale smoothly
   const scaleAnim = 0.92 + (easedScale * 0.08);
   
-  // Position on left side of lawn
-  const baseX = 70;
+  // Position - left or right side of lawn based on mirrored prop
+  const baseX = mirrored ? 330 : 70;
   const baseY = 270;
   const scale = 0.95 * scaleAnim;
+  const scaleX = mirrored ? -1 : 1;
   
   return (
     <g 
@@ -2292,7 +2296,7 @@ export const MobilePalmTree: React.FC<{
         backfaceVisibility: 'hidden',
       } as React.CSSProperties}
     >
-      <g transform={`translate(${baseX}, ${baseY}) scale(${scale})`}>
+      <g transform={`translate(${baseX}, ${baseY}) scale(${scaleX * scale}, ${scale})`}>
         <defs>
           {/* Premium trunk gradient */}
           <linearGradient id="mobilePalmTrunkGradient" x1="0%" y1="100%" x2="0%" y2="0%">

@@ -364,14 +364,24 @@ const RoofBuildSection: React.FC = () => {
                     </>
                   )}
                   
-                  {/* Mobile-only palm tree on left lawn */}
+                  {/* Mobile-only palm trees on both sides of lawn */}
                   {isMobile && (
-                    <MobilePalmTree 
-                      truckProgress={progress}
-                      truckStartProgress={layers[10].start}
-                      truckEndProgress={layers[10].end}
-                      isMobile={isMobile}
-                    />
+                    <>
+                      <MobilePalmTree 
+                        truckProgress={progress}
+                        truckStartProgress={layers[10].start}
+                        truckEndProgress={layers[10].end}
+                        isMobile={isMobile}
+                      />
+                      <MobilePalmTree 
+                        truckProgress={progress}
+                        truckStartProgress={layers[10].start}
+                        truckEndProgress={layers[10].end}
+                        isMobile={isMobile}
+                        mirrored={true}
+                        delayOffset={0.05}
+                      />
+                    </>
                   )}
                   
                 </svg>
