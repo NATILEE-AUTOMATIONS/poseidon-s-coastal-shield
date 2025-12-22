@@ -387,7 +387,7 @@ const RoofBuildSection: React.FC = () => {
                         truckStartProgress={layers[10].start}
                         truckEndProgress={layers[10].end}
                         isMobile={isMobile}
-                        delayOffset={0.18}
+                        delayOffset={0.35}
                       />
                     </>
                   )}
