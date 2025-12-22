@@ -2253,31 +2253,31 @@ export const MobilePalmTree: React.FC<{
   if (!isMobile && !isActuallyMobile) return null;
   
   const truckDuration = truckEndProgress - truckStartProgress;
-  // Start dropping at 80% of truck animation (later = less overlap with other animations)
+  // Start dropping earlier for more deliberate scroll-connected animation
   // Apply delay offset for staggered entrance
-  const dropStart = truckStartProgress + (truckDuration * 0.80) + (truckDuration * delayOffset);
-  const dropEnd = truckStartProgress + (truckDuration * 0.98) + (truckDuration * delayOffset);
+  const dropStart = truckStartProgress + (truckDuration * 0.75) + (truckDuration * delayOffset);
+  const dropEnd = truckStartProgress + (truckDuration * 1.03) + (truckDuration * delayOffset);
   
   const rawProgress = (truckProgress - dropStart) / (dropEnd - dropStart);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
   if (truckProgress < dropStart) return null;
   
-  // Smooth easeOutExpo for buttery animation
-  const easeOutExpo = (x: number): number => x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
+  // Softer easeOutCubic for deliberate, scroll-connected animation
+  const easeOutCubic = (x: number): number => 1 - Math.pow(1 - x, 3);
   const easeOutQuart = (x: number): number => 1 - Math.pow(1 - x, 4);
   
-  const easedPosition = easeOutExpo(layerProgress);
+  const easedPosition = easeOutCubic(layerProgress);
   const easedScale = easeOutQuart(layerProgress);
   
-  // Fall from sky - round to whole pixels to prevent sub-pixel jitter
-  const translateY = Math.round(-100 * (1 - easedPosition));
+  // Fall from sky - increased distance for more deliberate descent
+  const translateY = Math.round(-130 * (1 - easedPosition));
   
-  // Fade in smoothly
-  const opacity = easeOutQuart(Math.min(1, layerProgress * 1.2));
+  // Fade in gradually - slower fade so tree is fully visible after landing
+  const opacity = easeOutCubic(Math.min(1, layerProgress * 0.9));
   
-  // Scale smoothly
-  const scaleAnim = 0.92 + (easedScale * 0.08);
+  // Subtler scale animation to reduce "pop" feeling
+  const scaleAnim = 0.97 + (easedScale * 0.03);
   
   // Position - left or right side of lawn based on mirrored prop
   const baseX = mirrored ? 330 : 70;
