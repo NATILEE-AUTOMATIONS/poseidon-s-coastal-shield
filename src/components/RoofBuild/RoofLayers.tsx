@@ -2240,6 +2240,7 @@ export const MobileVentsLayer: React.FC<LayerProps> = ({ progress, startProgress
 };
 
 // Mobile-only palm tree that drops onto left lawn as dump truck drives away
+// Uses exact same design as desktop FallingPalmTree
 export const MobilePalmTree: React.FC<{ 
   truckProgress: number;
   truckStartProgress: number;
@@ -2251,16 +2252,16 @@ export const MobilePalmTree: React.FC<{
   if (!isMobile && !isActuallyMobile) return null;
   
   const truckDuration = truckEndProgress - truckStartProgress;
-  // Start dropping when truck starts driving away (40% of truck animation)
-  const dropStart = truckStartProgress + (truckDuration * 0.45);
-  const dropEnd = truckStartProgress + (truckDuration * 0.75);
+  // Start dropping LATER - at 65% of truck animation (was 45%)
+  const dropStart = truckStartProgress + (truckDuration * 0.65);
+  const dropEnd = truckStartProgress + (truckDuration * 0.90);
   
   const rawProgress = (truckProgress - dropStart) / (dropEnd - dropStart);
   const layerProgress = Math.max(0, Math.min(1, rawProgress));
   
   if (truckProgress < dropStart) return null;
   
-  // Smooth easeOutBack for bounce effect
+  // Smooth easeOutBack for subtle overshoot/bounce effect
   const easeOutBack = (x: number): number => {
     const c1 = 1.70158;
     const c3 = c1 + 1;
@@ -2272,20 +2273,20 @@ export const MobilePalmTree: React.FC<{
   const easedPosition = easeOutQuint(layerProgress);
   const easedScale = easeOutBack(layerProgress);
   
-  // Fall from sky
-  const translateY = -150 * (1 - easedPosition);
+  // Fall from sky - shorter drop distance
+  const translateY = -120 * (1 - easedPosition);
   
-  // Fade in
+  // Fade in very smoothly with easing
   const fadeIn = easeOutQuint(Math.min(1, layerProgress * 1.5));
   const opacity = fadeIn;
   
-  // Scale with bounce
-  const scaleAnim = 0.85 + (easedScale * 0.15);
+  // Scale with subtle overshoot for organic feel
+  const scaleAnim = 0.9 + (easedScale * 0.1);
   
-  // Position on left side of lawn
-  const baseX = 55;
-  const baseY = 275;
-  const scale = 1.1 * scaleAnim;
+  // Position on left side of lawn - adjusted for mobile
+  const baseX = 70;
+  const baseY = 270;
+  const scale = 0.95 * scaleAnim;
   
   return (
     <g 
@@ -2298,6 +2299,7 @@ export const MobilePalmTree: React.FC<{
     >
       <g transform={`translate(${baseX}, ${baseY}) scale(${scale})`}>
         <defs>
+          {/* Premium trunk gradient - vibrant orange to yellow */}
           <linearGradient id="mobilePalmTrunkGradient" x1="0%" y1="100%" x2="0%" y2="0%">
             <stop offset="0%" stopColor="hsl(25 100% 45%)" />
             <stop offset="30%" stopColor="hsl(35 100% 55%)" />
@@ -2305,59 +2307,121 @@ export const MobilePalmTree: React.FC<{
             <stop offset="100%" stopColor="hsl(48 100% 62%)" />
           </linearGradient>
           
+          {/* Premium frond gradients - rich cyan/teal */}
           <linearGradient id="mobilePalmFrondMain" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="hsl(175 100% 45%)" />
             <stop offset="50%" stopColor="hsl(170 100% 55%)" />
             <stop offset="100%" stopColor="hsl(165 100% 50%)" />
           </linearGradient>
+          <linearGradient id="mobilePalmFrondBright" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="hsl(180 100% 55%)" />
+            <stop offset="100%" stopColor="hsl(172 100% 60%)" />
+          </linearGradient>
           
-          <filter id="mobilePalmGlow" x="-100%" y="-100%" width="300%" height="300%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
-            <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0.8  0 0 1 0 0.6  0 0 0 0.7 0" />
+          {/* Multi-layer glow filter for premium neon effect */}
+          <filter id="mobilePalmNeonGlowOuter" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur1" />
+            <feColorMatrix in="blur1" type="matrix" values="1 0 0 0 0  0 1 0 0 0.8  0 0 1 0 0.6  0 0 0 0.6 0" />
+          </filter>
+          <filter id="mobilePalmNeonGlowMiddle" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur2" />
+            <feColorMatrix in="blur2" type="matrix" values="1 0 0 0 0.1  0 1 0 0 0.9  0 0 1 0 0.8  0 0 0 0.8 0" />
+          </filter>
+          <filter id="mobilePalmNeonGlowInner" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur3" />
+            <feMerge>
+              <feMergeNode in="blur3" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
           </filter>
           
-          <filter id="mobileTrunkGlow" x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="trunkBlur" />
-            <feColorMatrix in="trunkBlur" type="matrix" values="1 0 0 0 0.2  0 0.6 0 0 0  0 0 0.2 0 0  0 0 0 0.6 0" />
+          {/* Orange glow for trunk */}
+          <filter id="mobilePalmTrunkGlow" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="trunkBlur" />
+            <feColorMatrix in="trunkBlur" type="matrix" values="1 0 0 0 0.2  0 0.6 0 0 0  0 0 0.2 0 0  0 0 0 0.7 0" />
           </filter>
         </defs>
         
-        {/* Trunk with glow */}
-        <g filter="url(#mobileTrunkGlow)">
+        {/* === TRUNK === */}
+        {/* Outer glow layer */}
+        <g filter="url(#mobilePalmTrunkGlow)">
           <path
-            d="M0,-35 Q-2,-25 -1,-15 Q1,-5 0,5 Q-1,15 0,25"
+            d="M0,-78 C-3,-60 -4,-40 -2,-20 C0,0 1,8 0,5"
             fill="none"
-            stroke="url(#mobilePalmTrunkGradient)"
-            strokeWidth="6"
+            stroke="hsl(38 100% 55%)"
+            strokeWidth="8"
             strokeLinecap="round"
           />
         </g>
-        <path
-          d="M0,-35 Q-2,-25 -1,-15 Q1,-5 0,5 Q-1,15 0,25"
-          fill="none"
-          stroke="url(#mobilePalmTrunkGradient)"
-          strokeWidth="4"
-          strokeLinecap="round"
-        />
         
-        {/* Fronds with glow */}
-        <g filter="url(#mobilePalmGlow)">
-          {/* Center frond */}
-          <path d="M0,-35 Q0,-55 5,-70 Q10,-60 15,-50 Q5,-45 0,-35" fill="url(#mobilePalmFrondMain)" />
-          {/* Left fronds */}
-          <path d="M0,-35 Q-15,-50 -30,-55 Q-20,-45 -10,-38 Q-5,-36 0,-35" fill="url(#mobilePalmFrondMain)" />
-          <path d="M0,-35 Q-20,-40 -35,-38 Q-22,-35 -12,-33 Q-5,-33 0,-35" fill="url(#mobilePalmFrondMain)" />
-          {/* Right fronds */}
-          <path d="M0,-35 Q15,-50 30,-55 Q20,-45 10,-38 Q5,-36 0,-35" fill="url(#mobilePalmFrondMain)" />
-          <path d="M0,-35 Q20,-40 35,-38 Q22,-35 12,-33 Q5,-33 0,-35" fill="url(#mobilePalmFrondMain)" />
+        {/* Main trunk with curved segments */}
+        <g filter="url(#mobilePalmNeonGlowInner)">
+          <path
+            d="M0,-78 C-3,-60 -4,-40 -2,-20 C0,0 1,8 0,5"
+            fill="none"
+            stroke="url(#mobilePalmTrunkGradient)"
+            strokeWidth="5"
+            strokeLinecap="round"
+          />
+          
+          {/* Trunk ring segments - curved for realism */}
+          {[-70, -62, -54, -46, -38, -30, -22, -14, -6].map((y, i) => (
+            <path
+              key={`mobile-ring-${i}`}
+              d={`M${-4 + Math.sin(i * 0.5)},${y} Q${0},${y - 1.5} ${4 - Math.sin(i * 0.5)},${y}`}
+              fill="none"
+              stroke="hsl(42 100% 65%)"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+              opacity={0.9}
+            />
+          ))}
         </g>
         
-        {/* Solid fronds on top */}
-        <path d="M0,-35 Q0,-55 5,-70 Q10,-60 15,-50 Q5,-45 0,-35" fill="hsl(170 100% 50%)" />
-        <path d="M0,-35 Q-15,-50 -30,-55 Q-20,-45 -10,-38 Q-5,-36 0,-35" fill="hsl(172 100% 48%)" />
-        <path d="M0,-35 Q-20,-40 -35,-38 Q-22,-35 -12,-33 Q-5,-33 0,-35" fill="hsl(168 100% 45%)" />
-        <path d="M0,-35 Q15,-50 30,-55 Q20,-45 10,-38 Q5,-36 0,-35" fill="hsl(172 100% 48%)" />
-        <path d="M0,-35 Q20,-40 35,-38 Q22,-35 12,-33 Q5,-33 0,-35" fill="hsl(168 100% 45%)" />
+        {/* === FRONDS === */}
+        {/* Outer glow aura */}
+        <g filter="url(#mobilePalmNeonGlowOuter)" opacity={0.35}>
+          <path d="M0,-78 Q0,-100 0,-118 M0,-78 Q20,-92 45,-88 M0,-78 Q-20,-92 -45,-88 M0,-78 Q28,-82 52,-70 M0,-78 Q-28,-82 -52,-70 M0,-78 Q25,-72 45,-52 M0,-78 Q-25,-72 -45,-52" fill="none" stroke="hsl(172 100% 55%)" strokeWidth="8" strokeLinecap="round" />
+        </g>
+        
+        {/* Middle glow layer */}
+        <g filter="url(#mobilePalmNeonGlowMiddle)" opacity={0.6}>
+          <path d="M0,-78 Q0,-100 0,-118 M0,-78 Q20,-92 45,-88 M0,-78 Q-20,-92 -45,-88 M0,-78 Q28,-82 52,-70 M0,-78 Q-28,-82 -52,-70 M0,-78 Q25,-72 45,-52 M0,-78 Q-25,-72 -45,-52" fill="none" stroke="hsl(170 100% 52%)" strokeWidth="4" strokeLinecap="round" />
+        </g>
+        
+        {/* Main crisp fronds */}
+        <g filter="url(#mobilePalmNeonGlowInner)">
+          {/* Center frond - straight up */}
+          <path d="M0,-78 Q0,-98 0,-118" fill="none" stroke="hsl(170 100% 55%)" strokeWidth="2.5" strokeLinecap="round" />
+          
+          {/* Upper right frond */}
+          <path d="M0,-78 Q22,-94 48,-88" fill="none" stroke="hsl(168 100% 55%)" strokeWidth="2.5" strokeLinecap="round" />
+          
+          {/* Middle right frond */}
+          <path d="M0,-78 Q30,-82 55,-68" fill="none" stroke="hsl(172 100% 52%)" strokeWidth="2.3" strokeLinecap="round" />
+          
+          {/* Lower right frond - graceful droop */}
+          <path d="M0,-78 Q28,-72 48,-50" fill="none" stroke="hsl(175 100% 50%)" strokeWidth="2" strokeLinecap="round" />
+          
+          {/* Upper left frond */}
+          <path d="M0,-78 Q-22,-94 -48,-88" fill="none" stroke="hsl(168 100% 55%)" strokeWidth="2.5" strokeLinecap="round" />
+          
+          {/* Middle left frond */}
+          <path d="M0,-78 Q-30,-82 -55,-68" fill="none" stroke="hsl(172 100% 52%)" strokeWidth="2.3" strokeLinecap="round" />
+          
+          {/* Lower left frond - graceful droop */}
+          <path d="M0,-78 Q-28,-72 -48,-50" fill="none" stroke="hsl(175 100% 50%)" strokeWidth="2" strokeLinecap="round" />
+          
+          {/* Diagonal accent fronds */}
+          <path d="M0,-78 Q12,-96 28,-105" fill="none" stroke="hsl(170 100% 54%)" strokeWidth="2" strokeLinecap="round" />
+          <path d="M0,-78 Q-12,-96 -28,-105" fill="none" stroke="hsl(170 100% 54%)" strokeWidth="2" strokeLinecap="round" />
+        </g>
+        
+        {/* Glowing center point */}
+        <circle cx="0" cy="-78" r="3.5" fill="hsl(170 100% 60%)" opacity={0.9}>
+          <animate attributeName="opacity" values="0.7;1;0.7" dur="2.5s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="0" cy="-78" r="1.5" fill="hsl(180 100% 85%)" />
       </g>
     </g>
   );
