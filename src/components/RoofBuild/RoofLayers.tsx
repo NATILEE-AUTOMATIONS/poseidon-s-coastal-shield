@@ -1915,9 +1915,9 @@ export const CleanUpRevealText: React.FC<{
   
   if (truckProgress < truckStartProgress) return null;
   
-  // Fade out smoothly at end - stays visible longer but fully fades
-  const fadeOutStart = isMobile ? 0.92 : 0.88;
-  const fadeOutEnd = isMobile ? 0.99 : 0.96;
+  // Fade out smoothly at end - mobile stays visible much longer
+  const fadeOutStart = isMobile ? 0.95 : 0.88;
+  const fadeOutEnd = isMobile ? 1.02 : 0.96;
   let fadeOutOpacity = 1;
   if (layerProgress > fadeOutStart) {
     const fadeProgress = Math.min(1, (layerProgress - fadeOutStart) / (fadeOutEnd - fadeOutStart));
