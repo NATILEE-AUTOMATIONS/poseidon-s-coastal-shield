@@ -19,6 +19,7 @@ import {
   CleanUpLayer,
   CleanUpRevealText,
   FallingPalmTree,
+  MobilePalmTree,
   materialInfo,
 } from './RoofBuild/RoofLayers';
 import YardSign from './RoofBuild/YardSign';
@@ -361,6 +362,16 @@ const RoofBuildSection: React.FC = () => {
                         isMobile={isMobile}
                       />
                     </>
+                  )}
+                  
+                  {/* Mobile-only palm tree on left lawn */}
+                  {isMobile && (
+                    <MobilePalmTree 
+                      truckProgress={progress}
+                      truckStartProgress={layers[10].start}
+                      truckEndProgress={layers[10].end}
+                      isMobile={isMobile}
+                    />
                   )}
                   
                 </svg>
