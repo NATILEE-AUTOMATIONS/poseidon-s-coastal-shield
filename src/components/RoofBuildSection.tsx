@@ -157,9 +157,9 @@ const RoofBuildSection: React.FC = () => {
   const gridFadeOut = Math.max(0, 1 - (zoomProgress * 3));
   const houseFadeOut = Math.max(0, 1 - (easedZoom * 2));
 
-  // 3D Gallery visibility - DESKTOP ONLY (starts VERY late, after zoom fully completes)
+  // 3D Gallery visibility (starts VERY late, after zoom fully completes)
   const galleryStartPoint = 0.995;
-  const galleryProgress = !isMobile && progress > galleryStartPoint 
+  const galleryProgress = progress > galleryStartPoint 
     ? Math.min(1, (progress - galleryStartPoint) / 0.005)
     : 0;
   const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
@@ -233,12 +233,12 @@ const RoofBuildSection: React.FC = () => {
 
 
       {/* Doorway Image Reveal - appears AFTER zoom is fully complete */}
-      {!isMobile && <DoorwayImageReveal progress={progress} zoomProgress={zoomProgress} />}
+      <DoorwayImageReveal progress={progress} zoomProgress={zoomProgress} />
 
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
         {/* Poseidon Logo - pure zoom animation from 0 to full size, starts when entering doorway */}
-        {!isMobile && zoomProgress > 0.10 && (() => {
+        {zoomProgress > 0.10 && (() => {
           // Logo scales from 0 to 1 between zoomProgress 0.10 and 0.25 (faster zoom to full size)
           const logoProgress = Math.min(1, Math.max(0, (zoomProgress - 0.10) / 0.15));
           const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
@@ -251,7 +251,7 @@ const RoofBuildSection: React.FC = () => {
               <img 
                 src={poseidonDoorLogo} 
                 alt="Poseidon Roofing"
-                className="w-64 md:w-80 lg:w-[450px] max-w-[80vw]"
+                className="w-40 sm:w-56 md:w-80 lg:w-[450px] max-w-[70vw]"
                 style={{ 
                   transform: `scale(${logoScale})`,
                   willChange: 'transform',
@@ -276,7 +276,7 @@ const RoofBuildSection: React.FC = () => {
                 className="flex justify-center"
                 style={{
                   transform: `scale(${zoomScale})`,
-                  transformOrigin: '50% 82%', // Exact door center (door at ~82% of viewBox height)
+                  transformOrigin: isMobile ? '50% 70%' : '50% 82%', // Adjusted for mobile padding differences
                   opacity: houseFadeOut,
                   willChange: 'transform, opacity',
                   backfaceVisibility: 'hidden', // Prevent flicker
