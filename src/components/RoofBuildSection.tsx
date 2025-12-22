@@ -379,7 +379,7 @@ const RoofBuildSection: React.FC = () => {
                         truckEndProgress={layers[10].end}
                         isMobile={isMobile}
                         mirrored={true}
-                        delayOffset={0.05}
+                        delayOffset={0.10}
                       />
                     </>
                   )}
