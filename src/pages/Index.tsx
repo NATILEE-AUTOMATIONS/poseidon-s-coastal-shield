@@ -23,7 +23,15 @@ const IndexContent = () => {
       if (document.visibilityState === 'hidden') {
         hasBeenHiddenRef.current = true;
       } else if (document.visibilityState === 'visible' && hasBeenHiddenRef.current) {
-        // Only reset if we were previously hidden
+        const isMobileViewport = window.innerWidth < 768;
+        
+        if (isMobileViewport) {
+          // Force full page reload on mobile - bypasses all stale state issues
+          window.location.reload();
+          return;
+        }
+        
+        // Desktop: existing reset logic
         window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
         document.documentElement.scrollTop = 0;
         document.body.scrollTop = 0;
@@ -39,7 +47,15 @@ const IndexContent = () => {
   useEffect(() => {
     const handlePageShow = (event: PageTransitionEvent) => {
       if (event.persisted) {
-        // Only reset when coming from BFCache, not on initial load
+        const isMobileViewport = window.innerWidth < 768;
+        
+        if (isMobileViewport) {
+          // Force full page reload on mobile - bypasses all stale state issues
+          window.location.reload();
+          return;
+        }
+        
+        // Desktop: existing reset logic
         window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
         document.documentElement.scrollTop = 0;
         document.body.scrollTop = 0;
