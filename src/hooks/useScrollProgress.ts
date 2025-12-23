@@ -1,17 +1,16 @@
-import { useState, useEffect, RefObject, useRef } from 'react';
+import { useState, useEffect, RefObject } from 'react';
 
 export const useScrollProgress = (
   ref: RefObject<HTMLElement>,
   resetTrigger: number = 0
 ): number => {
   const [progress, setProgress] = useState(0);
-  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     const element = ref.current;
     if (!element) return;
 
-    const calculateProgress = () => {
+    const handleScroll = () => {
       const rect = element.getBoundingClientRect();
       const elementHeight = element.offsetHeight;
       const viewportHeight = window.innerHeight;
@@ -29,18 +28,8 @@ export const useScrollProgress = (
       setProgress(clampedProgress);
     };
 
-    const handleScroll = () => {
-      // Throttle with requestAnimationFrame for smooth 60fps updates
-      if (rafRef.current !== null) return;
-      
-      rafRef.current = requestAnimationFrame(() => {
-        rafRef.current = null;
-        calculateProgress();
-      });
-    };
-
     // Initial calculation
-    calculateProgress();
+    handleScroll();
 
     // Add scroll listener
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -49,9 +38,6 @@ export const useScrollProgress = (
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
-      if (rafRef.current !== null) {
-        cancelAnimationFrame(rafRef.current);
-      }
     };
   }, [ref, resetTrigger]);
 
