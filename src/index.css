@@ -526,6 +526,16 @@
   }
 }
 
+/* Shimmer border animation for premium buttons */
+@keyframes shimmer-border {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 /* (Removed snake animation – card now uses static neon frame only) */
 
 /* Pulsing roof outline for scroll hint */
