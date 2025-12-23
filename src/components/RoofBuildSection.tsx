@@ -257,14 +257,16 @@ const RoofBuildSection: React.FC = () => {
           // Logo stays visible on both mobile and desktop
           const logoFadeOut = 1;
           
-          // Text animation timing - tied to logoProgress so text appears WITH the logo
-          const getTextProgress = (lineIndex: number) => {
-            const textStart = 0.3 + (lineIndex * 0.15); // Staggered after logo starts scaling
-            return Math.min(1, Math.max(0, (logoProgress - textStart) / 0.2));
-          };
+          // Text animation - uses zoomProgress directly for timing AFTER logo appears
+          // Text starts appearing once zoomProgress hits 0.18 (logo is ~50% scaled)
+          const textBaseProgress = Math.min(1, Math.max(0, (zoomProgress - 0.18) / 0.12));
           
-          // Button appears last - after all text lines
-          const buttonProgress = Math.min(1, Math.max(0, (logoProgress - 0.9) / 0.2));
+          // Staggered text lines
+          const text1Progress = Math.min(1, Math.max(0, textBaseProgress / 0.25));
+          const text2Progress = Math.min(1, Math.max(0, (textBaseProgress - 0.15) / 0.25));
+          const text3Progress = Math.min(1, Math.max(0, (textBaseProgress - 0.30) / 0.25));
+          const text4Progress = Math.min(1, Math.max(0, (textBaseProgress - 0.45) / 0.25));
+          const buttonProg = Math.min(1, Math.max(0, (textBaseProgress - 0.60) / 0.40));
           
           return (
             <div 
@@ -283,42 +285,46 @@ const RoofBuildSection: React.FC = () => {
                 />
                 
                 {/* Text + Button Container */}
-                <div className="mt-3 md:mt-5 space-y-1 md:space-y-1.5">
+                <div className="mt-4 md:mt-6 space-y-1.5 md:space-y-2">
                   <p 
-                    className="text-white text-sm md:text-lg font-medium tracking-wide"
+                    className="text-white/95 text-base md:text-xl font-semibold tracking-wide drop-shadow-lg"
                     style={{
-                      opacity: easeOutCubic(getTextProgress(0)),
-                      transform: `translateY(${12 * (1 - easeOutCubic(getTextProgress(0)))}px)`,
+                      opacity: easeOutCubic(text1Progress),
+                      transform: `translateY(${16 * (1 - easeOutCubic(text1Progress))}px)`,
+                      textShadow: '0 2px 10px rgba(0,0,0,0.5)',
                     }}
                   >
                     Free Consultations
                   </p>
                   
                   <p 
-                    className="text-white text-sm md:text-lg font-medium tracking-wide"
+                    className="text-white/95 text-base md:text-xl font-semibold tracking-wide drop-shadow-lg"
                     style={{
-                      opacity: easeOutCubic(getTextProgress(1)),
-                      transform: `translateY(${12 * (1 - easeOutCubic(getTextProgress(1)))}px)`,
+                      opacity: easeOutCubic(text2Progress),
+                      transform: `translateY(${16 * (1 - easeOutCubic(text2Progress))}px)`,
+                      textShadow: '0 2px 10px rgba(0,0,0,0.5)',
                     }}
                   >
                     Free 17 Point Roof/Home Inspection
                   </p>
                   
                   <p 
-                    className="text-white text-sm md:text-lg font-medium tracking-wide"
+                    className="text-white/95 text-base md:text-xl font-semibold tracking-wide drop-shadow-lg"
                     style={{
-                      opacity: easeOutCubic(getTextProgress(2)),
-                      transform: `translateY(${12 * (1 - easeOutCubic(getTextProgress(2)))}px)`,
+                      opacity: easeOutCubic(text3Progress),
+                      transform: `translateY(${16 * (1 - easeOutCubic(text3Progress))}px)`,
+                      textShadow: '0 2px 10px rgba(0,0,0,0.5)',
                     }}
                   >
                     Free Estimates
                   </p>
                   
                   <p 
-                    className="text-white text-sm md:text-lg font-medium tracking-wide"
+                    className="text-white/95 text-base md:text-xl font-semibold tracking-wide drop-shadow-lg"
                     style={{
-                      opacity: easeOutCubic(getTextProgress(3)),
-                      transform: `translateY(${12 * (1 - easeOutCubic(getTextProgress(3)))}px)`,
+                      opacity: easeOutCubic(text4Progress),
+                      transform: `translateY(${16 * (1 - easeOutCubic(text4Progress))}px)`,
+                      textShadow: '0 2px 10px rgba(0,0,0,0.5)',
                     }}
                   >
                     No Paperwork
@@ -326,21 +332,20 @@ const RoofBuildSection: React.FC = () => {
                   
                   {/* CTA Button - no functionality for now */}
                   <div 
-                    className="pt-2 md:pt-3"
+                    className="pt-3 md:pt-4"
                     style={{
-                      opacity: easeOutCubic(buttonProgress),
-                      transform: `translateY(${15 * (1 - easeOutCubic(buttonProgress))}px) scale(${0.9 + 0.1 * easeOutCubic(buttonProgress)})`,
+                      opacity: easeOutCubic(buttonProg),
+                      transform: `translateY(${20 * (1 - easeOutCubic(buttonProg))}px) scale(${0.85 + 0.15 * easeOutCubic(buttonProg)})`,
                     }}
                   >
-                    <div className="btn-neon-wrapper">
-                      <button 
-                        className="btn-neon btn-neon-sm sm:btn-neon-default pointer-events-auto"
-                      >
-                        <span className="relative z-10 flex items-center gap-1.5 md:gap-2 text-xs md:text-sm">
-                          FREE ASSESSMENT
-                        </span>
-                      </button>
-                    </div>
+                    <button 
+                      className="px-6 py-2.5 md:px-8 md:py-3 bg-gradient-to-r from-teal-500 to-teal-400 text-white font-bold text-sm md:text-base rounded-full shadow-lg shadow-teal-500/30 pointer-events-auto hover:shadow-teal-500/50 hover:scale-105 transition-all duration-300"
+                      style={{
+                        boxShadow: `0 0 20px rgba(20, 184, 166, 0.4), 0 4px 15px rgba(0,0,0,0.3)`,
+                      }}
+                    >
+                      FREE ASSESSMENT
+                    </button>
                   </div>
                 </div>
               </div>
