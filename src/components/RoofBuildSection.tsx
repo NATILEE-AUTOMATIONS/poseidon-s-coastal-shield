@@ -273,30 +273,30 @@ const RoofBuildSection: React.FC = () => {
                   }}
                 />
                 
-                {/* Text + Button - simple, tied to logo opacity */}
+                {/* Text + Button - styled to match neon theme */}
                 <div 
-                  className="mt-4 md:mt-6 space-y-1 md:space-y-2"
+                  className="mt-6 md:mt-8 space-y-2 md:space-y-3"
                   style={{ opacity: logoScale }}
                 >
-                  <p className="text-white text-sm md:text-lg font-medium tracking-wide drop-shadow-lg">
+                  <p className="text-glow-teal text-lg md:text-2xl font-semibold tracking-wide">
                     Free Consultations
                   </p>
-                  <p className="text-white text-sm md:text-lg font-medium tracking-wide drop-shadow-lg">
+                  <p className="text-glow-teal text-lg md:text-2xl font-semibold tracking-wide">
                     Free 17 Point Roof/Home Inspection
                   </p>
-                  <p className="text-white text-sm md:text-lg font-medium tracking-wide drop-shadow-lg">
+                  <p className="text-glow-teal text-lg md:text-2xl font-semibold tracking-wide">
                     Free Estimates
                   </p>
-                  <p className="text-white text-sm md:text-lg font-medium tracking-wide drop-shadow-lg">
+                  <p className="text-glow-teal text-lg md:text-2xl font-semibold tracking-wide">
                     No Paperwork
                   </p>
                   
-                  <div className="pt-3 md:pt-4">
-                    <button 
-                      className="px-6 py-2.5 md:px-8 md:py-3 bg-gradient-to-r from-teal-500 to-teal-400 text-white font-bold text-sm md:text-base rounded-full shadow-lg shadow-teal-500/30 pointer-events-auto"
-                    >
-                      FREE ASSESSMENT
-                    </button>
+                  <div className="pt-4 md:pt-6">
+                    <div className="btn-neon-wrapper">
+                      <button className="btn-neon pointer-events-auto text-base md:text-lg px-8 py-3 md:px-10 md:py-4">
+                        <span className="btn-text">FREE ASSESSMENT</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
