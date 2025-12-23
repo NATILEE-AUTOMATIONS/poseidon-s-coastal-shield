@@ -273,27 +273,27 @@ const RoofBuildSection: React.FC = () => {
                   }}
                 />
                 
-                {/* Text + Button - styled to match neon theme */}
+                {/* Text + Button - white text with subtle glow for readability */}
                 <div 
-                  className="mt-6 md:mt-8 space-y-2 md:space-y-3"
+                  className="mt-6 md:mt-10 space-y-3 md:space-y-4"
                   style={{ opacity: logoScale }}
                 >
-                  <p className="text-glow-teal text-lg md:text-2xl font-semibold tracking-wide">
+                  <p className="text-foreground text-xl md:text-3xl font-bold tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
                     Free Consultations
                   </p>
-                  <p className="text-glow-teal text-lg md:text-2xl font-semibold tracking-wide">
+                  <p className="text-foreground text-xl md:text-3xl font-bold tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
                     Free 17 Point Roof/Home Inspection
                   </p>
-                  <p className="text-glow-teal text-lg md:text-2xl font-semibold tracking-wide">
+                  <p className="text-foreground text-xl md:text-3xl font-bold tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
                     Free Estimates
                   </p>
-                  <p className="text-glow-teal text-lg md:text-2xl font-semibold tracking-wide">
+                  <p className="text-foreground text-xl md:text-3xl font-bold tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
                     No Paperwork
                   </p>
                   
-                  <div className="pt-4 md:pt-6">
+                  <div className="pt-5 md:pt-8">
                     <div className="btn-neon-wrapper">
-                      <button className="btn-neon pointer-events-auto text-base md:text-lg px-8 py-3 md:px-10 md:py-4">
+                      <button className="btn-neon pointer-events-auto text-lg md:text-xl px-10 py-4 md:px-12 md:py-5">
                         <span className="btn-text">FREE ASSESSMENT</span>
                       </button>
                     </div>
