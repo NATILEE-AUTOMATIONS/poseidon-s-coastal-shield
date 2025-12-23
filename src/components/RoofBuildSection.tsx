@@ -317,13 +317,13 @@ const RoofBuildSection: React.FC = () => {
                   
                   <div className="pt-6 md:pt-10">
                     <button 
-                      className="pointer-events-auto text-lg md:text-2xl font-extrabold uppercase tracking-wider px-12 py-5 md:px-16 md:py-6 rounded-full transition-all duration-300 hover:scale-105 hover:brightness-110"
+                      className="pointer-events-auto text-lg md:text-2xl font-extrabold uppercase tracking-wider px-12 py-5 md:px-16 md:py-6 rounded-full transition-all duration-300 hover:scale-105"
                       style={{
-                        background: 'linear-gradient(180deg, hsl(168, 80%, 45%) 0%, hsl(168, 70%, 32%) 100%)',
+                        background: 'linear-gradient(180deg, hsl(160, 25%, 12%) 0%, hsl(160, 30%, 6%) 100%)',
                         color: 'white',
-                        boxShadow: '0 0 40px rgba(20, 184, 166, 0.7), 0 0 80px rgba(20, 184, 166, 0.4), 0 8px 32px rgba(0,0,0,0.6), inset 0 2px 0 rgba(255,255,255,0.25)',
-                        textShadow: '0 2px 8px rgba(0,0,0,0.4)',
-                        border: '3px solid rgba(255,255,255,0.4)',
+                        boxShadow: '0 0 30px rgba(20, 184, 166, 0.6), 0 0 60px rgba(20, 184, 166, 0.3), 0 8px 32px rgba(0,0,0,0.7)',
+                        textShadow: '0 0 20px rgba(20, 184, 166, 0.8), 0 0 40px rgba(20, 184, 166, 0.5)',
+                        border: '2px solid hsl(168, 70%, 40%)',
                       }}
                     >
                       FREE ASSESSMENT
