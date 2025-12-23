@@ -343,13 +343,7 @@ const RoofBuildSection: React.FC = () => {
                       ))}
                       
                       {/* Button with glow effect */}
-                      <div 
-                        className="pt-6 md:pt-10"
-                        style={{
-                          opacity: contentOpacity,
-                          transition: 'opacity 0.2s ease-out',
-                        }}
-                      >
+                      <div className="pt-6 md:pt-10">
                             {/* Premium animated button - tight glow */}
                             <div className="relative group pointer-events-auto inline-block">
                               {/* Animated gradient border - tight fit */}
