@@ -50,12 +50,6 @@ const ProjectGallerySection: React.FC = () => {
               {/* Overlay gradient */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
               
-              {/* Label */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                <span className="text-white text-xl md:text-2xl font-semibold tracking-wide">
-                  {img.label}
-                </span>
-              </div>
               
               {/* Hover border glow */}
               <div 
