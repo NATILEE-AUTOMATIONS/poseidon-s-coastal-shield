@@ -50,13 +50,13 @@ const RoofBuildSection: React.FC = () => {
   // CRITICAL: Mobile timing must fit all layers + dumpster + truck within 0-1 range
   const mobileLayerStart = 0.10;
   const desktopLayerStart = 0.08;
-  const mobileLayerStep = 0.020; // Compressed to fit everything including truck
+  const mobileLayerStep = 0.035; // Compressed to fit everything including truck
   const desktopLayerStep = 0.035;
   const layerStep = isMobile ? mobileLayerStep : desktopLayerStep;
   const layerStart = isMobile ? mobileLayerStart : desktopLayerStart;
   
   // Decking
-  const deckingMultiplier = isMobile ? 2 : 2;
+  const deckingMultiplier = isMobile ? 3 : 2;
   const deckingEnd = layerStart + (layerStep * deckingMultiplier);
   
   // Drip edge
@@ -68,7 +68,7 @@ const RoofBuildSection: React.FC = () => {
   const iceWaterEnd = dripEdgeEnd + (layerStep * iceWaterMultiplier);
   
   // Underlayment
-  const underlaymentMultiplier = isMobile ? 2 : 1.5;
+  const underlaymentMultiplier = isMobile ? 3 : 1.5;
   const underlaymentEnd = iceWaterEnd + (layerStep * underlaymentMultiplier);
   
   // Starter strip
@@ -88,12 +88,12 @@ const RoofBuildSection: React.FC = () => {
     
   // Dumpster timing - starts right after ridge cap
   const dumpsterStart = ridgeCapEnd;
-  const dumpsterMultiplier = isMobile ? 2 : 2;
+  const dumpsterMultiplier = isMobile ? 3 : 2;
   const dumpsterEnd = ridgeCapEnd + layerStep * dumpsterMultiplier;
   
   // Truck timing - starts right after dumpster (both mobile and desktop)
   const truckStart = dumpsterEnd;
-  const truckMultiplier = isMobile ? 2 : 4;
+  const truckMultiplier = isMobile ? 4 : 4;
   const truckEnd = dumpsterEnd + layerStep * truckMultiplier;
     
   const layers = [
@@ -138,7 +138,7 @@ const RoofBuildSection: React.FC = () => {
   // Door zoom: starts after door opens, extended duration for full doorway entry
   // Mobile: much slower zoom (0.25) for smooth, deliberate approach; Desktop: 0.30
   const zoomStart = doorStart + doorOpenDuration;
-  const zoomDuration = isMobile ? 0.20 : 0.30;
+  const zoomDuration = isMobile ? 0.25 : 0.30;
   const zoomProgress = progress > zoomStart 
     ? Math.min(1, (progress - zoomStart) / zoomDuration)
     : 0;
@@ -185,13 +185,9 @@ const RoofBuildSection: React.FC = () => {
     ? Math.min(1, (progress - galleryStartPoint) / (isMobile ? 0.02 : 0.005))
     : 0;
   const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
-  // Mobile: fade out overlay from progress 0.85 to 1.0 for smooth transition to gallery
-  const mobileOverlayFade = progress > 0.85 
-    ? Math.max(0, 1 - easeOutCubic((progress - 0.85) / 0.15))
-    : 1;
-  // Mobile: gradual fade; Desktop: fade based on gallery progress
+  // Mobile: keep warm background visible until user scrolls past; Desktop: fade based on gallery progress
   const overlayFade = isMobile 
-    ? mobileOverlayFade
+    ? 1 
     : (galleryProgress > 0 ? 1 - easeOutCubic(galleryProgress) : 1);
   
   // Overlay multiplier for effects
@@ -287,28 +283,6 @@ const RoofBuildSection: React.FC = () => {
           // Logo stays visible on both mobile and desktop
           const logoFadeOut = 1;
           
-          // Text appears AFTER logo reaches full size (logoProgress >= 1)
-          // Text animation: starts at zoomProgress 0.25 and completes by 0.40
-          const textProgress = Math.min(1, Math.max(0, (zoomProgress - 0.05) / 0.20));
-          const easeOutBack = (x: number) => {
-            const c1 = 1.70158;
-            const c3 = c1 + 1;
-            return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
-          };
-          const textEased = easeOutBack(textProgress);
-          
-          // Each text line has a staggered delay
-          const getLineProgress = (index: number) => {
-            const staggerDelay = 0.02; // 2% delay between each line
-            const lineStart = 0.05 + (index * staggerDelay);
-            const lineProgress = Math.min(1, Math.max(0, (zoomProgress - lineStart) / 0.15));
-            return easeOutBack(lineProgress);
-          };
-          
-          // Button appears last with extra delay
-          const buttonProgress = Math.min(1, Math.max(0, (zoomProgress - 0.20) / 0.15));
-          const buttonEased = easeOutBack(buttonProgress);
-          
           return (
             <div 
               className="absolute inset-0 flex items-center justify-center z-[101] pointer-events-none"
@@ -325,45 +299,49 @@ const RoofBuildSection: React.FC = () => {
                   }}
                 />
                 
-                {/* Text + Button - staggered entrance with scroll-direction awareness */}
+                {/* Text + Button - high contrast for visibility */}
                 <div 
-                  className="mt-6 md:mt-10 space-y-2 md:space-y-3"
+                  className="mt-6 md:mt-10 space-y-3 md:space-y-4"
+                  style={{ opacity: isMobile ? 1 : logoScale }}
                 >
-                  {[
-                    "Free Consultations",
-                    "Free 17 Point Roof/Home Inspection", 
-                    "Free Estimates",
-                    "No Paperwork"
-                  ].map((text, index) => {
-                    const lineEased = getLineProgress(index);
-                    return (
-                      <p 
-                        key={index}
-                        className="text-xl md:text-4xl font-extrabold tracking-wide"
-                        style={{ 
-                          color: 'white',
-                          textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7), 0 4px 8px rgba(0,0,0,0.9)',
-                          opacity: lineEased,
-                          transform: `translateY(${(1 - lineEased) * 30}px) scale(${0.8 + (lineEased * 0.2)})`,
-                          filter: `blur(${(1 - lineEased) * 4}px)`,
-                          transition: 'transform 0.1s ease-out, opacity 0.1s ease-out, filter 0.1s ease-out',
-                          willChange: 'transform, opacity, filter',
-                        }}
-                      >
-                        {text}
-                      </p>
-                    );
-                  })}
-                  
-                  <div 
-                    className="pt-6 md:pt-10"
-                    style={{
-                      opacity: buttonEased,
-                      transform: `translateY(${(1 - buttonEased) * 40}px) scale(${0.7 + (buttonEased * 0.3)})`,
-                      filter: `blur(${(1 - buttonEased) * 6}px)`,
-                      willChange: 'transform, opacity, filter',
+                  <p 
+                    className="text-2xl md:text-4xl font-extrabold tracking-wide"
+                    style={{ 
+                      color: 'white',
+                      textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7), 0 4px 8px rgba(0,0,0,0.9)'
                     }}
                   >
+                    Free Consultations
+                  </p>
+                  <p 
+                    className="text-2xl md:text-4xl font-extrabold tracking-wide"
+                    style={{ 
+                      color: 'white',
+                      textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7), 0 4px 8px rgba(0,0,0,0.9)'
+                    }}
+                  >
+                    Free 17 Point Roof/Home Inspection
+                  </p>
+                  <p 
+                    className="text-2xl md:text-4xl font-extrabold tracking-wide"
+                    style={{ 
+                      color: 'white',
+                      textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7), 0 4px 8px rgba(0,0,0,0.9)'
+                    }}
+                  >
+                    Free Estimates
+                  </p>
+                  <p 
+                    className="text-2xl md:text-4xl font-extrabold tracking-wide"
+                    style={{ 
+                      color: 'white',
+                      textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7), 0 4px 8px rgba(0,0,0,0.9)'
+                    }}
+                  >
+                    No Paperwork
+                  </p>
+                  
+                  <div className="pt-6 md:pt-10">
                     {/* Premium animated button - tight glow */}
                     <div className="relative group pointer-events-auto inline-block">
                       {/* Animated gradient border - tight fit */}
