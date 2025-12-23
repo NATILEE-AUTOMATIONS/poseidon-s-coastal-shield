@@ -283,6 +283,28 @@ const RoofBuildSection: React.FC = () => {
           // Logo stays visible on both mobile and desktop
           const logoFadeOut = 1;
           
+          // Text appears AFTER logo reaches full size (logoProgress >= 1)
+          // Text animation: starts at zoomProgress 0.25 and completes by 0.40
+          const textProgress = Math.min(1, Math.max(0, (zoomProgress - 0.25) / 0.15));
+          const easeOutBack = (x: number) => {
+            const c1 = 1.70158;
+            const c3 = c1 + 1;
+            return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+          };
+          const textEased = easeOutBack(textProgress);
+          
+          // Each text line has a staggered delay
+          const getLineProgress = (index: number) => {
+            const staggerDelay = 0.03; // 3% delay between each line
+            const lineStart = 0.25 + (index * staggerDelay);
+            const lineProgress = Math.min(1, Math.max(0, (zoomProgress - lineStart) / 0.12));
+            return easeOutBack(lineProgress);
+          };
+          
+          // Button appears last with extra delay
+          const buttonProgress = Math.min(1, Math.max(0, (zoomProgress - 0.38) / 0.12));
+          const buttonEased = easeOutBack(buttonProgress);
+          
           return (
             <div 
               className="absolute inset-0 flex items-center justify-center z-[101] pointer-events-none"
@@ -299,49 +321,45 @@ const RoofBuildSection: React.FC = () => {
                   }}
                 />
                 
-                {/* Text + Button - high contrast for visibility */}
+                {/* Text + Button - staggered entrance with scroll-direction awareness */}
                 <div 
-                  className="mt-6 md:mt-10 space-y-3 md:space-y-4"
-                  style={{ opacity: isMobile ? 1 : logoScale }}
+                  className="mt-6 md:mt-10 space-y-2 md:space-y-3"
                 >
-                  <p 
-                    className="text-2xl md:text-4xl font-extrabold tracking-wide"
-                    style={{ 
-                      color: 'white',
-                      textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7), 0 4px 8px rgba(0,0,0,0.9)'
-                    }}
-                  >
-                    Free Consultations
-                  </p>
-                  <p 
-                    className="text-2xl md:text-4xl font-extrabold tracking-wide"
-                    style={{ 
-                      color: 'white',
-                      textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7), 0 4px 8px rgba(0,0,0,0.9)'
-                    }}
-                  >
-                    Free 17 Point Roof/Home Inspection
-                  </p>
-                  <p 
-                    className="text-2xl md:text-4xl font-extrabold tracking-wide"
-                    style={{ 
-                      color: 'white',
-                      textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7), 0 4px 8px rgba(0,0,0,0.9)'
-                    }}
-                  >
-                    Free Estimates
-                  </p>
-                  <p 
-                    className="text-2xl md:text-4xl font-extrabold tracking-wide"
-                    style={{ 
-                      color: 'white',
-                      textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7), 0 4px 8px rgba(0,0,0,0.9)'
-                    }}
-                  >
-                    No Paperwork
-                  </p>
+                  {[
+                    "Free Consultations",
+                    "Free 17 Point Roof/Home Inspection", 
+                    "Free Estimates",
+                    "No Paperwork"
+                  ].map((text, index) => {
+                    const lineEased = getLineProgress(index);
+                    return (
+                      <p 
+                        key={index}
+                        className="text-xl md:text-4xl font-extrabold tracking-wide"
+                        style={{ 
+                          color: 'white',
+                          textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7), 0 4px 8px rgba(0,0,0,0.9)',
+                          opacity: lineEased,
+                          transform: `translateY(${(1 - lineEased) * 30}px) scale(${0.8 + (lineEased * 0.2)})`,
+                          filter: `blur(${(1 - lineEased) * 4}px)`,
+                          transition: 'transform 0.1s ease-out, opacity 0.1s ease-out, filter 0.1s ease-out',
+                          willChange: 'transform, opacity, filter',
+                        }}
+                      >
+                        {text}
+                      </p>
+                    );
+                  })}
                   
-                  <div className="pt-6 md:pt-10">
+                  <div 
+                    className="pt-6 md:pt-10"
+                    style={{
+                      opacity: buttonEased,
+                      transform: `translateY(${(1 - buttonEased) * 40}px) scale(${0.7 + (buttonEased * 0.3)})`,
+                      filter: `blur(${(1 - buttonEased) * 6}px)`,
+                      willChange: 'transform, opacity, filter',
+                    }}
+                  >
                     {/* Premium animated button - tight glow */}
                     <div className="relative group pointer-events-auto inline-block">
                       {/* Animated gradient border - tight fit */}
