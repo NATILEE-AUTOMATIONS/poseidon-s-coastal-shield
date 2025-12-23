@@ -135,9 +135,9 @@ const RoofBuildSection: React.FC = () => {
     : 1;
 
   // Door zoom: starts after door opens, extended duration for full doorway entry
-  // Mobile: much slower zoom (0.35) for smooth, deliberate approach; Desktop: 0.30
+  // Mobile: much slower zoom (0.25) for smooth, deliberate approach; Desktop: 0.30
   const zoomStart = doorStart + doorOpenDuration;
-  const zoomDuration = isMobile ? 0.35 : 0.30;
+  const zoomDuration = isMobile ? 0.25 : 0.30;
   const zoomProgress = progress > zoomStart 
     ? Math.min(1, (progress - zoomStart) / zoomDuration)
     : 0;
@@ -150,12 +150,7 @@ const RoofBuildSection: React.FC = () => {
   // easeInOutQuad - smooth start AND end for natural approach feel
   const easeInOutQuad = (x: number) => 
     x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
-  
-  // Mobile uses even smoother easing (easeInOutCubic) for gentler acceleration
-  const easeInOutCubic = (x: number) => 
-    x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
-  
-  const easedZoom = isMobile ? easeInOutCubic(zoomProgress) : easeInOutQuad(zoomProgress);
+  const easedZoom = easeInOutQuad(zoomProgress);
   
   // Scale: 1x → 500x for full doorway pass-through
   const zoomScale = 1 + (easedZoom * 499);
@@ -174,11 +169,11 @@ const RoofBuildSection: React.FC = () => {
   const galleryProgress = progress > galleryStartPoint 
     ? Math.min(1, (progress - galleryStartPoint) / (isMobile ? 0.02 : 0.005))
     : 0;
-  const easeOutCubicGallery = (x: number) => 1 - Math.pow(1 - x, 3);
+  const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
   // Mobile: keep warm background visible until user scrolls past; Desktop: fade based on gallery progress
   const overlayFade = isMobile 
     ? 1 
-    : (galleryProgress > 0 ? 1 - easeOutCubicGallery(galleryProgress) : 1);
+    : (galleryProgress > 0 ? 1 - easeOutCubic(galleryProgress) : 1);
   
   // Overlay multiplier for effects
   const mobileOverlayMultiplier = 1;
