@@ -16,17 +16,57 @@ const IndexContent = () => {
     }
   }, []);
 
+  // Track when page is being hidden (for iOS Safari BFCache)
+  useEffect(() => {
+    const handlePageHide = () => {
+      sessionStorage.setItem('wasHidden', 'true');
+    };
+    
+    window.addEventListener('pagehide', handlePageHide);
+    return () => window.removeEventListener('pagehide', handlePageHide);
+  }, []);
+
+  // Check on mount if returning from cached state
+  useEffect(() => {
+    const wasHidden = sessionStorage.getItem('wasHidden');
+    const isMobileViewport = window.innerWidth < 768;
+    
+    if (wasHidden === 'true' && isMobileViewport) {
+      sessionStorage.removeItem('wasHidden');
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      resetProgress();
+    }
+  }, [resetProgress]);
+
+  // Focus event handler - fallback for iOS Safari
+  useEffect(() => {
+    const handleFocus = () => {
+      const isMobileViewport = window.innerWidth < 768;
+      const wasHidden = sessionStorage.getItem('wasHidden');
+      
+      if (isMobileViewport && wasHidden === 'true') {
+        sessionStorage.removeItem('wasHidden');
+        window.location.reload();
+      }
+    };
+    
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, []);
+
   // Handle visibility change (tab switching, app switching on mobile)
-  // Only reset if page was previously hidden (not on initial load)
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'hidden') {
         hasBeenHiddenRef.current = true;
+        sessionStorage.setItem('wasHidden', 'true');
       } else if (document.visibilityState === 'visible' && hasBeenHiddenRef.current) {
         const isMobileViewport = window.innerWidth < 768;
         
         if (isMobileViewport) {
-          // Force full page reload on mobile - bypasses all stale state issues
+          sessionStorage.removeItem('wasHidden');
           window.location.reload();
           return;
         }
@@ -50,7 +90,7 @@ const IndexContent = () => {
         const isMobileViewport = window.innerWidth < 768;
         
         if (isMobileViewport) {
-          // Force full page reload on mobile - bypasses all stale state issues
+          sessionStorage.removeItem('wasHidden');
           window.location.reload();
           return;
         }
@@ -75,7 +115,7 @@ const IndexContent = () => {
     return () => window.removeEventListener('pageshow', handlePageShow);
   }, [resetProgress]);
 
-  // Ensure clean state on mount (just scroll, no resetProgress to avoid blocker)
+  // Ensure clean state on mount
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
     document.documentElement.scrollTop = 0;
