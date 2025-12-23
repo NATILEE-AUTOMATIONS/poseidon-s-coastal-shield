@@ -23,11 +23,11 @@ const ProjectGallerySection: React.FC = () => {
           className="relative h-[50vh] md:hidden"
           style={{
             background: `linear-gradient(180deg, 
-              hsl(25 60% 20%) 0%,
-              hsl(25 50% 18%) 20%,
-              hsl(30 40% 15%) 40%,
-              hsl(200 30% 12%) 70%,
-              hsl(220 25% 10%) 100%
+              hsl(25 75% 35%) 0%,
+              hsl(25 65% 28%) 15%,
+              hsl(28 55% 22%) 35%,
+              hsl(200 35% 15%) 60%,
+              hsl(220 30% 12%) 100%
             )`,
           }}
         >
@@ -35,7 +35,7 @@ const ProjectGallerySection: React.FC = () => {
           <div 
             className="absolute inset-0"
             style={{
-              background: `radial-gradient(ellipse at 50% 0%, hsl(35 80% 50% / 0.3) 0%, transparent 60%)`,
+              background: `radial-gradient(ellipse at 50% 0%, hsl(35 85% 55% / 0.5) 0%, transparent 70%)`,
             }}
           />
         </div>

@@ -185,9 +185,13 @@ const RoofBuildSection: React.FC = () => {
     ? Math.min(1, (progress - galleryStartPoint) / (isMobile ? 0.02 : 0.005))
     : 0;
   const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
-  // Mobile: keep warm background visible until user scrolls past; Desktop: fade based on gallery progress
+  // Mobile: fade out overlay from progress 0.85 to 1.0 for smooth transition to gallery
+  const mobileOverlayFade = progress > 0.85 
+    ? Math.max(0, 1 - easeOutCubic((progress - 0.85) / 0.15))
+    : 1;
+  // Mobile: gradual fade; Desktop: fade based on gallery progress
   const overlayFade = isMobile 
-    ? 1 
+    ? mobileOverlayFade
     : (galleryProgress > 0 ? 1 - easeOutCubic(galleryProgress) : 1);
   
   // Overlay multiplier for effects
