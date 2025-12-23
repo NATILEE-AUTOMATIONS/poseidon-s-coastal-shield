@@ -299,46 +299,29 @@ const RoofBuildSection: React.FC = () => {
                   }}
                 />
                 
-                {/* Text + Button - with cool staggered entrance/exit animations on mobile */}
+                {/* Text + Button - simplified animations that actually work on mobile */}
                 {(() => {
-                  // Mobile animation timing: entrance starts earlier at 0.05, exit at 0.85
-                  const entranceStart = 0.05;
-                  const entranceEnd = 0.50;
-                  const exitStart = 0.85;
-                  const exitEnd = 1.0;
+                  // Simple fade in/out based on zoom progress
+                  // Show content when logo is visible (zoomProgress 0.1 to 0.9)
+                  const showContent = zoomProgress >= 0.08 && zoomProgress <= 0.92;
                   
-                  // Calculate entrance progress (0 to 1)
-                  const entranceProgress = isMobile 
-                    ? Math.min(1, Math.max(0, (zoomProgress - entranceStart) / (entranceEnd - entranceStart)))
-                    : logoScale;
+                  // Smooth entrance: fade in from 0.08 to 0.25
+                  const entranceFade = Math.min(1, Math.max(0, (zoomProgress - 0.08) / 0.17));
                   
-                  // Calculate exit progress (0 to 1, where 1 = fully exited)
-                  const exitProgress = isMobile 
-                    ? Math.min(1, Math.max(0, (zoomProgress - exitStart) / (exitEnd - exitStart)))
+                  // Smooth exit: fade out from 0.85 to 0.95
+                  const exitFade = zoomProgress > 0.85 
+                    ? Math.min(1, (zoomProgress - 0.85) / 0.10) 
                     : 0;
                   
-                  // Easing functions
-                  const easeOutBack = (x: number) => {
-                    const c1 = 1.70158;
-                    const c3 = c1 + 1;
-                    return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
-                  };
-                  const easeInBack = (x: number) => {
-                    const c1 = 1.70158;
-                    const c3 = c1 + 1;
-                    return c3 * x * x * x - c1 * x * x;
-                  };
+                  // Base opacity: entrance minus exit
+                  const baseOpacity = isMobile ? Math.max(0, entranceFade - exitFade) : 1;
                   
-                  // Reduced stagger delays for each line (0-3 for text, 4 for button)
-                  const getItemProgress = (itemIndex: number) => {
-                    const staggerDelay = itemIndex * 0.08;
-                    const itemEntrance = Math.min(1, Math.max(0, (entranceProgress - staggerDelay) / (1 - staggerDelay * 0.5)));
-                    
-                    // Reverse stagger for exit (button exits first, top text last)
-                    const exitStaggerDelay = (4 - itemIndex) * 0.08;
-                    const itemExit = Math.min(1, Math.max(0, (exitProgress - exitStaggerDelay) / (1 - exitStaggerDelay * 0.5)));
-                    
-                    return { entrance: easeOutBack(itemEntrance), exit: easeInBack(itemExit) };
+                  // Stagger delay for entrance animation only
+                  const getStaggeredOpacity = (index: number) => {
+                    if (!isMobile) return 1;
+                    const delay = index * 0.04; // Very small stagger
+                    const staggeredEntrance = Math.min(1, Math.max(0, (entranceFade - delay) / (1 - delay)));
+                    return Math.max(0, staggeredEntrance - exitFade);
                   };
                   
                   const textLines = [
@@ -349,13 +332,16 @@ const RoofBuildSection: React.FC = () => {
                   ];
                   
                   return (
-                    <div className="mt-6 md:mt-10 space-y-3 md:space-y-4">
+                    <div 
+                      className="mt-6 md:mt-10 space-y-3 md:space-y-4"
+                      style={{ 
+                        opacity: showContent ? 1 : 0,
+                        transition: 'opacity 0.3s ease-out'
+                      }}
+                    >
                       {textLines.map((text, index) => {
-                        const { entrance, exit } = getItemProgress(index);
-                        const translateY = isMobile ? (1 - entrance) * 40 + exit * -60 : 0;
-                        const scale = isMobile ? 0.8 + entrance * 0.2 - exit * 0.3 : 1;
-                        const opacity = isMobile ? entrance * (1 - exit) : 1;
-                        const rotateX = isMobile ? (1 - entrance) * 15 - exit * 20 : 0;
+                        const itemOpacity = getStaggeredOpacity(index);
+                        const translateY = isMobile ? (1 - itemOpacity) * 20 : 0;
                         
                         return (
                           <p 
@@ -364,9 +350,9 @@ const RoofBuildSection: React.FC = () => {
                             style={{ 
                               color: 'white',
                               textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7), 0 4px 8px rgba(0,0,0,0.9)',
-                              transform: `translateY(${translateY}px) scale(${scale}) perspective(500px) rotateX(${rotateX}deg)`,
-                              opacity,
-                              willChange: 'transform, opacity',
+                              transform: `translateY(${translateY}px)`,
+                              opacity: itemOpacity,
+                              transition: 'transform 0.4s ease-out, opacity 0.4s ease-out',
                             }}
                           >
                             {text}
@@ -374,21 +360,18 @@ const RoofBuildSection: React.FC = () => {
                         );
                       })}
                       
-                      {/* Button with special entrance/exit */}
+                      {/* Button with glow effect */}
                       {(() => {
-                        const { entrance, exit } = getItemProgress(4);
-                        const translateY = isMobile ? (1 - entrance) * 60 + exit * -80 : 0;
-                        const scale = isMobile ? 0.6 + entrance * 0.4 - exit * 0.4 : 1;
-                        const opacity = isMobile ? entrance * (1 - exit) : 1;
-                        const rotateX = isMobile ? (1 - entrance) * 25 - exit * 30 : 0;
+                        const buttonOpacity = getStaggeredOpacity(4);
+                        const translateY = isMobile ? (1 - buttonOpacity) * 30 : 0;
                         
                         return (
                           <div 
                             className="pt-6 md:pt-10"
                             style={{
-                              transform: `translateY(${translateY}px) scale(${scale}) perspective(500px) rotateX(${rotateX}deg)`,
-                              opacity,
-                              willChange: 'transform, opacity',
+                              transform: `translateY(${translateY}px)`,
+                              opacity: buttonOpacity,
+                              transition: 'transform 0.5s ease-out, opacity 0.4s ease-out',
                             }}
                           >
                             {/* Premium animated button - tight glow */}
