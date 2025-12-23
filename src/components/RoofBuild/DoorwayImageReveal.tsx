@@ -97,18 +97,6 @@ const DoorwayImageReveal: React.FC<DoorwayImageRevealProps> = ({ progress, zoomP
                 className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"
               />
               
-              {/* Label */}
-              <div 
-                className="absolute bottom-2 md:bottom-4 left-2 md:left-4 right-2 md:right-4"
-                style={{
-                  opacity: imageEased,
-                  transform: `translateY(${10 * (1 - imageEased)}px)`,
-                }}
-              >
-                <span className="text-white text-xs md:text-sm font-medium tracking-wide">
-                  {img.label}
-                </span>
-              </div>
               
               {/* Subtle border glow */}
               <div 

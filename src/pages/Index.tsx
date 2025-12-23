@@ -3,11 +3,10 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import RoofBuildSection from "@/components/RoofBuildSection";
 import ProjectGallerySection from "@/components/ProjectGallerySection";
-import { ScrollProvider } from "@/context/ScrollContext";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { ScrollProvider, useScrollContext } from "@/context/ScrollContext";
 
-const Index = () => {
-  const isMobile = useIsMobile();
+const IndexContent = () => {
+  const { resetProgress } = useScrollContext();
 
   // Fix mobile caching: disable browser scroll restoration
   useEffect(() => {
@@ -16,17 +15,31 @@ const Index = () => {
     }
   }, []);
 
-  // Handle BFCache: reset scroll when page is restored from cache
+  // Handle visibility change (tab switching, app switching on mobile)
   useEffect(() => {
-    const handlePageShow = (event: PageTransitionEvent) => {
-      if (event.persisted) {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
         window.scrollTo(0, 0);
+        resetProgress();
       }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [resetProgress]);
+
+  // Handle ALL pageshow events (BFCache and regular navigation)
+  useEffect(() => {
+    const handlePageShow = () => {
+      window.scrollTo(0, 0);
+      resetProgress();
+      // Delayed reset to override any browser restoration
+      setTimeout(() => window.scrollTo(0, 0), 50);
     };
     
     window.addEventListener('pageshow', handlePageShow);
     return () => window.removeEventListener('pageshow', handlePageShow);
-  }, []);
+  }, [resetProgress]);
 
   // Ensure clean state on mount
   useEffect(() => {
@@ -34,13 +47,19 @@ const Index = () => {
   }, []);
   
   return (
+    <main className="min-h-screen bg-background">
+      <Navbar />
+      <HeroSection />
+      <RoofBuildSection />
+      <ProjectGallerySection />
+    </main>
+  );
+};
+
+const Index = () => {
+  return (
     <ScrollProvider>
-      <main className="min-h-screen bg-background">
-        <Navbar />
-        <HeroSection />
-        <RoofBuildSection />
-        <ProjectGallerySection />
-      </main>
+      <IndexContent />
     </ScrollProvider>
   );
 };
