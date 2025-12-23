@@ -257,17 +257,6 @@ const RoofBuildSection: React.FC = () => {
           // Logo stays visible on both mobile and desktop
           const logoFadeOut = 1;
           
-          // Text animation - uses zoomProgress directly for timing AFTER logo appears
-          // Text starts appearing once zoomProgress hits 0.18 (logo is ~50% scaled)
-          const textBaseProgress = Math.min(1, Math.max(0, (zoomProgress - 0.18) / 0.12));
-          
-          // Staggered text lines
-          const text1Progress = Math.min(1, Math.max(0, textBaseProgress / 0.25));
-          const text2Progress = Math.min(1, Math.max(0, (textBaseProgress - 0.15) / 0.25));
-          const text3Progress = Math.min(1, Math.max(0, (textBaseProgress - 0.30) / 0.25));
-          const text4Progress = Math.min(1, Math.max(0, (textBaseProgress - 0.45) / 0.25));
-          const buttonProg = Math.min(1, Math.max(0, (textBaseProgress - 0.60) / 0.40));
-          
           return (
             <div 
               className="absolute inset-0 flex items-center justify-center z-[101] pointer-events-none"
@@ -284,65 +273,27 @@ const RoofBuildSection: React.FC = () => {
                   }}
                 />
                 
-                {/* Text + Button Container */}
-                <div className="mt-4 md:mt-6 space-y-1.5 md:space-y-2">
-                  <p 
-                    className="text-white/95 text-base md:text-xl font-semibold tracking-wide drop-shadow-lg"
-                    style={{
-                      opacity: easeOutCubic(text1Progress),
-                      transform: `translateY(${16 * (1 - easeOutCubic(text1Progress))}px)`,
-                      textShadow: '0 2px 10px rgba(0,0,0,0.5)',
-                    }}
-                  >
+                {/* Text + Button - simple, tied to logo opacity */}
+                <div 
+                  className="mt-4 md:mt-6 space-y-1 md:space-y-2"
+                  style={{ opacity: logoScale }}
+                >
+                  <p className="text-white text-sm md:text-lg font-medium tracking-wide drop-shadow-lg">
                     Free Consultations
                   </p>
-                  
-                  <p 
-                    className="text-white/95 text-base md:text-xl font-semibold tracking-wide drop-shadow-lg"
-                    style={{
-                      opacity: easeOutCubic(text2Progress),
-                      transform: `translateY(${16 * (1 - easeOutCubic(text2Progress))}px)`,
-                      textShadow: '0 2px 10px rgba(0,0,0,0.5)',
-                    }}
-                  >
+                  <p className="text-white text-sm md:text-lg font-medium tracking-wide drop-shadow-lg">
                     Free 17 Point Roof/Home Inspection
                   </p>
-                  
-                  <p 
-                    className="text-white/95 text-base md:text-xl font-semibold tracking-wide drop-shadow-lg"
-                    style={{
-                      opacity: easeOutCubic(text3Progress),
-                      transform: `translateY(${16 * (1 - easeOutCubic(text3Progress))}px)`,
-                      textShadow: '0 2px 10px rgba(0,0,0,0.5)',
-                    }}
-                  >
+                  <p className="text-white text-sm md:text-lg font-medium tracking-wide drop-shadow-lg">
                     Free Estimates
                   </p>
-                  
-                  <p 
-                    className="text-white/95 text-base md:text-xl font-semibold tracking-wide drop-shadow-lg"
-                    style={{
-                      opacity: easeOutCubic(text4Progress),
-                      transform: `translateY(${16 * (1 - easeOutCubic(text4Progress))}px)`,
-                      textShadow: '0 2px 10px rgba(0,0,0,0.5)',
-                    }}
-                  >
+                  <p className="text-white text-sm md:text-lg font-medium tracking-wide drop-shadow-lg">
                     No Paperwork
                   </p>
                   
-                  {/* CTA Button - no functionality for now */}
-                  <div 
-                    className="pt-3 md:pt-4"
-                    style={{
-                      opacity: easeOutCubic(buttonProg),
-                      transform: `translateY(${20 * (1 - easeOutCubic(buttonProg))}px) scale(${0.85 + 0.15 * easeOutCubic(buttonProg)})`,
-                    }}
-                  >
+                  <div className="pt-3 md:pt-4">
                     <button 
-                      className="px-6 py-2.5 md:px-8 md:py-3 bg-gradient-to-r from-teal-500 to-teal-400 text-white font-bold text-sm md:text-base rounded-full shadow-lg shadow-teal-500/30 pointer-events-auto hover:shadow-teal-500/50 hover:scale-105 transition-all duration-300"
-                      style={{
-                        boxShadow: `0 0 20px rgba(20, 184, 166, 0.4), 0 4px 15px rgba(0,0,0,0.3)`,
-                      }}
+                      className="px-6 py-2.5 md:px-8 md:py-3 bg-gradient-to-r from-teal-500 to-teal-400 text-white font-bold text-sm md:text-base rounded-full shadow-lg shadow-teal-500/30 pointer-events-auto"
                     >
                       FREE ASSESSMENT
                     </button>
