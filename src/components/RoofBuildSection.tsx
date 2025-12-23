@@ -257,14 +257,14 @@ const RoofBuildSection: React.FC = () => {
           // Logo stays visible on both mobile and desktop
           const logoFadeOut = 1;
           
-          // Text animation timing - starts after logo scales in, uses zoomProgress for continued animation
+          // Text animation timing - tied to logoProgress so text appears WITH the logo
           const getTextProgress = (lineIndex: number) => {
-            const textStart = 0.20 + (lineIndex * 0.03);
-            return Math.min(1, Math.max(0, (zoomProgress - textStart) / 0.06));
+            const textStart = 0.3 + (lineIndex * 0.15); // Staggered after logo starts scaling
+            return Math.min(1, Math.max(0, (logoProgress - textStart) / 0.2));
           };
           
-          // Button appears last
-          const buttonProgress = Math.min(1, Math.max(0, (zoomProgress - 0.32) / 0.06));
+          // Button appears last - after all text lines
+          const buttonProgress = Math.min(1, Math.max(0, (logoProgress - 0.9) / 0.2));
           
           return (
             <div 
