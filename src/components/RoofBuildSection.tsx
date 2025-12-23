@@ -152,7 +152,12 @@ const RoofBuildSection: React.FC = () => {
   useEffect(() => {
     if (resetTrigger > 0) {
       setIsResetting(true);
-      const timer = setTimeout(() => setIsResetting(false), 150);
+      // Force scroll to top immediately
+      window.scrollTo(0, 0);
+      const timer = setTimeout(() => {
+        window.scrollTo(0, 0);
+        setIsResetting(false);
+      }, 200);
       return () => clearTimeout(timer);
     }
   }, [resetTrigger]);
@@ -225,6 +230,14 @@ const RoofBuildSection: React.FC = () => {
       className="relative"
       style={{ height: isMobile ? '600vh' : '600vh' }}
     >
+
+      {/* Full-screen blocker during BFCache reset - ensures clean state on mobile */}
+      {isResetting && (
+        <div 
+          className="fixed inset-0 z-[200] bg-background"
+          style={{ pointerEvents: 'all' }}
+        />
+      )}
 
       {/* Solid backup overlay - catches ANYTHING that escapes */}
       <div 

@@ -19,12 +19,11 @@ const IndexContent = () => {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
-        window.scrollTo(0, 0);
+        // Force to top immediately
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
         resetProgress();
-        // Force scroll recalculation
-        setTimeout(() => {
-          window.dispatchEvent(new Event('scroll'));
-        }, 50);
       }
     };
     
@@ -34,14 +33,20 @@ const IndexContent = () => {
 
   // Handle ALL pageshow events (BFCache and regular navigation)
   useEffect(() => {
-    const handlePageShow = () => {
-      window.scrollTo(0, 0);
+    const handlePageShow = (event: PageTransitionEvent) => {
+      // Force to top immediately - multiple methods for maximum compatibility
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
       resetProgress();
-      // Delayed reset + force scroll recalculation
+      
+      // Extra scroll reset after a delay for stubborn browsers
       setTimeout(() => {
-        window.scrollTo(0, 0);
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
         window.dispatchEvent(new Event('scroll'));
-      }, 50);
+      }, 100);
     };
     
     window.addEventListener('pageshow', handlePageShow);
@@ -50,7 +55,9 @@ const IndexContent = () => {
 
   // Ensure clean state on mount
   useEffect(() => {
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
   }, []);
   
   return (
