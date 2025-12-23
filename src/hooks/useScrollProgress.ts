@@ -1,16 +1,10 @@
-import { useState, useEffect, useRef, RefObject } from 'react';
-
-interface UseScrollProgressOptions {
-  threshold?: number;
-  rootMargin?: string;
-}
+import { useState, useEffect, RefObject } from 'react';
 
 export const useScrollProgress = (
   ref: RefObject<HTMLElement>,
-  options: UseScrollProgressOptions = {}
+  resetTrigger: number = 0
 ): number => {
   const [progress, setProgress] = useState(0);
-  const { threshold = 0, rootMargin = '0px' } = options;
 
   useEffect(() => {
     const element = ref.current;
@@ -22,9 +16,6 @@ export const useScrollProgress = (
       const viewportHeight = window.innerHeight;
       
       // Calculate how far we've scrolled through the element
-      // Start: when element top reaches viewport bottom
-      // End: when element bottom reaches viewport top
-      const scrollStart = elementHeight + viewportHeight;
       const scrollDistance = elementHeight;
       
       // Current position relative to scroll start
@@ -48,7 +39,7 @@ export const useScrollProgress = (
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
     };
-  }, [ref, threshold, rootMargin]);
+  }, [ref, resetTrigger]);
 
   return progress;
 };
