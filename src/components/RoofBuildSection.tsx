@@ -291,7 +291,7 @@ const RoofBuildSection: React.FC = () => {
                 <img 
                   src={poseidonDoorLogo} 
                   alt="Poseidon Roofing"
-                  className="w-[90vw] sm:w-80 md:w-[450px] lg:w-[650px] xl:w-[800px] max-w-[90vw]"
+                  className="w-[85vw] sm:w-56 md:w-80 lg:w-[450px] sm:max-w-[70vw]"
                   style={{ 
                     transform: `scale(${logoScale})`,
                     opacity: logoFadeOut,
