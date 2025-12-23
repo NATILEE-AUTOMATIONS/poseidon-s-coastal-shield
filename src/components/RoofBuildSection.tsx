@@ -50,13 +50,13 @@ const RoofBuildSection: React.FC = () => {
   // CRITICAL: Mobile timing must fit all layers + dumpster + truck within 0-1 range
   const mobileLayerStart = 0.10;
   const desktopLayerStart = 0.08;
-  const mobileLayerStep = 0.035; // Compressed to fit everything including truck
+  const mobileLayerStep = 0.020; // Compressed to fit everything including truck
   const desktopLayerStep = 0.035;
   const layerStep = isMobile ? mobileLayerStep : desktopLayerStep;
   const layerStart = isMobile ? mobileLayerStart : desktopLayerStart;
   
   // Decking
-  const deckingMultiplier = isMobile ? 3 : 2;
+  const deckingMultiplier = isMobile ? 2 : 2;
   const deckingEnd = layerStart + (layerStep * deckingMultiplier);
   
   // Drip edge
@@ -68,7 +68,7 @@ const RoofBuildSection: React.FC = () => {
   const iceWaterEnd = dripEdgeEnd + (layerStep * iceWaterMultiplier);
   
   // Underlayment
-  const underlaymentMultiplier = isMobile ? 3 : 1.5;
+  const underlaymentMultiplier = isMobile ? 2 : 1.5;
   const underlaymentEnd = iceWaterEnd + (layerStep * underlaymentMultiplier);
   
   // Starter strip
@@ -88,12 +88,12 @@ const RoofBuildSection: React.FC = () => {
     
   // Dumpster timing - starts right after ridge cap
   const dumpsterStart = ridgeCapEnd;
-  const dumpsterMultiplier = isMobile ? 3 : 2;
+  const dumpsterMultiplier = isMobile ? 2 : 2;
   const dumpsterEnd = ridgeCapEnd + layerStep * dumpsterMultiplier;
   
   // Truck timing - starts right after dumpster (both mobile and desktop)
   const truckStart = dumpsterEnd;
-  const truckMultiplier = isMobile ? 4 : 4;
+  const truckMultiplier = isMobile ? 2 : 4;
   const truckEnd = dumpsterEnd + layerStep * truckMultiplier;
     
   const layers = [
@@ -138,7 +138,7 @@ const RoofBuildSection: React.FC = () => {
   // Door zoom: starts after door opens, extended duration for full doorway entry
   // Mobile: much slower zoom (0.25) for smooth, deliberate approach; Desktop: 0.30
   const zoomStart = doorStart + doorOpenDuration;
-  const zoomDuration = isMobile ? 0.25 : 0.30;
+  const zoomDuration = isMobile ? 0.20 : 0.30;
   const zoomProgress = progress > zoomStart 
     ? Math.min(1, (progress - zoomStart) / zoomDuration)
     : 0;
@@ -285,7 +285,7 @@ const RoofBuildSection: React.FC = () => {
           
           // Text appears AFTER logo reaches full size (logoProgress >= 1)
           // Text animation: starts at zoomProgress 0.25 and completes by 0.40
-          const textProgress = Math.min(1, Math.max(0, (zoomProgress - 0.25) / 0.15));
+          const textProgress = Math.min(1, Math.max(0, (zoomProgress - 0.05) / 0.20));
           const easeOutBack = (x: number) => {
             const c1 = 1.70158;
             const c3 = c1 + 1;
@@ -295,14 +295,14 @@ const RoofBuildSection: React.FC = () => {
           
           // Each text line has a staggered delay
           const getLineProgress = (index: number) => {
-            const staggerDelay = 0.03; // 3% delay between each line
-            const lineStart = 0.25 + (index * staggerDelay);
-            const lineProgress = Math.min(1, Math.max(0, (zoomProgress - lineStart) / 0.12));
+            const staggerDelay = 0.02; // 2% delay between each line
+            const lineStart = 0.05 + (index * staggerDelay);
+            const lineProgress = Math.min(1, Math.max(0, (zoomProgress - lineStart) / 0.15));
             return easeOutBack(lineProgress);
           };
           
           // Button appears last with extra delay
-          const buttonProgress = Math.min(1, Math.max(0, (zoomProgress - 0.38) / 0.12));
+          const buttonProgress = Math.min(1, Math.max(0, (zoomProgress - 0.20) / 0.15));
           const buttonEased = easeOutBack(buttonProgress);
           
           return (
