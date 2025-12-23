@@ -301,9 +301,9 @@ const RoofBuildSection: React.FC = () => {
                 
                 {/* Text + Button - with cool staggered entrance/exit animations on mobile */}
                 {(() => {
-                  // Mobile animation timing: entrance starts at zoomProgress 0.15, exit starts at 0.85
-                  const entranceStart = 0.15;
-                  const entranceEnd = 0.55;
+                  // Mobile animation timing: entrance starts earlier at 0.05, exit at 0.85
+                  const entranceStart = 0.05;
+                  const entranceEnd = 0.50;
                   const exitStart = 0.85;
                   const exitEnd = 1.0;
                   
@@ -329,14 +329,14 @@ const RoofBuildSection: React.FC = () => {
                     return c3 * x * x * x - c1 * x * x;
                   };
                   
-                  // Staggered delays for each line (0-3 for text, 4 for button)
+                  // Reduced stagger delays for each line (0-3 for text, 4 for button)
                   const getItemProgress = (itemIndex: number) => {
-                    const staggerDelay = itemIndex * 0.15;
-                    const itemEntrance = Math.min(1, Math.max(0, (entranceProgress - staggerDelay) / (1 - staggerDelay * 0.8)));
+                    const staggerDelay = itemIndex * 0.08;
+                    const itemEntrance = Math.min(1, Math.max(0, (entranceProgress - staggerDelay) / (1 - staggerDelay * 0.5)));
                     
                     // Reverse stagger for exit (button exits first, top text last)
-                    const exitStaggerDelay = (4 - itemIndex) * 0.12;
-                    const itemExit = Math.min(1, Math.max(0, (exitProgress - exitStaggerDelay) / (1 - exitStaggerDelay * 0.8)));
+                    const exitStaggerDelay = (4 - itemIndex) * 0.08;
+                    const itemExit = Math.min(1, Math.max(0, (exitProgress - exitStaggerDelay) / (1 - exitStaggerDelay * 0.5)));
                     
                     return { entrance: easeOutBack(itemEntrance), exit: easeInBack(itemExit) };
                   };
