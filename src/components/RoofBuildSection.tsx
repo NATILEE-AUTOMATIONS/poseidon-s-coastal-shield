@@ -273,30 +273,61 @@ const RoofBuildSection: React.FC = () => {
                   }}
                 />
                 
-                {/* Text + Button - white text with subtle glow for readability */}
+                {/* Text + Button - high contrast for visibility */}
                 <div 
                   className="mt-6 md:mt-10 space-y-3 md:space-y-4"
                   style={{ opacity: logoScale }}
                 >
-                  <p className="text-foreground text-xl md:text-3xl font-bold tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                  <p 
+                    className="text-2xl md:text-4xl font-extrabold tracking-wide"
+                    style={{ 
+                      color: 'white',
+                      textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7), 0 4px 8px rgba(0,0,0,0.9)'
+                    }}
+                  >
                     Free Consultations
                   </p>
-                  <p className="text-foreground text-xl md:text-3xl font-bold tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                  <p 
+                    className="text-2xl md:text-4xl font-extrabold tracking-wide"
+                    style={{ 
+                      color: 'white',
+                      textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7), 0 4px 8px rgba(0,0,0,0.9)'
+                    }}
+                  >
                     Free 17 Point Roof/Home Inspection
                   </p>
-                  <p className="text-foreground text-xl md:text-3xl font-bold tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                  <p 
+                    className="text-2xl md:text-4xl font-extrabold tracking-wide"
+                    style={{ 
+                      color: 'white',
+                      textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7), 0 4px 8px rgba(0,0,0,0.9)'
+                    }}
+                  >
                     Free Estimates
                   </p>
-                  <p className="text-foreground text-xl md:text-3xl font-bold tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                  <p 
+                    className="text-2xl md:text-4xl font-extrabold tracking-wide"
+                    style={{ 
+                      color: 'white',
+                      textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7), 0 4px 8px rgba(0,0,0,0.9)'
+                    }}
+                  >
                     No Paperwork
                   </p>
                   
-                  <div className="pt-5 md:pt-8">
-                    <div className="btn-neon-wrapper">
-                      <button className="btn-neon pointer-events-auto text-lg md:text-xl px-10 py-4 md:px-12 md:py-5">
-                        <span className="btn-text">FREE ASSESSMENT</span>
-                      </button>
-                    </div>
+                  <div className="pt-6 md:pt-10">
+                    <button 
+                      className="pointer-events-auto text-lg md:text-2xl font-bold px-10 py-4 md:px-14 md:py-5 rounded-lg transition-all duration-300 hover:scale-105"
+                      style={{
+                        background: 'linear-gradient(135deg, hsl(30, 90%, 55%) 0%, hsl(25, 100%, 50%) 100%)',
+                        color: 'white',
+                        boxShadow: '0 0 30px rgba(255, 140, 50, 0.6), 0 0 60px rgba(255, 100, 30, 0.4), 0 8px 25px rgba(0,0,0,0.5)',
+                        textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                        border: '2px solid rgba(255,255,255,0.3)',
+                      }}
+                    >
+                      FREE ASSESSMENT
+                    </button>
                   </div>
                 </div>
               </div>
