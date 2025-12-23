@@ -3,6 +3,7 @@ import doorwayImage from '@/assets/doorway-reveal-image.png';
 import coastalCrew from '@/assets/coastal-home-crew.png';
 import coastalRoofing from '@/assets/coastal-home-roofing.png';
 import aerialPool from '@/assets/aerial-estate-pool.png';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const images = [
   { src: doorwayImage, label: 'Premium Installation' },
@@ -12,8 +13,35 @@ const images = [
 ];
 
 const ProjectGallerySection: React.FC = () => {
+  const isMobile = useIsMobile();
+  
   return (
-    <section className="relative min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 py-20 md:py-32 overflow-hidden">
+    <>
+      {/* Mobile: Warm orange transition zone that fades to slate */}
+      {isMobile && (
+        <div 
+          className="relative h-[50vh] md:hidden"
+          style={{
+            background: `linear-gradient(180deg, 
+              hsl(25 60% 20%) 0%,
+              hsl(25 50% 18%) 20%,
+              hsl(30 40% 15%) 40%,
+              hsl(200 30% 12%) 70%,
+              hsl(220 25% 10%) 100%
+            )`,
+          }}
+        >
+          {/* Warm glow at top to match doorway */}
+          <div 
+            className="absolute inset-0"
+            style={{
+              background: `radial-gradient(ellipse at 50% 0%, hsl(35 80% 50% / 0.3) 0%, transparent 60%)`,
+            }}
+          />
+        </div>
+      )}
+      
+      <section className="relative min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 py-20 md:py-32 overflow-hidden">
       {/* Subtle glow effect */}
       <div 
         className="absolute inset-0 pointer-events-none"
@@ -69,7 +97,8 @@ const ProjectGallerySection: React.FC = () => {
           </button>
         </div>
       </div>
-    </section>
+      </section>
+    </>
   );
 };
 
