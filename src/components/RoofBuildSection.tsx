@@ -1,5 +1,5 @@
-// Cache bust: 2025-01-14 - Shingles/Vents FULLY REMOVED from mobile
-import React, { useRef, useEffect } from 'react';
+// Cache bust: 2025-01-14 - BFCache fix with resetTrigger
+import React, { useRef, useEffect, useState } from 'react';
 import { useScrollProgress } from '@/hooks/useScrollProgress';
 import GridBackground from './RoofBuild/GridBackground';
 import HouseSVG from './RoofBuild/HouseSVG';
@@ -36,8 +36,9 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 const RoofBuildSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const progress = useScrollProgress(sectionRef);
-  const { setZoomProgress } = useScrollContext();
+  const { setZoomProgress, resetTrigger } = useScrollContext();
+  const progress = useScrollProgress(sectionRef, resetTrigger);
+  const [isResetting, setIsResetting] = useState(false);
   const isMobile = useIsMobile();
 
   // Layer timing - delayed start on mobile (15-85%) so card is visible first
@@ -146,6 +147,15 @@ const RoofBuildSection: React.FC = () => {
   useEffect(() => {
     setZoomProgress(zoomProgress);
   }, [zoomProgress, setZoomProgress]);
+
+  // BFCache reset: briefly hide overlays when returning to page
+  useEffect(() => {
+    if (resetTrigger > 0) {
+      setIsResetting(true);
+      const timer = setTimeout(() => setIsResetting(false), 150);
+      return () => clearTimeout(timer);
+    }
+  }, [resetTrigger]);
   
   // easeInOutQuad - smooth start AND end for natural approach feel
   const easeInOutQuad = (x: number) => 
@@ -221,7 +231,7 @@ const RoofBuildSection: React.FC = () => {
         className="fixed inset-0 pointer-events-none z-[99]"
         style={{
           backgroundColor: `hsl(25 60% 20% / ${Math.min(1, easedLight * 1.5 * mobileOverlayMultiplier)})`,
-          opacity: (easedLight > 0.02 && mobileOverlayMultiplier > 0) ? mobileOverlayMultiplier : 0,
+          opacity: isResetting ? 0 : ((easedLight > 0.02 && mobileOverlayMultiplier > 0) ? mobileOverlayMultiplier : 0),
           willChange: 'opacity',
         }}
       />
@@ -236,7 +246,7 @@ const RoofBuildSection: React.FC = () => {
             hsl(25 85% 50% / ${Math.min(1, easedLight * 0.85 * overlayFade * mobileOverlayMultiplier)}) 50%,
             hsl(20 75% 35% / ${Math.min(1, easedLight * 0.7 * overlayFade * mobileOverlayMultiplier)}) 80%,
             hsl(15 65% 20% / ${easedLight * 0.5 * overlayFade * mobileOverlayMultiplier}) 100%)`,
-          opacity: (easedLight > 0.01 && mobileOverlayMultiplier > 0) ? mobileOverlayMultiplier : 0,
+          opacity: isResetting ? 0 : ((easedLight > 0.01 && mobileOverlayMultiplier > 0) ? mobileOverlayMultiplier : 0),
           willChange: 'background, opacity',
         }}
       />

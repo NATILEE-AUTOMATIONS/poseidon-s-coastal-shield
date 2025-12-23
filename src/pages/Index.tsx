@@ -21,6 +21,10 @@ const IndexContent = () => {
       if (document.visibilityState === 'visible') {
         window.scrollTo(0, 0);
         resetProgress();
+        // Force scroll recalculation
+        setTimeout(() => {
+          window.dispatchEvent(new Event('scroll'));
+        }, 50);
       }
     };
     
@@ -33,8 +37,11 @@ const IndexContent = () => {
     const handlePageShow = () => {
       window.scrollTo(0, 0);
       resetProgress();
-      // Delayed reset to override any browser restoration
-      setTimeout(() => window.scrollTo(0, 0), 50);
+      // Delayed reset + force scroll recalculation
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        window.dispatchEvent(new Event('scroll'));
+      }, 50);
     };
     
     window.addEventListener('pageshow', handlePageShow);
