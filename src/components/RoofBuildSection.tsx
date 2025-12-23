@@ -276,7 +276,7 @@ const RoofBuildSection: React.FC = () => {
                 {/* Text + Button - high contrast for visibility */}
                 <div 
                   className="mt-6 md:mt-10 space-y-3 md:space-y-4"
-                  style={{ opacity: logoScale }}
+                  style={{ opacity: isMobile ? 1 : logoScale }}
                 >
                   <p 
                     className="text-2xl md:text-4xl font-extrabold tracking-wide"
