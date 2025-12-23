@@ -316,13 +316,16 @@ const RoofBuildSection: React.FC = () => {
                   </p>
                   
                   <div className="pt-6 md:pt-10">
-                    {/* Premium button - toned down */}
-                    <div className="relative group pointer-events-auto">
-                      {/* Subtle static border glow */}
+                    {/* Premium animated button - tight glow */}
+                    <div className="relative group pointer-events-auto inline-block">
+                      {/* Animated gradient border - tight fit */}
                       <div 
-                        className="absolute -inset-0.5 rounded-full opacity-50 group-hover:opacity-70 blur-[2px] transition-all duration-500"
+                        className="absolute inset-0 rounded-full opacity-60 group-hover:opacity-90 transition-all duration-500"
                         style={{
-                          background: 'linear-gradient(135deg, hsl(168, 70%, 40%), hsl(168, 60%, 35%))',
+                          background: 'linear-gradient(90deg, hsl(168, 80%, 50%), hsl(30, 80%, 55%), hsl(168, 80%, 50%))',
+                          backgroundSize: '200% 100%',
+                          animation: 'shimmer-border 3s linear infinite',
+                          padding: '2px',
                         }}
                       />
                       
@@ -332,9 +335,10 @@ const RoofBuildSection: React.FC = () => {
                         style={{
                           background: 'linear-gradient(180deg, hsl(160, 30%, 10%) 0%, hsl(160, 35%, 6%) 100%)',
                           color: 'white',
-                          boxShadow: '0 0 20px rgba(20, 184, 166, 0.3), 0 8px 24px rgba(0,0,0,0.4)',
+                          boxShadow: '0 0 15px rgba(20, 184, 166, 0.4), 0 8px 24px rgba(0,0,0,0.4)',
                           textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-                          border: '1px solid rgba(20, 184, 166, 0.4)',
+                          border: '2px solid transparent',
+                          backgroundClip: 'padding-box',
                         }}
                       >
                         FREE ASSESSMENT
