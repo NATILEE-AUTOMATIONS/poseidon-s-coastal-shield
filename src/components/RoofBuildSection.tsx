@@ -257,20 +257,93 @@ const RoofBuildSection: React.FC = () => {
           // Logo stays visible on both mobile and desktop
           const logoFadeOut = 1;
           
+          // Text animation timing - starts after logo scales in, uses zoomProgress for continued animation
+          const getTextProgress = (lineIndex: number) => {
+            const textStart = 0.20 + (lineIndex * 0.03);
+            return Math.min(1, Math.max(0, (zoomProgress - textStart) / 0.06));
+          };
+          
+          // Button appears last
+          const buttonProgress = Math.min(1, Math.max(0, (zoomProgress - 0.32) / 0.06));
+          
           return (
             <div 
               className="absolute inset-0 flex items-center justify-center z-[101] pointer-events-none"
             >
-              <img 
-                src={poseidonDoorLogo} 
-                alt="Poseidon Roofing"
-                className="w-[717px] sm:w-56 md:w-80 lg:w-[450px] max-w-[95vw] sm:max-w-[70vw]"
-                style={{ 
-                  transform: `scale(${logoScale})`,
-                  opacity: logoFadeOut,
-                  willChange: 'transform, opacity',
-                }}
-              />
+              <div className="flex flex-col items-center text-center">
+                <img 
+                  src={poseidonDoorLogo} 
+                  alt="Poseidon Roofing"
+                  className="w-[717px] sm:w-56 md:w-80 lg:w-[450px] max-w-[95vw] sm:max-w-[70vw]"
+                  style={{ 
+                    transform: `scale(${logoScale})`,
+                    opacity: logoFadeOut,
+                    willChange: 'transform, opacity',
+                  }}
+                />
+                
+                {/* Text + Button Container */}
+                <div className="mt-3 md:mt-5 space-y-1 md:space-y-1.5">
+                  <p 
+                    className="text-white text-sm md:text-lg font-medium tracking-wide"
+                    style={{
+                      opacity: easeOutCubic(getTextProgress(0)),
+                      transform: `translateY(${12 * (1 - easeOutCubic(getTextProgress(0)))}px)`,
+                    }}
+                  >
+                    Free Consultations
+                  </p>
+                  
+                  <p 
+                    className="text-white text-sm md:text-lg font-medium tracking-wide"
+                    style={{
+                      opacity: easeOutCubic(getTextProgress(1)),
+                      transform: `translateY(${12 * (1 - easeOutCubic(getTextProgress(1)))}px)`,
+                    }}
+                  >
+                    Free 17 Point Roof/Home Inspection
+                  </p>
+                  
+                  <p 
+                    className="text-white text-sm md:text-lg font-medium tracking-wide"
+                    style={{
+                      opacity: easeOutCubic(getTextProgress(2)),
+                      transform: `translateY(${12 * (1 - easeOutCubic(getTextProgress(2)))}px)`,
+                    }}
+                  >
+                    Free Estimates
+                  </p>
+                  
+                  <p 
+                    className="text-white text-sm md:text-lg font-medium tracking-wide"
+                    style={{
+                      opacity: easeOutCubic(getTextProgress(3)),
+                      transform: `translateY(${12 * (1 - easeOutCubic(getTextProgress(3)))}px)`,
+                    }}
+                  >
+                    No Paperwork
+                  </p>
+                  
+                  {/* CTA Button - no functionality for now */}
+                  <div 
+                    className="pt-2 md:pt-3"
+                    style={{
+                      opacity: easeOutCubic(buttonProgress),
+                      transform: `translateY(${15 * (1 - easeOutCubic(buttonProgress))}px) scale(${0.9 + 0.1 * easeOutCubic(buttonProgress)})`,
+                    }}
+                  >
+                    <div className="btn-neon-wrapper">
+                      <button 
+                        className="btn-neon btn-neon-sm sm:btn-neon-default pointer-events-auto"
+                      >
+                        <span className="relative z-10 flex items-center gap-1.5 md:gap-2 text-xs md:text-sm">
+                          FREE ASSESSMENT
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           );
         })()}
