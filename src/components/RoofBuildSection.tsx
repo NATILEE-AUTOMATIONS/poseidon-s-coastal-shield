@@ -1,5 +1,5 @@
 // Cache bust: 2025-01-14 - Shingles/Vents FULLY REMOVED from mobile
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useScrollProgress } from '@/hooks/useScrollProgress';
 import GridBackground from './RoofBuild/GridBackground';
 import HouseSVG from './RoofBuild/HouseSVG';
@@ -39,14 +39,6 @@ const RoofBuildSection: React.FC = () => {
   const progress = useScrollProgress(sectionRef);
   const { setZoomProgress } = useScrollContext();
   const isMobile = useIsMobile();
-  const [logoLoaded, setLogoLoaded] = useState(false);
-
-  // Preload logo image for smooth animation
-  useEffect(() => {
-    const img = new Image();
-    img.onload = () => setLogoLoaded(true);
-    img.src = poseidonDoorLogo;
-  }, []);
 
   // Layer timing - delayed start on mobile (15-85%) so card is visible first
   // Mobile: spread across 70% of scroll for leisurely viewing, ends before sign
@@ -255,13 +247,15 @@ const RoofBuildSection: React.FC = () => {
 
       {/* Sticky container - offset for navbar height */}
       <div className="sticky top-0 h-screen overflow-hidden">
-        {/* Poseidon Logo - pure zoom animation from 0.1 to full size, starts when entering doorway */}
-        {zoomProgress > 0.10 && logoLoaded && (() => {
-          // Logo scales from 0.1 to 1 between zoomProgress 0.10 and 0.25 (smooth zoom)
+        {/* Poseidon Logo - pure zoom animation from 0 to full size, starts when entering doorway */}
+        {zoomProgress > 0.10 && (() => {
+          // Logo scales from 0 to 1 between zoomProgress 0.10 and 0.25 (faster zoom to full size)
           const logoProgress = Math.min(1, Math.max(0, (zoomProgress - 0.10) / 0.15));
           const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
-          // Start from 0.1 scale for smoother appearance
-          const logoScale = 0.1 + (easeOutCubic(logoProgress) * 0.9);
+          const logoScale = easeOutCubic(logoProgress);
+          
+          // Logo stays visible on both mobile and desktop
+          const logoFadeOut = 1;
           
           return (
             <div 
@@ -270,10 +264,10 @@ const RoofBuildSection: React.FC = () => {
               <img 
                 src={poseidonDoorLogo} 
                 alt="Poseidon Roofing"
-                className="w-64 sm:w-56 md:w-80 lg:w-[450px]"
+                className="w-[717px] sm:w-56 md:w-80 lg:w-[450px] max-w-[95vw] sm:max-w-[70vw]"
                 style={{ 
                   transform: `scale(${logoScale})`,
-                  opacity: 1,
+                  opacity: logoFadeOut,
                   willChange: 'transform, opacity',
                 }}
               />
