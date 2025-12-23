@@ -299,79 +299,132 @@ const RoofBuildSection: React.FC = () => {
                   }}
                 />
                 
-                {/* Text + Button - high contrast for visibility */}
-                <div 
-                  className="mt-6 md:mt-10 space-y-3 md:space-y-4"
-                  style={{ opacity: isMobile ? 1 : logoScale }}
-                >
-                  <p 
-                    className="text-2xl md:text-4xl font-extrabold tracking-wide"
-                    style={{ 
-                      color: 'white',
-                      textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7), 0 4px 8px rgba(0,0,0,0.9)'
-                    }}
-                  >
-                    Free Consultations
-                  </p>
-                  <p 
-                    className="text-2xl md:text-4xl font-extrabold tracking-wide"
-                    style={{ 
-                      color: 'white',
-                      textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7), 0 4px 8px rgba(0,0,0,0.9)'
-                    }}
-                  >
-                    Free 17 Point Roof/Home Inspection
-                  </p>
-                  <p 
-                    className="text-2xl md:text-4xl font-extrabold tracking-wide"
-                    style={{ 
-                      color: 'white',
-                      textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7), 0 4px 8px rgba(0,0,0,0.9)'
-                    }}
-                  >
-                    Free Estimates
-                  </p>
-                  <p 
-                    className="text-2xl md:text-4xl font-extrabold tracking-wide"
-                    style={{ 
-                      color: 'white',
-                      textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7), 0 4px 8px rgba(0,0,0,0.9)'
-                    }}
-                  >
-                    No Paperwork
-                  </p>
+                {/* Text + Button - with cool staggered entrance/exit animations on mobile */}
+                {(() => {
+                  // Mobile animation timing: entrance starts at zoomProgress 0.15, exit starts at 0.85
+                  const entranceStart = 0.15;
+                  const entranceEnd = 0.55;
+                  const exitStart = 0.85;
+                  const exitEnd = 1.0;
                   
-                  <div className="pt-6 md:pt-10">
-                    {/* Premium animated button - tight glow */}
-                    <div className="relative group pointer-events-auto inline-block">
-                      {/* Animated gradient border - tight fit */}
-                      <div 
-                        className="absolute inset-0 rounded-full opacity-60 group-hover:opacity-90 transition-all duration-500"
-                        style={{
-                          background: 'linear-gradient(90deg, hsl(168, 80%, 50%), hsl(30, 80%, 55%), hsl(168, 80%, 50%))',
-                          backgroundSize: '200% 100%',
-                          animation: 'shimmer-border 3s linear infinite',
-                          padding: '2px',
-                        }}
-                      />
+                  // Calculate entrance progress (0 to 1)
+                  const entranceProgress = isMobile 
+                    ? Math.min(1, Math.max(0, (zoomProgress - entranceStart) / (entranceEnd - entranceStart)))
+                    : logoScale;
+                  
+                  // Calculate exit progress (0 to 1, where 1 = fully exited)
+                  const exitProgress = isMobile 
+                    ? Math.min(1, Math.max(0, (zoomProgress - exitStart) / (exitEnd - exitStart)))
+                    : 0;
+                  
+                  // Easing functions
+                  const easeOutBack = (x: number) => {
+                    const c1 = 1.70158;
+                    const c3 = c1 + 1;
+                    return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+                  };
+                  const easeInBack = (x: number) => {
+                    const c1 = 1.70158;
+                    const c3 = c1 + 1;
+                    return c3 * x * x * x - c1 * x * x;
+                  };
+                  
+                  // Staggered delays for each line (0-3 for text, 4 for button)
+                  const getItemProgress = (itemIndex: number) => {
+                    const staggerDelay = itemIndex * 0.15;
+                    const itemEntrance = Math.min(1, Math.max(0, (entranceProgress - staggerDelay) / (1 - staggerDelay * 0.8)));
+                    
+                    // Reverse stagger for exit (button exits first, top text last)
+                    const exitStaggerDelay = (4 - itemIndex) * 0.12;
+                    const itemExit = Math.min(1, Math.max(0, (exitProgress - exitStaggerDelay) / (1 - exitStaggerDelay * 0.8)));
+                    
+                    return { entrance: easeOutBack(itemEntrance), exit: easeInBack(itemExit) };
+                  };
+                  
+                  const textLines = [
+                    'Free Consultations',
+                    'Free 17 Point Roof/Home Inspection',
+                    'Free Estimates',
+                    'No Paperwork'
+                  ];
+                  
+                  return (
+                    <div className="mt-6 md:mt-10 space-y-3 md:space-y-4">
+                      {textLines.map((text, index) => {
+                        const { entrance, exit } = getItemProgress(index);
+                        const translateY = isMobile ? (1 - entrance) * 40 + exit * -60 : 0;
+                        const scale = isMobile ? 0.8 + entrance * 0.2 - exit * 0.3 : 1;
+                        const opacity = isMobile ? entrance * (1 - exit) : 1;
+                        const rotateX = isMobile ? (1 - entrance) * 15 - exit * 20 : 0;
+                        
+                        return (
+                          <p 
+                            key={index}
+                            className="text-2xl md:text-4xl font-extrabold tracking-wide"
+                            style={{ 
+                              color: 'white',
+                              textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7), 0 4px 8px rgba(0,0,0,0.9)',
+                              transform: `translateY(${translateY}px) scale(${scale}) perspective(500px) rotateX(${rotateX}deg)`,
+                              opacity,
+                              willChange: 'transform, opacity',
+                            }}
+                          >
+                            {text}
+                          </p>
+                        );
+                      })}
                       
-                      {/* Main button */}
-                      <button 
-                        className="relative text-lg md:text-2xl font-bold uppercase tracking-wide px-12 py-5 md:px-16 md:py-6 rounded-full transition-all duration-300 group-hover:scale-[1.02]"
-                        style={{
-                          background: 'linear-gradient(180deg, hsl(160, 30%, 10%) 0%, hsl(160, 35%, 6%) 100%)',
-                          color: 'white',
-                          boxShadow: '0 0 15px rgba(20, 184, 166, 0.4), 0 8px 24px rgba(0,0,0,0.4)',
-                          textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-                          border: '2px solid transparent',
-                          backgroundClip: 'padding-box',
-                        }}
-                      >
-                        FREE ASSESSMENT
-                      </button>
+                      {/* Button with special entrance/exit */}
+                      {(() => {
+                        const { entrance, exit } = getItemProgress(4);
+                        const translateY = isMobile ? (1 - entrance) * 60 + exit * -80 : 0;
+                        const scale = isMobile ? 0.6 + entrance * 0.4 - exit * 0.4 : 1;
+                        const opacity = isMobile ? entrance * (1 - exit) : 1;
+                        const rotateX = isMobile ? (1 - entrance) * 25 - exit * 30 : 0;
+                        
+                        return (
+                          <div 
+                            className="pt-6 md:pt-10"
+                            style={{
+                              transform: `translateY(${translateY}px) scale(${scale}) perspective(500px) rotateX(${rotateX}deg)`,
+                              opacity,
+                              willChange: 'transform, opacity',
+                            }}
+                          >
+                            {/* Premium animated button - tight glow */}
+                            <div className="relative group pointer-events-auto inline-block">
+                              {/* Animated gradient border - tight fit */}
+                              <div 
+                                className="absolute inset-0 rounded-full opacity-60 group-hover:opacity-90 transition-all duration-500"
+                                style={{
+                                  background: 'linear-gradient(90deg, hsl(168, 80%, 50%), hsl(30, 80%, 55%), hsl(168, 80%, 50%))',
+                                  backgroundSize: '200% 100%',
+                                  animation: 'shimmer-border 3s linear infinite',
+                                  padding: '2px',
+                                }}
+                              />
+                              
+                              {/* Main button */}
+                              <button 
+                                className="relative text-lg md:text-2xl font-bold uppercase tracking-wide px-12 py-5 md:px-16 md:py-6 rounded-full transition-all duration-300 group-hover:scale-[1.02]"
+                                style={{
+                                  background: 'linear-gradient(180deg, hsl(160, 30%, 10%) 0%, hsl(160, 35%, 6%) 100%)',
+                                  color: 'white',
+                                  boxShadow: '0 0 15px rgba(20, 184, 166, 0.4), 0 8px 24px rgba(0,0,0,0.4)',
+                                  textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+                                  border: '2px solid transparent',
+                                  backgroundClip: 'padding-box',
+                                }}
+                              >
+                                FREE ASSESSMENT
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })()}
                     </div>
-                  </div>
-                </div>
+                  );
+                })()}
               </div>
             </div>
           );
