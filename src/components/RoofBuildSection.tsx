@@ -354,7 +354,7 @@ const RoofBuildSection: React.FC = () => {
                             <div className="relative group pointer-events-auto inline-block">
                               {/* Animated gradient border - tight fit */}
                               <div 
-                                className="absolute inset-0 rounded-full opacity-60 group-hover:opacity-90 transition-all duration-500"
+                                className="absolute inset-0 rounded-full opacity-100 md:opacity-60 md:group-hover:opacity-90 transition-all duration-500"
                                 style={{
                                   background: 'linear-gradient(90deg, hsl(168, 80%, 50%), hsl(30, 80%, 55%), hsl(168, 80%, 50%))',
                                   backgroundSize: '200% 100%',
