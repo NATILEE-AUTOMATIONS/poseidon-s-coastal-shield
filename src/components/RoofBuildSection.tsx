@@ -231,11 +231,14 @@ const RoofBuildSection: React.FC = () => {
       style={{ height: isMobile ? '600vh' : '600vh' }}
     >
 
-      {/* Full-screen blocker during BFCache reset - ensures clean state on mobile */}
+      {/* Full-screen blocker during BFCache reset - matches page background for seamless appearance */}
       {isResetting && (
         <div 
-          className="fixed inset-0 z-[200] bg-background"
-          style={{ pointerEvents: 'all' }}
+          className="fixed inset-0 z-[200]"
+          style={{ 
+            backgroundColor: 'hsl(160 25% 4%)',
+            pointerEvents: 'all' 
+          }}
         />
       )}
 
