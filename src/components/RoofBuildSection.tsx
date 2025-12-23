@@ -136,9 +136,9 @@ const RoofBuildSection: React.FC = () => {
     : 1;
 
   // Door zoom: starts after door opens, extended duration for full doorway entry
-  // Mobile: much slower zoom (0.25) for smooth, deliberate approach; Desktop: 0.30
+  // Mobile: slower zoom (0.35) for smooth, deliberate approach; Desktop: 0.30
   const zoomStart = doorStart + doorOpenDuration;
-  const zoomDuration = isMobile ? 0.25 : 0.30;
+  const zoomDuration = isMobile ? 0.35 : 0.30;
   const zoomProgress = progress > zoomStart 
     ? Math.min(1, (progress - zoomStart) / zoomDuration)
     : 0;
@@ -275,10 +275,11 @@ const RoofBuildSection: React.FC = () => {
       <div className="sticky top-0 h-screen overflow-hidden">
         {/* Poseidon Logo - pure zoom animation from 0 to full size, starts when entering doorway */}
         {zoomProgress > 0.10 && (() => {
-          // Logo scales from 0 to 1 between zoomProgress 0.10 and 0.25 (faster zoom to full size)
+          // Logo scales from 0 to 1.15 on mobile, 1 on desktop
           const logoProgress = Math.min(1, Math.max(0, (zoomProgress - 0.10) / 0.15));
           const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
-          const logoScale = easeOutCubic(logoProgress);
+          const maxLogoScale = isMobile ? 1.15 : 1;
+          const logoScale = easeOutCubic(logoProgress) * maxLogoScale;
           
           // Logo stays visible on both mobile and desktop
           const logoFadeOut = 1;
@@ -291,11 +292,12 @@ const RoofBuildSection: React.FC = () => {
                 <img 
                   src={poseidonDoorLogo} 
                   alt="Poseidon Roofing"
-                  className="w-[90vw] sm:w-80 md:w-[450px] lg:w-[650px] xl:w-[800px] max-w-[90vw]"
+                  className="w-[95vw] sm:w-80 md:w-[450px] lg:w-[650px] xl:w-[800px] sm:max-w-[90vw]"
                   style={{ 
-                    transform: `scale(${logoScale})`,
+                    transform: `scale(${logoScale}) translateZ(0)`,
                     opacity: logoFadeOut,
                     willChange: 'transform, opacity',
+                    backfaceVisibility: 'hidden',
                   }}
                 />
                 
@@ -391,11 +393,12 @@ const RoofBuildSection: React.FC = () => {
               <div 
                 className="flex justify-center"
                 style={{
-                  transform: `scale(${zoomScale})`,
+                  transform: `scale(${zoomScale}) translateZ(0)`,
                   transformOrigin: isMobile ? '50% 75%' : '50% 82%',
                   opacity: houseFadeOut,
-                  willChange: 'transform, opacity',
-                  backfaceVisibility: 'hidden', // Prevent flicker
+                  willChange: 'transform',
+                  backfaceVisibility: 'hidden',
+                  transition: isMobile ? 'transform 0.08s ease-out' : 'none',
                 }}
               >
               <div className="w-full max-w-2xl svg-container relative z-20" style={{ containerType: 'inline-size' }}>
