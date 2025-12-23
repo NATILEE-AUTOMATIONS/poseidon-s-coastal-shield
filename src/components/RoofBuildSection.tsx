@@ -316,40 +316,29 @@ const RoofBuildSection: React.FC = () => {
                   </p>
                   
                   <div className="pt-6 md:pt-10">
-                    {/* Premium animated button */}
+                    {/* Premium button - toned down */}
                     <div className="relative group pointer-events-auto">
-                      {/* Animated gradient border */}
+                      {/* Subtle static border glow */}
                       <div 
-                        className="absolute -inset-1 rounded-full opacity-75 group-hover:opacity-100 blur-sm transition-all duration-500"
+                        className="absolute -inset-0.5 rounded-full opacity-50 group-hover:opacity-70 blur-[2px] transition-all duration-500"
                         style={{
-                          background: 'linear-gradient(90deg, hsl(168, 80%, 50%), hsl(30, 80%, 55%), hsl(168, 80%, 50%))',
-                          backgroundSize: '200% 100%',
-                          animation: 'shimmer-border 3s linear infinite',
+                          background: 'linear-gradient(135deg, hsl(168, 70%, 40%), hsl(168, 60%, 35%))',
                         }}
                       />
                       
                       {/* Main button */}
                       <button 
-                        className="relative text-lg md:text-2xl font-extrabold uppercase tracking-widest px-14 py-5 md:px-20 md:py-7 rounded-full transition-all duration-300 group-hover:scale-[1.02]"
+                        className="relative text-lg md:text-2xl font-bold uppercase tracking-wide px-12 py-5 md:px-16 md:py-6 rounded-full transition-all duration-300 group-hover:scale-[1.02]"
                         style={{
-                          background: 'linear-gradient(135deg, rgba(10, 30, 28, 0.95) 0%, rgba(5, 20, 18, 0.98) 100%)',
-                          backdropFilter: 'blur(10px)',
+                          background: 'linear-gradient(180deg, hsl(160, 30%, 10%) 0%, hsl(160, 35%, 6%) 100%)',
                           color: 'white',
-                          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1), inset 0 -2px 10px rgba(0,0,0,0.3), 0 20px 40px rgba(0,0,0,0.5)',
-                          textShadow: '0 0 30px rgba(255,255,255,0.5), 0 0 60px rgba(20, 184, 166, 0.6)',
-                          letterSpacing: '0.15em',
+                          boxShadow: '0 0 20px rgba(20, 184, 166, 0.3), 0 8px 24px rgba(0,0,0,0.4)',
+                          textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+                          border: '1px solid rgba(20, 184, 166, 0.4)',
                         }}
                       >
                         FREE ASSESSMENT
                       </button>
-                      
-                      {/* Bottom glow reflection */}
-                      <div 
-                        className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-3/4 h-8 rounded-full blur-xl opacity-60 group-hover:opacity-80 transition-opacity"
-                        style={{
-                          background: 'radial-gradient(ellipse, rgba(20, 184, 166, 0.6) 0%, transparent 70%)',
-                        }}
-                      />
                     </div>
                   </div>
                 </div>
