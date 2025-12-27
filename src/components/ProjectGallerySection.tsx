@@ -1,13 +1,13 @@
 import React from 'react';
 import doorwayImage from '@/assets/doorway-reveal-image.png';
 import coastalCrew from '@/assets/coastal-home-crew.png';
-import coastalRoofing from '@/assets/coastal-home-roofing.png';
+import coastalUnderlayment from '@/assets/coastal-underlayment.png';
 import aerialPool from '@/assets/aerial-estate-pool.png';
 
 const images = [
   { src: doorwayImage, label: 'Premium Installation' },
   { src: coastalCrew, label: 'Expert Team' },
-  { src: coastalRoofing, label: 'Coastal Excellence' },
+  { src: coastalUnderlayment, label: 'Coastal Excellence' },
   { src: aerialPool, label: 'Luxury Estates' },
 ];
 
