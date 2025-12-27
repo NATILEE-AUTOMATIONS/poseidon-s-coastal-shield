@@ -106,12 +106,17 @@ const HouseSVG: React.FC<HouseSVGProps> = ({ className = '', doorAngle = 0, ligh
             strokeWidth="1.5"
             rx="2"
           />
-          {/* Door panels - always visible */}
-          <rect x="182" y="200" width="16" height="25" fill="none" stroke="hsl(25 35% 35%)" strokeWidth="1" rx="1" />
-          <rect x="202" y="200" width="16" height="25" fill="none" stroke="hsl(25 35% 35%)" strokeWidth="1" rx="1" />
-          <rect x="182" y="232" width="16" height="28" fill="none" stroke="hsl(25 35% 35%)" strokeWidth="1" rx="1" />
-          <rect x="202" y="232" width="16" height="28" fill="none" stroke="hsl(25 35% 35%)" strokeWidth="1" rx="1" />
-          <circle cx="214.5" cy="230" r="2" fill="hsl(32 80% 50%)" />
+          {/* Door panels - 4 panel colonial style (2x2 grid) */}
+          {/* Top left panel */}
+          <rect x="182" y="200" width="16" height="22" fill="none" stroke="hsl(25 35% 35%)" strokeWidth="1" rx="1" />
+          {/* Top right panel */}
+          <rect x="202" y="200" width="16" height="22" fill="none" stroke="hsl(25 35% 35%)" strokeWidth="1" rx="1" />
+          {/* Bottom left panel */}
+          <rect x="182" y="227" width="16" height="33" fill="none" stroke="hsl(25 35% 35%)" strokeWidth="1" rx="1" />
+          {/* Bottom right panel */}
+          <rect x="202" y="227" width="16" height="33" fill="none" stroke="hsl(25 35% 35%)" strokeWidth="1" rx="1" />
+          {/* Door knob */}
+          <circle cx="214.5" cy="237" r="2" fill="hsl(32 80% 50%)" />
         </g>
         
         {/* ===== LEFT WINDOW (Premium 6-pane colonial) ===== */}
